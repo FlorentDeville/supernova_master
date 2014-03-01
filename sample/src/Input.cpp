@@ -32,6 +32,7 @@ namespace Devil
 		//set the initial mouse position
 		m_wndCenter.x = GRAPHICS->getScreenWidth() * 0.5f;
 		m_wndCenter.y = GRAPHICS->getScreenHeight() * 0.5f;
+
 		resetMousePosition();
 		
 		return;
@@ -51,7 +52,9 @@ namespace Devil
 		m_mouseDelta.y = pt.y - m_wndCenter.y;
 
 		//reset the mouse position to the center of the window.
-		resetMousePosition();
+		HWND focusedWindow = GetFocus();
+		if (focusedWindow == m_windowHandle)
+			resetMousePosition();
 	}
 
 	void Input::keyDown(unsigned int input)

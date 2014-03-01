@@ -219,21 +219,21 @@ namespace Supernova
 				QueryPerformanceCounter(&startSAT);
 #endif
 				snCollisionResult res = snCollision::queryTestCollision((*i), (*j));
-#if _DEBUG
-				LARGE_INTEGER endSAT;
-				QueryPerformanceCounter(&endSAT);
-				LONGLONG SATDuration = endSAT.QuadPart - startSAT.QuadPart;
-
-
-				//check collision GJK
-				LARGE_INTEGER startGJK;
-				QueryPerformanceCounter(&startGJK);
-				snVector4f simplex[4];
-				//snCollisionResult _res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
-				LARGE_INTEGER endGJK;
-				QueryPerformanceCounter(&endGJK);
-				LONGLONG GJKDuration = endGJK.QuadPart - startGJK.QuadPart;
-#endif
+//#if _DEBUG
+//				LARGE_INTEGER endSAT;
+//				QueryPerformanceCounter(&endSAT);
+//				LONGLONG SATDuration = endSAT.QuadPart - startSAT.QuadPart;
+//
+//
+//				//check collision GJK
+//				LARGE_INTEGER startGJK;
+//				QueryPerformanceCounter(&startGJK);
+//				snVector4f simplex[4];
+//				//snCollisionResult _res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
+//				LARGE_INTEGER endGJK;
+//				QueryPerformanceCounter(&endGJK);
+//				LONGLONG GJKDuration = endGJK.QuadPart - startGJK.QuadPart;
+//#endif
                 //no collision, continue
 				if (!res.m_collision)
 					continue;

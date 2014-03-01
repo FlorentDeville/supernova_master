@@ -801,7 +801,7 @@ namespace Devil
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->getSolver().setIterationCount(20);
 		m_physicScene->setBeta(0.2f);
-		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
+		m_physicScene->setGravity(snVector4f(0, -9.81f * 0.5f, 0, 0));
 
 		//set camera initial position
 		WORLD->getCamera()->setPosition(XMVectorSet(25, 30, 50, 1));
@@ -851,43 +851,43 @@ namespace Devil
 		}
 
 		//back wall
-		{
-			float width = 200;
-			float height = 200;
-			float depth = 2;
+		//{
+		//	float width = 200;
+		//	float height = 200;
+		//	float depth = 2;
 
-			//create actor
-			snActor* act = 0;
-			int actorId = -1;
-			m_physicScene->createActor(&act, actorId);
+		//	//create actor
+		//	snActor* act = 0;
+		//	int actorId = -1;
+		//	m_physicScene->createActor(&act, actorId);
 
-			act->setName("back");
-			act->setMass(100);
-			act->setPosition(snVector4f(0, 101, -80, 1));
-			act->setIsKinematic(true);
-			act->getPhysicMaterial().m_restitution = 1;
-			act->getPhysicMaterial().m_friction = 1;
+		//	act->setName("back");
+		//	act->setMass(100);
+		//	act->setPosition(snVector4f(0, 101, -80, 1));
+		//	act->setIsKinematic(true);
+		//	act->getPhysicMaterial().m_restitution = 1;
+		//	act->getPhysicMaterial().m_friction = 1;
 
-			//create collider
-			snColliderBox* collider = 0;
-			int colliderId = -1;
-			act->createColliderBox(&collider, colliderId);
+		//	//create collider
+		//	snColliderBox* collider = 0;
+		//	int colliderId = -1;
+		//	act->createColliderBox(&collider, colliderId);
 
-			collider->setSize(snVector4f(width, height, depth, 0));
+		//	collider->setSize(snVector4f(width, height, depth, 0));
 
-			//initialize
-			collider->initialize();
-			act->initialize();
+		//	//initialize
+		//	collider->initialize();
+		//	act->initialize();
 
-			//create world entity
-			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-			kinematicBox->setActor(act);
-		}
+		//	//create world entity
+		//	EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
+		//	kinematicBox->setActor(act);
+		//}
 
 		//platform
 		float platformHeight = 0;
 		{
-			float width = 15;
+			float width = 7;
 			float height = 1;
 			float depth = 3;
 			snVector4f pos(width * 0.5f, 20 + height * 0.5f + 0, 0, 1);
@@ -900,7 +900,7 @@ namespace Devil
 			act->setMass(1);
 			act->setPosition(pos);
 			float angle = 3.14f * 0.25f;
-			act->setOrientationQuaternion(snQuaternionFromEuler(angle, 0, 0));
+			act->setOrientationQuaternion(snQuaternionFromEuler(angle, angle, 0));
 			//act->setAngularVelocity(snVector4f(0, 10, 20, 0));
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = 0.f;
@@ -921,7 +921,7 @@ namespace Devil
 
 			platformHeight = pos.getY() + height * 0.5f;
 		}
-		//return;
+		return;
 		//dynamic
 		{
 			float width = 20;
