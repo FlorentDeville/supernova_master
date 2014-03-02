@@ -105,16 +105,16 @@ namespace Supernova
 		void createActor(snActor** _newActor, int& _actorId);
 
 		//Delete an actor
-		void deleteActor(int _actorId);
+		void deleteActor(unsigned int _actorId);
 
 		//Add the actor to the scene.
 		int attachActor(snActor* _actor);
 
 		//Remove the actor from the scene
-		void removeActor(int _actorId);
+		void removeActor(unsigned int _actorId);
 
 		//Get an actor from its id. Returns 0 if the actor can't be found.
-		snActor* getActor(int _actorId);
+		snActor* getActor(unsigned int _actorId);
 
 		//Delete all actors from the physics scene.
 		void clearScene();

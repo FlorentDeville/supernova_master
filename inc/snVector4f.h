@@ -104,6 +104,13 @@ namespace Supernova
 			return ret;
 		}
 
+		inline snVector4f operator*(int _other) const
+		{
+			__m128 factor = _mm_set_ps1((float)_other);
+			snVector4f ret(_mm_mul_ps(factor, m_vec));
+			return ret;
+		}
+
 		inline float dot4(const snVector4f& _other) const
 		{
 			__m128 mul = _mm_mul_ps(m_vec, _other.m_vec);

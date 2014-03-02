@@ -196,7 +196,7 @@ namespace Supernova
 		_colliderId = attachCollider(*_box);
 	}
 
-	void snActor::deleteCollider(int _colliderId)
+	void snActor::deleteCollider(unsigned int _colliderId)
 	{
 		if (_colliderId >= m_colliders.size())
 			return;
@@ -211,7 +211,7 @@ namespace Supernova
 	int snActor::attachCollider(snICollider* _collider)
 	{
 		//try to add it to the vector
-		for (int i = 0; i < m_colliders.size(); ++i)
+		for (unsigned int i = 0; i < m_colliders.size(); ++i)
 		{
 			if (m_colliders[i] != 0)
 				continue;
@@ -227,7 +227,7 @@ namespace Supernova
 	}
 
 	
-	void snActor::removeCollider(int _colliderId)
+	void snActor::removeCollider(unsigned int _colliderId)
 	{
 		if (m_colliders.size() <= _colliderId)
 			return;
@@ -235,7 +235,7 @@ namespace Supernova
 		m_colliders[_colliderId] = 0;
 	}
 
-	snICollider* snActor::getCollider(int _colliderId)
+	snICollider* snActor::getCollider(unsigned int _colliderId)
 	{
 		if (_colliderId >= m_colliders.size())
 			return 0;

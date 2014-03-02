@@ -90,7 +90,7 @@ namespace Supernova
 		*_newScene = new snScene();
 
 		//try to find an empty spot to store the pointer
-		for (int i = 0; i < m_scenes.size(); ++i)
+		for (unsigned int i = 0; i < m_scenes.size(); ++i)
 		{
 			if (m_scenes[i] != 0)
 				continue;
@@ -107,7 +107,7 @@ namespace Supernova
 		return;
 	}
 
-	void snFactory::deleteScene(int _sceneId)
+	void snFactory::deleteScene(unsigned int _sceneId)
 	{
 		//the id is out of range
 		if (_sceneId >= m_scenes.size())
@@ -125,11 +125,21 @@ namespace Supernova
 		m_scenes[_sceneId] = 0;
 	}
 
-	snScene* snFactory::getScene(int _sceneId)
+	snScene* snFactory::getScene(unsigned int _sceneId)
 	{
 		if (_sceneId >= m_scenes.size())
 			return 0;
 
 		return m_scenes[_sceneId];
+	}
+
+	void* snFactory::operator new(size_t _count)
+	{
+		return _aligned_malloc(_count, SN_ALIGN_SIZE);
+	}
+
+	void snFactory::operator delete(void* _p)
+	{
+		_aligned_free(_p);
 	}
 }

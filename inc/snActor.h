@@ -161,16 +161,16 @@ namespace Supernova
 		void createColliderBox(snColliderBox** _box, int& _colliderId);
 
 		//Delete the collider.
-		void deleteCollider(int _colliderId);
+		void deleteCollider(unsigned int _colliderId);
 
 		//Add collider to the actor
 		int attachCollider(snICollider* _collider);
 
 		//remove the collider from the actor
-		void removeCollider(int _colliderId);
+		void removeCollider(unsigned int _colliderId);
 
 		//Return the collider identified by its id. Return 0 if the collider can't be found.
-		snICollider* getCollider(int _colliderId);
+		snICollider* getCollider(unsigned int _colliderId);
 
 		std::vector<snICollider*>& getColliders();
 

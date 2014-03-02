@@ -77,10 +77,16 @@ namespace Supernova
 		void createScene(snScene** _newScene, int& _sceneId);
 
 		//Delete a scene and all its actors.
-		void deleteScene(int _sceneId);
+		void deleteScene(unsigned int _sceneId);
 
 		//Get a scene from its id. Return null if the scene can't be found.
-		snScene* getScene(int _sceneId);
+		snScene* getScene(unsigned int _sceneId);
+
+		//Overridden new operator to create scene with correct alignement.
+		void* operator new(size_t _count);
+
+		//Overridden delete operator to delete using the correct alignement.
+		void operator delete(void* _p);
 	};
 
 //Provide quick access to the factory.

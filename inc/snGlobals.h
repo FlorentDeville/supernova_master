@@ -35,6 +35,9 @@
 #ifndef SN_GLOBALS_H
 #define SN_GLOBALS_H
 
+//Disable warning : structure was padded due to __declspec(align())
+#pragma warning( disable : 4324 )
+
 //Align a class or struct to 16 bytes. Necessary for SIMD vectors.
 #define SN_ALIGN_SIZE 16
 #define SN_ALIGN __declspec(align(SN_ALIGN_SIZE))

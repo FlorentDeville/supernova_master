@@ -89,18 +89,18 @@ namespace Supernova
 		virtual snCollisionResult queryTestCollision(const snColliderSphere& _sphere) const = 0;
 
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
-		virtual snVector4f getFarthestPointInDirection(const snVector4f& _direction) const { return snVector4f(); };
+		virtual snVector4f getFarthestPointInDirection(const snVector4f& /*_direction*/) const { return snVector4f(); };
 
 		//Get the closest polygon projected onto the normal.
-		virtual void getClosestPolygonProjected(const snVector4f& _n, snVector4f* const _polygon, int& _count) const{};
+		virtual void getClosestPolygonProjected(const snVector4f& /*_n*/, snVector4f* const /*_polygon*/, int& /*_count*/) const{};
 
 		//Get the ids of all the adjacent faces.
-		virtual const int* getAdjacentFaces(int _faceId) const { return 0; };
+		virtual const int* getAdjacentFaces(int /*_faceId*/) const { return 0; };
 
 		//Return the normal in world coordinate of the face
-		virtual snVector4f getWorldNormalOfFace(int _faceId) const { return snVector4f(); };
+		virtual snVector4f getWorldNormalOfFace(int /*_faceId*/) const { return snVector4f(); };
 
-		virtual snVector4f getWorldVertexOfFace(int _faceId) const { return snVector4f(); };
+		virtual snVector4f getWorldVertexOfFace(int /*_faceId*/) const { return snVector4f(); };
 
 		const snVector4f& getOrigin() const { return m_origin; }
 

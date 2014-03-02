@@ -75,7 +75,7 @@ namespace Supernova
 		_actorId = attachActor(*_newActor);
 	}
 
-	void snScene::deleteActor(int _actorId)
+	void snScene::deleteActor(unsigned int _actorId)
 	{
 		//id out of range
 		if (_actorId >= m_actors.size())
@@ -94,7 +94,7 @@ namespace Supernova
 	int snScene::attachActor(snActor* _actor)
 	{
 		//try to add it to the vector
-		for (int i = 0; i < m_actors.size(); ++i)
+		for (unsigned int i = 0; i < m_actors.size(); ++i)
 		{
 			if (m_actors[i] != 0)
 				continue;
@@ -109,7 +109,7 @@ namespace Supernova
 		return actorId;
 	}
 
-	void snScene::removeActor(int _actorId)
+	void snScene::removeActor(unsigned int _actorId)
 	{
 		if (m_actors.size() <= _actorId)
 			return;
@@ -117,7 +117,7 @@ namespace Supernova
 		m_actors[_actorId] = 0;
 	}
 
-	snActor* snScene::getActor(int _actorId)
+	snActor* snScene::getActor(unsigned int _actorId)
 	{
 		//id out of range
 		if (_actorId >= m_actors.size())
@@ -219,21 +219,21 @@ namespace Supernova
 				QueryPerformanceCounter(&startSAT);
 #endif
 				snCollisionResult res = snCollision::queryTestCollision((*i), (*j));
-//#if _DEBUG
-//				LARGE_INTEGER endSAT;
-//				QueryPerformanceCounter(&endSAT);
-//				LONGLONG SATDuration = endSAT.QuadPart - startSAT.QuadPart;
-//
-//
-//				//check collision GJK
-//				LARGE_INTEGER startGJK;
-//				QueryPerformanceCounter(&startGJK);
-//				snVector4f simplex[4];
-//				//snCollisionResult _res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
-//				LARGE_INTEGER endGJK;
-//				QueryPerformanceCounter(&endGJK);
-//				LONGLONG GJKDuration = endGJK.QuadPart - startGJK.QuadPart;
-//#endif
+#if _DEBUG
+				LARGE_INTEGER endSAT;
+				QueryPerformanceCounter(&endSAT);
+				LONGLONG SATDuration = endSAT.QuadPart - startSAT.QuadPart;
+
+
+				//check collision GJK
+				LARGE_INTEGER startGJK;
+				QueryPerformanceCounter(&startGJK);
+				snVector4f simplex[4];
+				//snCollisionResult _res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
+				LARGE_INTEGER endGJK;
+				QueryPerformanceCounter(&endGJK);
+				LONGLONG GJKDuration = endGJK.QuadPart - startGJK.QuadPart;
+#endif
                 //no collision, continue
 				if (!res.m_collision)
 					continue;

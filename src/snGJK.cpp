@@ -286,7 +286,8 @@ namespace Supernova
 
 	snVector4f snGJK::expandPolytope(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2) const
 	{
-		while (true)
+		bool loopOver = false;
+		while (!loopOver)
 		{
 			//find the closest triangle to the origin
 			int closestTriangleId = -1;
@@ -306,5 +307,7 @@ namespace Supernova
 
 			_simplex.expand(newVertex, closestTriangleId);
 		}
+
+		return snVector4f();
 	}
 }

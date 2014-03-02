@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <malloc.h>
 
+//Here just for the UNREFERENCED_PARAMETER macro.
+#define WIN32_LEAN_AND_MEAN
+#include<Windows.h>
+
 template <typename T, std::size_t N = 16>
 class AlignmentAllocator {
 public:
@@ -46,6 +50,7 @@ public:
 	}
 
 	inline void destroy(pointer p) {
+		UNREFERENCED_PARAMETER(p);
 		p->~value_type();
 	}
 
