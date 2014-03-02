@@ -1,31 +1,25 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-
-//#include "Vector4f.h"
-//#include "Matrix44f.h"
-
-
-//#include "ColliderBox.h"
-//#include "ColliderSphere.h"
-//#include "Collision.h"
-
-//#include <d3d11.h>
-//#include "ColliderPlan.h"
-
-#include <DirectXMath.h>
-using namespace DirectX;
-
 #include "System.h"
 
-#include "LemkeAlgorithm.h"
-#include "PGSSolver.h"
-#include "MatrixX.h"
-#include "VectorX.h"
+#ifdef _DEBUG
+
+//needed for memory leak detection. Do not change the order.
+#include <stdlib.h>
+#include <crtdbg.h>
+
+#endif //_DEBUG
 
 using namespace Devil;
 
 int CALLBACK WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nCmdShow*/)
 {
+
+#ifdef _DEBUG
+	//enable memory leak detection
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif //_DEBUG
+
 	System* GlobalSystem;
 	bool result;
 

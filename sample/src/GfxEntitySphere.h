@@ -9,7 +9,7 @@ using namespace DirectX;
 
 namespace Devil
 {
-	class GfxEntitySphere : IGfxEntity
+	class GfxEntitySphere : public IGfxEntity
 	{
 	private:
 

@@ -10,12 +10,6 @@ namespace Devil
 	class GfxEntityBox : public IGfxEntity
 	{
 	private:
-		//struct VertexType
-		//{
-		//	XMFLOAT3 position;
-		//	XMFLOAT3 color;
-		//	XMFLOAT3 normal;
-		//};
 
 		XMFLOAT3 m_size;
 
@@ -24,6 +18,7 @@ namespace Devil
 		ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 		ID3D11InputLayout* m_inputLayout;
 
+		//Effect to use to render the box. It is retrieve from the Effect manager so there is no need to delete it in the destructor.
 		DirectX::BasicEffect* m_effect;
 
 	public:

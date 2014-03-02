@@ -124,7 +124,19 @@ namespace Devil
 
 	void GfxEntityPlan::shutdown()
 	{
+		// Release the index buffer.
+		if (m_indexBuffer)
+		{
+			m_indexBuffer->Release();
+			m_indexBuffer = 0;
+		}
 
+		// Release the vertex buffer.
+		if (m_vertexBuffer)
+		{
+			m_vertexBuffer->Release();
+			m_vertexBuffer = 0;
+		}
 	}
 
 	void GfxEntityPlan::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection)

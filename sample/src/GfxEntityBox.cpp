@@ -39,7 +39,6 @@ namespace Devil
 			m_vertexBuffer->Release();
 			m_vertexBuffer = 0;
 		}
-
 	}
 
 	void GfxEntityBox::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection)

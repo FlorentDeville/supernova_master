@@ -15,6 +15,8 @@ namespace Devil
 
 	EffectProvider::~EffectProvider()
 	{
+		m_BasicEffectinputLayout->Release();
+		m_BasicEffectinputLayout.release();
 	}
 
 	EffectProvider* EffectProvider::getInstance()

@@ -20,7 +20,6 @@ namespace Devil
 
 	void GfxEntitySphere::shutdown()
 	{
-		m_primitive.release();
 	}
 
 	void GfxEntitySphere::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection)

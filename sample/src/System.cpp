@@ -95,10 +95,10 @@ namespace Devil
 		}
 
 		//createScene1();
-		//createScene2();
+		createScene2();
 
 		//test case to debug the clipping plan bug.
-		createScene3();
+		//createScene3();
 
 		//createTower();
 
@@ -109,7 +109,7 @@ namespace Devil
 	{
 		SUPERNOVA->clean();
 		WORLD->shutdown();
-
+		EFFECT->kill();
 		GRAPHICS->shutdown();
 		GRAPHICS->kill();
 
