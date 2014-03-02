@@ -27,7 +27,7 @@ namespace Devil
 
 		EntitySphere* m_Sphere;
 
-		const int TICK = 60;
+		int TICK = 60;
 
 		unsigned long m_deltaTime;
 		unsigned long m_lastTick;
@@ -35,11 +35,14 @@ namespace Devil
 		//Physics scene.
 		snScene* m_physicScene;
 
+		//Flag to indicate if the window is full screen or not.
+		bool m_fullScreen;
+
 	public:
 		System();
 		virtual ~System();
 
-		bool initialize();
+		bool initialize(bool _fullScreen);
 		void run();
 		void shutdown();
 		LRESULT CALLBACK messageHandler(HWND, UINT, WPARAM, LPARAM);

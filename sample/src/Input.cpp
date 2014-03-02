@@ -87,8 +87,8 @@ namespace Devil
 	void Input::resetMousePosition()
 	{
 		POINT pt;
-		pt.x = m_wndCenter.x;
-		pt.y = m_wndCenter.y;
+		pt.x = (LONG)m_wndCenter.x;
+		pt.y = (LONG)m_wndCenter.y;
 		ClientToScreen(m_windowHandle, &pt);
 
 		SetCursorPos(pt.x, pt.y);

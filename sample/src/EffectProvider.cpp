@@ -51,6 +51,7 @@ namespace Devil
 
 		HRESULT res = GRAPHICS->getDirectXWrapper()->getDevice()->CreateInputLayout(VertexPositionNormalColor::InputElements,
 			VertexPositionNormalColor::InputElementCount, shaderByteCode, byteCodeLength, &inputLayout);
+		UNREFERENCED_PARAMETER(res);
 		assert(!FAILED(res));
 
 		m_BasicEffectinputLayout.reset(inputLayout);

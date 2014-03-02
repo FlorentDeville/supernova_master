@@ -31,7 +31,7 @@ using namespace Supernova;
 namespace Devil
 {
 
-	System::System()
+	System::System() : m_fullScreen(false)
 	{
 		m_Input = 0;
 	}
@@ -40,8 +40,9 @@ namespace Devil
 	{
 	}
 
-	bool System::initialize()
+	bool System::initialize(bool _fullScreen)
 	{
+		m_fullScreen = _fullScreen;
 		m_deltaTime = 1000 / TICK;
 
 		int screenWidth, screenHeight;
@@ -57,7 +58,7 @@ namespace Devil
 
 
 		// Initialize the graphics object.
-		result = GRAPHICS->initialize(screenWidth, screenHeight, m_hwnd);
+		result = GRAPHICS->initialize(screenWidth, screenHeight, m_hwnd, m_fullScreen);
 		if (!result)
 		{
 			return false;
@@ -242,8 +243,8 @@ namespace Devil
 					float width = 5;
 					float height = 5;
 					float depth = 5;
-					float space = 1.5;
-					float xOffset = -10;
+					/*float space = 1.5;*/
+					/*float xOffset = -10;*/
 					snVector4f pos(WORLD->getCamera()->getPosition());
 
 					//create actor
@@ -326,7 +327,7 @@ namespace Devil
 		screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
 		// Setup the screen settings depending on whether it is running in full screen or in windowed mode.
-		if (FULL_SCREEN)
+		if (m_fullScreen)
 		{
 			// If full screen set the screen to maximum size of the users desktop and 32bit.
 			memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
@@ -375,7 +376,7 @@ namespace Devil
 		ShowCursor(true);
 
 		// Fix the display settings if leaving full screen mode.
-		if (FULL_SCREEN)
+		if (m_fullScreen)
 		{
 			ChangeDisplaySettings(NULL, 0);
 		}
@@ -1049,7 +1050,7 @@ namespace Devil
 			act->setPosition(pos);
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = 0;
-			act->getPhysicMaterial().m_friction = 0.9;
+			act->getPhysicMaterial().m_friction = 0.9f;
 
 			//create collider
 			snColliderBox* collider = 0;

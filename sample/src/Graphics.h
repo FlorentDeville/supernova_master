@@ -22,7 +22,7 @@ namespace Devil
 	class GfxEntityBox;
 	class GfxEntityPlan;
 
-	const bool FULL_SCREEN = false;
+	//const bool FULL_SCREEN = false;
 	const bool VSYNC_ENABLED = false;
 	const float SCREEN_DEPTH = 1000.0f;
 	const float SCREEN_NEAR = 0.1f;
@@ -58,7 +58,7 @@ namespace Devil
 		
 		~Graphics();
 
-		bool initialize(int _screenWidth, int _screenHeight, HWND _hwnd);
+		bool initialize(int _screenWidth, int _screenHeight, HWND _hwnd, bool _fullScreen);
 		void shutdown();
 		
 		void BeginRender();

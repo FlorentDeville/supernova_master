@@ -32,7 +32,8 @@ int CALLBACK WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR
 	}
 
 	// Initialize and run the system object.
-	result = GlobalSystem->initialize();
+	bool fullScreen = false;
+	result = GlobalSystem->initialize(fullScreen);
 	if (result)
 	{
 		GlobalSystem->run();

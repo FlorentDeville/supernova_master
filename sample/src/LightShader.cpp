@@ -17,7 +17,7 @@ namespace Devil
 		m_lightBuffer = 0;
 	}
 
-	LightShader::LightShader(const LightShader& other)
+	LightShader::LightShader(const LightShader& /*other*/)
 	{
 	}
 
