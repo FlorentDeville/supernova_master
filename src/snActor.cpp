@@ -48,6 +48,14 @@ namespace Supernova
 		m_w = snVector4f(0, 0, 0, 0);
 		m_q = snVector4f(0, 0, 0, 1);
 		m_R.identity();
+
+		m_isKinematic = false;
+		m_isStatic = false;
+	}
+
+	snActor::snActor(bool _isStatic) : snActor()
+	{
+		m_isStatic = _isStatic;
 	}
 
 	snActor::~snActor()
@@ -80,7 +88,7 @@ namespace Supernova
 
 	float snActor::getInvMass()const
 	{
-		if (m_isKinematic)
+		if (m_isKinematic || m_isStatic)
 			return 0;
 		return m_massInv;
 	}
@@ -92,7 +100,7 @@ namespace Supernova
 
 	const snMatrix44f snActor::getInvInertiaTensor() const
 	{
-		if (m_isKinematic)
+		if (m_isKinematic || m_isStatic)
 			return snMatrix44f::m_zero;
 
 		return m_invInertiaTensor;
@@ -137,6 +145,11 @@ namespace Supernova
 	void snActor::setIsKinematic(bool _isKinematic)
 	{
 		m_isKinematic = _isKinematic;
+	}
+
+	bool snActor::getIsStatic() const
+	{
+		return m_isStatic;
 	}
 
 	snVector4f snActor::getPosition()const

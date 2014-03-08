@@ -82,6 +82,9 @@ namespace Supernova
 		//Indicates if this actor is kinematic or not
 		bool m_isKinematic;
 
+		//Indicates if this actor is static or not. A static actor is checked for collisions against other actor but it is not simulated.
+		bool m_isStatic;
+
 		//position
 		snVector4f m_x;
 
@@ -105,6 +108,9 @@ namespace Supernova
 		//Constructor. Actors should be created using snScene::createActor. If you create an actor yourself it is your responsability
 		//to delete it.
 		snActor();
+
+		//Constructor to let you set if the actor is static or not. Actors should be created using snScene::createActor.
+		explicit snActor(bool _isStatic);
 
 		virtual ~snActor();
 
@@ -136,6 +142,9 @@ namespace Supernova
 		bool getIsKinematic()const;
 
 		void setIsKinematic(bool);
+
+		//Return if th current actor is static.
+		bool getIsStatic() const;
 
 		snVector4f getPosition()const;
 

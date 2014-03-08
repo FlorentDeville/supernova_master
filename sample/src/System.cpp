@@ -661,12 +661,12 @@ namespace Devil
 			//create actor
 			snActor* act = 0;
 			int actorId = -1;
-			m_physicScene->createActor(&act, actorId);
+			m_physicScene->createStaticActor(&act, actorId);
 
 			act->setName("ground");
 			act->setMass(100);
 			act->setPosition(snVector4f(0, 0, 0, 1));
-			act->setIsKinematic(true);
+			//act->setIsKinematic(true);
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 0.8f;
 
@@ -697,12 +697,12 @@ namespace Devil
 			//create actor
 			snActor* act = 0;
 			int actorId = -1;
-			m_physicScene->createActor(&act, actorId);
+			m_physicScene->createStaticActor(&act, actorId);
 
 			act->setName("back");
 			act->setMass(100);
 			act->setPosition(snVector4f(0, 101, -80, 1));
-			act->setIsKinematic(true);
+			//act->setIsKinematic(true);
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
 

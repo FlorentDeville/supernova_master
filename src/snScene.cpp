@@ -75,6 +75,15 @@ namespace Supernova
 		_actorId = attachActor(*_newActor);
 	}
 
+	void snScene::createStaticActor(snActor** _newActor, int& _actorId)
+	{
+		//create the actor
+		*_newActor = new snActor(true);
+
+		//attach the actor to the current scene
+		_actorId = attachActor(*_newActor);
+	}
+
 	void snScene::deleteActor(unsigned int _actorId)
 	{
 		//id out of range
@@ -213,6 +222,10 @@ namespace Supernova
 		{
 			for (std::vector<snActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
 			{
+				//do not check collision between twe static actors.
+				if ((*i)->getIsStatic() && (*j)->getIsStatic())
+					continue;
+
 				//check collisions SAT
 #if _DEBUG
 				LARGE_INTEGER startSAT;
@@ -337,6 +350,10 @@ namespace Supernova
 	{
 		for (vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
+			//do not simulate static actors.
+			if ((*i)->getIsStatic())
+				continue;
+
 			//if the linear speed is too small, set it to 0.
 			float sqSpeed = (*i)->getLinearVelocity().squareNorme();
 			if (sqSpeed < m_linearSquaredSpeedThreshold)

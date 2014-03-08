@@ -104,6 +104,9 @@ namespace Supernova
 		//Create a new actor and add it to the scene.
 		void createActor(snActor** _newActor, int& _actorId);
 
+		//Create a new static actor.
+		void createStaticActor(snActor** _newActor, int& _actorId);
+
 		//Delete an actor
 		void deleteActor(unsigned int _actorId);
 
