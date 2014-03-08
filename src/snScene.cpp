@@ -42,6 +42,10 @@
 #include "snQuaternion.h"
 #include "snFeatureClipping.h"
 
+#include "snDistanceConstraint.h"
+#include "snNonPenetrationConstraint.h"
+#include "snFrictionConstraint.h"
+
 #ifdef _DEBUG
 //#include "World.h"
 //#include "EntityCollisionPoint.h"
@@ -135,17 +139,33 @@ namespace Supernova
 		return m_actors[_actorId];
 	}
 
+	int snScene::createDistanceConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2, 
+		float _distance)
+	{
+		snDistanceConstraint* constraint = new snDistanceConstraint(_body1, _offset1, _body2, _offset2, _distance);
+		int id = m_constraints.size();
+		m_constraints.push_back(constraint);
+		return id;
+	}
+
 	void snScene::clearScene()
 	{
 		for (vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 			delete *i;
 		m_actors.clear();
+
+		for (vector<snIConstraint*>::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
+			delete *i;
+
+		m_constraints.clear();
 	}
 
 	void snScene::update(float _deltaTime)
 	{
 		//compute collision points
 		m_contactsPoints.clear();
+		vector<snIConstraint*> collisionConstraints;
+		//getContactPoints(collisionConstraints, _deltaTime);
 		getContactPoints(m_contactsPoints, _deltaTime);
 
 		//apply forces
@@ -153,6 +173,7 @@ namespace Supernova
 
 		//apply impulses
 		sequentialImpulseSIMD(m_contactsPoints);
+		//resolveAllConstraints(collisionConstraints);
 
 		//update positions
 		updatePosition(_deltaTime);	
@@ -173,9 +194,19 @@ namespace Supernova
 		m_beta = _beta;
 	}
 
+	float snScene::getBeta() const
+	{
+		return m_beta;
+	}
+
 	void snScene::setMaxSlop(float _maxSlop)
 	{
 		m_maxSlop = _maxSlop;
+	}
+
+	float snScene::getMaxSlop() const
+	{
+		return m_maxSlop;
 	}
 
 	void snScene::setGravity(const snVector4f& _gravity)
@@ -203,6 +234,7 @@ namespace Supernova
 		_aligned_free(_p);
 	}
 
+	//void snScene::getContactPoints(vector<snIConstraint*>& _collisionConstraints, float _dt)
 	void snScene::getContactPoints(snContactPointVector& _contacts, float _dt)
 	{
 #if _DEBUG
@@ -255,7 +287,14 @@ namespace Supernova
 				vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
 				for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
 				{
+					/*
+					snNonPenetrationConstraint* npConstraint = new snNonPenetrationConstraint(*i, *j, res.m_normal, *point, *penetrationIterator, this, _dt);
+					_collisionConstraints.push_back(npConstraint);
 
+					snFrictionConstraint* fConstraint = new snFrictionConstraint(*i, *j, npConstraint);
+					_collisionConstraints.push_back(fConstraint);
+					*/
+					
 					snContactPoint NewPoint;
 					NewPoint.m_point = *point;
 					NewPoint.m_penetration = *penetrationIterator;
@@ -322,6 +361,7 @@ namespace Supernova
 					//Compute the friction coefficient as the average of frictions of the two objects.
 					NewPoint.m_frictionCoefficient = ((*i)->getPhysicMaterial().m_friction + (*j)->getPhysicMaterial().m_friction) * 0.5f;
 					_contacts.push_back(NewPoint);
+					
 				}
 			}
 		}
@@ -397,5 +437,31 @@ namespace Supernova
 	void snScene::sequentialImpulseSIMD(snContactPointVector& _contacts) const
 	{
 		m_sequentialImpulseSolver.solve(_contacts);
+	}
+
+	void snScene::resolveAllConstraints(vector<snIConstraint*>& _collisionConstraints)
+	{
+		//first prepare the constraint for the resolve step
+		for (vector<snIConstraint*>::iterator constraint = _collisionConstraints.begin(); constraint != _collisionConstraints.end(); ++constraint)
+			(*constraint)->prepare();
+
+		for (vector<snIConstraint*>::iterator constraint = m_constraints.begin(); constraint != m_constraints.end(); ++constraint)
+			(*constraint)->prepare();
+
+		//resolve the constraints
+		for (int i = 0; i < m_sequentialImpulseSolver.getIterationCount(); ++i)
+		{
+			for (vector<snIConstraint*>::iterator constraint = _collisionConstraints.begin(); constraint != _collisionConstraints.end(); ++constraint)
+				(*constraint)->resolve();
+
+			for (vector<snIConstraint*>::iterator constraint = m_constraints.begin(); constraint != m_constraints.end(); ++constraint)
+				(*constraint)->resolve();
+		}
+
+		//clean the collision constraints
+		for (vector<snIConstraint*>::iterator constraint = _collisionConstraints.begin(); constraint != _collisionConstraints.end(); ++constraint)
+			delete *constraint;
+
+		_collisionConstraints.clear();
 	}
 }

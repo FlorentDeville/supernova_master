@@ -32,48 +32,52 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_TYPES_H
-#define SN_TYPES_H
+#ifndef SN_I_CONSTRAINT_H
+#define SN_I_CONSTRAINT_H
 
-#include <vector>
-using std::vector;
-
-#include <DirectXMath.h>
-using namespace DirectX;
-
-#include "snIConstraint.h"
-#include "snContactPoint.h"
-#include "AlignmentAllocator.h"
-
-#define XMVEC_ID_X 0
-#define XMVEC_ID_Y 1
-#define XMVEC_ID_Z 2
-#define XMVEC_ID_W 3
+#include "snVector4f.h"
 
 namespace Supernova
 {
-	//A vector of ContactPoint aligned correctly.
-	typedef vector<snContactPoint, AlignmentAllocator<snContactPoint>> snContactPointVector;
+	//Interface to represent a constraint for one or several bodies.
+	class SN_ALIGN snIConstraint
+	{
+	protected:
 
-	//Iterator for a snContactPointVector.
-	typedef snContactPointVector::iterator snContactPointVectorIterator;
+		//Store the total impulse.
+		float m_accumulatedImpulseMagnitude;
 
-	//Reverse iterator for a snContactPointVector.
-	typedef snContactPointVector::reverse_iterator snContactPointVectorReverseIterator;
+		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
+		float m_effectiveMass;
 
-	//Constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_iterator snContactPointVectorConstIterator;
+	public:
 
-	//Reverse constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_reverse_iterator snContactPointVectorConstReverseIterator;
+		//Default constructor
+		snIConstraint() : m_accumulatedImpulseMagnitude(0), m_effectiveMass(0){}
 
+		//Default destructor
+		virtual ~snIConstraint(){}
 
-	//Aligned vector of snVector4f.
-	typedef vector<snVector4f, AlignmentAllocator<snVector4f>> snVector4fVector;
+		//Prepare the constraint to be resolved precomputing all values not changing during the resolve update.
+		virtual void prepare() = 0;
 
-	//Constant iterator for a snVector4fVector.
-	typedef snVector4fVector::const_iterator snVector4fVectorConstIterator;
+		//Resolve the constraint by computing a new velocity for the bodies.
+		virtual void resolve() = 0;
 
+		//Overridden new operator to create scene with correct alignement.
+		void* operator new(size_t _count)
+		{
+			return _aligned_malloc(_count, SN_ALIGN_SIZE);
+		}
+
+		//Overridden delete operator to delete using the correct alignement.
+		void operator delete(void* _p)
+		{
+			_aligned_free(_p);
+		}
+
+		float getAccumulatedImpulseMagnitude() const{ return m_accumulatedImpulseMagnitude; }
+	};
 }
 
-#endif //SN_TYPES_H
+#endif //SN_I_CONSTRAINT_H

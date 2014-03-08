@@ -16,6 +16,9 @@
     <Filter Include="Collision\Collider">
       <UniqueIdentifier>{42c0e510-f2b4-4918-8af3-3d923a4da401}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Simulation\Constraints">
+      <UniqueIdentifier>{a729f281-7e66-4b23-b051-b373cdc32e26}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\snCollision.h">
@@ -82,6 +85,18 @@
     <ClInclude Include="inc\AlignmentAllocator.h">
       <Filter>Tools</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snIConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snDistanceConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snNonPenetrationConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snFrictionConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -123,6 +138,15 @@
     </ClCompile>
     <ClCompile Include="src\snSequentialImpulse.cpp">
       <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snDistanceConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snNonPenetrationConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snFrictionConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

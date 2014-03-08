@@ -960,6 +960,66 @@ namespace Devil
 
 	}
 
+	void System::createSceneWithconstraint()
+	{
+		int sceneId = -1;
+		SUPERNOVA->createScene(&m_physicScene, sceneId);
+		m_physicScene->setGravity(snVector4f(0, -9.81f * 4, 0, 0));
+		m_physicScene->getSolver().setIterationCount(40);
+		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
+		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
+
+		//set camera initial position
+		WORLD->getCamera()->setPosition(XMVectorSet(70, 50, 100, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(15, 15, 0, 1));
+		WORLD->getCamera()->setUp(XMVectorSet(0, 1, 0, 0));
+
+		WORLD->deactivateCollisionPoint();
+
+		XMFLOAT4 colors[5];
+		colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
+		colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
+		colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
+		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
+		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
+
+		float groundHeight = 0;
+		//ground
+		{
+			float width = 200;
+			float height = 2;
+			float depth = 200;
+
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			m_physicScene->createStaticActor(&act, actorId);
+
+			act->setName("ground");
+			act->setMass(100);
+			act->setPosition(snVector4f(0, 0, 0, 1));
+			act->getPhysicMaterial().m_restitution = 1;
+			act->getPhysicMaterial().m_friction = 0.8f;
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			collider->setSize(snVector4f(width, height, depth, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			//create the world entity
+			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
+			kinematicBox->setActor(act);
+
+			groundHeight += height * 0.5f;
+		}
+	}
+
 	snVector4f System::createTowerLevel(const snVector4f& _origin)
 	{
 		//colors

@@ -32,48 +32,52 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_TYPES_H
-#define SN_TYPES_H
-
-#include <vector>
-using std::vector;
-
-#include <DirectXMath.h>
-using namespace DirectX;
+#ifndef SN_DISTANCE_CONSTRAINT_H
+#define SN_DISTANCE_CONSTRAINT_H
 
 #include "snIConstraint.h"
-#include "snContactPoint.h"
-#include "AlignmentAllocator.h"
-
-#define XMVEC_ID_X 0
-#define XMVEC_ID_Y 1
-#define XMVEC_ID_Z 2
-#define XMVEC_ID_W 3
 
 namespace Supernova
 {
-	//A vector of ContactPoint aligned correctly.
-	typedef vector<snContactPoint, AlignmentAllocator<snContactPoint>> snContactPointVector;
+	class snActor;
 
-	//Iterator for a snContactPointVector.
-	typedef snContactPointVector::iterator snContactPointVectorIterator;
+	//Represent a constraint between two bodies. It forces the two bodies to remain at the same distance.
+	class SN_ALIGN snDistanceConstraint : public snIConstraint
+	{
+	private:
+		//The two bodies which must respect the constraint.
+		snActor* m_bodies[2];
 
-	//Reverse iterator for a snContactPointVector.
-	typedef snContactPointVector::reverse_iterator snContactPointVectorReverseIterator;
+		//Offset to the center of mass of the bodies. They must be expressed in local coordinates of the bodies.
+		snVector4f m_localOffset[2];
 
-	//Constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_iterator snContactPointVectorConstIterator;
+		//Offset to the center of mass expressed in world coordinates.
+		snVector4f m_worldOffset[2];
 
-	//Reverse constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_reverse_iterator snContactPointVectorConstReverseIterator;
+		//Vector from the constraint point and the center of mass.
+		snVector4f m_radius[2];
 
+		//Constraint distance between the two bodies.
+		float m_distance;
 
-	//Aligned vector of snVector4f.
-	typedef vector<snVector4f, AlignmentAllocator<snVector4f>> snVector4fVector;
+		//Normalized vector from the second body to the first one
+		snVector4f m_normalizeddp;
 
-	//Constant iterator for a snVector4fVector.
-	typedef snVector4fVector::const_iterator snVector4fVectorConstIterator;
+		//radius X normalized dp
+		snVector4f m_rCrossDirection[2];
 
+		//(radius X normalized dp) * I-1
+		snVector4f m_rCrossUInvI[2];
+	public:
+
+		snDistanceConstraint(snActor* const _body1, const snVector4f& _offsetBody1, snActor* const _body2, const snVector4f& _offsetBody2, float _distance);
+
+		virtual ~snDistanceConstraint();
+
+		void prepare();
+
+		void resolve();
+	};
 }
 
-#endif //SN_TYPES_H
+#endif //SN_DISTANCE_CONSTRAINT_H

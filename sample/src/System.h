@@ -64,6 +64,7 @@ namespace Devil
 		void createScene1();
 		void createScene2();
 		void createScene3();
+		void createSceneWithconstraint();
 
 		snVector4f createTowerLevel(const snVector4f& _origin);
 		void createTower();

@@ -55,20 +55,21 @@ namespace Supernova
 {
 	class snActor;
 	class CollisionResult;
+	class snIConstraint;
 
 	//The physic scene to simulate. HUGE WIP.
 	class SN_ALIGN snScene
 	{
 	private:
 
-		//Singleton
-		//static snScene* m_instance;
-
 		//Name of the scene.
 		string m_name;
 
 		//List of actors in the scene.
 		vector<snActor*> m_actors;
+
+		//List of constraints in the scene.
+		vector<snIConstraint*> m_constraints;
 
 		//List of contacts found during the latest collision detection steps
 		snContactPointVector m_contactsPoints;
@@ -119,6 +120,9 @@ namespace Supernova
 		//Get an actor from its id. Returns 0 if the actor can't be found.
 		snActor* getActor(unsigned int _actorId);
 
+		//Create a distance constraint between two actors and return the id of the constraint
+		int createDistanceConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2, float _distance);
+
 		//Delete all actors from the physics scene.
 		void clearScene();
 
@@ -134,8 +138,14 @@ namespace Supernova
 		//Set the coefficient of penetration.
 		void setBeta(float _beta);
 
+		//Get the coefficient of penetration.
+		float getBeta() const;
+
 		//Set the maximum authorized penetration between two actors.
 		void setMaxSlop(float _maxSlop);
+
+		//Get the maximum authorized penetration between two actors.
+		float getMaxSlop() const;
 
 		//Set the gravity to apply in the scene.
 		void setGravity(const snVector4f& _gravity);
@@ -154,6 +164,7 @@ namespace Supernova
 
 	private:
 		//Check collisions and make a list of contact points.
+		//void getContactPoints(vector<snIConstraint*>& _collisionConstraints, float _dt);
 		void getContactPoints(snContactPointVector& _contacts, float _dt);
 
 		//Apply forces and compute linear and angular velocities
@@ -164,6 +175,9 @@ namespace Supernova
 
 		//Resolve all contact points using sequential impulse algorithm.
 		void sequentialImpulseSIMD(snContactPointVector& _contacts) const;
+
+		//Resolve the constraint provided in the array and the constraints stored in the scene.
+		void resolveAllConstraints(vector<snIConstraint*>& _collisionConstraints);
 	};
 }
 

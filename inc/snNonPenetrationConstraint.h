@@ -32,48 +32,67 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_TYPES_H
-#define SN_TYPES_H
-
-#include <vector>
-using std::vector;
-
-#include <DirectXMath.h>
-using namespace DirectX;
+#ifndef SN_NON_PENETRATION_CONSTRAINT_H
+#define SN_NON_PENETRATION_CONSTRAINT_H
 
 #include "snIConstraint.h"
-#include "snContactPoint.h"
-#include "AlignmentAllocator.h"
-
-#define XMVEC_ID_X 0
-#define XMVEC_ID_Y 1
-#define XMVEC_ID_Z 2
-#define XMVEC_ID_W 3
 
 namespace Supernova
 {
-	//A vector of ContactPoint aligned correctly.
-	typedef vector<snContactPoint, AlignmentAllocator<snContactPoint>> snContactPointVector;
+	class snActor;
+	class snScene;
 
-	//Iterator for a snContactPointVector.
-	typedef snContactPointVector::iterator snContactPointVectorIterator;
+	//Constraint to prevent two actors from penetrating each others.
+	class SN_ALIGN snNonPenetrationConstraint : public snIConstraint
+	{
+	protected:
 
-	//Reverse iterator for a snContactPointVector.
-	typedef snContactPointVector::reverse_iterator snContactPointVectorReverseIterator;
+		//The two bodies who must repsect the constraint.
+		snActor* m_bodies[2];
 
-	//Constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_iterator snContactPointVectorConstIterator;
+		//Collision normal going from the second body to the first one.
+		snVector4f m_normal;
 
-	//Reverse constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_reverse_iterator snContactPointVectorConstReverseIterator;
+		//The collision point between the two bodies expressed in world coordinates.
+		snVector4f m_collisionPoint;
 
+		//Penetration depth of the two actors.
+		float m_penetrationDepth;
 
-	//Aligned vector of snVector4f.
-	typedef vector<snVector4f, AlignmentAllocator<snVector4f>> snVector4fVector;
+		//collision point - center of mass
+		snVector4f m_radius[2];
 
-	//Constant iterator for a snVector4fVector.
-	typedef snVector4fVector::const_iterator snVector4fVectorConstIterator;
+		//r X N
+		snVector4f m_rCrossN[2];
 
+		//(r X N)I-1
+		snVector4f m_rCrossNInvI[2];
+
+		//Bias velocity
+		float m_velocityBias;
+
+		//Scene containing this constraints.
+		snScene const * m_scene;
+
+		//Delta time used to integrate the current step.
+		float m_dt;
+
+	public:
+		snNonPenetrationConstraint(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
+			snScene const * _scene, float _dt);
+
+		virtual ~snNonPenetrationConstraint();
+
+		void prepare();
+
+		void resolve();
+
+		//Return the collision normal
+		snVector4f const & getNormal() const;
+
+		//Return an array of two vector containing the radius of each actor.
+		snVector4f const * getRadius() const;
+	};
 }
 
-#endif //SN_TYPES_H
+#endif //SN_NON_PENETRATION_CONSTRAINT_H

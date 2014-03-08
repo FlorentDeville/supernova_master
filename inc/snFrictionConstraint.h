@@ -32,48 +32,54 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_TYPES_H
-#define SN_TYPES_H
-
-#include <vector>
-using std::vector;
-
-#include <DirectXMath.h>
-using namespace DirectX;
+#ifndef SN_FRICTION_CONSTRAINT_H
+#define SN_FRICTION_CONSTRAINT_H
 
 #include "snIConstraint.h"
-#include "snContactPoint.h"
-#include "AlignmentAllocator.h"
-
-#define XMVEC_ID_X 0
-#define XMVEC_ID_Y 1
-#define XMVEC_ID_Z 2
-#define XMVEC_ID_W 3
+#include "snActor.h"
 
 namespace Supernova
 {
-	//A vector of ContactPoint aligned correctly.
-	typedef vector<snContactPoint, AlignmentAllocator<snContactPoint>> snContactPointVector;
+	class snNonPenetrationConstraint;
 
-	//Iterator for a snContactPointVector.
-	typedef snContactPointVector::iterator snContactPointVectorIterator;
+	//Friction constraint clamped using a corresponding non penetration constraint.
+	class SN_ALIGN snFrictionConstraint : public snIConstraint
+	{
+	protected:
 
-	//Reverse iterator for a snContactPointVector.
-	typedef snContactPointVector::reverse_iterator snContactPointVectorReverseIterator;
+		//The two bodies involved in this constraints.
+		snActor* m_bodies[2];
 
-	//Constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_iterator snContactPointVectorConstIterator;
+		//coefficient used to compute the friction.
+		float m_frictionCoefficient;
 
-	//Reverse constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_reverse_iterator snContactPointVectorConstReverseIterator;
+		//Corresponding non penetration constraint used to clamp the friction
+		snNonPenetrationConstraint const * m_npConstraint;
 
+		//The two tangent vector along which the friction is applied.
+		snVector4f m_tangent[2];
 
-	//Aligned vector of snVector4f.
-	typedef vector<snVector4f, AlignmentAllocator<snVector4f>> snVector4fVector;
+		//(r X T0)I-1
+		snVector4f m_rCrossT0InvI[2];
 
-	//Constant iterator for a snVector4fVector.
-	typedef snVector4fVector::const_iterator snVector4fVectorConstIterator;
+		//(r X T1)I-1
+		snVector4f m_rCrossT1InvI[2];
 
+		//The effective mass for the second tangent vector.
+		float m_secondEffectiveMass;
+
+		//The accumulated impulse for the second tangent vector.
+		float m_secondAccumulatedImpulseMagnitude;
+
+	public:
+		snFrictionConstraint(snActor* const _body1, snActor* const _body2, snNonPenetrationConstraint const * _npConstraint);
+
+		virtual ~snFrictionConstraint();
+
+		void prepare();
+
+		void resolve();
+	};
 }
 
-#endif //SN_TYPES_H
+#endif //SN_FRICTION_CONSTRAINT_H
