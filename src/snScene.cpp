@@ -287,14 +287,18 @@ namespace Supernova
 				vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
 				for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
 				{
-					/*
-					snNonPenetrationConstraint* npConstraint = new snNonPenetrationConstraint(*i, *j, res.m_normal, *point, *penetrationIterator, this, _dt);
+					
+					/*snNonPenetrationConstraint* npConstraint = new snNonPenetrationConstraint(*i, *j, res.m_normal, *point, *penetrationIterator, this, _dt);
 					_collisionConstraints.push_back(npConstraint);
 
 					snFrictionConstraint* fConstraint = new snFrictionConstraint(*i, *j, npConstraint);
-					_collisionConstraints.push_back(fConstraint);
-					*/
+					_collisionConstraints.push_back(fConstraint);*/
 					
+					snContactPoint NewPoint;
+					NewPoint.initialize(*i, *j, res.m_normal, *penetrationIterator, *point);
+					NewPoint.prepare(this, _dt);
+					_contacts.push_back(NewPoint);
+					/*
 					snContactPoint NewPoint;
 					NewPoint.m_point = *point;
 					NewPoint.m_penetration = *penetrationIterator;
@@ -343,8 +347,8 @@ namespace Supernova
 					NewPoint.m_raCrossT1InvI = snMatrixTransform3(tempA, (*i)->getInvWorldInertia());
 					tempB = NewPoint.m_rb.cross(NewPoint.m_tangent1);
 					NewPoint.m_rbCrossT1InvI = snMatrixTransform3(tempB, (*j)->getInvWorldInertia());
-					tempA.setW(0);
-					tempB.setW(0);
+					//tempA.setW(0);
+					//tempB.setW(0);
 					NewPoint.m_tangent1EffectiveMass = 1.f / ( sumInvMass + 
 						(NewPoint.m_raCrossT1InvI.cross(NewPoint.m_ra) + NewPoint.m_rbCrossT1InvI.cross(NewPoint.m_rb)).dot(NewPoint.m_tangent1));
 
@@ -361,7 +365,7 @@ namespace Supernova
 					//Compute the friction coefficient as the average of frictions of the two objects.
 					NewPoint.m_frictionCoefficient = ((*i)->getPhysicMaterial().m_friction + (*j)->getPhysicMaterial().m_friction) * 0.5f;
 					_contacts.push_back(NewPoint);
-					
+					*/
 				}
 			}
 		}

@@ -148,5 +148,8 @@
     <ClCompile Include="src\snFrictionConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
+    <ClCompile Include="src\snContactPoint.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

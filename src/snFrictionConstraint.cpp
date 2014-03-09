@@ -52,6 +52,9 @@ namespace Supernova
 
 	void snFrictionConstraint::prepare()
 	{
+		m_accumulatedImpulseMagnitude = 0;
+		m_secondAccumulatedImpulseMagnitude = 0;
+
 		//Compute the friction coefficient as the average of frictions of the two objects.
 		m_frictionCoefficient = (m_bodies[0]->getPhysicMaterial().m_friction + m_bodies[1]->getPhysicMaterial().m_friction) * 0.5f;
 
@@ -75,8 +78,7 @@ namespace Supernova
 		m_rCrossT1InvI[0] = snMatrixTransform3(tempA, m_bodies[0]->getInvWorldInertia());
 		tempB = m_npConstraint->getRadius()[1].cross(m_tangent[1]);
 		m_rCrossT1InvI[1] = snMatrixTransform3(tempB, m_bodies[1]->getInvWorldInertia());
-		tempA.setW(0);
-		tempB.setW(0);
+
 		m_secondEffectiveMass = 1.f / (sumInvMass +
 			(m_rCrossT1InvI[0].cross(m_npConstraint->getRadius()[0]) + m_rCrossT1InvI[1].cross(m_npConstraint->getRadius()[1])).dot(m_tangent[1]));
 
@@ -107,6 +109,10 @@ namespace Supernova
 
 		m_bodies[0]->setAngularVelocity(m_bodies[0]->getAngularVelocity() - m_rCrossT0InvI[0] * lagrangian);
 		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossT0InvI[1] * lagrangian);
+
+		//compute the relative velocity
+		dv = m_bodies[1]->getLinearVelocity() + m_bodies[1]->getAngularVelocity().cross(m_npConstraint->getRadius()[1])
+			- m_bodies[0]->getLinearVelocity() - m_bodies[0]->getAngularVelocity().cross(m_npConstraint->getRadius()[0]);
 
 		//compute and clamp the impulse along the second tangent
 		lagrangian = -dv.dot(m_tangent[1]) * m_secondEffectiveMass;

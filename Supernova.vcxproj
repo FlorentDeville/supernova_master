@@ -44,6 +44,7 @@
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
+    <ClCompile Include="src\snContactPoint.cpp" />
     <ClCompile Include="src\snDistanceConstraint.cpp" />
     <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />

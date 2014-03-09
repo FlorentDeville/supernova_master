@@ -633,7 +633,7 @@ namespace Devil
 		int sceneId = -1;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
-		m_physicScene->getSolver().setIterationCount(40);
+		m_physicScene->getSolver().setIterationCount(35);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
 

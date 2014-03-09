@@ -32,103 +32,85 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snNonPenetrationConstraint.h"
+#include "snContactPoint.h"
 #include "snActor.h"
-#include "snMath.h"
 #include "snScene.h"
+#include "snMath.h"
 
-#include <algorithm>    
+#include <algorithm>
 using std::max;
 
 namespace Supernova
 {
-	snNonPenetrationConstraint::snNonPenetrationConstraint(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, 
-		const snVector4f& _collisionPoint, float _penetrationDepth, snScene const * _scene, float _dt) : snIConstraint()
+	void snContactPoint::initialize(snActor* _body0, snActor* _body1, const snVector4f& _normal, float _penetrationDepth, 
+		const snVector4f& _contact)
 	{
-		m_bodies[0] = _body1;
-		m_bodies[1] = _body2;
-
-		m_collisionPoint = _collisionPoint;
-		m_penetrationDepth = _penetrationDepth;
+		m_bodies[0] = _body0;
+		m_bodies[1] = _body1;
 		m_normal = _normal;
-		m_scene = _scene;
-		m_dt = _dt;
+		m_penetration = _penetrationDepth;
+		m_point = _contact;
 	}
 
-	snNonPenetrationConstraint::~snNonPenetrationConstraint()
-	{}
-
-	void snNonPenetrationConstraint::prepare()
+	void snContactPoint::prepare(snScene const * _scene, float _dt)
 	{
-		m_accumulatedImpulseMagnitude = 0;
-
-		m_radius[0] = m_collisionPoint - m_bodies[0]->getPosition();
-		m_radius[1] = m_collisionPoint - m_bodies[1]->getPosition();
+		//compute relative velocity
+		m_ra = m_point - m_bodies[0]->getPosition();
+		snVector4f v1 = m_bodies[0]->getLinearVelocity() + m_bodies[0]->getAngularVelocity().cross(m_ra);
+		m_rb = m_point - m_bodies[1]->getPosition();
+		snVector4f v2 = m_bodies[1]->getLinearVelocity() + m_bodies[1]->getAngularVelocity().cross(m_rb);
+		snVector4f relVel = v2 - v1;
+		m_preImpRelSpeed = m_normal.dot(relVel);
+		m_accumulatedImpulseMag = 0;
+		m_accumulatedFrictionImpulse1 = 0;
+		m_accumulatedFrictionImpulse2 = 0;
 
 		//compute r cross n
-		m_rCrossN[0] = m_radius[0].cross(m_normal);
-		m_rCrossN[1] = m_radius[1].cross(m_normal);
+		m_rACrossN = m_ra.cross(m_normal);
+		m_rBCrossN = m_rb.cross(m_normal);
 
 		//Compute the effective mass for the non penetration constraint
 		// (r X N) I-1
-		m_rCrossNInvI[0] = snMatrixTransform3(m_rCrossN[0], m_bodies[0]->getInvWorldInertia());
-		m_rCrossNInvI[1] = snMatrixTransform3(m_rCrossN[1], m_bodies[1]->getInvWorldInertia());
+		m_raCrossNInvI = snMatrixTransform3(m_rACrossN, m_bodies[0]->getInvWorldInertia());
+		m_rbCrossNInvI = snMatrixTransform3(m_rBCrossN, m_bodies[1]->getInvWorldInertia());
 
 		// [(r X N)I-1] X r
-		snVector4f tempA = m_rCrossNInvI[0].cross(m_radius[0]);
-		snVector4f tempB = m_rCrossNInvI[1].cross(m_radius[1]);
+		snVector4f tempA = m_raCrossNInvI.cross(m_ra);
+		snVector4f tempB = m_rbCrossNInvI.cross(m_rb);
 
 		float sumInvMass = m_bodies[0]->getInvMass() + m_bodies[1]->getInvMass();
 
 		// 1/ ( 1/ma + 1/mb + ( [(ra X n)Ia-1] X ra + [(rb X n)Ib-1] X rb) . N)
-		m_effectiveMass = 1.f / (sumInvMass + (tempA + tempB).dot(m_normal));
-
-		//compute relative velocity
-		snVector4f v0 = m_bodies[0]->getLinearVelocity() + m_bodies[0]->getAngularVelocity().cross(m_radius[0]);
-		snVector4f v1 = m_bodies[1]->getLinearVelocity() + m_bodies[1]->getAngularVelocity().cross(m_radius[1]);
-		float relVel = m_normal.dot(v1 - v0);
+		m_normalEffectiveMass = 1.f / (sumInvMass + (tempA + tempB).dot(m_normal));
 
 		//compute the bias
 		float restitution = (m_bodies[0]->getPhysicMaterial().m_restitution + m_bodies[1]->getPhysicMaterial().m_restitution) * 0.5f;
-		m_velocityBias = -restitution * relVel - m_scene->getBeta() / m_dt * max<float>(0, m_penetrationDepth - m_scene->getMaxSlop());
+		m_bias = -restitution * m_preImpRelSpeed - _scene->getBeta() / _dt * max<float>(0, m_penetration - _scene->getMaxSlop());
 
-	}
+		//compute tangent vectors. They make an orthonormal basis with the normal
+		computeBasis(m_normal, m_tangent1, m_tangent2);
 
-	void snNonPenetrationConstraint::resolve()
-	{
-		//compute relative velocity between the two colliding bodies
-		snVector4f deltaLinVel = m_bodies[1]->getLinearVelocity() - m_bodies[0]->getLinearVelocity();
-		float dv = m_normal.dot(deltaLinVel) +
-			m_rCrossN[1].dot(m_bodies[1]->getAngularVelocity()) - m_rCrossN[0].dot(m_bodies[0]->getAngularVelocity());
+		//compute the effective mass along the first tangent vector
+		tempA = m_ra.cross(m_tangent1);
+		m_raCrossT1InvI = snMatrixTransform3(tempA, m_bodies[0]->getInvWorldInertia());
+		tempB = m_rb.cross(m_tangent1);
+		m_rbCrossT1InvI = snMatrixTransform3(tempB, m_bodies[1]->getInvWorldInertia());
+		//tempA.setW(0);
+		//tempB.setW(0);
+		m_tangent1EffectiveMass = 1.f / (sumInvMass +
+			(m_raCrossT1InvI.cross(m_ra) + m_rbCrossT1InvI.cross(m_rb)).dot(m_tangent1));
 
-		//compute lagrange multiplier
-		float lagrangian = (m_velocityBias - dv) * m_effectiveMass;
+		//compute the effective mass along the second tangent vector
+		tempA = m_ra.cross(m_tangent2);
+		m_raCrossT2InvI = snMatrixTransform3(tempA, m_bodies[0]->getInvWorldInertia());
+		tempB = m_rb.cross(m_tangent2);
+		m_rbCrossT2InvI = snMatrixTransform3(tempB, m_bodies[1]->getInvWorldInertia());
+		tempA.setW(0);
+		tempB.setW(0);
+		m_tangent2EffectiveMass = 1.f / (sumInvMass +
+			(m_raCrossT2InvI.cross(m_ra) + m_rbCrossT2InvI.cross(m_rb)).dot(m_tangent2));
 
-		//clamp lambda
-		float oldAccLambda = m_accumulatedImpulseMagnitude;
-		//m_accumulatedImpulseMagnitude += lagrangian;
-		m_accumulatedImpulseMagnitude = clamp(m_accumulatedImpulseMagnitude + lagrangian, -SN_FLOAT_MAX, 0);
-		lagrangian = m_accumulatedImpulseMagnitude - oldAccLambda;
-
-		//compute the impulse
-		snVector4f impulse = m_normal * lagrangian;
-
-		//compute the new linear velocity
-		m_bodies[0]->setLinearVelocity(m_bodies[0]->getLinearVelocity() - (impulse * m_bodies[0]->getInvMass()));
-		m_bodies[1]->setLinearVelocity(m_bodies[1]->getLinearVelocity() + (impulse * m_bodies[1]->getInvMass()));
-
-		//compute the new angular velocity
-		m_bodies[0]->setAngularVelocity(m_bodies[0]->getAngularVelocity() - m_rCrossNInvI[0] * lagrangian);
-		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossNInvI[1] * lagrangian);
-	}
-
-	snVector4f const & snNonPenetrationConstraint::getNormal() const
-	{
-		return m_normal;
-	}
-
-	snVector4f const * snNonPenetrationConstraint::getRadius() const
-	{
-		return m_radius;
+		//Compute the friction coefficient as the average of frictions of the two objects.
+		m_frictionCoefficient = (m_bodies[0]->getPhysicMaterial().m_friction + m_bodies[1]->getPhysicMaterial().m_friction) * 0.5f;
 	}
 }

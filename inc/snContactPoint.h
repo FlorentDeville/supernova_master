@@ -41,6 +41,7 @@
 namespace Supernova
 {
 	class snActor;
+	class snScene;
 
 	//Represents a contact point between two bodies. It contains all the precalculation necessary for the sequential impulse solver.
 	class SN_ALIGN snContactPoint
@@ -107,6 +108,10 @@ namespace Supernova
 	public:
 		snContactPoint(){};
 		~snContactPoint(){};
+
+		void initialize(snActor* _body0, snActor* _body1, const snVector4f& _normal, float _penetrationDepth, const snVector4f& _contact);
+
+		void prepare(snScene const * _scene, float _dt);
 	};
 }
 
