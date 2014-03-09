@@ -164,7 +164,6 @@ namespace Supernova
 
 	private:
 		//Check collisions and make a list of contact points.
-		//void getContactPoints(vector<snIConstraint*>& _collisionConstraints, float _dt);
 		void getContactPoints(snContactPointVector& _contacts, float _dt);
 
 		//Apply forces and compute linear and angular velocities
@@ -178,6 +177,12 @@ namespace Supernova
 
 		//Resolve the constraint provided in the array and the constraints stored in the scene.
 		void resolveAllConstraints(vector<snIConstraint*>& _collisionConstraints);
+
+		//Prepare all the constraints. It must be called before resolving them.
+		void prepareConstraints(vector<snIConstraint*>& _collisionConstraints);
+
+		//Check collisions in the scene and fill in an array of collision constraints.
+		void computeCollisions(vector<snIConstraint*>& _collisionConstraints, float _dt);
 	};
 }
 

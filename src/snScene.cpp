@@ -165,15 +165,19 @@ namespace Supernova
 		//compute collision points
 		m_contactsPoints.clear();
 		vector<snIConstraint*> collisionConstraints;
-		//getContactPoints(collisionConstraints, _deltaTime);
-		getContactPoints(m_contactsPoints, _deltaTime);
+		computeCollisions(collisionConstraints, _deltaTime);
+		//getContactPoints(m_contactsPoints, _deltaTime);
 
-		//apply forces
+		//The constraints must be prepared before applying forces.
+		//Apply forces updates the velocities with candidates velocities we can't prepare constraints with candidate velocities.
+		prepareConstraints(collisionConstraints);
+
+		//apply forces and compute candidate velocities for actors.
 		applyForces(_deltaTime);
 
 		//apply impulses
-		sequentialImpulseSIMD(m_contactsPoints);
-		//resolveAllConstraints(collisionConstraints);
+		//sequentialImpulseSIMD(m_contactsPoints);
+		resolveAllConstraints(collisionConstraints);
 
 		//update positions
 		updatePosition(_deltaTime);	
@@ -234,7 +238,6 @@ namespace Supernova
 		_aligned_free(_p);
 	}
 
-	//void snScene::getContactPoints(vector<snIConstraint*>& _collisionConstraints, float _dt)
 	void snScene::getContactPoints(snContactPointVector& _contacts, float _dt)
 	{
 #if _DEBUG
@@ -287,85 +290,10 @@ namespace Supernova
 				vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
 				for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
 				{
-					
-					/*snNonPenetrationConstraint* npConstraint = new snNonPenetrationConstraint(*i, *j, res.m_normal, *point, *penetrationIterator, this, _dt);
-					_collisionConstraints.push_back(npConstraint);
-
-					snFrictionConstraint* fConstraint = new snFrictionConstraint(*i, *j, npConstraint);
-					_collisionConstraints.push_back(fConstraint);*/
-					
 					snContactPoint NewPoint;
 					NewPoint.initialize(*i, *j, res.m_normal, *penetrationIterator, *point);
 					NewPoint.prepare(this, _dt);
 					_contacts.push_back(NewPoint);
-					/*
-					snContactPoint NewPoint;
-					NewPoint.m_point = *point;
-					NewPoint.m_penetration = *penetrationIterator;
-					NewPoint.m_normal = res.m_normal;
-					NewPoint.m_bodies[0] = *i;
-					NewPoint.m_bodies[1] = *j;
-
-					//compute relative velocity
-					NewPoint.m_ra = *point - (*i)->getPosition();
-					snVector4f v1 = (*i)->getLinearVelocity() + (*i)->getAngularVelocity().cross(NewPoint.m_ra);
-					NewPoint.m_rb = *point - (*j)->getPosition();
-					snVector4f v2 = (*j)->getLinearVelocity() + (*j)->getAngularVelocity().cross(NewPoint.m_rb);
-					snVector4f relVel = v2 - v1;
-					NewPoint.m_preImpRelSpeed = NewPoint.m_normal.dot(relVel);
-					NewPoint.m_accumulatedImpulseMag = 0;
-					NewPoint.m_accumulatedFrictionImpulse1 = 0;
-					NewPoint.m_accumulatedFrictionImpulse2 = 0;
-
-					//compute r cross n
-					NewPoint.m_rACrossN = NewPoint.m_ra.cross(NewPoint.m_normal);
-					NewPoint.m_rBCrossN = NewPoint.m_rb.cross(NewPoint.m_normal);
-
-					//Compute the effective mass for the non penetration constraint
-					// (r X N) I-1
-					NewPoint.m_raCrossNInvI = snMatrixTransform3(NewPoint.m_rACrossN, (*i)->getInvWorldInertia()); 
-					NewPoint.m_rbCrossNInvI = snMatrixTransform3(NewPoint.m_rBCrossN, (*j)->getInvWorldInertia());
-
-					// [(r X N)I-1] X r
-					snVector4f tempA = NewPoint.m_raCrossNInvI.cross(NewPoint.m_ra);
-					snVector4f tempB = NewPoint.m_rbCrossNInvI.cross(NewPoint.m_rb);
-
-					float sumInvMass = (*i)->getInvMass() + (*j)->getInvMass();
-
-					// 1/ ( 1/ma + 1/mb + ( [(ra X n)Ia-1] X ra + [(rb X n)Ib-1] X rb) . N)
-					NewPoint.m_normalEffectiveMass = 1.f / (sumInvMass +(tempA + tempB).dot(NewPoint.m_normal));
-
-					//compute the bias
-					float restitution = ((*i)->getPhysicMaterial().m_restitution + (*j)->getPhysicMaterial().m_restitution) * 0.5f;
-					NewPoint.m_bias = - restitution * NewPoint.m_preImpRelSpeed - m_beta / _dt * max<float>(0, NewPoint.m_penetration - m_maxSlop);
-
-					//compute tangent vectors. They make an orthonormal basis with the normal
-					computeBasis(NewPoint.m_normal, NewPoint.m_tangent1, NewPoint.m_tangent2);
-
-					//compute the effective mass along the first tangent vector
-					tempA = NewPoint.m_ra.cross(NewPoint.m_tangent1);
-					NewPoint.m_raCrossT1InvI = snMatrixTransform3(tempA, (*i)->getInvWorldInertia());
-					tempB = NewPoint.m_rb.cross(NewPoint.m_tangent1);
-					NewPoint.m_rbCrossT1InvI = snMatrixTransform3(tempB, (*j)->getInvWorldInertia());
-					//tempA.setW(0);
-					//tempB.setW(0);
-					NewPoint.m_tangent1EffectiveMass = 1.f / ( sumInvMass + 
-						(NewPoint.m_raCrossT1InvI.cross(NewPoint.m_ra) + NewPoint.m_rbCrossT1InvI.cross(NewPoint.m_rb)).dot(NewPoint.m_tangent1));
-
-					//compute the effective mass along the second tangent vector
-					tempA = NewPoint.m_ra.cross(NewPoint.m_tangent2);
-					NewPoint.m_raCrossT2InvI = snMatrixTransform3(tempA, (*i)->getInvWorldInertia());
-					tempB = NewPoint.m_rb.cross(NewPoint.m_tangent2);
-					NewPoint.m_rbCrossT2InvI = snMatrixTransform3(tempB, (*j)->getInvWorldInertia());
-					tempA.setW(0);
-					tempB.setW(0);
-					NewPoint.m_tangent2EffectiveMass = 1.f / (sumInvMass +
-						(NewPoint.m_raCrossT2InvI.cross(NewPoint.m_ra) + NewPoint.m_rbCrossT2InvI.cross(NewPoint.m_rb)).dot(NewPoint.m_tangent2));
-
-					//Compute the friction coefficient as the average of frictions of the two objects.
-					NewPoint.m_frictionCoefficient = ((*i)->getPhysicMaterial().m_friction + (*j)->getPhysicMaterial().m_friction) * 0.5f;
-					_contacts.push_back(NewPoint);
-					*/
 				}
 			}
 		}
@@ -445,13 +373,6 @@ namespace Supernova
 
 	void snScene::resolveAllConstraints(vector<snIConstraint*>& _collisionConstraints)
 	{
-		//first prepare the constraint for the resolve step
-		for (vector<snIConstraint*>::iterator constraint = _collisionConstraints.begin(); constraint != _collisionConstraints.end(); ++constraint)
-			(*constraint)->prepare();
-
-		for (vector<snIConstraint*>::iterator constraint = m_constraints.begin(); constraint != m_constraints.end(); ++constraint)
-			(*constraint)->prepare();
-
 		//resolve the constraints
 		for (int i = 0; i < m_sequentialImpulseSolver.getIterationCount(); ++i)
 		{
@@ -468,4 +389,76 @@ namespace Supernova
 
 		_collisionConstraints.clear();
 	}
+
+	void snScene::prepareConstraints(vector<snIConstraint*>& _collisionConstraints)
+	{
+		//prepare the collision constraints
+		for (vector<snIConstraint*>::iterator constraint = _collisionConstraints.begin(); constraint != _collisionConstraints.end(); ++constraint)
+			(*constraint)->prepare();
+
+		//prepare the scene constraints
+		for (vector<snIConstraint*>::iterator constraint = m_constraints.begin(); constraint != m_constraints.end(); ++constraint)
+			(*constraint)->prepare();
+	}
+
+	void snScene::computeCollisions(vector<snIConstraint*>& _collisionConstraints, float _dt)
+	{
+#if _DEBUG
+			LARGE_INTEGER frequency;
+			QueryPerformanceFrequency(&frequency);
+
+			float tickPerMilliseconds = (float)frequency.QuadPart * 0.001f;
+			float tickPerMicroseconds = tickPerMilliseconds * 0.001f;
+#endif
+
+			if (m_actors.size() <= 1)
+				return;
+
+			for (std::vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
+			{
+				for (std::vector<snActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
+				{
+					//do not check collision between twe static actors.
+					if ((*i)->getIsStatic() && (*j)->getIsStatic())
+						continue;
+
+					//check collisions SAT
+#if _DEBUG
+					LARGE_INTEGER startSAT;
+					QueryPerformanceCounter(&startSAT);
+#endif
+					snCollisionResult res = snCollision::queryTestCollision((*i), (*j));
+#if _DEBUG
+					LARGE_INTEGER endSAT;
+					QueryPerformanceCounter(&endSAT);
+					LONGLONG SATDuration = endSAT.QuadPart - startSAT.QuadPart;
+
+
+					//check collision GJK
+					LARGE_INTEGER startGJK;
+					QueryPerformanceCounter(&startGJK);
+					snVector4f simplex[4];
+					//snCollisionResult _res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
+					LARGE_INTEGER endGJK;
+					QueryPerformanceCounter(&endGJK);
+					LONGLONG GJKDuration = endGJK.QuadPart - startGJK.QuadPart;
+#endif
+					//no collision, continue
+					if (!res.m_collision)
+						continue;
+
+					//make the contact points from the collision results
+					vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
+					for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
+					{
+						snNonPenetrationConstraint* npConstraint = new snNonPenetrationConstraint(*i, *j, res.m_normal, *point, *penetrationIterator, this, _dt);
+						_collisionConstraints.push_back(npConstraint);
+
+						snFrictionConstraint* fConstraint = new snFrictionConstraint(*i, *j, npConstraint);
+						_collisionConstraints.push_back(fConstraint);
+					}
+				}
+			}
+		}
+
 }
