@@ -78,10 +78,13 @@ namespace Supernova
 		float m_dt;
 
 	public:
-		snNonPenetrationConstraint(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
-			snScene const * _scene, float _dt);
+		snNonPenetrationConstraint();
 
 		virtual ~snNonPenetrationConstraint();
+
+		//Give to the constraints the basic information it needs.
+		void initialize(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
+			snScene const * _scene, float _dt);
 
 		void prepare();
 

@@ -72,9 +72,12 @@ namespace Supernova
 		float m_secondAccumulatedImpulseMagnitude;
 
 	public:
-		snFrictionConstraint(snActor* const _body1, snActor* const _body2, snNonPenetrationConstraint const * _npConstraint);
+		snFrictionConstraint();
 
 		virtual ~snFrictionConstraint();
+
+		//Give to the constraint the basic information it needs.
+		void initialize(snActor* const _body1, snActor* const _body2, snNonPenetrationConstraint const * _npConstraint);
 
 		void prepare();
 

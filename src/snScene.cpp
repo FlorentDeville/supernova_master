@@ -156,28 +156,30 @@ namespace Supernova
 
 		for (vector<snIConstraint*>::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
 			delete *i;
-
 		m_constraints.clear();
+
+		for (vector<snIConstraint*>::iterator i = m_collisionConstraints.begin(); i != m_collisionConstraints.end(); ++i)
+			delete *i;
+		m_collisionConstraints.clear();
 	}
 
 	void snScene::update(float _deltaTime)
 	{
 		//compute collision points
 		m_contactsPoints.clear();
-		vector<snIConstraint*> collisionConstraints;
-		computeCollisions(collisionConstraints, _deltaTime);
+		computeCollisions(_deltaTime);
 		//getContactPoints(m_contactsPoints, _deltaTime);
 
 		//The constraints must be prepared before applying forces.
 		//Apply forces updates the velocities with candidates velocities we can't prepare constraints with candidate velocities.
-		prepareConstraints(collisionConstraints);
+		prepareConstraints();
 
 		//apply forces and compute candidate velocities for actors.
 		applyForces(_deltaTime);
 
 		//apply impulses
 		//sequentialImpulseSIMD(m_contactsPoints);
-		resolveAllConstraints(collisionConstraints);
+		resolveAllConstraints();
 
 		//update positions
 		updatePosition(_deltaTime);	
@@ -371,29 +373,26 @@ namespace Supernova
 		m_sequentialImpulseSolver.solve(_contacts);
 	}
 
-	void snScene::resolveAllConstraints(vector<snIConstraint*>& _collisionConstraints)
+	void snScene::resolveAllConstraints()
 	{
 		//resolve the constraints
 		for (int i = 0; i < m_sequentialImpulseSolver.getIterationCount(); ++i)
 		{
-			for (vector<snIConstraint*>::iterator constraint = _collisionConstraints.begin(); constraint != _collisionConstraints.end(); ++constraint)
-				(*constraint)->resolve();
+			for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
+			{
+				if ((*constraint)->getIsActive())
+					(*constraint)->resolve();
+			}
 
 			for (vector<snIConstraint*>::iterator constraint = m_constraints.begin(); constraint != m_constraints.end(); ++constraint)
 				(*constraint)->resolve();
 		}
-
-		//clean the collision constraints
-		for (vector<snIConstraint*>::iterator constraint = _collisionConstraints.begin(); constraint != _collisionConstraints.end(); ++constraint)
-			delete *constraint;
-
-		_collisionConstraints.clear();
 	}
 
-	void snScene::prepareConstraints(vector<snIConstraint*>& _collisionConstraints)
+	void snScene::prepareConstraints()
 	{
 		//prepare the collision constraints
-		for (vector<snIConstraint*>::iterator constraint = _collisionConstraints.begin(); constraint != _collisionConstraints.end(); ++constraint)
+		for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
 			(*constraint)->prepare();
 
 		//prepare the scene constraints
@@ -401,7 +400,7 @@ namespace Supernova
 			(*constraint)->prepare();
 	}
 
-	void snScene::computeCollisions(vector<snIConstraint*>& _collisionConstraints, float _dt)
+	void snScene::computeCollisions(float _dt)
 	{
 #if _DEBUG
 			LARGE_INTEGER frequency;
@@ -413,6 +412,8 @@ namespace Supernova
 
 			if (m_actors.size() <= 1)
 				return;
+
+			unsigned int currentConstraintId = 0;
 
 			for (std::vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
 			{
@@ -451,14 +452,37 @@ namespace Supernova
 					vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
 					for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
 					{
-						snNonPenetrationConstraint* npConstraint = new snNonPenetrationConstraint(*i, *j, res.m_normal, *point, *penetrationIterator, this, _dt);
-						_collisionConstraints.push_back(npConstraint);
+						//if a constraints already exists, take it and reuse it or else create it.
+						snNonPenetrationConstraint* npConstraint = 0;
+						snFrictionConstraint* fConstraint = 0;
+						if (currentConstraintId < m_collisionConstraints.size())
+						{
+							npConstraint = static_cast<snNonPenetrationConstraint*>(m_collisionConstraints[currentConstraintId]);
+							fConstraint = static_cast<snFrictionConstraint*>(m_collisionConstraints[++currentConstraintId]);
+							++currentConstraintId;
+						}
+						else
+						{
+							npConstraint = new snNonPenetrationConstraint();
+							m_collisionConstraints.push_back(npConstraint);
 
-						snFrictionConstraint* fConstraint = new snFrictionConstraint(*i, *j, npConstraint);
-						_collisionConstraints.push_back(fConstraint);
+							fConstraint = new snFrictionConstraint();
+							m_collisionConstraints.push_back(fConstraint);
+							currentConstraintId += 2;
+						}
+
+						//initialize and activate the constraints
+						npConstraint->initialize(*i, *j, res.m_normal, *point, *penetrationIterator, this, _dt);
+						fConstraint->initialize(*i, *j, npConstraint);
+						npConstraint->setIsActive(true);
+						fConstraint->setIsActive(true);
 					}
 				}
 			}
+
+			//deactivate all unused constraints
+			for (unsigned int i = currentConstraintId; i < m_collisionConstraints.size(); ++i)
+				m_collisionConstraints[i]->setIsActive(false);
 		}
 
 }

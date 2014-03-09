@@ -38,17 +38,19 @@
 
 namespace Supernova
 {
-	snFrictionConstraint::snFrictionConstraint(snActor* const _body1, snActor* const _body2, snNonPenetrationConstraint const * _npConstraint)
+	snFrictionConstraint::snFrictionConstraint()
 		:snIConstraint()
+	{
+	}
+
+	snFrictionConstraint::~snFrictionConstraint(){}
+
+	void snFrictionConstraint::initialize(snActor* const _body1, snActor* const _body2, snNonPenetrationConstraint const * _npConstraint)
 	{
 		m_bodies[0] = _body1;
 		m_bodies[1] = _body2;
 		m_npConstraint = _npConstraint;
-
-		m_secondAccumulatedImpulseMagnitude = 0;
 	}
-
-	snFrictionConstraint::~snFrictionConstraint(){}
 
 	void snFrictionConstraint::prepare()
 	{

@@ -71,6 +71,9 @@ namespace Supernova
 		//List of constraints in the scene.
 		vector<snIConstraint*> m_constraints;
 
+		//List of constraints created by the collision detection system.
+		vector<snIConstraint*> m_collisionConstraints;
+
 		//List of contacts found during the latest collision detection steps
 		snContactPointVector m_contactsPoints;
 
@@ -176,13 +179,13 @@ namespace Supernova
 		void sequentialImpulseSIMD(snContactPointVector& _contacts) const;
 
 		//Resolve the constraint provided in the array and the constraints stored in the scene.
-		void resolveAllConstraints(vector<snIConstraint*>& _collisionConstraints);
+		void resolveAllConstraints();
 
 		//Prepare all the constraints. It must be called before resolving them.
-		void prepareConstraints(vector<snIConstraint*>& _collisionConstraints);
+		void prepareConstraints();
 
 		//Check collisions in the scene and fill in an array of collision constraints.
-		void computeCollisions(vector<snIConstraint*>& _collisionConstraints, float _dt);
+		void computeCollisions(float _dt);
 	};
 }
 

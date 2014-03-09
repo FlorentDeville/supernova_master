@@ -42,8 +42,15 @@ using std::max;
 
 namespace Supernova
 {
-	snNonPenetrationConstraint::snNonPenetrationConstraint(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, 
-		const snVector4f& _collisionPoint, float _penetrationDepth, snScene const * _scene, float _dt) : snIConstraint()
+	snNonPenetrationConstraint::snNonPenetrationConstraint() : snIConstraint()
+	{
+	}
+
+	snNonPenetrationConstraint::~snNonPenetrationConstraint()
+	{}
+
+	void snNonPenetrationConstraint::initialize(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
+		snScene const * _scene, float _dt)
 	{
 		m_bodies[0] = _body1;
 		m_bodies[1] = _body2;
@@ -54,9 +61,6 @@ namespace Supernova
 		m_scene = _scene;
 		m_dt = _dt;
 	}
-
-	snNonPenetrationConstraint::~snNonPenetrationConstraint()
-	{}
 
 	void snNonPenetrationConstraint::prepare()
 	{
@@ -106,7 +110,6 @@ namespace Supernova
 
 		//clamp lambda
 		float oldAccLambda = m_accumulatedImpulseMagnitude;
-		//m_accumulatedImpulseMagnitude += lagrangian;
 		m_accumulatedImpulseMagnitude = clamp(m_accumulatedImpulseMagnitude + lagrangian, -SN_FLOAT_MAX, 0);
 		lagrangian = m_accumulatedImpulseMagnitude - oldAccLambda;
 
