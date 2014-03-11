@@ -132,7 +132,6 @@ namespace Devil
 		MSG msg;
 		bool done;
 
-
 		// Initialize the message structure.
 		ZeroMemory(&msg, sizeof(MSG));
 
@@ -140,7 +139,12 @@ namespace Devil
 
 		int fpsCounter = 0;
 		int fpsCounterPhysics = 0;
-		float fpsTimeCounter = 0;
+		long long fpsTimeCounter = 0;
+
+		LARGE_INTEGER frequency;
+		QueryPerformanceFrequency(&frequency);
+
+		float tickPerMilliseconds = (float)frequency.QuadPart * 0.001f;
 
 		// Loop until there is a quit message from the window or the user.
 		done = false;
@@ -161,16 +165,20 @@ namespace Devil
 			else
 			{
 				//check if enough time has elapsed
-				unsigned long currentTime = timeGetTime();
-				if (currentTime > m_lastTick + m_deltaTime)
+				LARGE_INTEGER currentClock;
+				QueryPerformanceCounter(&currentClock);
+				unsigned long currentTime = (currentClock.QuadPart - m_lastTick) / tickPerMilliseconds;
+				if (currentTime > m_deltaTime)
 				{
+					m_lastTick = currentClock.QuadPart;
+
+					LARGE_INTEGER clockStart;
+					QueryPerformanceCounter(&clockStart);
 					m_physicScene->update(m_deltaTime * 0.001f);
+					fpsCounterPhysics++;
 
 					//update the world
 					WORLD->update();
-
-					m_lastTick = timeGetTime();
-					fpsCounterPhysics++;
 
 					// Check if the user pressed escape and wants to exit the application.
 					if (m_Input->isKeyDown(VK_ESCAPE))
@@ -193,8 +201,9 @@ namespace Devil
 				++fpsCounter;
 
 				//update fps
-				
-				if (timeGetTime() >= fpsTimeCounter + 1000.f)
+				QueryPerformanceCounter(&currentClock);
+				currentTime = (currentClock.QuadPart - fpsTimeCounter) / tickPerMilliseconds;
+				if (currentTime >= 1000)
 				{
 					std::wstring strFPS = std::to_wstring(fpsCounter);
 
@@ -207,7 +216,7 @@ namespace Devil
 
 					SetWindowText(m_hwnd, title.c_str());
 
-					fpsTimeCounter = (float)timeGetTime();
+					fpsTimeCounter = currentClock.QuadPart;
 					fpsCounter = 0;	
 					fpsCounterPhysics = 0;
 				}

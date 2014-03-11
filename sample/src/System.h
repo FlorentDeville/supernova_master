@@ -30,7 +30,7 @@ namespace Devil
 		int TICK = 60;
 
 		unsigned long m_deltaTime;
-		unsigned long m_lastTick;
+		long long m_lastTick;
 
 		//Physics scene.
 		snScene* m_physicScene;
