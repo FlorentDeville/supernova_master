@@ -62,7 +62,7 @@ using std::max;
 namespace Supernova
 {
 	snScene::snScene() : m_beta(0.25f), m_maxSlop(0.05f), m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
-		m_angularSquaredSpeedThreshold(0.001f)
+		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10)
 	{
 	}
 
@@ -166,33 +166,25 @@ namespace Supernova
 	void snScene::update(float _deltaTime)
 	{
 		//compute collision points
-		m_contactsPoints.clear();
 		computeCollisions(_deltaTime);
-		//getContactPoints(m_contactsPoints, _deltaTime);
 
 		//The constraints must be prepared before applying forces.
-		//Apply forces updates the velocities with candidates velocities we can't prepare constraints with candidate velocities.
+		//applyForces updates the velocities with candidates velocities and we can't prepare constraints with candidate velocities.
 		prepareConstraints();
 
 		//apply forces and compute candidate velocities for actors.
 		applyForces(_deltaTime);
 
 		//apply impulses
-		//sequentialImpulseSIMD(m_contactsPoints);
 		resolveAllConstraints();
 
 		//update positions
 		updatePosition(_deltaTime);	
 	}
 
-	const snContactPointVector& snScene::getContactsPoints() const
+	const snVector4fVector& snScene::getCollisionPoints() const
 	{
-		return m_contactsPoints;
-	}
-
-	snSequentialImpulse& snScene::getSolver()
-	{
-		return m_sequentialImpulseSolver;
+		return m_collisionPoints;
 	}
 
 	void snScene::setBeta(float _beta)
@@ -230,6 +222,11 @@ namespace Supernova
 		m_angularSquaredSpeedThreshold = _angularSquaredSpeedThreshold;
 	}
 
+	void snScene::setSolverIterationCount(int _solverIterationCount)
+	{
+		m_solverIterationCount = _solverIterationCount;
+	}
+
 	void* snScene::operator new(size_t _count)
 	{
 		return _aligned_malloc(_count, SN_ALIGN_SIZE);
@@ -238,67 +235,6 @@ namespace Supernova
 	void snScene::operator delete(void* _p)
 	{
 		_aligned_free(_p);
-	}
-
-	void snScene::getContactPoints(snContactPointVector& _contacts, float _dt)
-	{
-#if _DEBUG
-		LARGE_INTEGER frequency;
-		QueryPerformanceFrequency(&frequency);
-
-		float tickPerMilliseconds = (float)frequency.QuadPart * 0.001f;
-		float tickPerMicroseconds = tickPerMilliseconds * 0.001f;
-#endif
-
-		_contacts.clear();
-
-		if (m_actors.size() <= 1)
-			return;
-
-		for (std::vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
-		{
-			for (std::vector<snActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
-			{
-				//do not check collision between twe static actors.
-				if ((*i)->getIsStatic() && (*j)->getIsStatic())
-					continue;
-
-				//check collisions SAT
-#if _DEBUG
-				LARGE_INTEGER startSAT;
-				QueryPerformanceCounter(&startSAT);
-#endif
-				snCollisionResult res = snCollision::queryTestCollision((*i), (*j));
-#if _DEBUG
-				LARGE_INTEGER endSAT;
-				QueryPerformanceCounter(&endSAT);
-				LONGLONG SATDuration = endSAT.QuadPart - startSAT.QuadPart;
-
-
-				//check collision GJK
-				LARGE_INTEGER startGJK;
-				QueryPerformanceCounter(&startGJK);
-				snVector4f simplex[4];
-				//snCollisionResult _res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
-				LARGE_INTEGER endGJK;
-				QueryPerformanceCounter(&endGJK);
-				LONGLONG GJKDuration = endGJK.QuadPart - startGJK.QuadPart;
-#endif
-                //no collision, continue
-				if (!res.m_collision)
-					continue;
-
-				//make the contact points from the collision results
-				vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
-				for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
-				{
-					snContactPoint NewPoint;
-					NewPoint.initialize(*i, *j, res.m_normal, *penetrationIterator, *point);
-					NewPoint.prepare(this, _dt);
-					_contacts.push_back(NewPoint);
-				}
-			}
-		}
 	}
 
 	void snScene::applyForces(float _dt)
@@ -368,15 +304,10 @@ namespace Supernova
 		}
 	}
 
-	void snScene::sequentialImpulseSIMD(snContactPointVector& _contacts) const
-	{
-		m_sequentialImpulseSolver.solve(_contacts);
-	}
-
 	void snScene::resolveAllConstraints()
 	{
 		//resolve the constraints
-		for (int i = 0; i < m_sequentialImpulseSolver.getIterationCount(); ++i)
+		for (int i = 0; i < m_solverIterationCount; ++i)
 		{
 			for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
 			{
@@ -409,6 +340,7 @@ namespace Supernova
 			float tickPerMilliseconds = (float)frequency.QuadPart * 0.001f;
 			float tickPerMicroseconds = tickPerMilliseconds * 0.001f;
 #endif
+			m_collisionPoints.clear();
 
 			if (m_actors.size() <= 1)
 				return;
@@ -452,6 +384,8 @@ namespace Supernova
 					vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
 					for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
 					{
+						m_collisionPoints.push_back(*point);
+
 						//if a constraints already exists, take it and reuse it or else create it.
 						snNonPenetrationConstraint* npConstraint = 0;
 						snFrictionConstraint* fConstraint = 0;

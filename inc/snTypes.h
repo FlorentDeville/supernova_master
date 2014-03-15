@@ -42,7 +42,6 @@ using std::vector;
 using namespace DirectX;
 
 #include "snIConstraint.h"
-#include "snContactPoint.h"
 #include "AlignmentAllocator.h"
 
 #define XMVEC_ID_X 0
@@ -52,28 +51,11 @@ using namespace DirectX;
 
 namespace Supernova
 {
-	//A vector of ContactPoint aligned correctly.
-	typedef vector<snContactPoint, AlignmentAllocator<snContactPoint>> snContactPointVector;
-
-	//Iterator for a snContactPointVector.
-	typedef snContactPointVector::iterator snContactPointVectorIterator;
-
-	//Reverse iterator for a snContactPointVector.
-	typedef snContactPointVector::reverse_iterator snContactPointVectorReverseIterator;
-
-	//Constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_iterator snContactPointVectorConstIterator;
-
-	//Reverse constant iterator for a snContactPointVector.
-	typedef snContactPointVector::const_reverse_iterator snContactPointVectorConstReverseIterator;
-
-
 	//Aligned vector of snVector4f.
 	typedef vector<snVector4f, AlignmentAllocator<snVector4f>> snVector4fVector;
 
 	//Constant iterator for a snVector4fVector.
 	typedef snVector4fVector::const_iterator snVector4fVectorConstIterator;
-
 }
 
 #endif //SN_TYPES_H

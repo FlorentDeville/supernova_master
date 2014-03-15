@@ -40,7 +40,6 @@ using std::vector;
 using std::string;
 
 #include "AlignmentAllocator.h"
-#include "snSequentialImpulse.h"
 #include "snTypes.h"
 #include "snGJK.h"
 
@@ -74,11 +73,8 @@ namespace Supernova
 		//List of constraints created by the collision detection system.
 		vector<snIConstraint*> m_collisionConstraints;
 
-		//List of contacts found during the latest collision detection steps
-		snContactPointVector m_contactsPoints;
-
-		//Solver for contact points using sequential impulse.
-		snSequentialImpulse m_sequentialImpulseSolver;
+		//The list of collision points gathered during the previous update of the scene.
+		snVector4fVector m_collisionPoints;
 
 		snGJK m_GJK;
 
@@ -96,6 +92,9 @@ namespace Supernova
 
 		//Threshold under wich the angular speed is ignored and becomes 0.
 		float m_angularSquaredSpeedThreshold;
+
+		//Number of iteration to execute to solve the constraints.
+		int m_solverIterationCount;
 
 	public:
 		//Constructor. Scenes should be created using snFactory::createScene. If you create a scene yourself it is your responsability
@@ -132,11 +131,8 @@ namespace Supernova
 		//Simulate the scene for a given elapsed time step.
 		void update(float _dt);
 
-		//Return the list of contact points for the last iteration of the engine.
-		const snContactPointVector& getContactsPoints() const;
-
-		//Return a reference to the sequential impulse solver.
-		snSequentialImpulse& getSolver();
+		//Return the list of collision results for the last iteration of the engine.
+		const snVector4fVector& getCollisionPoints() const;
 
 		//Set the coefficient of penetration.
 		void setBeta(float _beta);
@@ -159,6 +155,9 @@ namespace Supernova
 		//Set the threshold under wich the angular velocity is set to 0
 		void setAngularSquaredSpeedThreshold(float _angularSquaredSpeedThreshold);
 
+		//Set the number of iteration to execute to resolve constraints.
+		void setSolverIterationCount(int _solverIterationCount);
+
 		//Overridden new operator to create scene with correct alignement.
 		void* operator new(size_t _count);
 
@@ -166,17 +165,11 @@ namespace Supernova
 		void operator delete(void* _p);
 
 	private:
-		//Check collisions and make a list of contact points.
-		void getContactPoints(snContactPointVector& _contacts, float _dt);
-
 		//Apply forces and compute linear and angular velocities
 		void applyForces(float _dt);
 
 		//Update linear and angular position of all actors.
 		void updatePosition(float _dt);
-
-		//Resolve all contact points using sequential impulse algorithm.
-		void sequentialImpulseSIMD(snContactPointVector& _contacts) const;
 
 		//Resolve the constraint provided in the array and the constraints stored in the scene.
 		void resolveAllConstraints();

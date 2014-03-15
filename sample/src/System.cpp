@@ -144,7 +144,7 @@ namespace Devil
 		LARGE_INTEGER frequency;
 		QueryPerformanceFrequency(&frequency);
 
-		float tickPerMilliseconds = (float)frequency.QuadPart * 0.001f;
+		unsigned long tickPerMilliseconds = (unsigned long)(frequency.QuadPart * 0.001f);
 
 		// Loop until there is a quit message from the window or the user.
 		done = false;
@@ -167,7 +167,7 @@ namespace Devil
 				//check if enough time has elapsed
 				LARGE_INTEGER currentClock;
 				QueryPerformanceCounter(&currentClock);
-				unsigned long currentTime = (currentClock.QuadPart - m_lastTick) / tickPerMilliseconds;
+				unsigned long currentTime = (unsigned long)(currentClock.QuadPart - m_lastTick) / tickPerMilliseconds;
 				if (currentTime > m_deltaTime)
 				{
 					m_lastTick = currentClock.QuadPart;
@@ -202,7 +202,7 @@ namespace Devil
 
 				//update fps
 				QueryPerformanceCounter(&currentClock);
-				currentTime = (currentClock.QuadPart - fpsTimeCounter) / tickPerMilliseconds;
+				currentTime = (unsigned long)(currentClock.QuadPart - fpsTimeCounter) / tickPerMilliseconds;
 				if (currentTime >= 1000)
 				{
 					std::wstring strFPS = std::to_wstring(fpsCounter);
@@ -412,7 +412,7 @@ namespace Devil
 
 		m_physicScene->setAngularSquaredSpeedThreshold(0.0001f);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.005f);
-		m_physicScene->getSolver().setIterationCount(20);
+		m_physicScene->setSolverIterationCount(20);
 		//set camera initial position
 		WORLD->getCamera()->setPosition(XMVectorSet(25, 30, 50, 1));
 		WORLD->getCamera()->setLookAt(XMVectorSet(15, 7, 0, 1));
@@ -642,9 +642,9 @@ namespace Devil
 		int sceneId = -1;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
-		m_physicScene->getSolver().setIterationCount(35);
+		m_physicScene->setSolverIterationCount(35);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
-		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
+		m_physicScene->setAngularSquaredSpeedThreshold(0.0005f);
 
 		//set camera initial position
 		WORLD->getCamera()->setPosition(XMVectorSet(70, 50, 100, 1));
@@ -809,7 +809,7 @@ namespace Devil
 	{
 		int sceneId = -1;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
-		m_physicScene->getSolver().setIterationCount(20);
+		m_physicScene->setSolverIterationCount(20);
 		m_physicScene->setBeta(0.2f);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 0.5f, 0, 0));
 
@@ -974,7 +974,7 @@ namespace Devil
 		int sceneId = -1;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 4, 0, 0));
-		m_physicScene->getSolver().setIterationCount(40);
+		m_physicScene->setSolverIterationCount(40);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
 
@@ -1143,7 +1143,7 @@ namespace Devil
 	{
 		int sceneId = -1;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
-		m_physicScene->getSolver().setIterationCount(45);
+		m_physicScene->setSolverIterationCount(45);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
 

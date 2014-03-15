@@ -27,9 +27,6 @@
     <ClInclude Include="inc\snCollisionResult.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snContactPoint.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snFeatureClipping.h">
       <Filter>Collision</Filter>
     </ClInclude>
@@ -77,9 +74,6 @@
       <Filter>Simulation</Filter>
     </ClInclude>
     <ClInclude Include="inc\snScene.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snSequentialImpulse.h">
       <Filter>Simulation</Filter>
     </ClInclude>
     <ClInclude Include="inc\AlignmentAllocator.h">
@@ -136,9 +130,6 @@
     <ClCompile Include="src\snScene.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
-    <ClCompile Include="src\snSequentialImpulse.cpp">
-      <Filter>Simulation</Filter>
-    </ClCompile>
     <ClCompile Include="src\snDistanceConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
@@ -147,9 +138,6 @@
     </ClCompile>
     <ClCompile Include="src\snFrictionConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snContactPoint.cpp">
-      <Filter>Collision</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

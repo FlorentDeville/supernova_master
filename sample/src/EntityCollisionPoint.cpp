@@ -35,10 +35,10 @@ namespace Devil
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
-		const snContactPointVector& contacts = SUPERNOVA->getScene(0)->getContactsPoints();
-		for (snContactPointVectorConstIterator i = contacts.cbegin(); i != contacts.cend(); ++i)
+		const snVector4fVector& contacts = SUPERNOVA->getScene(0)->getCollisionPoints();
+		for (snVector4fVectorConstIterator i = contacts.cbegin(); i != contacts.cend(); ++i)
 		{
-			XMMATRIX transform = XMMatrixTranslationFromVector(i->m_point.m_vec);
+			XMMATRIX transform = XMMatrixTranslationFromVector(i->m_vec);
 			m_gfx->render(transform, viewMatrix, projectionMatrix);
 		}
 	}

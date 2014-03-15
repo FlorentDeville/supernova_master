@@ -18,7 +18,6 @@
     <ClInclude Include="inc\snColliderSphere.h" />
     <ClInclude Include="inc\snCollision.h" />
     <ClInclude Include="inc\snCollisionResult.h" />
-    <ClInclude Include="inc\snContactPoint.h" />
     <ClInclude Include="inc\snDistanceConstraint.h" />
     <ClInclude Include="inc\snFactory.h" />
     <ClInclude Include="inc\snFeatureClipping.h" />
@@ -33,7 +32,6 @@
     <ClInclude Include="inc\snPhysicMaterial.h" />
     <ClInclude Include="inc\snQuaternion.h" />
     <ClInclude Include="inc\snScene.h" />
-    <ClInclude Include="inc\snSequentialImpulse.h" />
     <ClInclude Include="inc\snSimplex.h" />
     <ClInclude Include="inc\snTypes.h" />
     <ClInclude Include="inc\snVector4f.h" />
@@ -44,7 +42,6 @@
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
-    <ClCompile Include="src\snContactPoint.cpp" />
     <ClCompile Include="src\snDistanceConstraint.cpp" />
     <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />
@@ -55,7 +52,6 @@
     <ClCompile Include="src\snNonPenetrationConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
     <ClCompile Include="src\snScene.cpp" />
-    <ClCompile Include="src\snSequentialImpulse.cpp" />
     <ClCompile Include="src\snSimplex.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
