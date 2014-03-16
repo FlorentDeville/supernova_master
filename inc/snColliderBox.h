@@ -80,18 +80,6 @@ namespace Supernova
 		//Compute the inertia tensor in a local frame.
 		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const;
 
-		//Check collision between a collider given in parameter and this collider (in that order).
-		snCollisionResult queryTestCollision(const snICollider& _collider) const;
-
-		//Check collision between this collider and a box collider.
-		snCollisionResult queryTestCollision(const snColliderBox& _box) const;
-
-		//Check collision between this collider and a plan collider.
-		snCollisionResult queryTestCollision(const snColliderPlan& _plan) const;
-
-		//Check collision between this collider and a sphere collider.
-		snCollisionResult queryTestCollision(const snColliderSphere& _sphere) const;
-
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
 		snVector4f getFarthestPointInDirection(const snVector4f& _direction) const;
 

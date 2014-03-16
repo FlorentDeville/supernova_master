@@ -44,6 +44,7 @@ namespace Supernova
 {
 	snColliderBox::snColliderBox() : snICollider(), m_size(), m_box()
 	{
+		m_typeOfCollider = snEColliderBox;
 	}
 
 	snColliderBox::~snColliderBox()
@@ -178,26 +179,6 @@ namespace Supernova
 		_inertiaTensor.m_r[1] = snVector4f(0, massOverTwelve * (squaredSize.VEC4FX + squaredSize.VEC4FZ), 0, 0);
 		_inertiaTensor.m_r[2] = snVector4f(0, 0, massOverTwelve * (squaredSize.VEC4FX + squaredSize.VEC4FY), 0);
 		_inertiaTensor.m_r[3] = snVector4f(0, 0, 0, 1);
-	}
-
-	snCollisionResult snColliderBox::queryTestCollision(const snICollider& _collider) const
-	{
-		return _collider.queryTestCollision(*this);
-	}
-
-	snCollisionResult snColliderBox::queryTestCollision(const snColliderBox& _box) const
-	{
-		return snCollision::queryTestCollision(*this, _box);
-	}
-
-	snCollisionResult snColliderBox::queryTestCollision(const snColliderPlan& _plan) const
-	{
-		return snCollision::queryTestCollision(*this, _plan);
-	}
-
-	snCollisionResult snColliderBox::queryTestCollision(const snColliderSphere& _sphere) const
-	{
-		return snCollision::queryTestCollision(*this, _sphere);
 	}
 
 	snVector4f snColliderBox::getFarthestPointInDirection(const snVector4f& _direction) const

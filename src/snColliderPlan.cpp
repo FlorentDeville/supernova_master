@@ -4,6 +4,7 @@ namespace Supernova
 {
 	snColliderPlan::snColliderPlan(float width, float height)
 	{
+		m_typeOfCollider = snEColliderPlan;
 		snVector4f corners[4];
 
 		float halfWidth = width * 0.5f;

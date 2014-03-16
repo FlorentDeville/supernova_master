@@ -47,13 +47,9 @@
 #include "snFrictionConstraint.h"
 
 #ifdef _DEBUG
-//#include "World.h"
-//#include "EntityCollisionPoint.h"
-//using namespace Devil;
-
 #include <Windows.h>
 #include <string>
-#endif // _DEBUG
+#endif // ifdef _DEBUG
 
 #include <algorithm>    
 using std::max;
@@ -61,6 +57,9 @@ using std::max;
 
 namespace Supernova
 {
+
+	snCollision snScene::m_collisionService;
+
 	snScene::snScene() : m_beta(0.25f), m_maxSlop(0.05f), m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10)
 	{
@@ -360,7 +359,7 @@ namespace Supernova
 					LARGE_INTEGER startSAT;
 					QueryPerformanceCounter(&startSAT);
 #endif
-					snCollisionResult res = snCollision::queryTestCollision((*i), (*j));
+					snCollisionResult res = m_collisionService.queryTestCollision(*i, *j);
 					//snCollisionResult res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
 #if _DEBUG
 					LARGE_INTEGER endSAT;

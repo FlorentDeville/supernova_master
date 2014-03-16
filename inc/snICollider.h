@@ -46,6 +46,15 @@ namespace Supernova
 	class snColliderSphere;
 	class snColliderPlan;
 
+	//Type enum to identify the kind of collider
+	enum snEColliderType : unsigned char
+	{
+		snEColliderUnknown,
+		snEColliderBox,
+		snEColliderPlan,
+		snEColliderSphere
+	};
+
 	class snICollider
 	{
 
@@ -55,6 +64,9 @@ namespace Supernova
 
 		/*Origin of the shape in world coordinate.*/
 		snVector4f m_worldOrigin;
+
+		//The type of collider
+		snEColliderType m_typeOfCollider;
 
 	public:
 		snICollider() : m_origin(0, 0, 0, 1)
@@ -76,18 +88,6 @@ namespace Supernova
 		//Compute the inertia tensor in a local frame.
 		virtual void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const = 0;
 
-		//Check collision between a collider given in parameter and this collider (in that order).
-		virtual snCollisionResult queryTestCollision(const snICollider& _collider) const = 0;
-
-		//Check collision between this collider and a box collider.
-		virtual snCollisionResult queryTestCollision(const snColliderBox& _box) const = 0;
-
-		//Check collision between this collider and a plan collider.
-		virtual snCollisionResult queryTestCollision(const snColliderPlan& _plan) const = 0;
-
-		//Check collision between this collider and a sphere collider.
-		virtual snCollisionResult queryTestCollision(const snColliderSphere& _sphere) const = 0;
-
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
 		virtual snVector4f getFarthestPointInDirection(const snVector4f& /*_direction*/) const { return snVector4f(); };
 
@@ -106,6 +106,8 @@ namespace Supernova
 		virtual snVector4f getWorldVertexOfFace(int /*_faceId*/) const { return snVector4f(); };
 
 		const snVector4f& getOrigin() const { return m_origin; }
+
+		snEColliderType getTypeOfCollider() const { return m_typeOfCollider; }
 
 		//Set the origin of the collider.
 		void setOrigin(const snVector4f& _origin){ m_origin = _origin; }

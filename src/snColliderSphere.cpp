@@ -4,17 +4,15 @@ namespace Supernova
 {
 	snColliderSphere::snColliderSphere() : snICollider(), m_radius(0)
 	{
-//		m_TypeOfCollider = ColliderType::Collider_Sphere;
+		m_typeOfCollider = snEColliderSphere;
 	}
 
 	snColliderSphere::snColliderSphere(float _radius) : snICollider(), m_radius(_radius)
 	{
-		//m_TypeOfCollider = ColliderType::Collider_Sphere;
 	}
 
 	snColliderSphere::snColliderSphere(float _radius, const snVector4f& _origin) : snICollider(_origin), m_radius(_radius)
 	{
-		//m_TypeOfCollider = ColliderType::Collider_Sphere;
 	}
 
 	float snColliderSphere::getRadius()const

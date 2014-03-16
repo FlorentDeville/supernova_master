@@ -48,6 +48,7 @@ namespace Supernova
 		m_w = snVector4f(0, 0, 0, 0);
 		m_q = snVector4f(0, 0, 0, 1);
 		m_R.identity();
+		m_invR.identity();
 
 		m_isKinematic = false;
 		m_isStatic = false;
@@ -200,6 +201,12 @@ namespace Supernova
 	void snActor::setOrientationMatrix(const snMatrix44f& _R)
 	{
 		m_R = _R;
+		m_invR = m_R.inverse();
+	}
+
+	const snMatrix44f& snActor::getInverseOrientationMatrix() const
+	{
+		return m_invR;
 	}
 
 	void snActor::createColliderBox(snColliderBox** _box, int& _colliderId)

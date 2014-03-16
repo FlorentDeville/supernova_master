@@ -48,72 +48,83 @@
 
 namespace Supernova
 {
-	snCollision::snCollision(){}
+	snCollision::snCollision()
+	{
+		//initialize the collision query map
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderBox), &Supernova::snCollision::queryTestCollisionBoxVersusBox));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderSphere), &Supernova::snCollision::queryTestCollisionSphereVersusSphere));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderPlan), &Supernova::snCollision::queryTestCollisionBoxVersusPlan));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderPlan), &Supernova::snCollision::queryTestCollisionSphereVersusPlan));
+	}
 
 	snCollision::~snCollision(){}
 
-	snCollisionResult snCollision::queryTestCollision(snActor* _a1, snActor* _a2)
+	snCollisionResult snCollision::queryTestCollision(snActor* _a1, snActor* _a2) const
 	{
 		std::vector<snICollider*>& c1 = _a1->getColliders();
 		std::vector<snICollider*>& c2 = _a2->getColliders();
 
-		return (c2[0])->queryTestCollision(*c1[0]);
+		return invokeQueryTestCollision(c1[0], _a1->getPosition(), _a1->getInverseOrientationMatrix(), c2[0], _a2->getPosition(), _a2->getInverseOrientationMatrix());
 	}
 
-	snCollisionResult snCollision::queryTestCollision(const snColliderBox& _b1, const snColliderBox& _b2)
+	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2) const
 	{
+		unsigned short key = SN_COLLISION_KEY(_c1->getTypeOfCollider(), _c2->getTypeOfCollider());
+		snCollisionQueryMap::const_iterator i = m_collisionQueryMap.find(key);
+		
+		if (i != m_collisionQueryMap.cend())
+		{
+			snQueryTestCollisionFunction func = i->second;
+			return func(_c1, _p1, _invR1, _c2, _p2, _invR2);
+		}
+		else
+		{
+			key = SN_COLLISION_KEY(_c2->getTypeOfCollider(), _c1->getTypeOfCollider());
+			i = m_collisionQueryMap.find(key);
+			snQueryTestCollisionFunction func = i->second;
+			return func(_c1, _p1, _invR1, _c2, _p2, _invR2);
+		}
+			
+	}
+
+	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
+	{
+		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
+		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
+
 		snCollisionResult res;
 
 		const snVector4f* s1Normals;
 		const snVector4f* s2Normals;
 
-		s1Normals = _b1.getWorldNormal();
-		s2Normals = _b2.getWorldNormal();
+		s1Normals = _b1->getWorldNormal();
+		s2Normals = _b2->getWorldNormal();
 
 		snVector4f smallestOverlapNormal;
 		float smallestOverlap = SN_FLOAT_MAX;
 
-		bool overlapRes = true;
-		overlapRes = computeOverlap(_b1, _b2, s1Normals[0], smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-		overlapRes = computeOverlap(_b1, _b2, s1Normals[1], smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-		overlapRes = computeOverlap(_b1, _b2, s1Normals[2], smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-		overlapRes = computeOverlap(_b1, _b2, s2Normals[0], smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-		overlapRes = computeOverlap(_b1, _b2, s2Normals[1], smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-		overlapRes = computeOverlap(_b1, _b2, s2Normals[2], smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
+		//compute collider overlap using the normals
+		const float NORMAL_COUNT = 3;
+		for (int i = 0; i < NORMAL_COUNT; ++i)
+		{
+			bool overlapRes = true;
+			overlapRes = computeOverlap(*_b1, *_b2, s1Normals[i], smallestOverlapNormal, smallestOverlap);
+			if (!overlapRes) return res;
+			overlapRes = computeOverlap(*_b1, *_b2, s1Normals[i], smallestOverlapNormal, smallestOverlap);
+			if (!overlapRes) return res;
 
-		snVector4f cross = s1Normals[0].cross(s2Normals[0]);
-		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-		cross = s1Normals[0].cross(s2Normals[1]);
-		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-		cross = s1Normals[0].cross(s2Normals[2]);
-		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-
-		cross = s1Normals[1].cross(s2Normals[1]);
-		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-		cross = s1Normals[1].cross(s2Normals[2]);
-		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
-
-		
-		cross = s1Normals[2].cross(s2Normals[2]);
-		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
-		if (!overlapRes) return res;
+			//compute overlap for the cross product of the normals
+			for (int j = i; j < NORMAL_COUNT; ++j)
+			{
+				snVector4f cross = s1Normals[i].cross(s2Normals[j]);
+				if (cross.squareNorme() == 1.f)
+					overlapRes = computeOverlap(*_b1, *_b2, cross, smallestOverlapNormal, smallestOverlap);
+				if (!overlapRes) return res;
+			}
+		}
 
 		//there is a collision so find the collision patch
 		res.m_collision = true;
@@ -123,20 +134,24 @@ namespace Supernova
 
 		//find collision patch using clipping algorithm.
 		snFeatureClipping clipping;
-		bool clippingResult = clipping.findContactPatch(_b1, _b2, smallestOverlapNormal, res.m_contacts, res.m_penetrations);
+		bool clippingResult = clipping.findContactPatch(*_b1, *_b2, smallestOverlapNormal, res.m_contacts, res.m_penetrations);
 		res.m_collision = clippingResult;
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollision(const snColliderSphere& _s1, const snColliderSphere& _s2)
+	snCollisionResult snCollision::queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
 	{
+		const snColliderSphere* _s1 = static_cast<const snColliderSphere*>(_c1);
+		const snColliderSphere* _s2 = static_cast<const snColliderSphere*>(_c2);
+
 		snCollisionResult res;
 
 		//Get the vector between the sphere's origins.
-		snVector4f vecDistance = _s1.getWorldOrigin() - _s2.getWorldOrigin();
+		snVector4f vecDistance = _s1->getWorldOrigin() - _s2->getWorldOrigin();
 
 		//Calculate the minimum distance between the spheres
-		float squaredMinDistance = _s1.getRadius() + _s2.getRadius();
+		float squaredMinDistance = _s1->getRadius() + _s2->getRadius();
 		squaredMinDistance *= squaredMinDistance;
 
 		//If the distance between the centers is inferior to the sum or radius then collision.
@@ -155,45 +170,53 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollision(const snColliderBox& _box, const snColliderSphere& _sphere)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
 	{
+		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
+		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c2);
+
 		snCollisionResult res;
 
 		//Get the closest point to the box.
-		snVector4f closestPoint = _box.getClosestPoint(_sphere.getWorldOrigin());
+		snVector4f closestPoint = _box->getClosestPoint(_sphere->getWorldOrigin());
 
 		//Get the distance (squared) between the closest point and the sphere center.
-		float squaredDistanceClosestPoint = (_sphere.getWorldOrigin() - closestPoint).squareNorme();
-		float squaredRadius = _sphere.getRadius() * _sphere.getRadius();
+		float squaredDistanceClosestPoint = (_sphere->getWorldOrigin() - closestPoint).squareNorme();
+		float squaredRadius = _sphere->getRadius() * _sphere->getRadius();
 
 		//If the closest point distance is bigger than the radius then no collision (all distances are squared).
 		if (squaredDistanceClosestPoint > squaredRadius)
 			return res;
 
 		res.m_collision = true;
-		res.m_normal = (_sphere.getWorldOrigin() - closestPoint);
+		res.m_normal = (_sphere->getWorldOrigin() - closestPoint);
 		res.m_normal.normalize();
 		res.m_normal.VEC4FW = 0;
 		res.m_penetrations.push_back(-sqrtf(squaredDistanceClosestPoint) + sqrtf(squaredRadius));
-		res.m_contacts.push_back(_sphere.getWorldOrigin() - res.m_normal * _sphere.getRadius());
+		res.m_contacts.push_back(_sphere->getWorldOrigin() - res.m_normal * _sphere->getRadius());
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollision(const snColliderBox& _box, const snColliderPlan& _plan)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
 	{
+		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
+		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
+
 		//get the distance between the box center and the plan
-		float boxDistance = fabsf(_plan.getDistance(_box.getWorldOrigin()));
+		float boxDistance = fabsf(_plan->getDistance(_box->getWorldOrigin()));
 		
 		//get the extends
-		snVector4f extends = _box.getSize() * 0.5f;
+		snVector4f extends = _box->getSize() * 0.5f;
 
 		//get the box normals
-		const snVector4f* s1Normals = _box.getWorldNormal();
+		const snVector4f* s1Normals = _box->getWorldNormal();
 
 		//compute the minimum distance between the box and the plan
-		float minDistance = extends.VEC4FX * fabsf(s1Normals[0].dot(_plan.getWorldNormal())) +
-			extends.VEC4FY * fabsf(s1Normals[1].dot(_plan.getWorldNormal())) +
-			extends.VEC4FZ * fabsf(s1Normals[2].dot(_plan.getWorldNormal()));
+		float minDistance = extends.VEC4FX * fabsf(s1Normals[0].dot(_plan->getWorldNormal())) +
+			extends.VEC4FY * fabsf(s1Normals[1].dot(_plan->getWorldNormal())) +
+			extends.VEC4FZ * fabsf(s1Normals[2].dot(_plan->getWorldNormal()));
 		
 		//compare the real distance to the min distance
 		float overlap = boxDistance - minDistance;
@@ -202,7 +225,7 @@ namespace Supernova
 		if (overlap < 0)
 		{
 			res.m_collision = true;
-			res.m_normal = _plan.getWorldNormal();
+			res.m_normal = _plan->getWorldNormal();
 			res.m_penetrations.push_back(fabs(overlap));
 		}
 		else
@@ -211,20 +234,24 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollision(const snColliderSphere& _sphere, const snColliderPlan& _plan)
+	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
 	{
+		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c1);
+		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
+
 		snCollisionResult res;
 
 		//get the distance between the sphere center and the plan
-		float distance = _plan.getDistance(_sphere.getWorldOrigin());
+		float distance = _plan->getDistance(_sphere->getWorldOrigin());
 
-		if (distance > _sphere.getRadius())
+		if (distance > _sphere->getRadius())
 			return res;
 		else
 		{
 			res.m_collision = true;
-			res.m_normal = _plan.getWorldNormal();
-			res.m_penetrations.push_back(_sphere.getRadius() - distance);
+			res.m_normal = _plan->getWorldNormal();
+			res.m_penetrations.push_back(_sphere->getRadius() - distance);
 			return res;
 		}
 	}

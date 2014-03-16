@@ -100,6 +100,9 @@ namespace Supernova
 		//orientation matrix
 		snMatrix44f m_R;
 
+		//Inverse of the orientation matrix
+		snMatrix44f m_invR;
+
 		//Various parameters to define the behavior of the object (friction, bouncing...)
 		snPhysicMaterial m_material;
 
@@ -165,6 +168,8 @@ namespace Supernova
 		const snMatrix44f& getOrientationMatrix() const;
 
 		void setOrientationMatrix(const snMatrix44f& _R);
+
+		const snMatrix44f& getInverseOrientationMatrix() const;
 
 		//Create a collider box and add it to the actor. Return its id.
 		void createColliderBox(snColliderBox** _box, int& _colliderId);

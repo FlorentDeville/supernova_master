@@ -42,6 +42,7 @@ using std::string;
 #include "AlignmentAllocator.h"
 #include "snTypes.h"
 #include "snGJK.h"
+#include "snCollision.h"
 
 #ifdef _DEBUG
 namespace Devil
@@ -75,6 +76,9 @@ namespace Supernova
 
 		//The list of collision points gathered during the previous update of the scene.
 		snVector4fVector m_collisionPoints;
+
+		//Provide access to the collision query functions.
+		static snCollision m_collisionService;
 
 		snGJK m_GJK;
 

@@ -36,34 +36,46 @@
 #define SN_COLLISION_H
 
 #include <malloc.h>
+#include <map>
+using std::map;
+
 #include "snGlobals.h"
+#include "snCollisionResult.h"
+#include "snICollider.h"
+
+//Compute the key to retrieve the collision query function in the map. The parameters are the type of colliders.
+#define SN_COLLISION_KEY(a, b) ((a<<8) | b)
 
 namespace Supernova
 {
 	/*Forward declaration*/
 	class snVector4f;
-	class snCollisionResult;
-	class snICollider;
 	class snColliderBox;
 	class snColliderSphere;
 	class snColliderPlan;
 	class snActor;
 
+	//Make collision tests between all the different types of colliders available.
 	class SN_ALIGN snCollision
 	{
 	
+	private:
+		//Typedef of pointers to the collision query functions.
+		typedef snCollisionResult(*snQueryTestCollisionFunction)(const snICollider* const, const snVector4f&, const snMatrix44f&,
+			const snICollider* const, const snVector4f&, const snMatrix44f&);
+
+		typedef std::pair<unsigned short, snQueryTestCollisionFunction> snCollisionQueryMapElement;
+
+		typedef map<unsigned short, snQueryTestCollisionFunction> snCollisionQueryMap;
+
+		//Map between a key and a collision query function. The key is
+		snCollisionQueryMap m_collisionQueryMap;
+
 	public:
 		snCollision();
 		virtual ~snCollision();
 
-		static snCollisionResult queryTestCollision(snActor*, snActor*);
-
-		static snCollisionResult queryTestCollision(const snColliderBox&, const snColliderBox&);
-		static snCollisionResult queryTestCollision(const snColliderSphere&, const snColliderSphere&);
-		static snCollisionResult queryTestCollision(const snColliderBox&, const snColliderSphere&);
-
-		static snCollisionResult queryTestCollision(const snColliderBox&, const snColliderPlan&);
-		static snCollisionResult queryTestCollision(const snColliderSphere&, const snColliderPlan&);
+		snCollisionResult queryTestCollision(snActor*, snActor*) const;
 
 		void* operator new(size_t _count)
 		{
@@ -76,6 +88,26 @@ namespace Supernova
 		}
 
 	private:
+
+		snCollisionResult invokeQueryTestCollision(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2) const;
+
+		//Check collision between two boxes
+		static snCollisionResult queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1, 
+			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2);
+
+		static snCollisionResult queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2);
+
+		static snCollisionResult queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2);
+
+		static snCollisionResult queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2);
+
+		static snCollisionResult queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2);
+
 		static bool computeOverlap(const snICollider& _c1, const snICollider& _c2, const snVector4f& _axis, snVector4f& _separatingAxis, float& _overlap);
 	};
 }
