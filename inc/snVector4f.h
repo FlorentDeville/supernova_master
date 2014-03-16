@@ -36,6 +36,7 @@
 #define SN_VECTOR4F_H
 
 #include <xmmintrin.h>
+#include <emmintrin.h>
 #include <math.h>
 
 #define VEC4F_ID_X 0
@@ -237,6 +238,14 @@ namespace Supernova
 		inline void set(float _X, float _Y, float _Z, float _W)
 		{
 			m_vec = _mm_set_ps(_W, _Z, _Y, _X);
+		}
+
+		inline bool operator == (const snVector4f& _other) const
+		{
+			__m128 vcmp = _mm_cmpeq_ps(m_vec, _other.m_vec);
+			__m128i ivcmp = _mm_castps_si128(vcmp);
+			int vmask = _mm_movemask_epi8(ivcmp);
+			return (vmask == 0xffff);
 		}
 	};
 }

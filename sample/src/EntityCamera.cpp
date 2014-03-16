@@ -31,7 +31,7 @@ namespace Devil
 	{
 		//return;
 		const float linearCameraSpeed = 0.5f;
-		const float angularCameraSpeed = 1.5f;
+		const float angularCameraSpeed = 2.5f;
 
 		//forward vector
 		XMVECTOR forward = m_lookAt - m_position;

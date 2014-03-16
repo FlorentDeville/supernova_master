@@ -459,7 +459,7 @@ namespace Devil
 
 			groundHeight += height * 0.5f;
 		}
-		
+		return;
 		//first block on the ground
 		float blockOneHeight = 0;
 		{
@@ -748,7 +748,7 @@ namespace Devil
 				int actorId = -1;
 				m_physicScene->createActor(&act, actorId);
 
-				act->setName("base");
+				act->setName("base_" + std::to_string(row) + "_" + std::to_string(i));
 				act->setMass(50);
 				act->setPosition(pos);
 				act->setIsKinematic(false);
