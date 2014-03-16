@@ -74,50 +74,52 @@ namespace Supernova
 		float smallestOverlap = SN_FLOAT_MAX;
 
 		bool overlapRes = true;
-		overlapRes = computeOverlap(s1Normals[0], _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+		overlapRes = computeOverlap(_b1, _b2, s1Normals[0], smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
-		overlapRes = computeOverlap(s1Normals[1], _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+		overlapRes = computeOverlap(_b1, _b2, s1Normals[1], smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
-		overlapRes = computeOverlap(s1Normals[2], _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+		overlapRes = computeOverlap(_b1, _b2, s1Normals[2], smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
-		overlapRes = computeOverlap(s2Normals[0], _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+		overlapRes = computeOverlap(_b1, _b2, s2Normals[0], smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
-		overlapRes = computeOverlap(s2Normals[1], _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+		overlapRes = computeOverlap(_b1, _b2, s2Normals[1], smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
-		overlapRes = computeOverlap(s2Normals[2], _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+		overlapRes = computeOverlap(_b1, _b2, s2Normals[2], smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
 
 		snVector4f cross = s1Normals[0].cross(s2Normals[0]);
 		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(cross, _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
 		cross = s1Normals[0].cross(s2Normals[1]);
 		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(cross, _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
 		cross = s1Normals[0].cross(s2Normals[2]);
 		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(cross, _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
 
 		cross = s1Normals[1].cross(s2Normals[1]);
 		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(cross, _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
 		cross = s1Normals[1].cross(s2Normals[2]);
 		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(cross, _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
 
 		
 		cross = s1Normals[2].cross(s2Normals[2]);
 		if (cross.squareNorme() == 1.f)
-			overlapRes = computeOverlap(cross, _b1.getWorldVertices(), _b2.getWorldVertices(), 8, smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeOverlap(_b1, _b2, cross, smallestOverlapNormal, smallestOverlap);
 		if (!overlapRes) return res;
 
 		//there is a collision so find the collision patch
 		res.m_collision = true;
 		res.m_normal = smallestOverlapNormal;
+
+		assert(smallestOverlap > 0.f);
 
 		//find collision patch using clipping algorithm.
 		snFeatureClipping clipping;
@@ -227,36 +229,21 @@ namespace Supernova
 		}
 	}
 
-	void snCollision::computeProjection(const snVector4f& _axis, const snVector4f* _vertices, int _verticesCount, float& _min, float& _max)
-	{
-		_min = _axis.dot(_vertices[0]);
-		_max = _min;
-
-		for (int i = 1; i < _verticesCount; ++i)
-		{
-			float dot = _axis.dot(_vertices[i]);
-			if (dot < _min)
-				_min = dot;
-			else if (dot > _max)
-				_max = dot;
-		}
-	}
-
-	bool snCollision::computeOverlap(const snVector4f& _axis, const snVector4f* _bodyAVertices, const snVector4f* _bodyBVertices, int _vertexCount, snVector4f& _separatingAxis, float& _overlap)
+	bool snCollision::computeOverlap(const snICollider& _c1, const snICollider& _c2, const snVector4f& _axis, snVector4f& _separatingAxis, float& _overlap)
 	{
 		float minS1, minS2, maxS1, maxS2;
 
-		computeProjection(_axis, _bodyAVertices, _vertexCount, minS2, maxS2);
-		computeProjection(_axis, _bodyBVertices, _vertexCount, minS1, maxS1);
+		_c1.computeProjection(_axis, minS2, maxS2);
+		_c2.computeProjection(_axis, minS1, maxS1);
 
-		float diff1 = maxS1 - minS2;
 		float diff2 = maxS2 - minS1;
 
 		//no collision
-		if (diff1 <= 0.f || diff2 <= 0.f)
+		if (diff2 <= 0.f)
 			return false;
-		
+
 		//collision, get the minimum overlap with the axis
+		float diff1 = maxS1 - minS2;
 		float min1 = fabs(diff1);
 		float min2 = fabs(diff2);
 

@@ -76,8 +76,7 @@ namespace Supernova
 		}
 
 	private:
-		static void computeProjection(const snVector4f& _axis, const snVector4f* _vertices, int _verticesCount, float& _min, float& max);
-		static bool computeOverlap(const snVector4f& _axis, const snVector4f* _bodyAVertices, const snVector4f* _bodyBVertices, int _vertexCount, snVector4f& _separatingAxis, float& _overlap);
+		static bool computeOverlap(const snICollider& _c1, const snICollider& _c2, const snVector4f& _axis, snVector4f& _separatingAxis, float& _overlap);
 	};
 }
 

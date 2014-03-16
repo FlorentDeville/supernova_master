@@ -36,4 +36,7 @@ namespace Supernova
 	{
 		return m_origin;
 	}
+
+	void snColliderSphere::computeProjection(const snVector4f& /*_direction*/, float& /*_min*/, float& /*_max*/) const
+	{}
 }

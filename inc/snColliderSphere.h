@@ -27,6 +27,8 @@ namespace Supernova
 		void setWorldTransform(const snMatrix44f& _transform);
 
 		snVector4f getLocalCenterOfMass() const;
+
+		void computeProjection(const snVector4f& _direction, float& _min, float& _max) const;
 	};
 }
 

@@ -91,6 +91,9 @@ namespace Supernova
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
 		virtual snVector4f getFarthestPointInDirection(const snVector4f& /*_direction*/) const { return snVector4f(); };
 
+		//Project the collider along an axis and return the min and max value. The direction has to be expressed in world coordinate.
+		virtual void computeProjection(const snVector4f& _direction, float& _min, float& _max) const = 0;
+
 		//Get the closest polygon projected onto the normal.
 		virtual void getClosestPolygonProjected(const snVector4f& /*_n*/, snVector4f* const /*_polygon*/, int& /*_count*/) const{};
 

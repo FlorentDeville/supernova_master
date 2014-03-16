@@ -39,6 +39,8 @@ namespace Supernova
 
 		float getDistance(const snVector4f& _o) const;
 
+		void computeProjection(const snVector4f& _direction, float& _min, float& _max) const;
+
 	private:
 		void initialize(const snVector4f* _corners);
 	};

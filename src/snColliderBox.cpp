@@ -220,9 +220,19 @@ namespace Supernova
 		return m_worldBox[id];
 	}
 
-	const snVector4f* snColliderBox::getWorldVertices() const
+	void snColliderBox::computeProjection(const snVector4f& _direction, float& _min, float& _max) const
 	{
-		return m_worldBox;
+		_min = _direction.dot(m_worldBox[0]);
+		_max = _min;
+
+		for (int i = 1; i < VERTEX_COUNT; ++i)
+		{
+			float dot = _direction.dot(m_worldBox[i]);
+			if (dot < _min)
+				_min = dot;
+			else if (dot > _max)
+				_max = dot;
+		}
 	}
 
 	const snVector4f* snColliderBox::getWorldNormal() const
