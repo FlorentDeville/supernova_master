@@ -79,6 +79,7 @@ namespace Supernova
 		//Expand a simplex and return the collision normal.
 		snVector4f expandPolytope(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2) const;
 
+		bool expandPolytopeV2(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVector4f& _normal) const;
 	};
 }
 

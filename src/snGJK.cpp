@@ -85,19 +85,38 @@ namespace Supernova
 			over = doSimplex(simplex, simplexCount, direction);
 		}
 
-		//create a simplex for the EPA
-		snSimplex epaSimplex;
-		epaSimplex.addVertex(simplex[0]);
-		epaSimplex.addVertex(simplex[1]);
-		epaSimplex.addVertex(simplex[2]);
-		epaSimplex.addVertex(simplex[3]);
+		////create a simplex for the EPA
+		//snSimplex epaSimplex;
+		//epaSimplex.addVertex(simplex[0]);
+		//epaSimplex.addVertex(simplex[1]);
+		//epaSimplex.addVertex(simplex[2]);
+		//epaSimplex.addVertex(simplex[3]);
 
-		epaSimplex.addTriangle(0, 1, 2);
-		epaSimplex.addTriangle(0, 3, 1);
-		epaSimplex.addTriangle(1, 3, 2);
-		epaSimplex.addTriangle(0, 3, 2);
+		//epaSimplex.addTriangle(0, 1, 2);
+		//epaSimplex.addTriangle(0, 3, 1);
+		//epaSimplex.addTriangle(1, 3, 2);
+		//epaSimplex.addTriangle(0, 2, 3);
+		//
+		////res.m_normal = expandPolytope(epaSimplex, _c1, _c2);
+
+		//snSimplex epaSimplex2;
+		//epaSimplex2.addVertex(simplex[0]);
+		//epaSimplex2.addVertex(simplex[1]);
+		//epaSimplex2.addVertex(simplex[2]);
+		//epaSimplex2.addVertex(simplex[3]);
+
+		//epaSimplex2.addTriangle(0, 1, 2);
+		//epaSimplex2.addTriangle(0, 3, 1);
+		//epaSimplex2.addTriangle(1, 3, 2);
+		//epaSimplex2.addTriangle(0, 2, 3);
+		//snVector4f tempNormal;
+		//res.m_collision = expandPolytopeV2(epaSimplex2, _c1, _c2, tempNormal);
+		///*if (!(res.m_normal == tempNormal))
+		//	int a = 0;*/
+
+		//res.m_normal = tempNormal;
 		
-		res.m_normal = expandPolytope(epaSimplex, _c1, _c2);
+		res.m_normal.normalize();
 
 		//compute the collision patch
 		res.m_collision = m_clipping.findContactPatch(_c1, _c2, res.m_normal, res.m_contacts, res.m_penetrations);
@@ -296,18 +315,116 @@ namespace Supernova
 			_simplex.computeTriangleClosestToOrigin(closestTriangleId, normal, distance);
 
 			//expand the polytope
-			snVector4f revNormal = normal * -1;
+			snVector4f revNormal = normal *-1;
 			snVector4f newVertex = support(_c1, _c2, revNormal);
 
 			//check if we are closer to the origin
 			float newPointDistance = revNormal.dot(newVertex);
 
-			if (newPointDistance - distance < 0.2f)
+			const float EPA_TOLERANCE = 0.01f;
+			if ((newPointDistance - distance) < EPA_TOLERANCE)
 				return normal;
 
 			_simplex.expand(newVertex, closestTriangleId);
 		}
 
 		return snVector4f();
+	}
+
+	bool snGJK::expandPolytopeV2(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVector4f& _normal) const
+	{
+		bool loopOver = false;
+		while (!loopOver)
+		{
+			//find the closest triangle to the origin
+			int closestTriangleId = -1;
+			snVector4f triangleNormal;
+			float distance = 0;
+			_simplex.computeTriangleClosestToOrigin(closestTriangleId, triangleNormal, distance);
+
+			////find the closest point to the origin
+			//snVector4f revNormal;
+			//_simplex.computeClosestPointToOriginInTriangle(closestTriangleId, revNormal);
+			//distance = revNormal.norme();
+			//const float MIN_PENETRATION = 0.0001f;
+			//if (distance <= MIN_PENETRATION)
+			//{
+			//	revNormal = triangleNormal * -1;
+			//	/*_normal = triangleNormal;
+			//	return true;*/
+			//}
+			snVector4f revNormal = triangleNormal * -1;
+			//find a new point for the simplex.
+			snVector4f newVertex = support(_c1, _c2, revNormal);
+
+			//check if we are closer to the origin
+			float newPointDistance = revNormal.dot(newVertex);
+
+			snVector4f triangle[3];
+			_simplex.getTriangle(closestTriangleId, triangle[0], triangle[1], triangle[2]);
+			const float EPA_TOLERANCE = 0.01f;
+			if ((newPointDistance - distance) < EPA_TOLERANCE ||
+				newVertex == triangle[0] ||
+				newVertex == triangle[1] ||
+				newVertex == triangle[2])
+			{
+				revNormal.normalize();
+				_normal = revNormal * -1;
+				return true;
+			}			
+
+			//add the new vertex
+			int newVertexId = _simplex.addVertex(newVertex);
+			int id0, id1, id2;
+			_simplex.getTriangle(closestTriangleId, id0, id1, id2);
+
+			//split the first edge
+			{
+				snVector4f ve1 = _simplex.computeClosestPointForSegment(triangle[0], triangle[1], snVector4f(0, 0, 0, 1));
+				snVector4f we1 = support(_c1, _c2, ve1);
+				if (ve1.dot(we1) != ve1.dot(ve1))
+				{
+					int edgeVertexId = _simplex.addVertex(we1);
+					_simplex.addTriangle(id0, edgeVertexId, newVertexId);
+					_simplex.addTriangle(edgeVertexId, id1, newVertexId);
+				}
+				else
+				{
+					_simplex.addTriangle(id0, id1, newVertexId);
+				}
+			}
+			//split the second edge
+			{
+				snVector4f ve1 = _simplex.computeClosestPointForSegment(triangle[1], triangle[2], snVector4f(0, 0, 0, 1));
+				snVector4f we1 = support(_c1, _c2, ve1);
+				if (ve1.dot(we1) != ve1.dot(ve1))
+				{
+					int edgeVertexId = _simplex.addVertex(we1);
+					_simplex.addTriangle(id1, edgeVertexId, newVertexId);
+					_simplex.addTriangle(edgeVertexId, id2, newVertexId);
+				}
+				else
+				{
+					_simplex.addTriangle(id1, id2, newVertexId);
+				}
+			}
+			//split the third edge
+			{
+				snVector4f ve1 = _simplex.computeClosestPointForSegment(triangle[2], triangle[0], snVector4f(0, 0, 0, 1));
+				snVector4f we1 = support(_c1, _c2, ve1);
+				if (ve1.dot(we1) != ve1.dot(ve1))
+				{
+					int edgeVertexId = _simplex.addVertex(we1);
+					_simplex.addTriangle(id2, edgeVertexId, newVertexId);
+					_simplex.addTriangle(edgeVertexId, id0, newVertexId);
+				}
+				else
+				{
+					_simplex.addTriangle(id2, id0, newVertexId);
+				}
+			}
+			_simplex.setTriangleValidity(closestTriangleId, false);
+			//_simplex.expand(newVertex, closestTriangleId);
+		}
 	}
 }

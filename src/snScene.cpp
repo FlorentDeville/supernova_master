@@ -361,6 +361,7 @@ namespace Supernova
 					QueryPerformanceCounter(&startSAT);
 #endif
 					snCollisionResult res = snCollision::queryTestCollision((*i), (*j));
+					//snCollisionResult res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
 #if _DEBUG
 					LARGE_INTEGER endSAT;
 					QueryPerformanceCounter(&endSAT);

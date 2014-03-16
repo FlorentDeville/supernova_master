@@ -37,7 +37,7 @@
 
 namespace Supernova
 {
-	snSimplex::snSimplex() : m_vertexBuffer(), m_indexBuffer(), m_triangleCount(0){}
+	snSimplex::snSimplex() : m_vertexBuffer(), m_indexBuffer(), m_triangleCount(0), m_validTriangle(){}
 
 	snSimplex::~snSimplex(){}
 
@@ -53,6 +53,7 @@ namespace Supernova
 		m_indexBuffer.push_back(_vertexId1);
 		m_indexBuffer.push_back(_vertexId2);
 		m_indexBuffer.push_back(_vertexId3);
+		m_validTriangle.push_back(true);
 		return m_triangleCount++;
 	}
 
@@ -68,29 +69,17 @@ namespace Supernova
 		m_indexBuffer.push_back(idNewVertex);
 		m_indexBuffer.push_back(m_indexBuffer[indexId]);
 		m_indexBuffer.push_back(m_indexBuffer[indexId + 1]);
+		m_validTriangle.push_back(true);
 
 		//N 1 2
 		m_indexBuffer.push_back(idNewVertex);
 		m_indexBuffer.push_back(m_indexBuffer[indexId + 1]);
 		m_indexBuffer.push_back(m_indexBuffer[indexId + 2]);
+		m_validTriangle.push_back(true);
 
 		//update the existing triangle 0 N 2
 		m_indexBuffer[indexId + 1] = idNewVertex;
-
-		////N10
-		//m_indexBuffer.push_back(idNewVertex);
-		//m_indexBuffer.push_back(m_indexBuffer[indexId + 1]);
-		//m_indexBuffer.push_back(m_indexBuffer[indexId]);
-
-		////N21
-		//m_indexBuffer.push_back(idNewVertex);
-		//m_indexBuffer.push_back(m_indexBuffer[indexId + 2]);
-		//m_indexBuffer.push_back(m_indexBuffer[indexId + 1]);
-
-		////2N0
-		//m_indexBuffer[indexId + 1] = m_indexBuffer[indexId + 2];
-		//m_indexBuffer[indexId + 2] = idNewVertex;
-
+		m_validTriangle[_triangleId] = true;
 		m_triangleCount += 2;
 	}
 
@@ -108,6 +97,15 @@ namespace Supernova
 		_v3 = m_vertexBuffer[m_indexBuffer[indexBufferId + 2]];
 	}
 
+	void snSimplex::getTriangle(int _triangleId, int& _id1, int& _id2, int& _id3) const
+	{
+		int indexBufferId = _triangleId * 3;
+
+		_id1 = m_indexBuffer[indexBufferId];
+		_id2 = m_indexBuffer[indexBufferId + 1];
+		_id3 = m_indexBuffer[indexBufferId + 2];
+	}
+
 	void snSimplex::computeTriangleClosestToOrigin(int& _triangleId, snVector4f& _normal, float& _distance) const
 	{
 		_distance = SN_FLOAT_MAX;
@@ -115,6 +113,10 @@ namespace Supernova
 		//loop through each triangle to find the closest triangle to the origin
 		for (int triangleId = 0; triangleId < m_triangleCount; ++triangleId)
 		{
+			//this triangle can't be the closest to the origin
+			if (!m_validTriangle[triangleId])
+				continue;
+
 			//get the triangle
 			snVector4f vertices[3];
 			getTriangle(triangleId, vertices[0], vertices[1], vertices[2]);
@@ -135,12 +137,125 @@ namespace Supernova
 
 			//the distance is greater
 			if (distance >= _distance)
+			{
+				m_validTriangle[triangleId] = false;
 				continue;
+			}
+			
+			computeClosestPointToOriginInTriangle(triangleId, AO);
+			distance = AO.norme();
+			if (distance >= _distance)
+			{
+				m_validTriangle[triangleId] = false;
+				continue;
+			}
 
 			//the distance is smaller so save the triangle
 			_distance = distance;
 			_triangleId = triangleId;
-			_normal = n;
+
+			if (_distance <= 0.0001f)
+				_normal = n;
+			else
+			{
+				AO.normalize();
+				_normal = AO * -1;
+			}
 		}
+	}
+
+	void snSimplex::computeClosestPointToOriginInTriangle(int _triangleId, snVector4f& _closestPoint) const
+	{
+		int index = _triangleId * 3;
+		snVector4f a = m_vertexBuffer[m_indexBuffer[index]];
+		snVector4f b = m_vertexBuffer[m_indexBuffer[index + 1]];
+		snVector4f c = m_vertexBuffer[m_indexBuffer[index + 2]];
+
+		snVector4f ab = b - a;
+		snVector4f ac = c - a;
+		snVector4f ap = snVector4f(0, 0, 0, 1) - a;
+		float d1 = ab.dot(ap);
+		float d2 = ac.dot(ap);
+		if (d1 <= 0.f && d2 <= 0.f)
+		{
+			_closestPoint = a;
+			return;
+		}
+
+		snVector4f bp = snVector4f(0, 0, 0, 1) - b;
+		float d3 = ab.dot(bp);
+		float d4 = ac.dot(bp);
+		if (d3 >= 0.f && d4 <= d3)
+		{
+			_closestPoint = b;
+			return;
+		}
+
+		float vc = d1 * d4 - d3 * d2;
+		if (vc <= 0.f && d1 >= 0.f && d3 <= 0.f)
+		{
+			float v = d1 / (d1 - d3);
+			_closestPoint = a + ab * v;
+			return;
+		}
+
+		snVector4f cp = snVector4f(0, 0, 0, 1) - c;
+		float d5 = ab.dot(cp);
+		float d6 = ac.dot(cp);
+		if (d6 >= 0.f && d5 <= d6)
+		{
+			_closestPoint = c;
+			return;
+		}
+
+		float vb = d5 * d2 - d1 * d6;
+		if (vb <= 0.f && d2 >= 0.f && d6 <= 0.f)
+		{
+			float w = d2 / (d2 - d6);
+			_closestPoint = a + ac * w;
+			return;
+		}
+
+		float va = d3 * d6 - d5 * d4;
+		if (va <= 0.f && (d4 - d3) >= 0.f && (d5 - d6) >= 0.f)
+		{
+			float w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
+			_closestPoint = b + (c - b) * w;
+			return;
+		}
+
+		float denom = 1.f / (va + vb + vc);
+		float v = vb * denom;
+		float w = vc * denom;
+		_closestPoint = a + ab * v + ac * w;
+	}
+
+	snVector4f snSimplex::computeClosestPointForSegment(const snVector4f& _e1, const snVector4f& _e2, const snVector4f& _p) const
+	{
+		snVector4f edge = _e2 - _e1;
+		float length = edge.norme();
+		edge.normalize();
+
+		snVector4f e1p = _p - _e1;
+
+		float distance = edge.dot(e1p);
+		distance = clamp(distance, 0.f, length);
+
+		return _e1 + (edge * distance);
+	}
+
+	void snSimplex::setTriangleValidity(int _triangleId, bool _isValid)
+	{
+		m_validTriangle[_triangleId] = _isValid;
+	}
+
+	void* snSimplex::operator new(size_t _count)
+	{
+		return _aligned_malloc(_count, SN_ALIGN_SIZE);
+	}
+
+	void snSimplex::operator delete(void* _p)
+	{
+		_aligned_free(_p);
 	}
 }

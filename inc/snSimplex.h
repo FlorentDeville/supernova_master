@@ -40,7 +40,7 @@
 namespace Supernova
 {
 	//Represent a simplex as produced by the GJK algorithm.
-	class snSimplex
+	class SN_ALIGN snSimplex
 	{
 	private:
 		//List of vertices making the simplex
@@ -51,6 +51,9 @@ namespace Supernova
 
 		//The number of triangles in the simplex.
 		int m_triangleCount;
+
+		//Get or set if a triangle is valid to be the closest to the origin.
+		mutable vector<bool> m_validTriangle;
 
 	public:
 
@@ -75,8 +78,23 @@ namespace Supernova
 		//Get the vertices making a triangle identify by its id.
 		void getTriangle(int _triangleId, snVector4f& _v1, snVector4f& _v2, snVector4f& _v3) const;
 
+		void getTriangle(int _triangleId, int& _id1, int& _id2, int& _id3) const;
+
 		//Compute what triangle is the closest to the origin and return its id and normal. The normal points to the origin.
 		void computeTriangleClosestToOrigin(int& _triangleId, snVector4f& _normal, float& _distance) const;
+
+		//Compute the closest point to the origin of a given triangle.
+		void computeClosestPointToOriginInTriangle(int _triangleId, snVector4f& _closestPoint) const;
+
+		snVector4f computeClosestPointForSegment(const snVector4f& _e1, const snVector4f& e2, const snVector4f& _p) const;
+
+		void setTriangleValidity(int _triangleId, bool _isValid);
+
+		//Overridden new operator to create scene with correct alignement.
+		void* operator new(size_t _count);
+
+		//Overridden delete operator to delete using the correct alignement.
+		void operator delete(void* _p);
 	};
 }
 #endif
