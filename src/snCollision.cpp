@@ -113,15 +113,18 @@ namespace Supernova
 			bool overlapRes = true;
 			overlapRes = computeOverlap(*_b1, *_b2, s1Normals[i], smallestOverlapNormal, smallestOverlap);
 			if (!overlapRes) return res;
-			overlapRes = computeOverlap(*_b1, *_b2, s1Normals[i], smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeOverlap(*_b1, *_b2, s2Normals[i], smallestOverlapNormal, smallestOverlap);
 			if (!overlapRes) return res;
+		}
 
-			//compute overlap for the cross product of the normals
+		//compute overlap for the cross product of the normals
+		for (int i = 0; i < NORMAL_COUNT; ++i)
+		{
 			for (int j = i; j < NORMAL_COUNT; ++j)
 			{
 				snVector4f cross = s1Normals[i].cross(s2Normals[j]);
-				if (cross.squareNorme() == 1.f)
-					overlapRes = computeOverlap(*_b1, *_b2, cross, smallestOverlapNormal, smallestOverlap);
+				if (cross.squareNorme() != 1.f) continue;
+				bool overlapRes = computeOverlap(*_b1, *_b2, cross, smallestOverlapNormal, smallestOverlap);
 				if (!overlapRes) return res;
 			}
 		}
