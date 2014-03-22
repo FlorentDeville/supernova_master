@@ -46,6 +46,8 @@
 #include "snNonPenetrationConstraint.h"
 #include "snFrictionConstraint.h"
 
+#include "snTimer.h"
+
 #ifdef _DEBUG
 #include <Windows.h>
 #include <string>
@@ -164,8 +166,21 @@ namespace Supernova
 
 	void snScene::update(float _deltaTime)
 	{
+		long long startCollision = snTimer::getCurrentTick();
+
 		//compute collision points
 		computeCollisions(_deltaTime);
+
+		long long collisionDuration = snTimer::getElapsedTickCount(startCollision);
+		float seconds = snTimer::convertElapsedTickCountInSeconds(collisionDuration);
+		float milliseconds = snTimer::convertElapsedTickCountInMilliSeconds(collisionDuration);
+		float microseconds = snTimer::convertElapsedTickCountInMicroSeconds(collisionDuration);
+		std::wstring log = L"collision tick=" + std::to_wstring(collisionDuration) + L"\n";
+		log += L"  " + std::to_wstring(seconds) + L"s\n";
+		log += L"  " + std::to_wstring(milliseconds) + L"ms\n";
+		log += L"  " + std::to_wstring(microseconds) + L"µs\n\n";
+		OutputDebugString(log.c_str());
+		
 
 		//The constraints must be prepared before applying forces.
 		//applyForces updates the velocities with candidates velocities and we can't prepare constraints with candidate velocities.
