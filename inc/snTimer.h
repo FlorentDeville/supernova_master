@@ -35,6 +35,8 @@
 #ifndef SN_TIMER_H
 #define SN_TIMER_H
 
+#include <stdint.h>
+
 namespace Supernova
 {
 	class snTimer
@@ -48,6 +50,8 @@ namespace Supernova
 
 		//Return the current high precision time
 		static long long getCurrentTick();
+
+		static uint64_t rdtsc();
 
 		//Compute the elapsed time between the parameter _startTime and the current time.
 		static long long getElapsedTickCount(long long _startTick);

@@ -49,6 +49,9 @@ namespace Supernova
 		//size of the box: width, height, depth.
 		snVector4f m_size;
 
+		//Half size of the box
+		snVector4f m_extends;
+
 		//Vertices composing the box.
 		snVector4f m_box[VERTEX_COUNT];
 
@@ -89,6 +92,9 @@ namespace Supernova
 		const snVector4f& getSize() const;
 
 		void setSize(const snVector4f& _size);
+
+		//Return an array containing the extends of the box for each axis.
+		const snVector4f& getExtends() const;
 
 		/*Return an array of three vectors containing normals along x, y and z axis (in that order) and in world coordinates.*/
 		const snVector4f* getWorldNormal() const;

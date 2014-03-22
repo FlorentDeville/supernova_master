@@ -49,6 +49,11 @@ namespace Supernova
 		return timer.QuadPart;
 	}
 
+	uint64_t snTimer::rdtsc()
+	{
+		return __rdtsc();
+	}
+
 	//Compute the elapsed number of tick between the parameter _startTime and the current time.
 	long long snTimer::getElapsedTickCount(long long _startTime)
 	{

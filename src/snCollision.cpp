@@ -154,18 +154,24 @@ namespace Supernova
 
 		snCollisionResult res;
 
-		snVector4f ea = _b1->getSize() * 0.5f;
-		snVector4f eb = _b2->getSize() * 0.5f;
+		snVector4f ea = _b1->getExtends();
+		snVector4f eb = _b2->getExtends();
 
 		//compute rotation matrix expressing b in a's coordinate frame.
-		snMatrix44f R;
-		for (int i = 0; i < 3; ++i)
-		{
-			for (int j = 0; j < 3; ++j)
-			{
-				R[i][j] = s1Normals[i].dot(s2Normals[j]);
-			}
-		}
+		snMatrix44f orientationA;
+		orientationA[0] = s1Normals[0];
+		orientationA[1] = s1Normals[1];
+		orientationA[2] = s1Normals[2];
+		orientationA[3] = _mm_set1_ps(0);
+		snMatrix44f orientationB;
+		orientationB[0] = s2Normals[0];
+		orientationB[1] = s2Normals[1];
+		orientationB[2] = s2Normals[2];
+		orientationB[3] = _mm_set1_ps(0);
+		snMatrix44f transOrientationB;
+		orientationB.transpose(transOrientationB);
+		
+		snMatrix44f R = orientationA * transOrientationB;
 
 		//compute translation vector t
 		snVector4f ds = _p2 - _p1;
@@ -174,14 +180,11 @@ namespace Supernova
 
 		//compute common subexpressions
 		snMatrix44f absR;
+		snVector4f perturbation(0.0001f, 0.0001f, 0.0001f, 0);
 		for (int i = 0; i < 3; ++i)
 		{
-			for (int j = 0; j < 3; ++j)
-			{
-				absR[i][j] = fabs(R[i][j]) + 0.0001f;
-			}
+			absR[i] = R[i].getAbsolute() + perturbation;
 		}
-
 
 		for (int i = 0; i < 3; ++i)
 		{

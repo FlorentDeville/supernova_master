@@ -63,6 +63,12 @@ namespace Supernova
 	void snColliderBox::setSize(const snVector4f& _size)
 	{
 		m_size = _size;
+		m_extends = m_size * 0.5f;
+	}
+
+	const snVector4f& snColliderBox::getExtends() const
+	{
+		return m_extends;
 	}
 
 	void snColliderBox::computeVertices()

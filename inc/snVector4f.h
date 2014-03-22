@@ -255,6 +255,13 @@ namespace Supernova
 			m_vec = _mm_max_ps(m_vec, minusV);
 		}
 
+		inline snVector4f getAbsolute()
+		{
+			__m128 zero = _mm_set1_ps(0);
+			__m128 minusV = _mm_sub_ps(zero, m_vec);
+			return snVector4f(_mm_max_ps(m_vec, minusV));
+		}
+
 		inline float& operator[](int id)
 		{
 			return m_vec.m128_f32[id];

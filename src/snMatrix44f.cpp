@@ -419,10 +419,37 @@ namespace Supernova
 
 	void snMatrix44f::transpose(snMatrix44f& _transpose) const
 	{
-		_transpose.m_r[0] = snVector4f(m_r[0].getX(), m_r[1].getX(), m_r[2].getX(), m_r[3].getX());
-		_transpose.m_r[1] = snVector4f(m_r[0].getY(), m_r[1].getY(), m_r[2].getY(), m_r[3].getY());
-		_transpose.m_r[2] = snVector4f(m_r[0].getZ(), m_r[1].getZ(), m_r[2].getZ(), m_r[3].getZ());
-		_transpose.m_r[3] = snVector4f(m_r[0].getW(), m_r[1].getW(), m_r[2].getW(), m_r[3].getW());
+		// Let's say we start with this matrix:
+		// r0 = 00 01 02 03
+		// r1 = 10 11 12 13
+		// r2 = 20 21 22 23
+		// r3 = 30 31 32 33
+		//
+		// Then we compute shuffle 1 and 2 like this:
+		// s1 = 00 01 10 11 //shuffle(r0, r1, shuffle(1, 0, 1, 0))
+		// s2 = 20 21 30 31 //shuffle(r2, r3, shuffle(1, 0, 1, 0))
+		//
+		// From this we can compute the first two rows of the transpose:
+		// transpose row 1 = 00 10 20 30 //shuffle(s1, s2, shuffle(2, 0, 2, 0))
+		// transpose row 2 = 01 11 21 31 //shuffle(s1, s2, shuffle(3, 1, 3, 1))
+		//
+		// We repeat the process to get transpose row 2 and 3:
+		// s1 = 02 03 12 13 //shuffle(r0, r1, shuffle(3, 2, 3, 2))
+		// s2 = 22 23 32 33 //shuffle(r2, r3, shuffle(3, 2, 3, 2))
+		// transpose row 2 = 02 12 22 32 //shuffle(s1, s2, shuffle(2, 0, 2, 0))
+		// transpose row 3 = 03 13 23 33 //shuffle(s1, s2, shuffle(3, 1, 3, 1))
+
+		__m128 s1 = _mm_shuffle_ps(m_r[0].m_vec, m_r[1].m_vec, _MM_SHUFFLE(1, 0, 1, 0));
+		__m128 s2 = _mm_shuffle_ps(m_r[2].m_vec, m_r[3].m_vec, _MM_SHUFFLE(1, 0, 1, 0));
+
+		_transpose.m_r[0] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(2, 0, 2, 0));
+		_transpose.m_r[1] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(3, 1, 3, 1));
+
+		s1 = _mm_shuffle_ps(m_r[0].m_vec, m_r[1].m_vec, _MM_SHUFFLE(3, 2, 3, 2));
+		s2 = _mm_shuffle_ps(m_r[2].m_vec, m_r[3].m_vec, _MM_SHUFFLE(3, 2, 3, 2));
+
+		_transpose.m_r[2] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(2, 0, 2, 0));
+		_transpose.m_r[3] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(3, 1, 3, 1));
 	}
 
 	void snMatrix44f::createRotationFromQuaternion(const snVector4f& _q)
