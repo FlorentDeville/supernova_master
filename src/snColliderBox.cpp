@@ -160,14 +160,13 @@ namespace Supernova
 		for (int i = 0; i < 8; ++i)
 			m_worldBox[i] = _transform * m_box[i];
 
-		m_worldOrigin = _transform * m_origin;
+		//world origin is the last row.
+		m_worldOrigin = _transform[4];
 
-		m_worldNormals[0] = _transform * snVector4f(1, 0, 0, 0); //right - x
-		m_worldNormals[1] = _transform * snVector4f(0, 1, 0, 0); //up - y
-		m_worldNormals[2] = _transform * snVector4f(0, 0, 1, 0); //back - z
-		m_worldNormals[0].normalize();
-		m_worldNormals[1].normalize();
-		m_worldNormals[2].normalize();
+		//world normals are just the rows of the transform matrix
+		m_worldNormals[0] = _transform[0];
+		m_worldNormals[1] = _transform[1];
+		m_worldNormals[2] = _transform[2];
 	}
 
 	void snColliderBox::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const

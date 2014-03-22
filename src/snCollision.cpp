@@ -51,7 +51,7 @@ namespace Supernova
 	snCollision::snCollision()
 	{
 		//initialize the collision query map
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderBox), &Supernova::snCollision::queryTestCollisionBoxVersusBox));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderBox), &Supernova::snCollision::queryTestCollisionBoxVersusBox_V2));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderSphere), &Supernova::snCollision::queryTestCollisionSphereVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderPlan), &Supernova::snCollision::queryTestCollisionBoxVersusPlan));
@@ -104,18 +104,18 @@ namespace Supernova
 		s2Normals = _b2->getWorldNormal();
 
 		snVector4f smallestOverlapNormal;
-		float smallestOverlap = SN_FLOAT_MAX;
+		float smallestOverlap = SN_FLOAT_MAX;		
 
 		//compute collider overlap using the normals
 		const float NORMAL_COUNT = 3;
 		for (int i = 0; i < NORMAL_COUNT; ++i)
 		{
-			bool overlapRes = true;
+			bool overlapRes = true;		
 			overlapRes = computeOverlap(*_b1, *_b2, s1Normals[i], smallestOverlapNormal, smallestOverlap);
-			if (!overlapRes) return res;
+			if (!overlapRes) return res;		
 			overlapRes = computeOverlap(*_b1, *_b2, s2Normals[i], smallestOverlapNormal, smallestOverlap);
-			if (!overlapRes) return res;
-		}
+			if (!overlapRes) return res;		
+		}	
 
 		//compute overlap for the cross product of the normals
 		for (int i = 0; i < NORMAL_COUNT; ++i)
@@ -126,6 +126,283 @@ namespace Supernova
 				if (cross.squareNorme() != 1.f) continue;
 				bool overlapRes = computeOverlap(*_b1, *_b2, cross, smallestOverlapNormal, smallestOverlap);
 				if (!overlapRes) return res;
+			}
+		}
+
+		//there is a collision so find the collision patch
+		res.m_collision = true;
+		res.m_normal = smallestOverlapNormal;
+
+		assert(smallestOverlap > 0.f);
+
+		//find collision patch using clipping algorithm.
+		snFeatureClipping clipping;
+		bool clippingResult = clipping.findContactPatch(*_b1, *_b2, smallestOverlapNormal, res.m_contacts, res.m_penetrations);
+		res.m_collision = clippingResult;
+		return res;
+	}
+
+	snCollisionResult snCollision::queryTestCollisionBoxVersusBox_V2(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
+	{
+		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
+		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
+		const snVector4f* s1Normals = _b1->getWorldNormal();
+		const snVector4f* s2Normals = _b2->getWorldNormal();
+		snVector4f smallestOverlapNormal;
+		float smallestOverlap = SN_FLOAT_MAX;
+
+		snCollisionResult res;
+
+		snVector4f ea = _b1->getSize() * 0.5f;
+		snVector4f eb = _b2->getSize() * 0.5f;
+
+		//compute rotation matrix expressing b in a's coordinate frame.
+		snMatrix44f R;
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				R[i][j] = s1Normals[i].dot(s2Normals[j]);
+			}
+		}
+
+		//compute translation vector t
+		snVector4f ds = _p2 - _p1;
+		//Bring translation into a's coordinate frame
+		snVector4f t(ds.dot(s1Normals[0]), ds.dot(s1Normals[1]), ds.dot(s1Normals[2]), 0);
+
+		//compute common subexpressions
+		snMatrix44f absR;
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				absR[i][j] = fabs(R[i][j]) + 0.0001f;
+			}
+		}
+
+
+		for (int i = 0; i < 3; ++i)
+		{
+			//test axis A0, A1, A2
+			float ra = ea[i];
+			float rb = eb.dot(absR[i]);
+
+			//compute overlap
+			float overlap = ra + rb - fabs(t[i]);
+
+			//no overlap, it means the current tested axis is a separate axis so there is no collision.
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(s1Normals[i].dot(ds));
+				smallestOverlapNormal = s1Normals[i] * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//test axis B0, B1, B2
+		for (int i = 0; i < 3; ++i)
+		{
+			snVector4f absRColI(absR[0][i], absR[1][i], absR[2][i], 0);
+			float ra = ea.dot(absRColI);
+			float rb = eb[i];
+
+			snVector4f RColI(R[0][i], R[1][i], R[2][i], 0);
+			float at = t.dot(RColI);
+
+			float overlap = ra + rb - fabs(at);
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(s2Normals[i].dot(ds));
+				smallestOverlapNormal = s2Normals[i] * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A0 x B0
+		snVector4f cross = s1Normals[0].cross(s2Normals[0]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[2] * R[1][0] - t[1] * R[2][0]);
+			float ra = ea[1] * absR[2][0] + ea[2] * absR[1][0];
+			float rb = eb[1] * absR[0][2] + eb[2] * absR[0][1];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A0 x B1
+		cross = s1Normals[0].cross(s2Normals[1]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[2] * R[1][1] - t[1] * R[2][1]);
+			float ra = ea[1] * absR[2][1] + ea[2] * absR[1][1];
+			float rb = eb[0] * absR[0][2] + eb[2] * absR[0][0];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A0 x B2
+		cross = s1Normals[0].cross(s2Normals[2]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[2] * R[1][2] - t[1] * R[2][2]);
+			float ra = ea[1] * absR[2][2] + ea[2] * absR[1][2];
+			float rb = eb[0] * absR[0][1] + eb[1] * absR[0][0];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A1 x B0
+		cross = s1Normals[1].cross(s2Normals[0]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[0] * R[2][0] - t[2] * R[0][0]);
+			float ra = ea[0] * absR[2][0] + ea[2] * absR[0][0];
+			float rb = eb[1] * absR[1][2] + eb[2] * absR[1][1];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A1 x B1
+		cross = s1Normals[1].cross(s2Normals[1]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[0] * R[2][1] - t[2] * R[0][1]);
+			float ra = ea[0] * absR[2][1] + ea[2] * absR[0][1];
+			float rb = eb[0] * absR[1][2] + eb[2] * absR[1][1];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A1 x B2
+		cross = s1Normals[1].cross(s2Normals[2]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[0] * R[2][2] - t[2] * R[0][2]);
+			float ra = ea[0] * absR[2][2] + ea[2] * absR[0][2];
+			float rb = eb[0] * absR[1][1] + eb[1] * absR[1][0];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A2 x B0
+		cross = s1Normals[2].cross(s2Normals[0]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[1] * R[0][0] - t[0] * R[1][0]);
+			float ra = ea[0] * absR[1][0] + ea[1] * absR[0][0];
+			float rb = eb[1] * absR[2][2] + eb[2] * absR[2][1];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A2 x B1
+		cross = s1Normals[2].cross(s2Normals[1]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[1] * R[0][1] - t[0] * R[1][1]);
+			float ra = ea[0] * absR[1][1] + ea[1] * absR[0][1];
+			float rb = eb[0] * absR[2][2] + eb[2] * absR[2][0];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
+			}
+		}
+
+		//A2 x B2
+		cross = s1Normals[2].cross(s2Normals[2]);
+		if (cross.squareNorme() == 1.f)
+		{
+			float tDotL = fabsf(t[1] * R[0][2] - t[0] * R[1][2]);
+			float ra = ea[0] * absR[1][2] + ea[1] * absR[0][2];
+			float rb = eb[0] * absR[2][1] + eb[1] * absR[2][0];
+
+			float overlap = ra + rb - tDotL;
+			if (overlap <= 0.f)
+				return res;
+
+			if (smallestOverlap > overlap)
+			{
+				int s = sign(cross.dot(ds));
+				smallestOverlapNormal = cross * -s;
+				smallestOverlap = overlap;
 			}
 		}
 
@@ -266,25 +543,22 @@ namespace Supernova
 		_c1.computeProjection(_axis, minS2, maxS2);
 		_c2.computeProjection(_axis, minS1, maxS1);
 
-		float diff2 = maxS2 - minS1;
-
+		float diff1 = maxS1 - minS2;
+ 		float diff2 = maxS2 - minS1;
+		
 		//no collision
-		if (diff2 <= 0.f)
+		if (diff1 <= 0.f || diff2 <= 0.f)
 			return false;
 
 		//collision, get the minimum overlap with the axis
-		float diff1 = maxS1 - minS2;
-		float min1 = fabs(diff1);
-		float min2 = fabs(diff2);
-
-		if (min1 < _overlap)
+		if (diff1 < _overlap)
 		{
-			_overlap = min1;
+			_overlap = diff1;
 			_separatingAxis = _axis;
 		}
-		if (min2 < _overlap)
+		if (diff2 < _overlap)
 		{
-			_overlap = min2;
+			_overlap = diff2;
 			_separatingAxis = _axis * -1;
 		}
 		return true;

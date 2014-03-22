@@ -95,8 +95,8 @@ namespace Devil
 			return false;
 		}
 
-		//createScene1();
-		createScene2();
+		createScene1();
+		//createScene2();
 
 		//test case to debug the clipping plan bug.
 		//createScene3();
@@ -459,7 +459,7 @@ namespace Devil
 
 			groundHeight += height * 0.5f;
 		}
-		return;
+		//return;
 		//first block on the ground
 		float blockOneHeight = 0;
 		{
@@ -701,7 +701,7 @@ namespace Devil
 		{
 			float width = 200;
 			float height = 200;
-			float depth = 2;
+			float depth = 5;
 
 			//create actor
 			snActor* act = 0;

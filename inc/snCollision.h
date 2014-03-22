@@ -96,6 +96,9 @@ namespace Supernova
 		static snCollisionResult queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1, 
 			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2);
 
+		static snCollisionResult queryTestCollisionBoxVersusBox_V2(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
+			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2);
+
 		static snCollisionResult queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
 			const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2);
 

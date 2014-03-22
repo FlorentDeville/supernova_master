@@ -92,6 +92,9 @@ namespace Supernova
 		/*Get the row with the index _id*/
 		inline snVector4f& operator[](int _id);
 
+		/*Get the row with the index _id*/
+		inline snVector4f operator[](int _id) const;
+
 		/*create a translation matrix*/
 		void createTranslation(float x, float y, float z);
 
@@ -136,6 +139,11 @@ namespace Supernova
 	};
 
 	snVector4f& snMatrix44f::operator[](int _id)
+	{
+		return m_r[_id];
+	}
+
+	snVector4f snMatrix44f::operator[](int _id) const
 	{
 		return m_r[_id];
 	}

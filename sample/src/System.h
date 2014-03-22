@@ -27,7 +27,7 @@ namespace Devil
 
 		EntitySphere* m_Sphere;
 
-		int TICK = 60;
+		int TICK = 90;
 
 		unsigned long m_deltaTime;
 		long long m_lastTick;
