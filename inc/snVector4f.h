@@ -247,6 +247,23 @@ namespace Supernova
 			int vmask = _mm_movemask_epi8(ivcmp);
 			return (vmask == 0xffff);
 		}
+
+		inline void absolute()
+		{
+			__m128 zero = _mm_set1_ps(0);
+			__m128 minusV = _mm_sub_ps(zero, m_vec);
+			m_vec = _mm_max_ps(m_vec, minusV);
+		}
+
+		inline float& operator[](int id)
+		{
+			return m_vec.m128_f32[id];
+		}
+		
+		inline float operator[](int id) const
+		{
+			return m_vec.m128_f32[id];
+		}
 	};
 }
 

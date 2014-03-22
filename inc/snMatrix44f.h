@@ -89,6 +89,9 @@ namespace Supernova
 		/*assign*/
 		void operator=(const snMatrix44f& m)const;
 
+		/*Get the row with the index _id*/
+		inline snVector4f& operator[](int _id);
+
 		/*create a translation matrix*/
 		void createTranslation(float x, float y, float z);
 
@@ -131,6 +134,11 @@ namespace Supernova
 		//Compute the rotation matrix from a quaternion
 		void createRotationFromQuaternion(const snVector4f& _q);
 	};
+
+	snVector4f& snMatrix44f::operator[](int _id)
+	{
+		return m_r[_id];
+	}
 
 	//Compute the product between a vector and a matrix. The fourth element of the vector and the fourth line of the matrix are ignored.
 	snVector4f snMatrixTransform3(const snVector4f& _v, const snMatrix44f& _m);
