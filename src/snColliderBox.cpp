@@ -164,7 +164,7 @@ namespace Supernova
 	void snColliderBox::setWorldTransform(const snMatrix44f& _transform)
 	{
 		for (int i = 0; i < 8; ++i)
-			m_worldBox[i] = _transform * m_box[i];
+			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform);
 
 		//world origin is the last row.
 		m_worldOrigin = _transform[4];

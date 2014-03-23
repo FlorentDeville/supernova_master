@@ -163,8 +163,8 @@ namespace Supernova
 	snMatrix44f snMatrix44f::operator+(const snMatrix44f& m)const
 	{
 		snMatrix44f sum;
-		for (int i = 0; i < 4; i++)
-			sum.m_r[i] = m_r[i] + m.m_r[i];
+		for (int i = 0; i < ROW_COUNT; i++)
+			sum[i] = m_r[i] + m[i];
 
 		return sum;
 	}
@@ -173,60 +173,24 @@ namespace Supernova
 	snMatrix44f snMatrix44f::operator-(const snMatrix44f& m)const
 	{
 		snMatrix44f sum;
-		for (int i = 0; i < 4; i++)
-			sum.m_r[i] = m_r[i] - m.m_r[i];
+		for (int i = 0; i < ROW_COUNT; i++)
+			sum[i] = m_r[i] - m[i];
 
 		return sum;
-	}
-
-	/*multiplication*/
-	snMatrix44f snMatrix44f::operator*(const snMatrix44f& m)const
-	{
-		snMatrix44f res;
-
-		//for each row of the first matrix
-		for (int i = 0; i < 4; i++) //row
-		{
-			//for each column of the second matrix
-			for (int j = 0; j < 4; j++) //column
-			{
-				//create a vector containing the column of the second matrix
-				snVector4f col = snVector4f(m.m_r[0].m_vec.m128_f32[j], m.m_r[1].m_vec.m128_f32[j],
-					m.m_r[2].m_vec.m128_f32[j], m.m_r[3].m_vec.m128_f32[j]);
-
-				//compute the value of res[i][j]
-				res.m_r[i].m_vec.m128_f32[j] = m_r[i].dot4(col);
-			}
-		}
-
-		return res;
-	}
-
-	/*Multiplication with a vector*/
-	snVector4f snMatrix44f::operator*(const snVector4f& v)const
-	{
-		snVector4f col0(m_r[0].getX(), m_r[1].getX(), m_r[2].getX(), m_r[3].getX());
-		snVector4f col1(m_r[0].getY(), m_r[1].getY(), m_r[2].getY(), m_r[3].getY());
-		snVector4f col2(m_r[0].getZ(), m_r[1].getZ(), m_r[2].getZ(), m_r[3].getZ());
-		snVector4f col3(m_r[0].getW(), m_r[1].getW(), m_r[2].getW(), m_r[3].getW());
-
-		snVector4f res(v.dot4(col0), v.dot4(col1), v.dot4(col2), v.dot4(col3));
-
-		return res;
 	}
 
 	/*add and assign*/
 	void snMatrix44f::operator+=(const snMatrix44f& m)
 	{
-		for (int i = 0; i < 4; i++)
-			m_r[i] = m_r[i] + m.m_r[i];
+		for (int i = 0; i < ROW_COUNT; i++)
+			m_r[i] = m_r[i] + m[i];
 	}
 
 	/*sub and assign*/
 	void snMatrix44f::operator-=(const snMatrix44f& m)
 	{
-		for (int i = 0; i < 4; i++)
-			m_r[i] = m_r[i] - m.m_r[i];
+		for (int i = 0; i < ROW_COUNT; i++)
+			m_r[i] = m_r[i] - m[i];
 	}
 
 	/*assign*/
@@ -513,5 +477,34 @@ namespace Supernova
 		res = _mm_add_ps(res, mul);
 
 		return res;
+	}
+
+	snVector4f snMatrixTransform4(const snVector4f& _v, const snMatrix44f& _m)
+	{
+		//compute v.[i] * m[i] = r[i] the res = sum(r[i])
+		__m128 vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 res = _mm_mul_ps(vTemp, _m[0].m_vec);
+
+		vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 mul = _mm_mul_ps(vTemp, _m[1].m_vec);
+		res = _mm_add_ps(res, mul);
+
+		vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(2, 2, 2, 2));
+		mul = _mm_mul_ps(vTemp, _m[2].m_vec);
+		res = _mm_add_ps(res, mul);
+
+		vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(3, 3, 3, 3));
+		mul = _mm_mul_ps(vTemp, _m[3].m_vec);
+		res = _mm_add_ps(res, mul);
+
+		return res;
+	}
+
+	void snMatrixMultiply(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res)
+	{
+		_res[0] = snMatrixTransform4(_m1[0], _m2);
+		_res[1] = snMatrixTransform4(_m1[1], _m2);
+		_res[2] = snMatrixTransform4(_m1[2], _m2);
+		_res[3] = snMatrixTransform4(_m1[3], _m2);
 	}
 }

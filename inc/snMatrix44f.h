@@ -47,8 +47,10 @@ namespace Supernova
 	{
 	public:
 
+		static const int ROW_COUNT = 4;
+
 		//array representing the matrix. Each element is a row so the representation is row major.
-		snVector4f m_r[4];
+		snVector4f m_r[ROW_COUNT];
 
 		static const snMatrix44f m_zero;
 
@@ -73,12 +75,6 @@ namespace Supernova
 
 		/*substraction*/
 		snMatrix44f operator-(const snMatrix44f& m)const;
-
-		/*multiplication*/
-		snMatrix44f operator*(const snMatrix44f& m)const;
-
-		/*Multiplication with a vector*/
-		snVector4f operator*(const snVector4f& v)const;
 
 		/*add and assign*/
 		void operator+=(const snMatrix44f& m);
@@ -150,6 +146,12 @@ namespace Supernova
 
 	//Compute the product between a vector and a matrix. The fourth element of the vector and the fourth line of the matrix are ignored.
 	snVector4f snMatrixTransform3(const snVector4f& _v, const snMatrix44f& _m);
+
+	//Compute the product between a vector and a matrix.
+	snVector4f snMatrixTransform4(const snVector4f& _v, const snMatrix44f& _m);
+
+	//Multiply two matrices _m1 and _m2 and set the result in _res.
+	void snMatrixMultiply(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res);
 }
 
 #endif // SN_MATRIX44F_H

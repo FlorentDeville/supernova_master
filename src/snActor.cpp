@@ -114,8 +114,9 @@ namespace Supernova
 		m_R.transpose(RT);
 
 		snMatrix44f J = getInertiaTensor();
-		snMatrix44f WJ = m_R * J;
-		m_worldInertiaTensor = WJ * RT;
+		snMatrix44f WJ;
+		snMatrixMultiply(m_R, J, WJ);
+		snMatrixMultiply(WJ, RT, m_worldInertiaTensor);
 	}
 
 	void snActor::computeWInvInertiaTensor()
@@ -124,8 +125,9 @@ namespace Supernova
 		m_R.transpose(RT);
 
 		snMatrix44f InvJ = getInvInertiaTensor();
-		snMatrix44f WInvJ = m_R * InvJ;
-		m_invWorldInertiaTensor = WInvJ * RT;
+		snMatrix44f WInvJ;
+		snMatrixMultiply(m_R, InvJ, WInvJ);
+		snMatrixMultiply(WInvJ, RT, m_invWorldInertiaTensor);
 	}
 
 	const snMatrix44f& snActor::getWorldInertia()const
@@ -287,7 +289,8 @@ namespace Supernova
 		snMatrix44f translation;
 		translation.createTranslation(_x);
 
-		snMatrix44f transform = _R * translation;
+		snMatrix44f transform;
+		snMatrixMultiply(_R, translation, transform);
 
 		for (std::vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 			(*i)->setWorldTransform(transform);

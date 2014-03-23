@@ -32,10 +32,10 @@ namespace Supernova
 	{
 		for (int i = 0; i < 4; ++i)
 		{
-			m_worldCorners[i] = _transform * m_corners[i];
+			m_worldCorners[i] = snMatrixTransform4(m_corners[i], _transform);
 		}
 
-		m_worldNormal = _transform * m_normal;
+		m_worldNormal = snMatrixTransform3(m_normal, _transform);
 	}
 
 	const snVector4f& snColliderPlan::getNormal()const

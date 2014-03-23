@@ -27,7 +27,7 @@ namespace Supernova
 
 	void snColliderSphere::setWorldTransform(const snMatrix44f& _transform)
 	{
-		m_worldOrigin = _transform * m_origin;
+		m_worldOrigin = _transform[3];
 	}
 
 	snVector4f snColliderSphere::getLocalCenterOfMass() const
