@@ -172,7 +172,7 @@ namespace Supernova
 		orientationB.transpose(transOrientationB);
 		
 		snMatrix44f R;
-		snMatrixMultiply(orientationA, transOrientationB, R);
+		snMatrixMultiply3(orientationA, transOrientationB, R);
 
 		//compute translation vector t
 		snVector4f ds = _p2 - _p1;

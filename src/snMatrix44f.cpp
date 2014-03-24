@@ -500,11 +500,25 @@ namespace Supernova
 		return res;
 	}
 
-	void snMatrixMultiply(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res)
+	snVector4f snMatrixTransform3(const snMatrix44f& _m, const snVector4f& _v)
+	{
+		//compute first matrix column time X
+		return snVector4f(_m[0].dot(_v), _m[1].dot(_v), _m[2].dot(_v), 0);
+	}
+
+	void snMatrixMultiply4(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res)
 	{
 		_res[0] = snMatrixTransform4(_m1[0], _m2);
 		_res[1] = snMatrixTransform4(_m1[1], _m2);
 		_res[2] = snMatrixTransform4(_m1[2], _m2);
 		_res[3] = snMatrixTransform4(_m1[3], _m2);
+	}
+
+	void snMatrixMultiply3(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res)
+	{
+		_res[0] = snMatrixTransform4(_m1[0], _m2);
+		_res[1] = snMatrixTransform4(_m1[1], _m2);
+		_res[2] = snMatrixTransform4(_m1[2], _m2);
+		_res[3] = snVector4f(0, 0, 0, 1);
 	}
 }

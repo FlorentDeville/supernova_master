@@ -32,35 +32,53 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_MATH_H
-#define SN_MATH_H
+#ifndef SN_FIXED_CONSTRAINT_H
+#define SN_FIXED_CONSTRAINT_H
 
-#include <cfloat>
-
-//The maximum number a floating point variable can store.
-#define SN_FLOAT_MAX FLT_MAX
-
-//The smallest absolute number a floating point variable can store
-#define SN_FLOAT_MIN FLT_MIN
+#include "snIConstraint.h"
+#include "snMatrix44f.h"
 
 namespace Supernova
 {
-	class snVector4f;
+	class snActor;
 
-	//Clamp the value between min and max.
-	float clamp(float _value, float _min, float _max);
+	//Represent a constraint of a body staying at the same distance of a point in space.
+	class snFixedConstraint : public snIConstraint
+	{
+	protected:
 
-	//Clamp a vector componentwise.
-	snVector4f clampComponents(const snVector4f& _v, float _min, float _max);
+		//Actor this constraint has to be applied to.
+		snActor* m_actor;
 
-	//Return true if the value is between the min and max value included.
-	bool isInRange(float _value, float _min, float _max);
+		//Point in space. The actor has to stay at the same distance to this point.
+		snVector4f m_fixedPoint;
 
-	//Return 1 if the float is positive, -1 if negative
-	int sign(float _value);
+		//Skew matrix used to compute the cross product r X w
+		snMatrix44f m_R;
 
-	//compute an orthonormal basis for the vector _a. This is a code snippet from Erin Catto's blog.
-	void computeBasis(const snVector4f& _a, snVector4f& _b, snVector4f& _c);
+		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
+		snMatrix44f m_effectiveMass;
 
+		//The accumulated lagrangian computed through iteration and used to clamp.
+		snVector4f m_accumulatedLagrangian;
+
+		float m_distance;
+
+		float m_dt;
+
+		snVector4f m_bias;
+
+		snMatrix44f m_invIR;
+
+	public:
+		snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _dt);
+		~snFixedConstraint();
+
+		void prepare();
+
+		void resolve();
+
+	};
 }
-#endif //SN_MATH_H
+
+#endif //ifndef SN_FIXED_CONSTRAINT_H

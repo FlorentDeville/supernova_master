@@ -14,6 +14,11 @@ namespace Supernova
 		return _value;
 	}
 
+	snVector4f clampComponents(const snVector4f& _v, float _min, float _max)
+	{
+		return snVector4f(clamp(_v.getX(), _min, _max), clamp(_v.getY(), _min, _max), clamp(_v.getZ(), _min, _max), clamp(_v.getW(), _min, _max));
+	}
+
 	bool isInRange(float _value, float _min, float _max)
 	{
 		return _value >= _min && _value <= _max;

@@ -42,6 +42,7 @@
 #include "snQuaternion.h"
 #include "snFeatureClipping.h"
 
+#include "snFixedConstraint.h"
 #include "snDistanceConstraint.h"
 #include "snNonPenetrationConstraint.h"
 #include "snFrictionConstraint.h"
@@ -149,6 +150,14 @@ namespace Supernova
 		return id;
 	}
 
+	int snScene::createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint)
+	{
+		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, 0.016f);
+		int id = m_constraints.size();
+		m_constraints.push_back(constraint);
+		return id;
+	}
+
 	void snScene::clearScene()
 	{
 		for (vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
@@ -179,7 +188,7 @@ namespace Supernova
 		log += L"  " + std::to_wstring(seconds) + L"s\n";
 		log += L"  " + std::to_wstring(milliseconds) + L"ms\n";
 		log += L"  " + std::to_wstring(microseconds) + L"µs\n\n";
-		OutputDebugString(log.c_str());
+		//OutputDebugString(log.c_str());
 		
 
 		//The constraints must be prepared before applying forces.

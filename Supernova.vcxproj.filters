@@ -94,6 +94,9 @@
     <ClInclude Include="inc\snTimer.h">
       <Filter>Tools</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snFixedConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -144,6 +147,9 @@
     </ClCompile>
     <ClCompile Include="src\snTimer.cpp">
       <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snFixedConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

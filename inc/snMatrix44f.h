@@ -144,14 +144,20 @@ namespace Supernova
 		return m_r[_id];
 	}
 
-	//Compute the product between a vector and a matrix. The fourth element of the vector and the fourth line of the matrix are ignored.
+	//Compute the product between a row vector and a matrix. The fourth element of the vector and the fourth line of the matrix are ignored.
 	snVector4f snMatrixTransform3(const snVector4f& _v, const snMatrix44f& _m);
 
-	//Compute the product between a vector and a matrix.
+	//Compute the product between a row vector and a matrix.
 	snVector4f snMatrixTransform4(const snVector4f& _v, const snMatrix44f& _m);
 
+	//Compute the product between a matrix and a column vector. The fourth element of the vector and the fourth line of the matrix are ignored.
+	snVector4f snMatrixTransform3(const snMatrix44f& _m, const snVector4f& _v);
+
 	//Multiply two matrices _m1 and _m2 and set the result in _res.
-	void snMatrixMultiply(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res);
+	void snMatrixMultiply4(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res);
+
+	//Multiply two matrices _m1 and _m2 and set the result in _res. The matrices are considered to be 3x3 so the last row and column are ignored.
+	void snMatrixMultiply3(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res);
 }
 
-#endif // SN_MATRIX44F_H
+#endif // ifndef SN_MATRIX44F_H

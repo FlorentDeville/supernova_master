@@ -32,35 +32,78 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_MATH_H
-#define SN_MATH_H
-
-#include <cfloat>
-
-//The maximum number a floating point variable can store.
-#define SN_FLOAT_MAX FLT_MAX
-
-//The smallest absolute number a floating point variable can store
-#define SN_FLOAT_MIN FLT_MIN
+#include "snFixedConstraint.h"
+#include "snActor.h"
+#include "snMath.h"
 
 namespace Supernova
 {
-	class snVector4f;
+	snFixedConstraint::snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _dt) 
+		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_dt(_dt)
+	{
+		m_distance = (_fixedPoint - _actor->getPosition()).norme();
+	}
 
-	//Clamp the value between min and max.
-	float clamp(float _value, float _min, float _max);
+	snFixedConstraint::~snFixedConstraint(){}
 
-	//Clamp a vector componentwise.
-	snVector4f clampComponents(const snVector4f& _v, float _min, float _max);
+	void snFixedConstraint::prepare()
+	{
+		m_accumulatedLagrangian = snVector4f(0, 0, 0, 0);
 
-	//Return true if the value is between the min and max value included.
-	bool isInRange(float _value, float _min, float _max);
+		//compute the offset between the object position and the fixed point
+		snVector4f offset = m_fixedPoint - m_actor->getPosition();
 
-	//Return 1 if the float is positive, -1 if negative
-	int sign(float _value);
+		//Compute the r skew matrix
+		m_R[0] = snVector4f(0, offset.getZ(), -offset.getY(), 0);
+		m_R[1] = snVector4f(-offset.getZ(), 0, offset.getX(), 0);
+		m_R[2] = snVector4f(offset.getY(), -offset.getX(), 0, 0);
+		m_R[3] = snVector4f(0, 0, 0, 1);
 
-	//compute an orthonormal basis for the vector _a. This is a code snippet from Erin Catto's blog.
-	void computeBasis(const snVector4f& _a, snVector4f& _b, snVector4f& _c);
+		//compute the effective mass
+		snMatrix44f RI;
+		snMatrixMultiply3(m_R, m_actor->getInvWorldInertia(), RI);
 
+		snMatrix44f RIR;
+		snMatrixMultiply3(RI, m_R, RIR);
+
+		snMatrix44f invM;
+		invM[0] = snVector4f(m_actor->getInvMass(), 0, 0, 0);
+		invM[1] = snVector4f(0, m_actor->getInvMass(), 0, 0);
+		invM[2] = snVector4f(0, 0, m_actor->getInvMass(), 0);
+		invM[3] = snVector4f(0, 0, 0, 0);
+		m_effectiveMass = invM + RIR;
+		m_effectiveMass = m_effectiveMass.inverse();
+
+		//compute I-1R
+		snMatrixMultiply3(m_actor->getInvWorldInertia(), m_R, m_invIR);
+
+		//compute velocity bias
+		snVector4f normalizedOffset = offset;
+		normalizedOffset.normalize();
+		float beta = 0.1f;
+
+		snVector4f deltaOffset = (normalizedOffset * m_distance) - offset;
+		m_bias = deltaOffset * (beta / m_dt);
+	}
+
+	void snFixedConstraint::resolve()
+	{
+		//compute JV
+		snVector4f Rw = snMatrixTransform3(m_R, m_actor->getAngularVelocity());
+		snVector4f JV = (m_actor->getLinearVelocity() + Rw) * -1;
+
+		//compute lagrangian
+		snVector4f lagrangian = snMatrixTransform3(JV - m_bias, m_effectiveMass);
+
+		//clamp lagrangian
+		snVector4f oldAccLambda = m_accumulatedLagrangian;
+		m_accumulatedLagrangian = clampComponents(m_accumulatedLagrangian + lagrangian, 0, SN_FLOAT_MAX);
+		lagrangian = m_accumulatedLagrangian - oldAccLambda;
+
+		//compute the corrective velocity
+		snVector4f dv = lagrangian * m_actor->getInvMass();
+		snVector4f dw = snMatrixTransform3(m_invIR, lagrangian);
+		m_actor->setLinearVelocity(m_actor->getLinearVelocity() + dv);
+		m_actor->setAngularVelocity(m_actor->getAngularVelocity() + dw);
+	}
 }
-#endif //SN_MATH_H
