@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\AlignmentAllocator.h" />
+    <ClInclude Include="inc\snActor.h" />
+    <ClInclude Include="inc\snColliderBox.h" />
+    <ClInclude Include="inc\snColliderPlan.h" />
+    <ClInclude Include="inc\snColliderSphere.h" />
+    <ClInclude Include="inc\snCollision.h" />
+    <ClInclude Include="inc\snCollisionResult.h" />
+    <ClInclude Include="inc\snDistanceConstraint.h" />
+    <ClInclude Include="inc\snFactory.h" />
+    <ClInclude Include="inc\snFeatureClipping.h" />
+    <ClInclude Include="inc\snFrictionConstraint.h" />
+    <ClInclude Include="inc\snGJK.h" />
+    <ClInclude Include="inc\snGlobals.h" />
+    <ClInclude Include="inc\snICollider.h" />
+    <ClInclude Include="inc\snIConstraint.h" />
+    <ClInclude Include="inc\snMath.h" />
+    <ClInclude Include="inc\snMatrix44f.h" />
+    <ClInclude Include="inc\snNonPenetrationConstraint.h" />
+    <ClInclude Include="inc\snPhysicMaterial.h" />
+    <ClInclude Include="inc\snQuaternion.h" />
+    <ClInclude Include="inc\snScene.h" />
+    <ClInclude Include="inc\snSimplex.h" />
+    <ClInclude Include="inc\snTimer.h" />
+    <ClInclude Include="inc\snTypes.h" />
+    <ClInclude Include="inc\snVector4f.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\snActor.cpp" />
+    <ClCompile Include="src\snColliderBox.cpp" />
+    <ClCompile Include="src\snColliderPlan.cpp" />
+    <ClCompile Include="src\snColliderSphere.cpp" />
+    <ClCompile Include="src\snCollision.cpp" />
+    <ClCompile Include="src\snDistanceConstraint.cpp" />
+    <ClCompile Include="src\snFactory.cpp" />
+    <ClCompile Include="src\snFeatureClipping.cpp" />
+    <ClCompile Include="src\snFrictionConstraint.cpp" />
+    <ClCompile Include="src\snGJK.cpp" />
+    <ClCompile Include="src\snMath.cpp" />
+    <ClCompile Include="src\snMatrix44f.cpp" />
+    <ClCompile Include="src\snNonPenetrationConstraint.cpp" />
+    <ClCompile Include="src\snQuaternion.cpp" />
+    <ClCompile Include="src\snScene.cpp" />
+    <ClCompile Include="src\snSimplex.cpp" />
+    <ClCompile Include="src\snTimer.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7A50E8D4-5550-4F71-8051-ECD68FA776CE}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Supernova</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)temp\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)temp\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRTDBG_MAP_ALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <StructMemberAlignment>16Bytes</StructMemberAlignment>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <StructMemberAlignment>16Bytes</StructMemberAlignment>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <AdditionalIncludeDirectories>.\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FloatingPointModel>Fast</FloatingPointModel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

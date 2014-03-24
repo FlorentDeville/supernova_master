@@ -95,8 +95,8 @@ namespace Devil
 			return false;
 		}
 
-		createScene1();
-		//createScene2();
+		//createScene1();
+		createScene2();
 
 		//test case to debug the clipping plan bug.
 		//createScene3();
@@ -731,7 +731,7 @@ namespace Devil
 			kinematicBox->setActor(act);
 		}
 
-		const int MAX_ROW = 10;
+		const int MAX_ROW = 15;
 		for (int row = MAX_ROW; row > 0; --row)
 		{
 			for (int i = 0; i < row; ++i)

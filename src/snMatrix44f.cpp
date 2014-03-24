@@ -458,7 +458,7 @@ namespace Supernova
 
 		Q1 = _mm_shuffle_ps(V1, R0, _MM_SHUFFLE(3, 2, 1, 0));
 		m_r[2] = Q1;
-		m_r[3] = { 0, 0, 0, 1 };
+		m_r[3] = snVector4f( 0, 0, 0, 1 );
 	}
 
 	snVector4f snMatrixTransform3(const snVector4f& _v, const snMatrix44f& _m)

@@ -54,8 +54,15 @@ namespace Supernova
 		m_isStatic = false;
 	}
 
-	snActor::snActor(bool _isStatic) : snActor()
+	snActor::snActor(bool _isStatic) //: snActor()
 	{
+		m_w = snVector4f(0, 0, 0, 0);
+		m_q = snVector4f(0, 0, 0, 1);
+		m_R.identity();
+		m_invR.identity();
+
+		m_isKinematic = false;
+		//m_isStatic = false;
 		m_isStatic = _isStatic;
 	}
 
