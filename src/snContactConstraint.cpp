@@ -32,7 +32,7 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snNonPenetrationConstraint.h"
+#include "snContactConstraint.h"
 #include "snActor.h"
 #include "snMath.h"
 #include "snScene.h"
@@ -42,14 +42,14 @@ using std::max;
 
 namespace Supernova
 {
-	snNonPenetrationConstraint::snNonPenetrationConstraint() : snIConstraint()
+	snContactConstraint::snContactConstraint() : snIConstraint()
 	{
 	}
 
-	snNonPenetrationConstraint::~snNonPenetrationConstraint()
+	snContactConstraint::~snContactConstraint()
 	{}
 
-	void snNonPenetrationConstraint::initialize(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
+	void snContactConstraint::initialize(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
 		snScene const * _scene, float _dt)
 	{
 		m_bodies[0] = _body1;
@@ -62,7 +62,7 @@ namespace Supernova
 		m_dt = _dt;
 	}
 
-	void snNonPenetrationConstraint::prepare()
+	void snContactConstraint::prepare()
 	{
 		m_accumulatedImpulseMagnitude = 0;
 
@@ -98,7 +98,7 @@ namespace Supernova
 
 	}
 
-	void snNonPenetrationConstraint::resolve()
+	void snContactConstraint::resolve()
 	{
 		//compute relative velocity between the two colliding bodies
 		snVector4f deltaLinVel = m_bodies[1]->getLinearVelocity() - m_bodies[0]->getLinearVelocity();
@@ -125,12 +125,12 @@ namespace Supernova
 		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossNInvI[1] * lagrangian);
 	}
 
-	snVector4f const & snNonPenetrationConstraint::getNormal() const
+	snVector4f const & snContactConstraint::getNormal() const
 	{
 		return m_normal;
 	}
 
-	snVector4f const * snNonPenetrationConstraint::getRadius() const
+	snVector4f const * snContactConstraint::getRadius() const
 	{
 		return m_radius;
 	}

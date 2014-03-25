@@ -43,7 +43,7 @@ namespace Supernova
 	class snScene;
 
 	//Constraint to prevent two actors from penetrating each others.
-	class SN_ALIGN snNonPenetrationConstraint : public snIConstraint
+	class SN_ALIGN snContactConstraint : public snIConstraint
 	{
 	protected:
 
@@ -78,9 +78,9 @@ namespace Supernova
 		float m_dt;
 
 	public:
-		snNonPenetrationConstraint();
+		snContactConstraint();
 
-		virtual ~snNonPenetrationConstraint();
+		virtual ~snContactConstraint();
 
 		//Give to the constraints the basic information it needs.
 		void initialize(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,

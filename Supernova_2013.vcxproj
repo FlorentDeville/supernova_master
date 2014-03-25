@@ -29,7 +29,7 @@
     <ClInclude Include="inc\snIConstraint.h" />
     <ClInclude Include="inc\snMath.h" />
     <ClInclude Include="inc\snMatrix44f.h" />
-    <ClInclude Include="inc\snNonPenetrationConstraint.h" />
+    <ClInclude Include="inc\snContactConstraint.h" />
     <ClInclude Include="inc\snPhysicMaterial.h" />
     <ClInclude Include="inc\snQuaternion.h" />
     <ClInclude Include="inc\snScene.h" />
@@ -52,7 +52,7 @@
     <ClCompile Include="src\snGJK.cpp" />
     <ClCompile Include="src\snMath.cpp" />
     <ClCompile Include="src\snMatrix44f.cpp" />
-    <ClCompile Include="src\snNonPenetrationConstraint.cpp" />
+    <ClCompile Include="src\snContactConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
     <ClCompile Include="src\snScene.cpp" />
     <ClCompile Include="src\snSimplex.cpp" />

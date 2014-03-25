@@ -7,7 +7,8 @@
 //needed for memory leak detection. Do not change the order.
 #include <stdlib.h>
 #include <crtdbg.h>
-
+#include "snMatrix44f.h"
+using namespace Supernova;
 #endif //_DEBUG
 
 using namespace Devil;

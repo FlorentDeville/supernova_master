@@ -34,7 +34,7 @@
 
 #include "snFrictionConstraint.h"
 #include "snMath.h"
-#include "snNonPenetrationConstraint.h"
+#include "snContactConstraint.h"
 
 namespace Supernova
 {
@@ -45,7 +45,7 @@ namespace Supernova
 
 	snFrictionConstraint::~snFrictionConstraint(){}
 
-	void snFrictionConstraint::initialize(snActor* const _body1, snActor* const _body2, snNonPenetrationConstraint const * _npConstraint)
+	void snFrictionConstraint::initialize(snActor* const _body1, snActor* const _body2, snContactConstraint const * _npConstraint)
 	{
 		m_bodies[0] = _body1;
 		m_bodies[1] = _body2;

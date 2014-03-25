@@ -44,7 +44,7 @@
 
 #include "snFixedConstraint.h"
 #include "snDistanceConstraint.h"
-#include "snNonPenetrationConstraint.h"
+#include "snContactConstraint.h"
 #include "snFrictionConstraint.h"
 
 #include "snTimer.h"
@@ -411,17 +411,17 @@ namespace Supernova
 						m_collisionPoints.push_back(*point);
 
 						//if a constraints already exists, take it and reuse it or else create it.
-						snNonPenetrationConstraint* npConstraint = 0;
+						snContactConstraint* npConstraint = 0;
 						snFrictionConstraint* fConstraint = 0;
 						if (currentConstraintId < m_collisionConstraints.size())
 						{
-							npConstraint = static_cast<snNonPenetrationConstraint*>(m_collisionConstraints[currentConstraintId]);
+							npConstraint = static_cast<snContactConstraint*>(m_collisionConstraints[currentConstraintId]);
 							fConstraint = static_cast<snFrictionConstraint*>(m_collisionConstraints[++currentConstraintId]);
 							++currentConstraintId;
 						}
 						else
 						{
-							npConstraint = new snNonPenetrationConstraint();
+							npConstraint = new snContactConstraint();
 							m_collisionConstraints.push_back(npConstraint);
 
 							fConstraint = new snFrictionConstraint();

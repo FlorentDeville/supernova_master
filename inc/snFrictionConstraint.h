@@ -40,7 +40,7 @@
 
 namespace Supernova
 {
-	class snNonPenetrationConstraint;
+	class snContactConstraint;
 
 	//Friction constraint clamped using a corresponding non penetration constraint.
 	class SN_ALIGN snFrictionConstraint : public snIConstraint
@@ -54,7 +54,7 @@ namespace Supernova
 		float m_frictionCoefficient;
 
 		//Corresponding non penetration constraint used to clamp the friction
-		snNonPenetrationConstraint const * m_npConstraint;
+		snContactConstraint const * m_npConstraint;
 
 		//The two tangent vector along which the friction is applied.
 		snVector4f m_tangent[2];
@@ -77,7 +77,7 @@ namespace Supernova
 		virtual ~snFrictionConstraint();
 
 		//Give to the constraint the basic information it needs.
-		void initialize(snActor* const _body1, snActor* const _body2, snNonPenetrationConstraint const * _npConstraint);
+		void initialize(snActor* const _body1, snActor* const _body2, snContactConstraint const * _npConstraint);
 
 		void prepare();
 

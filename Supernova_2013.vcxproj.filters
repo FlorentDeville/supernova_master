@@ -85,9 +85,6 @@
     <ClInclude Include="inc\snDistanceConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snNonPenetrationConstraint.h">
-      <Filter>Simulation\Constraints</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snFrictionConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
@@ -95,6 +92,9 @@
       <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="inc\snFixedConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snContactConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
   </ItemGroup>
@@ -139,9 +139,6 @@
     <ClCompile Include="src\snDistanceConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
-    <ClCompile Include="src\snNonPenetrationConstraint.cpp">
-      <Filter>Simulation\Constraints</Filter>
-    </ClCompile>
     <ClCompile Include="src\snFrictionConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
@@ -149,6 +146,9 @@
       <Filter>Tools</Filter>
     </ClCompile>
     <ClCompile Include="src\snFixedConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snContactConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
   </ItemGroup>
