@@ -150,9 +150,9 @@ namespace Supernova
 		return id;
 	}
 
-	int snScene::createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint)
+	int snScene::createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _dt)
 	{
-		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, 0.016f);
+		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, _dt);
 		int id = m_constraints.size();
 		m_constraints.push_back(constraint);
 		return id;

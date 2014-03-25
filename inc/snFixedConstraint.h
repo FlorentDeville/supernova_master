@@ -59,16 +59,20 @@ namespace Supernova
 		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
 		snMatrix44f m_effectiveMass;
 
-		//The accumulated lagrangian computed through iteration and used to clamp.
-		snVector4f m_accumulatedLagrangian;
-
+		//The distance between the fixed point and the actor's center of mass.
 		float m_distance;
 
+		//The time step. Necessary to compute baumgarte stabilization.
 		float m_dt;
 
+		//Velocity bias computed using baumgarte stabilization.
 		snVector4f m_bias;
 
+		//I-1 * R
 		snMatrix44f m_invIR;
+
+		//Normalized vector going from the actor's center of mass to the constraint's fixed point.
+		snVector4f m_normalizedOffset;
 
 	public:
 		snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _dt);

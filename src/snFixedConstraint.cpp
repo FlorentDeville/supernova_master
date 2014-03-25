@@ -48,7 +48,7 @@ namespace Supernova
 
 	void snFixedConstraint::prepare()
 	{
-		m_accumulatedLagrangian = snVector4f(0, 0, 0, 0);
+		m_accumulatedImpulseMagnitude = 0;
 
 		//compute the offset between the object position and the fixed point
 		snVector4f offset = m_fixedPoint - m_actor->getPosition();
@@ -77,12 +77,12 @@ namespace Supernova
 		//compute I-1R
 		snMatrixMultiply3(m_actor->getInvWorldInertia(), m_R, m_invIR);
 
-		//compute velocity bias
-		snVector4f normalizedOffset = offset;
-		normalizedOffset.normalize();
+		//compute velocity bias (baumgarte stabilization)
+		m_normalizedOffset = offset;
+		m_normalizedOffset.normalize();
 		float beta = 0.1f;
 
-		snVector4f deltaOffset = (normalizedOffset * m_distance) - offset;
+		snVector4f deltaOffset = (m_normalizedOffset * m_distance) - offset;
 		m_bias = deltaOffset * (beta / m_dt);
 	}
 
@@ -95,10 +95,13 @@ namespace Supernova
 		//compute lagrangian
 		snVector4f lagrangian = snMatrixTransform3(JV - m_bias, m_effectiveMass);
 
-		//clamp lagrangian
-		snVector4f oldAccLambda = m_accumulatedLagrangian;
-		m_accumulatedLagrangian = clampComponents(m_accumulatedLagrangian + lagrangian, 0, SN_FLOAT_MAX);
-		lagrangian = m_accumulatedLagrangian - oldAccLambda;
+		float lagrangianMagnitude = m_normalizedOffset.dot(lagrangian);
+
+		//clamp lagrangian along the offset direction
+		float oldAccLambda = m_accumulatedImpulseMagnitude;
+		m_accumulatedImpulseMagnitude = clamp(m_accumulatedImpulseMagnitude + lagrangianMagnitude, 0, SN_FLOAT_MAX);
+		lagrangianMagnitude = m_accumulatedImpulseMagnitude - oldAccLambda;
+		lagrangian = m_normalizedOffset * lagrangianMagnitude;
 
 		//compute the corrective velocity
 		snVector4f dv = lagrangian * m_actor->getInvMass();
