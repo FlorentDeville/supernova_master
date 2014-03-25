@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Collision">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Simulation">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Collision\Collider">
+      <UniqueIdentifier>{42c0e510-f2b4-4918-8af3-3d923a4da401}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Simulation\Constraints">
+      <UniqueIdentifier>{a729f281-7e66-4b23-b051-b373cdc32e26}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\snCollision.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snCollisionResult.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snFeatureClipping.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snGJK.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snSimplex.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snColliderBox.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snColliderSphere.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snColliderPlan.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snICollider.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snFactory.h" />
+    <ClInclude Include="inc\snGlobals.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snMath.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snMatrix44f.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snQuaternion.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snTypes.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snVector4f.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snActor.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snPhysicMaterial.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snScene.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\AlignmentAllocator.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snIConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snDistanceConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snNonPenetrationConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snFrictionConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snTimer.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snFixedConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\snColliderBox.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snColliderPlan.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snColliderSphere.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snCollision.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snFeatureClipping.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snGJK.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snSimplex.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snFactory.cpp" />
+    <ClCompile Include="src\snMath.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snMatrix44f.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snQuaternion.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snActor.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snScene.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snDistanceConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snNonPenetrationConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snFrictionConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snTimer.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snFixedConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
