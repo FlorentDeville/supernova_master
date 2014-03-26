@@ -141,6 +141,13 @@ namespace Supernova
 		return m_actors[_actorId];
 	}
 
+	snIConstraint* snScene::getConstraint(unsigned int _constraintId)
+	{
+		assert(_constraintId < m_constraints.size());
+
+		return m_constraints[_constraintId];
+	}
+
 	int snScene::createDistanceConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2, 
 		float _distance)
 	{

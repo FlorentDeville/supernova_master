@@ -13,6 +13,7 @@
 #include "EntityBox.h"
 #include "EntityPlan.h"
 #include "EntityCamera.h"
+#include "EntityFixedConstraint.h"
 
 #include "snColliderSphere.h"
 #include "snColliderPlan.h"
@@ -22,7 +23,7 @@
 #include "snActor.h"
 #include "snFactory.h"
 #include "snQuaternion.h"
-
+#include "snFixedConstraint.h"
 
 
 #include <string>
@@ -1100,7 +1101,10 @@ namespace Devil
 			box->setActor(act);
 
 			//create constraints
-			m_physicScene->createFixedConstraint(act, pos + snVector4f(-7, 0, 0, 0), m_deltaTime * 0.001f);
+			int constraintId = m_physicScene->createFixedConstraint(act, pos + snVector4f(-7, 0, 0, 0), m_deltaTime * 0.001f);
+			snIConstraint* c = m_physicScene->getConstraint(constraintId);
+			snFixedConstraint* constraint = static_cast<snFixedConstraint*>(c);
+			WORLD->createFixedConstraint(constraint);
 		}
 		return;
 		{
@@ -1136,7 +1140,11 @@ namespace Devil
 			box->setActor(act);
 
 			//create constraints
-			m_physicScene->createFixedConstraint(act, pos + snVector4f(7, 0, 0, 0), m_deltaTime * 0.001f);
+			int constraintId = m_physicScene->createFixedConstraint(act, pos + snVector4f(7, 0, 0, 0), m_deltaTime * 0.001f);
+			snIConstraint* c = m_physicScene->getConstraint(constraintId);
+			snFixedConstraint* constraint = static_cast<snFixedConstraint*>(c);
+			WORLD->createFixedConstraint(constraint);
+			//worldConstraint->setIsActive(true);
 		}
 	}
 

@@ -55,6 +55,16 @@ namespace Devil
 
 		//Return the position of the entity.
 		const XMVECTOR& getPosition() const { return m_position; }
+
+		void* operator new(size_t _count)
+		{
+			return _aligned_malloc(_count, 16);
+		}
+
+		void operator delete(void* _p)
+		{
+			_aligned_free(_p);
+		}
 	};
 }
 

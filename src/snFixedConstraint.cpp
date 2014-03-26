@@ -109,4 +109,19 @@ namespace Supernova
 		m_actor->setLinearVelocity(m_actor->getLinearVelocity() + dv);
 		m_actor->setAngularVelocity(m_actor->getAngularVelocity() + dw);
 	}
+
+	snVector4f snFixedConstraint::getFixedPosition() const
+	{
+		return m_fixedPoint;
+	}
+
+	float snFixedConstraint::getDistance() const
+	{
+		return m_distance;
+	}
+
+	const snActor* snFixedConstraint::getActor() const
+	{
+		return m_actor;
+	}
 }

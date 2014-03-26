@@ -5,6 +5,7 @@
 #include "EntityPlan.h"
 #include "EntityCollisionPoint.h"
 #include "EntityCamera.h"
+#include "EntityFixedConstraint.h"
 #include "Input.h"
 #include "Graphics.h"
 
@@ -101,6 +102,14 @@ namespace Devil
 		m_camera->initialize(_position, _lookAt, _up);
 		m_EntityList.insert(m_EntityList.cbegin(), m_camera);
 		return m_camera;
+	}
+
+	EntityFixedConstraint* World::createFixedConstraint(const snFixedConstraint* _constraint)
+	{
+		EntityFixedConstraint* newEntity = new EntityFixedConstraint();
+		newEntity->initialize(_constraint);
+		m_EntityList.push_back(newEntity);
+		return newEntity;
 	}
 
 	void World::clearWorld()

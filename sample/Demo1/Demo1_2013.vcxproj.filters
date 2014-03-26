@@ -82,6 +82,9 @@
       <Filter>System</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\EntityFixedConstraint.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -152,6 +155,9 @@
     </ClInclude>
     <ClInclude Include="..\src\System.h">
       <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityFixedConstraint.h">
+      <Filter>World</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

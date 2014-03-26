@@ -126,6 +126,9 @@ namespace Supernova
 		//Get an actor from its id. Returns 0 if the actor can't be found.
 		snActor* getActor(unsigned int _actorId);
 
+		//Get a constraint from its id.
+		snIConstraint* getConstraint(unsigned int _constraintId);
+
 		//Create a distance constraint between two actors and return the id of the constraint
 		int createDistanceConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2, float _distance);
 

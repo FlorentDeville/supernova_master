@@ -32,65 +32,65 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_FIXED_CONSTRAINT_H
-#define SN_FIXED_CONSTRAINT_H
+#include "EntityFixedConstraint.h"
+#include "GfxEntitySphere.h"
+#include "GfxEntityBox.h"
+#include "Graphics.h"
+#include "D3D.h"
+#include "Camera.h"
 
-#include "snIConstraint.h"
-#include "snMatrix44f.h"
+#include "snFixedConstraint.h"
+#include "snMath.h"
+#include "snActor.h"
+using namespace Supernova;
 
-namespace Supernova
+namespace Devil
 {
-	class snActor;
 
-	//Represent a constraint of a body staying at the same distance of a point in space.
-	class snFixedConstraint : public snIConstraint
+	EntityFixedConstraint::EntityFixedConstraint() : IWorldEntity(), m_constraint(0)
+	{}
+
+	EntityFixedConstraint::~EntityFixedConstraint()
+	{}
+
+	bool EntityFixedConstraint::initialize(const snFixedConstraint* _constraint)
 	{
-	protected:
+		assert(_constraint != null);
 
-		//Actor this constraint has to be applied to.
-		snActor* m_actor;
+		m_constraint = _constraint;
+		m_sphere = GRAPHICS->createSphere(1, Colors::Green);
+		m_box = GRAPHICS->createBox(XMFLOAT3(1.f, m_constraint->getDistance(), 1.f), XMFLOAT4(0, 0.5f, 0, 1.f));
+		return true;
+	}
 
-		//Point in space. The actor has to stay at the same distance to this point.
-		snVector4f m_fixedPoint;
+	void EntityFixedConstraint::update()
+	{
+	
+	}
 
-		//Skew matrix used to compute the cross product r X w
-		snMatrix44f m_R;
+	void EntityFixedConstraint::render()
+	{
+		XMMATRIX viewMatrix, projectionMatrix;
+		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
+		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
-		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
-		snMatrix44f m_effectiveMass;
+		//show the fixed point as a sphere
+		XMMATRIX fixedPointTransform = XMMatrixTranslationFromVector(m_constraint->getFixedPosition().m_vec);
+		m_sphere->render(fixedPointTransform, viewMatrix, projectionMatrix);
 
-		//The distance between the fixed point and the actor's center of mass.
-		float m_distance;
+		//show the link between the fixed point and the actor
+		snVector4f up, left, forward;
+		up = m_constraint->getActor()->getPosition() - m_constraint->getFixedPosition();
+		up.normalize();
+		computeBasis(up, left, forward);
+		XMMATRIX linkRotate = XMMatrixSet(left.getX(), left.getY(), left.getZ(), 0,
+			up.getX(), up.getY(), up.getZ(), 0,
+			forward.getX(), forward.getY(), forward.getZ(), 0,
+			0, 0, 0, 1);
 
-		//The time step. Necessary to compute baumgarte stabilization.
-		float m_dt;
+		XMMATRIX offset = XMMatrixTranslation(0, m_constraint->getDistance() * 0.5f, 0);
 
-		//Velocity bias computed using baumgarte stabilization.
-		snVector4f m_bias;
-
-		//I-1 * R
-		snMatrix44f m_invIR;
-
-		//Normalized vector going from the actor's center of mass to the constraint's fixed point.
-		snVector4f m_normalizedOffset;
-
-	public:
-		snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _dt);
-		~snFixedConstraint();
-
-		void prepare();
-
-		void resolve();
-
-		//Return the world coordinate of the fixed point.
-		snVector4f getFixedPosition() const;
-
-		//Return the distance between the fixed point and the actor.
-		float getDistance() const;
-
-		const snActor* getActor() const;
-
-	};
+		XMMATRIX linkTransform = offset * linkRotate * fixedPointTransform;
+		m_box->render(linkTransform, viewMatrix, projectionMatrix);
+	}
 }
-
-#endif //ifndef SN_FIXED_CONSTRAINT_H
