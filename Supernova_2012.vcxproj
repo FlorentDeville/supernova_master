@@ -18,6 +18,7 @@
     <ClInclude Include="inc\snColliderSphere.h" />
     <ClInclude Include="inc\snCollision.h" />
     <ClInclude Include="inc\snCollisionResult.h" />
+    <ClInclude Include="inc\snContactConstraint.h" />
     <ClInclude Include="inc\snDistanceConstraint.h" />
     <ClInclude Include="inc\snFactory.h" />
     <ClInclude Include="inc\snFeatureClipping.h" />
@@ -29,7 +30,6 @@
     <ClInclude Include="inc\snIConstraint.h" />
     <ClInclude Include="inc\snMath.h" />
     <ClInclude Include="inc\snMatrix44f.h" />
-    <ClInclude Include="inc\snNonPenetrationConstraint.h" />
     <ClInclude Include="inc\snPhysicMaterial.h" />
     <ClInclude Include="inc\snQuaternion.h" />
     <ClInclude Include="inc\snScene.h" />
@@ -44,6 +44,7 @@
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
+    <ClCompile Include="src\snContactConstraint.cpp" />
     <ClCompile Include="src\snDistanceConstraint.cpp" />
     <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />
@@ -52,7 +53,6 @@
     <ClCompile Include="src\snGJK.cpp" />
     <ClCompile Include="src\snMath.cpp" />
     <ClCompile Include="src\snMatrix44f.cpp" />
-    <ClCompile Include="src\snNonPenetrationConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
     <ClCompile Include="src\snScene.cpp" />
     <ClCompile Include="src\snSimplex.cpp" />

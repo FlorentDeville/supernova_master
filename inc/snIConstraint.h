@@ -50,13 +50,10 @@ namespace Supernova
 		//Store the total impulse.
 		float m_accumulatedImpulseMagnitude;
 
-		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
-		float m_effectiveMass;
-
 	public:
 
 		//Default constructor
-		snIConstraint() : m_accumulatedImpulseMagnitude(0), m_effectiveMass(0), m_active(false){}
+		snIConstraint() : m_accumulatedImpulseMagnitude(0), m_active(false){}
 
 		//Default destructor
 		virtual ~snIConstraint(){}

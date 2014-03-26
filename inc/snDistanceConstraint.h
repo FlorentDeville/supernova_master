@@ -68,6 +68,9 @@ namespace Supernova
 
 		//(radius X normalized dp) * I-1
 		snVector4f m_rCrossUInvI[2];
+
+		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
+		float m_effectiveMass;
 	public:
 
 		snDistanceConstraint(snActor* const _body1, const snVector4f& _offsetBody1, snActor* const _body2, const snVector4f& _offsetBody2, float _distance);

@@ -71,6 +71,9 @@ namespace Supernova
 		//Bias velocity
 		float m_velocityBias;
 
+		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
+		float m_effectiveMass;
+
 		//Scene containing this constraints.
 		snScene const * m_scene;
 

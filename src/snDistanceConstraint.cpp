@@ -39,7 +39,7 @@
 namespace Supernova
 {
 	snDistanceConstraint::snDistanceConstraint(snActor* const _body1, const snVector4f& _offsetBody1, snActor* const _body2,
-		const snVector4f& _offsetBody2, float _distance) : snIConstraint()
+		const snVector4f& _offsetBody2, float _distance) : snIConstraint(), m_effectiveMass(0)
 	{
 		m_bodies[0] = _body1;
 		m_localOffset[0] = _offsetBody1;

@@ -39,7 +39,7 @@
 namespace Supernova
 {
 	snFrictionConstraint::snFrictionConstraint()
-		:snIConstraint()
+		:snIConstraint(), m_effectiveMass(0)
 	{
 	}
 

@@ -42,7 +42,7 @@ using std::max;
 
 namespace Supernova
 {
-	snContactConstraint::snContactConstraint() : snIConstraint()
+	snContactConstraint::snContactConstraint() : snIConstraint(), m_effectiveMass(0)
 	{
 	}
 
