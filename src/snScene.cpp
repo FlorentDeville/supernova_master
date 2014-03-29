@@ -274,15 +274,26 @@ namespace Supernova
 			//calculate weight
 			snVector4f W = m_gravity * (*i)->getMass();
 
+			float l = (*i)->getLinearDamping();
+
+			//calculate linear damping
+			snVector4f linDamping = (*i)->getLinearVelocity() * -(*i)->getLinearDamping();
+
+			//compute sum of external forces.
+			snVector4f externalForces = W + linDamping;
+
 			//calculate linear velocity
-			snVector4f v = (*i)->getLinearVelocity() + (W * _dt * (*i)->getInvMass());
+			snVector4f v = (*i)->getLinearVelocity() + (externalForces * _dt * (*i)->getInvMass());
 			
-			//calculate angular velocity
-			//XMVECTOR w = (*i)->getAngularVelocity() + XMVector4Transform((*i)->getTorque(), (*i)->getInvWorldInertia()) * _dt;
+			//compute angular damping
+			snVector4f angDamping = (*i)->getAngularVelocity() * -(*i)->getAngularDamping();
+
+			//compute angular velocity
+			snVector4f w = (*i)->getAngularVelocity() + snMatrixTransform3(angDamping, (*i)->getInvWorldInertia()) * _dt;
 			
 			//set state
 			(*i)->setLinearVelocity(v);
-			//(*i)->setAngularVelocity(w);
+			(*i)->setAngularVelocity(w);
 		}
 	}
 

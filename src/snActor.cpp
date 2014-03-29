@@ -43,7 +43,7 @@
 
 namespace Supernova
 {
-	snActor::snActor() : m_material()
+	snActor::snActor() : m_material(), m_linearDamping(0.5f), m_angularDamping(0.f)
 	{
 		m_w = snVector4f(0, 0, 0, 0);
 		m_q = snVector4f(0, 0, 0, 1);
@@ -54,7 +54,7 @@ namespace Supernova
 		m_isStatic = false;
 	}
 
-	snActor::snActor(bool _isStatic) //: snActor()
+	snActor::snActor(bool _isStatic) : m_material(), m_linearDamping(0.5f), m_angularDamping(0.f)
 	{
 		m_w = snVector4f(0, 0, 0, 0);
 		m_q = snVector4f(0, 0, 0, 1);
@@ -62,7 +62,6 @@ namespace Supernova
 		m_invR.identity();
 
 		m_isKinematic = false;
-		//m_isStatic = false;
 		m_isStatic = _isStatic;
 	}
 
@@ -216,6 +215,26 @@ namespace Supernova
 	const snMatrix44f& snActor::getInverseOrientationMatrix() const
 	{
 		return m_invR;
+	}
+
+	void snActor::setLinearDamping(float _linearDamping)
+	{
+		m_linearDamping = _linearDamping;
+	}
+
+	void snActor::setAngularDamping(float _angularDamping)
+	{
+		m_angularDamping = _angularDamping;
+	}
+
+	float snActor::getLinearDamping() const
+	{
+		return m_linearDamping;
+	}
+
+	float snActor::getAngularDamping() const
+	{
+		return m_angularDamping;
 	}
 
 	void snActor::createColliderBox(snColliderBox** _box, int& _colliderId)

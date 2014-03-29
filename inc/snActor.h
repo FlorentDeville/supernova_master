@@ -106,6 +106,12 @@ namespace Supernova
 		//Various parameters to define the behavior of the object (friction, bouncing...)
 		snPhysicMaterial m_material;
 
+		//Factor used to compute the linear damping force which is equal to -m_linearDamping * m_linearVelocity.
+		float m_linearDamping;
+
+		//Factor used to compute the amgular damping torque which is equal to -m_angularDamping * m_angularVelocity.
+		float m_angularDamping;
+
 	public:
 
 		//Constructor. Actors should be created using snScene::createActor. If you create an actor yourself it is your responsability
@@ -170,6 +176,14 @@ namespace Supernova
 		void setOrientationMatrix(const snMatrix44f& _R);
 
 		const snMatrix44f& getInverseOrientationMatrix() const;
+
+		void setLinearDamping(float _linearDamping);
+
+		void setAngularDamping(float _angularDamping);
+
+		float getLinearDamping() const;
+
+		float getAngularDamping() const;
 
 		//Create a collider box and add it to the actor. Return its id.
 		void createColliderBox(snColliderBox** _box, int& _colliderId);

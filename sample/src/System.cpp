@@ -1072,19 +1072,21 @@ namespace Devil
 			float width = 5;
 			float height = 5;
 			float depth = 5;
-			snVector4f pos(10, 45, 0, 1);
+			snVector4f pos(10, 5, 0, 1);
 
 			//create actor
 			snActor* act = 0;
 			int actorId = -1;
 			m_physicScene->createActor(&act, actorId);
 			act->setName("dynamic");
-			act->setMass(500);
+			act->setMass(50);
 			act->setPosition(pos);
 			//act->setLinearVelocity(snVector4f(0, -50, -80, 0));
 			act->getPhysicMaterial().m_restitution = 0;
 			act->getPhysicMaterial().m_friction = 1;
 			act->setIsKinematic(false);
+			act->setLinearDamping(20);
+			act->setAngularDamping(20);
 
 			//create collider
 			snColliderBox* collider = 0;
@@ -1101,7 +1103,7 @@ namespace Devil
 			box->setActor(act);
 
 			//create constraints
-			int constraintId = m_physicScene->createFixedConstraint(act, pos + snVector4f(-7, 0, 0, 0), m_deltaTime * 0.001f);
+			int constraintId = m_physicScene->createFixedConstraint(act, pos + snVector4f(-7, 40, 0, 0), 0, m_deltaTime * 0.001f);
 			snIConstraint* c = m_physicScene->getConstraint(constraintId);
 			snFixedConstraint* constraint = static_cast<snFixedConstraint*>(c);
 			WORLD->createFixedConstraint(constraint);
@@ -1140,7 +1142,7 @@ namespace Devil
 			box->setActor(act);
 
 			//create constraints
-			int constraintId = m_physicScene->createFixedConstraint(act, pos + snVector4f(7, 0, 0, 0), m_deltaTime * 0.001f);
+			int constraintId = m_physicScene->createFixedConstraint(act, pos + snVector4f(7, 0, 0, 0), 20, m_deltaTime * 0.001f);
 			snIConstraint* c = m_physicScene->getConstraint(constraintId);
 			snFixedConstraint* constraint = static_cast<snFixedConstraint*>(c);
 			WORLD->createFixedConstraint(constraint);
