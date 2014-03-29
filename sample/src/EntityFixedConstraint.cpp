@@ -55,7 +55,7 @@ namespace Devil
 
 	bool EntityFixedConstraint::initialize(const snFixedConstraint* _constraint)
 	{
-		assert(_constraint != null);
+		assert(_constraint != 0);
 
 		m_constraint = _constraint;
 		m_sphere = GRAPHICS->createSphere(1, Colors::Green);
@@ -83,10 +83,11 @@ namespace Devil
 		up = m_constraint->getActor()->getPosition() - m_constraint->getFixedPosition();
 		up.normalize();
 		computeBasis(up, left, forward);
-		XMMATRIX linkRotate = XMMatrixSet(left.getX(), left.getY(), left.getZ(), 0,
-			up.getX(), up.getY(), up.getZ(), 0,
-			forward.getX(), forward.getY(), forward.getZ(), 0,
-			0, 0, 0, 1);
+		XMMATRIX linkRotate;
+		linkRotate.r[0] = left.m_vec;
+		linkRotate.r[1] = up.m_vec;
+		linkRotate.r[2] = -forward.m_vec;
+		linkRotate.r[3] = _mm_set_ps(1, 0, 0, 0);
 
 		XMMATRIX offset = XMMatrixTranslation(0, m_constraint->getDistance() * 0.5f, 0);
 
