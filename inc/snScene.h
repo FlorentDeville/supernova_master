@@ -132,7 +132,7 @@ namespace Supernova
 		//Create a distance constraint between two actors and return the id of the constraint
 		int createDistanceConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2, float _distance);
 
-		int createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _dt);
+		int createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt);
 
 		//Delete all actors from the physics scene.
 		void clearScene();

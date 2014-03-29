@@ -75,7 +75,7 @@ namespace Supernova
 		snVector4f m_normalizedOffset;
 
 	public:
-		snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _dt);
+		snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt);
 		~snFixedConstraint();
 
 		void prepare();

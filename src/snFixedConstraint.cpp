@@ -38,10 +38,10 @@
 
 namespace Supernova
 {
-	snFixedConstraint::snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _dt) 
-		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_dt(_dt)
+	snFixedConstraint::snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt)
+		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_distance(_distance), m_dt(_dt)
 	{
-		m_distance = (_fixedPoint - _actor->getPosition()).norme();
+		
 	}
 
 	snFixedConstraint::~snFixedConstraint(){}
