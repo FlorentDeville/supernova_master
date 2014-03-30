@@ -6,6 +6,7 @@
 #include "EntityCollisionPoint.h"
 #include "EntityCamera.h"
 #include "EntityFixedConstraint.h"
+#include "EntityPointToPointConstraint.h"
 #include "Input.h"
 #include "Graphics.h"
 
@@ -107,6 +108,14 @@ namespace Devil
 	EntityFixedConstraint* World::createFixedConstraint(const snFixedConstraint* _constraint)
 	{
 		EntityFixedConstraint* newEntity = new EntityFixedConstraint();
+		newEntity->initialize(_constraint);
+		m_EntityList.push_back(newEntity);
+		return newEntity;
+	}
+
+	EntityPointToPointConstraint* World::createPointToPointConstraint(const snPointToPointConstraint* _constraint)
+	{
+		EntityPointToPointConstraint* newEntity = new EntityPointToPointConstraint();
 		newEntity->initialize(_constraint);
 		m_EntityList.push_back(newEntity);
 		return newEntity;

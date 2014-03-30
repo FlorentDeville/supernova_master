@@ -85,6 +85,9 @@
     <ClCompile Include="..\src\EntityFixedConstraint.cpp">
       <Filter>World</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\EntityPointToPointConstraint.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -157,6 +160,9 @@
       <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="..\src\EntityFixedConstraint.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityPointToPointConstraint.h">
       <Filter>World</Filter>
     </ClInclude>
   </ItemGroup>

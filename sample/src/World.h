@@ -10,6 +10,7 @@ using namespace DirectX;
 namespace Supernova
 {
 	class snFixedConstraint;
+	class snPointToPointConstraint;
 }
 
 using namespace Supernova;
@@ -22,6 +23,7 @@ namespace Devil
 	class EntityCollisionPoint;
 	class EntityCamera;
 	class EntityFixedConstraint;
+	class EntityPointToPointConstraint;
 
 	class Input;
 
@@ -52,6 +54,7 @@ namespace Devil
 		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);
 		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
 		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
+		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
 
 		//Delete all entities from the world.
 		void clearWorld();

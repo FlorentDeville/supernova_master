@@ -56,6 +56,8 @@ namespace Supernova
 	class snActor;
 	class CollisionResult;
 	class snIConstraint;
+	class snPointToPointConstraint;
+	class snFixedConstraint;
 
 	//The physic scene to simulate. HUGE WIP.
 	class SN_ALIGN snScene
@@ -130,9 +132,9 @@ namespace Supernova
 		snIConstraint* getConstraint(unsigned int _constraintId);
 
 		//Create a distance constraint between two actors and return the id of the constraint
-		int createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2);
+		snPointToPointConstraint* createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2);
 
-		int createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt);
+		snFixedConstraint* createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt);
 
 		//Delete all actors from the physics scene.
 		void clearScene();

@@ -148,20 +148,19 @@ namespace Supernova
 		return m_constraints[_constraintId];
 	}
 
-	int snScene::createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2)
+	snPointToPointConstraint* snScene::createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, 
+		const snVector4f& _offset2)
 	{
 		snPointToPointConstraint* constraint = new snPointToPointConstraint(_body1, _offset1, _body2, _offset2);
-		int id = m_constraints.size();
 		m_constraints.push_back(constraint);
-		return id;
+		return constraint;
 	}
 
-	int snScene::createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt)
+	snFixedConstraint* snScene::createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt)
 	{
 		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, _distance, _dt);
-		int id = m_constraints.size();
 		m_constraints.push_back(constraint);
-		return id;
+		return constraint;
 	}
 
 	void snScene::clearScene()

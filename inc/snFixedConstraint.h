@@ -42,7 +42,42 @@ namespace Supernova
 {
 	class snActor;
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
 	//Represent a constraint of a body staying at the same distance of a point in space.
+	//
+	//Position Constraint : C = x + r - p with : 
+	//			- x as the position of the actor.
+	//			- r as the vector from the actor origin to the pivot point (expressed in world coordinate).
+	//			- p as the pivot point (expressed in world coordinate).
+	//
+	//Velocity Constraint : dC/dt = v + Rs * w with :
+	//			- v as the linear velocity of the actor.
+	//			- Rs as the skew symmetric matrices used to compute a cross product. Rs * w = w X r
+	//			- w as the angular velocity of the actor.
+	//
+	//Jacobian : J = [E Rs] with : 
+	//			- E as the identity matrix.
+	//			- Rs as the skew symmetric matrices used to compute a cross product. Rs * w = w X r
+	//
+	//K Matrix : K = M-1 + Rs * I-1 * RsT with :
+	//			- M-1 as the inverse masss matrix.
+	//			- Rs as the skew symmetric matrices used to compute a cross product. Rs * w = w X r
+	//			- I-1 as the inverse inertia tensor expressed in world coordinate.
+	//			- RsT as the transpose of Rs.
+	//
+	//Linear velocity : v = v + m-1 * l with :
+	//			- v as linear velocity of the actor.
+	//			- m-1 as the inverse of the mass.
+	//			- l as the lagrangian.
+	//
+	//Angular velocity : w + I-1 * RsT * l with :
+	//			- w as the angular velocity.
+	//			- I-1 as the inverse inertia tensor expressed in world coordinate.
+	//			- RsT as the transpose of Rs.
+	//			- l as the lagrangian
+	//
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	class snFixedConstraint : public snIConstraint
 	{
 	protected:

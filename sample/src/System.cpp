@@ -916,7 +916,6 @@ namespace Devil
 			act->setPosition(pos);
 			float angle = 3.14f * 0.25f;
 			act->setOrientationQuaternion(snQuaternionFromEuler(angle, angle, 0));
-			//act->setAngularVelocity(snVector4f(0, 10, 20, 0));
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = 0.f;
 			act->getPhysicMaterial().m_friction = 1.f;
@@ -955,6 +954,7 @@ namespace Devil
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = 0.f;
 			act->getPhysicMaterial().m_friction = 1.f;
+			act->setAngularDamping(0.01f);
 
 			//create collider
 			snColliderBox* collider = 0;
@@ -984,8 +984,8 @@ namespace Devil
 		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
 
 		//set camera initial position
-		WORLD->getCamera()->setPosition(XMVectorSet(0, 50, 100, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(15, 15, 0, 1));
+		WORLD->getCamera()->setPosition(XMVectorSet(0, 80, 150, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(0, 80, 0, 1));
 		WORLD->getCamera()->setUp(XMVectorSet(0, 1, 0, 0));
 
 		//WORLD->deactivateCollisionPoint();
@@ -1067,12 +1067,13 @@ namespace Devil
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
 			kinematicBox->setActor(act);
 		}
-		snActor* act1 = 0;
+		float top = 100;
+		snActor* previousActor = 0;
 		{
 			float width = 5;
 			float height = 5;
 			float depth = 5;
-			snVector4f pos(10, 35, 0, 1);
+			snVector4f pos(10, top, 0, 1);
 
 			//create actor
 			snActor* act = 0;
@@ -1086,7 +1087,7 @@ namespace Devil
 			act->setIsKinematic(false);
 			act->setLinearDamping(20);
 			act->setAngularDamping(20);
-			act1 = act;
+			previousActor = act;
 
 			//create collider
 			snColliderBox* collider = 0;
@@ -1103,43 +1104,56 @@ namespace Devil
 			box->setActor(act);
 
 			//create constraints
-			int constraintId = m_physicScene->createFixedConstraint(act, pos + snVector4f(-7, 10, 0, 0), 10, m_deltaTime * 0.001f);
-			snIConstraint* c = m_physicScene->getConstraint(constraintId);
-			snFixedConstraint* constraint = static_cast<snFixedConstraint*>(c);
+			snFixedConstraint* constraint = m_physicScene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10, m_deltaTime * 0.001f);
 			WORLD->createFixedConstraint(constraint);
 		}
 		
-		float width = 5;
-		float height = 5;
-		float depth = 5;
-		snVector4f pos(-10, 35, 0, 1);
+		const int LENGTH = 5;
+		const float LINK_LENGTH = 5;
+		const float TWO_LINK_LENGTH = LINK_LENGTH * 2;
+		for (int i = 0; i < LENGTH; ++i)
+		{
 
-		//create actor
-		snActor* act = 0;
-		int actorId = -1;
-		m_physicScene->createActor(&act, actorId);
-		act->setName("d1");
-		act->setMass(50);
-		act->setPosition(pos);
-		act->getPhysicMaterial().m_restitution = 0;
-		act->getPhysicMaterial().m_friction = 1;
-		act->setIsKinematic(false);
+			float width = 5;
+			float height = 5;
+			float depth = 5;
+			top -= TWO_LINK_LENGTH;
+			snVector4f pos(10, top, 0, 1);
 
-		//create collider
-		snColliderBox* collider = 0;
-		int colliderId = -1;
-		act->createColliderBox(&collider, colliderId);
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			m_physicScene->createActor(&act, actorId);
+			act->setName("d1");
+			act->setMass(50);
+			act->setPosition(pos);
+			act->getPhysicMaterial().m_restitution = 0;
+			act->getPhysicMaterial().m_friction = 1;
+			act->setIsKinematic(false);
+			act->setAngularDamping(20);
+			act->setLinearDamping(5);
 
-		collider->setSize(snVector4f(width, height, depth, 0));
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
 
-		//initialize
-		collider->initialize();
-		act->initialize();
+			collider->setSize(snVector4f(width, height, depth, 0));
 
-		EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[4]);
-		box->setActor(act);	
+			//initialize
+			collider->initialize();
+			act->initialize();
 
-		//int p2pcid = m_physicScene->createPointToPointConstraint(act1, snVector4f(-10, 0, 0, 1), act, snVector4f(10, 0, 0, 1));
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[4]);
+			box->setActor(act);
+
+			//create p2p constraint
+			snPointToPointConstraint* p2pc = m_physicScene->createPointToPointConstraint(previousActor, snVector4f(0, -LINK_LENGTH, 0, 1), 
+				act, snVector4f(0, LINK_LENGTH, 0, 1));
+			WORLD->createPointToPointConstraint(p2pc);
+
+			previousActor = act;
+		}
 	}
 
 	snVector4f System::createTowerLevel(const snVector4f& _origin)

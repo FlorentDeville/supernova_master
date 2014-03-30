@@ -42,10 +42,10 @@ namespace Supernova
 		const snVector4f& _pivotB)
 		: snIConstraint()
 	{
-		m_bodies[0] = _bodyA;
+		m_actors[0] = _bodyA;
 		m_pivot[0] = _pivotA;
 
-		m_bodies[1] = _bodyB;
+		m_actors[1] = _bodyB;
 		m_pivot[1] = _pivotB;
 	}
 
@@ -62,12 +62,12 @@ namespace Supernova
 		for (int i = 0; i < ACTOR_COUNT; ++i)
 		{
 			//compute the offset in world coordinates.
-			snMatrix44f transform = m_bodies[i]->getOrientationMatrix();
-			transform[3] = m_bodies[i]->getPosition();
+			snMatrix44f transform = m_actors[i]->getOrientationMatrix();
+			transform[3] = m_actors[i]->getPosition();
 			m_worldPivot[i] = snMatrixTransform4(m_pivot[i], transform);
 
 			//compute the offset
-			m_offset[i] = m_worldPivot[i] - m_bodies[i]->getPosition();
+			m_offset[i] = m_worldPivot[i] - m_actors[i]->getPosition();
 
 			//compte the skew matrix
 			m_R[i][0] = snVector4f(0, m_offset[i].getZ(), -m_offset[i].getY(), 0);
@@ -76,9 +76,9 @@ namespace Supernova
 			m_R[i][3] = snVector4f(0, 0, 0, 1);
 
 			//compute inverse mass matrix
-			invMass[i][0] = snVector4f(m_bodies[i]->getInvMass(), 0, 0, 0);
-			invMass[i][1] = snVector4f(0, m_bodies[i]->getInvMass(), 0, 0);
-			invMass[i][2] = snVector4f(0, 0, m_bodies[i]->getInvMass(), 0);
+			invMass[i][0] = snVector4f(m_actors[i]->getInvMass(), 0, 0, 0);
+			invMass[i][1] = snVector4f(0, m_actors[i]->getInvMass(), 0, 0);
+			invMass[i][2] = snVector4f(0, 0, m_actors[i]->getInvMass(), 0);
 			invMass[i][3] = snVector4f(0, 0, 0, 1);
 
 			//compute R * I-1 * RT
@@ -86,54 +86,55 @@ namespace Supernova
 			m_R[i].transpose(RT);
 
 			snMatrix44f RInvI;
-			snMatrixMultiply3(m_R[i], m_bodies[i]->getInvWorldInertia(), RInvI);
+			snMatrixMultiply3(m_R[i], m_actors[i]->getInvWorldInertia(), RInvI);
 			snMatrixMultiply3(RInvI, RT, RinvIRT[i]);
 
 			//compute I-1 * R
-			snMatrixMultiply3(m_bodies[i]->getInvWorldInertia(), m_R[i], m_InvIR[i]);
+			snMatrixMultiply3(m_actors[i]->getInvWorldInertia(), RT, m_InvIRT[i]);
 		}
 
 		//compute the effective mass and then its inverse.
-		snMatrix44f effectiveMass = invMass[0] + RinvIRT[0] + invMass[1] + RinvIRT[1];
-		effectiveMass[3] = snVector4f(0, 0, 0, 1);
-		m_invEffectiveMass = effectiveMass.inverse();
+		snMatrix44f KMatrix = invMass[0] + RinvIRT[0] + invMass[1] + RinvIRT[1];
+		KMatrix[3] = snVector4f(0, 0, 0, 1);
+		m_invEffectiveMass = KMatrix.inverse();
+
+		//compute baumgarte stabilization
+		float beta = 0.1f;
+		float dt = 0.016f;
+		snVector4f error = m_worldPivot[0] - m_worldPivot[1];
+		m_bias = error * (beta / dt);
+		//m_bias = snVector4f(0, 0, 0, 0);
 	}
 
 	void snPointToPointConstraint::resolve()
 	{
 		//compute the jacobian times the relative velocity.
-		snVector4f JV = m_bodies[0]->getLinearVelocity() + m_bodies[0]->getAngularVelocity().cross(m_worldPivot[0]) -
-			m_bodies[1]->getLinearVelocity() - m_bodies[1]->getAngularVelocity().cross(m_worldPivot[1]);
-
-		/*JV = m_bodies[1]->getLinearVelocity() - m_bodies[0]->getLinearVelocity() + m_bodies[0]->getAngularVelocity().cross(m_worldPivot[0])
-			- m_bodies[1]->getAngularVelocity().cross(m_worldPivot[1]);*/
+		snVector4f JV = m_actors[0]->getLinearVelocity() + m_actors[0]->getAngularVelocity().cross(m_offset[0]) -
+			m_actors[1]->getLinearVelocity() - m_actors[1]->getAngularVelocity().cross(m_offset[1]);
 
 		//compute lagrangian
-		snVector4f lagrangian = snMatrixTransform3(JV, m_invEffectiveMass);
-
-		////clamp lambda
-		//float oldAccLambda = m_accumulatedImpulseMagnitude;
-		//m_accumulatedImpulseMagnitude += lagrangian;
-		//m_accumulatedImpulseMagnitude = clamp(m_accumulatedImpulseMagnitude, -SN_FLOAT_MAX, 0);
-		//lagrangian = m_accumulatedImpulseMagnitude - oldAccLambda;
+		snVector4f lagrangian = snMatrixTransform3(-JV - m_bias, m_invEffectiveMass);
 
 		//compute linear velocity
-		m_bodies[0]->setLinearVelocity(m_bodies[0]->getLinearVelocity() - lagrangian * m_bodies[0]->getInvMass());
-		m_bodies[1]->setLinearVelocity(m_bodies[1]->getLinearVelocity() + lagrangian * m_bodies[1]->getInvMass());
+		m_actors[0]->setLinearVelocity(m_actors[0]->getLinearVelocity() + lagrangian * m_actors[0]->getInvMass());
+		m_actors[1]->setLinearVelocity(m_actors[1]->getLinearVelocity() - lagrangian * m_actors[1]->getInvMass());
 
-		//compute angular velocity
-		snMatrix44f RT[2];
-		m_R[0].transpose(RT[0]);
-		m_R[1].transpose(RT[1]);
+		m_actors[0]->setAngularVelocity(m_actors[0]->getAngularVelocity() + snMatrixTransform3(m_InvIRT[0], lagrangian));
+		m_actors[1]->setAngularVelocity(m_actors[1]->getAngularVelocity() - snMatrixTransform3(m_InvIRT[1], lagrangian));
+	}
 
-		snMatrix44f InvIRT[2];
-		snMatrixMultiply3(m_bodies[0]->getInvWorldInertia(), RT[0], InvIRT[0]);
-		snMatrixMultiply3(m_bodies[1]->getInvWorldInertia(), RT[1], InvIRT[1]);
+	snActor const * const * snPointToPointConstraint::getActors() const
+	{
+		return m_actors;
+	}
 
-		snVector4f dw[2];
-		dw[0] = snMatrixTransform3(InvIRT[0], lagrangian);
-		dw[1] = snMatrixTransform3(InvIRT[1], lagrangian);
-		m_bodies[0]->setAngularVelocity(m_bodies[0]->getAngularVelocity() - dw[0]);
-		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + dw[1]);
+	snVector4f const * snPointToPointConstraint::getWPivot() const
+	{
+		return m_worldPivot;
+	}
+
+	snVector4f const* snPointToPointConstraint::getOffset() const
+	{
+		return m_offset;
 	}
 }

@@ -40,12 +40,49 @@
 
 namespace Supernova
 {
-	//Represent a constraint between two bodies. It forces the two bodies to remain at the same distance.
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+	//Represent a constraint between two bodies. It only lets the bodies to rotate about a common point.
+	//
+	//Position Constraint: C = pa - pb = 0 where pa and pb are the pivot point expressed in world coordinate for body a and b.
+	//It means those two points as to be the same everytime.
+	//It is otherwise expressed : C = xa + Ra * ra - xb - Rb * rb with : 
+	//		- xa, xb as the position of the actors
+	//		- Ra, Rb as the orientation matrix of the actors
+	//		- ra, rb as the vector from the actor position to the pivot point (in world coordinate). It is called m_offset in this class.
+	//
+	//Velocity Constraint : dC/dt = va + Rsa * wa - xb - Rsb * wb with :
+	//		- va, vb as the linear velocities of body a and b
+	//		- Rsa, Rsb as the skew symmetric matrices used to compute a cross product. Rsa * wa = wa X ra
+	//		- wa, wb as the angular velocities of body a and b.
+	//
+	//Jacobian : J = [ 1 Rsa -1 -Rsb]
+	//
+	//K Matrix : K = Ma-1 + Rsa * Ia-1 * RsaT + Mb-1 + Rsb * Ib-1 * RsbT with : 
+	//		- Ma-1, Mb-1 as the inverse mass matrices for body a and b.
+	//		- Ia-1, Ib-1 as the inverse world inertia tensor for body a and b.
+	//		- Rsa, Rsb as the skew symmetric matrices used to compute a cross product. They are the same as in the velocity constraint.
+	//		- RsaT, RsbT as the transpose of respectively Rsa and Rsb.
+	//
+	//Linear Velocity : 
+	//			Va = Va + Ma-1 * l and Vb = Vb - Mb-1 * l with :
+	//				- Va, Vb as the linear velocities of actor a and b.
+	//				- Ma-1, Mb-1 as the inverse mass matrices for actor a and b.
+	//				- l as the lagrangian.
+	//
+	//Angular Velocity :
+	//			wa = wa + Ia-1 * RsaT * l and wb = wb - Ib-1 * RsbT with : 
+	//				- wa, wb as the angular velocities ofactor a and b.
+	//				- Ia-1, Ib-1 as the inverse world inertia tensors for actor a and b.
+	//				- RsaT, RsbT as the transpose of respectively Rsa and Rsb.
+	//				- l as the lagrangian.
+	//
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	class SN_ALIGN snPointToPointConstraint : public snIConstraint
 	{
 	private:
 		//The two bodies which must respect the constraint.
-		snActor* m_bodies[2];
+		snActor* m_actors[2];
 
 		//Offset to the center of mass of the bodies. They must be expressed in local coordinates of the bodies.
 		snVector4f m_pivot[2];
@@ -59,33 +96,36 @@ namespace Supernova
 		//Skew matrix used to compute the cross product r X w
 		snMatrix44f m_R[2];
 
-		//I-1 * R
-		snMatrix44f m_InvIR[2];
-
-		////Constraint distance between the two bodies.
-		//float m_distance;
-
-		////Normalized vector from the second body to the first one
-		//snVector4f m_normalizeddp;
-
-		////radius X normalized dp
-		//snVector4f m_rCrossDirection[2];
-
-		////(radius X normalized dp) * I-1
-		//snVector4f m_rCrossUInvI[2];
+		//I-1 * RT
+		snMatrix44f m_InvIRT[2];
 
 		//Inverse of the mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
 		snMatrix44f m_invEffectiveMass;
 
-	public:
+		//Baumgarte stabilization
+		snVector4f m_bias;
 
-		snPointToPointConstraint(snActor* const _bodyA, const snVector4f& _pivotA, snActor* const _bodyB, const snVector4f& _pivotB);
+	public:
+		//Constructor for a Point To Point Constraint.
+		//_bodyA and _bodyB are const pointers to snActor objects.
+		//_pivotA is the pivot point around which _bodyA can rotate. It is expressed in _bodyA local coordinate.
+		//_pivotB is the pivot point around which _bodyB can rotate. It is expressed in _bodyB local coordinate.
+		snPointToPointConstraint(snActor* const _actorA, const snVector4f& _pivotA, snActor* const _actorB, const snVector4f& _pivotB);
 
 		virtual ~snPointToPointConstraint();
 
 		void prepare();
 
 		void resolve();
+
+		//Return an array of two pointers to snActors
+		snActor const * const * getActors() const;
+
+		//Return an array of vectors containing the pivot points in world coordinate for each actor of the constraint.
+		snVector4f const * getWPivot() const;
+
+		//Return an array of vectors constaining the offset of the pivot. The vector goes from the actor origin to the pivot.
+		snVector4f const* getOffset() const;
 	};
 }
 
