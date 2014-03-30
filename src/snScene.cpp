@@ -43,7 +43,7 @@
 #include "snFeatureClipping.h"
 
 #include "snFixedConstraint.h"
-#include "snDistanceConstraint.h"
+#include "snPointToPointConstraint.h"
 #include "snContactConstraint.h"
 #include "snFrictionConstraint.h"
 
@@ -148,10 +148,9 @@ namespace Supernova
 		return m_constraints[_constraintId];
 	}
 
-	int snScene::createDistanceConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2, 
-		float _distance)
+	int snScene::createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2)
 	{
-		snDistanceConstraint* constraint = new snDistanceConstraint(_body1, _offset1, _body2, _offset2, _distance);
+		snPointToPointConstraint* constraint = new snPointToPointConstraint(_body1, _offset1, _body2, _offset2);
 		int id = m_constraints.size();
 		m_constraints.push_back(constraint);
 		return id;
@@ -273,8 +272,6 @@ namespace Supernova
 		{
 			//calculate weight
 			snVector4f W = m_gravity * (*i)->getMass();
-
-			float l = (*i)->getLinearDamping();
 
 			//calculate linear damping
 			snVector4f linDamping = (*i)->getLinearVelocity() * -(*i)->getLinearDamping();

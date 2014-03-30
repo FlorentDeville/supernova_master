@@ -32,50 +32,56 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_DISTANCE_CONSTRAINT_H
-#define SN_DISTANCE_CONSTRAINT_H
+#ifndef SN_POINT_TO_POINT_CONSTRAINT_H
+#define SN_POINT_TO_POINT_CONSTRAINT_H
 
 #include "snIConstraint.h"
+#include "snActor.h"
 
 namespace Supernova
 {
-	class snActor;
-
 	//Represent a constraint between two bodies. It forces the two bodies to remain at the same distance.
-	class SN_ALIGN snDistanceConstraint : public snIConstraint
+	class SN_ALIGN snPointToPointConstraint : public snIConstraint
 	{
 	private:
 		//The two bodies which must respect the constraint.
 		snActor* m_bodies[2];
 
 		//Offset to the center of mass of the bodies. They must be expressed in local coordinates of the bodies.
-		snVector4f m_localOffset[2];
+		snVector4f m_pivot[2];
 
 		//Offset to the center of mass expressed in world coordinates.
-		snVector4f m_worldOffset[2];
+		snVector4f m_worldPivot[2];
 
-		//Vector from the constraint point and the center of mass.
-		snVector4f m_radius[2];
+		//Vector from the constraint point to the center of mass.
+		snVector4f m_offset[2];
 
-		//Constraint distance between the two bodies.
-		float m_distance;
+		//Skew matrix used to compute the cross product r X w
+		snMatrix44f m_R[2];
 
-		//Normalized vector from the second body to the first one
-		snVector4f m_normalizeddp;
+		//I-1 * R
+		snMatrix44f m_InvIR[2];
 
-		//radius X normalized dp
-		snVector4f m_rCrossDirection[2];
+		////Constraint distance between the two bodies.
+		//float m_distance;
 
-		//(radius X normalized dp) * I-1
-		snVector4f m_rCrossUInvI[2];
+		////Normalized vector from the second body to the first one
+		//snVector4f m_normalizeddp;
 
-		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
-		float m_effectiveMass;
+		////radius X normalized dp
+		//snVector4f m_rCrossDirection[2];
+
+		////(radius X normalized dp) * I-1
+		//snVector4f m_rCrossUInvI[2];
+
+		//Inverse of the mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
+		snMatrix44f m_invEffectiveMass;
+
 	public:
 
-		snDistanceConstraint(snActor* const _body1, const snVector4f& _offsetBody1, snActor* const _body2, const snVector4f& _offsetBody2, float _distance);
+		snPointToPointConstraint(snActor* const _bodyA, const snVector4f& _pivotA, snActor* const _bodyB, const snVector4f& _pivotB);
 
-		virtual ~snDistanceConstraint();
+		virtual ~snPointToPointConstraint();
 
 		void prepare();
 
@@ -83,4 +89,4 @@ namespace Supernova
 	};
 }
 
-#endif //SN_DISTANCE_CONSTRAINT_H
+#endif //ifndef SN_POINT_TO_POINT_CONSTRAINT_H

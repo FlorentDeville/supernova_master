@@ -130,7 +130,7 @@ namespace Supernova
 		snIConstraint* getConstraint(unsigned int _constraintId);
 
 		//Create a distance constraint between two actors and return the id of the constraint
-		int createDistanceConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2, float _distance);
+		int createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2);
 
 		int createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt);
 

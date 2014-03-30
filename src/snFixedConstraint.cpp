@@ -51,20 +51,22 @@ namespace Supernova
 		m_accumulatedImpulseMagnitude = 0;
 
 		//compute the offset between the object position and the fixed point
-		snVector4f offset = m_fixedPoint - m_actor->getPosition();
+		m_offset = m_fixedPoint - m_actor->getPosition();
 
 		//Compute the r skew matrix
-		m_R[0] = snVector4f(0, offset.getZ(), -offset.getY(), 0);
-		m_R[1] = snVector4f(-offset.getZ(), 0, offset.getX(), 0);
-		m_R[2] = snVector4f(offset.getY(), -offset.getX(), 0, 0);
+		m_R[0] = snVector4f(0, m_offset.getZ(), -m_offset.getY(), 0);
+		m_R[1] = snVector4f(-m_offset.getZ(), 0, m_offset.getX(), 0);
+		m_R[2] = snVector4f(m_offset.getY(), -m_offset.getX(), 0, 0);
 		m_R[3] = snVector4f(0, 0, 0, 1);
+		snMatrix44f RT;
+		m_R.transpose(RT);
 
 		//compute the effective mass
 		snMatrix44f RI;
 		snMatrixMultiply3(m_R, m_actor->getInvWorldInertia(), RI);
 
 		snMatrix44f RIR;
-		snMatrixMultiply3(RI, m_R, RIR);
+		snMatrixMultiply3(RI, RT, RIR);
 
 		snMatrix44f invM;
 		invM[0] = snVector4f(m_actor->getInvMass(), 0, 0, 0);
@@ -74,38 +76,30 @@ namespace Supernova
 		m_effectiveMass = invM + RIR;
 		m_effectiveMass = m_effectiveMass.inverse();
 
-		//compute I-1R
-		snMatrixMultiply3(m_actor->getInvWorldInertia(), m_R, m_invIR);
+		//compute I-1RT
+		snMatrixMultiply3(m_actor->getInvWorldInertia(), RT, m_invIRT);
 
 		//compute velocity bias (baumgarte stabilization)
-		m_normalizedOffset = offset;
+		m_normalizedOffset = m_offset;
 		m_normalizedOffset.normalize();
 		float beta = 0.1f;
 
-		snVector4f deltaOffset = (m_normalizedOffset * m_distance) - offset;
+		snVector4f deltaOffset = (m_normalizedOffset * m_distance) - m_offset;
 		m_bias = deltaOffset * (beta / m_dt);
 	}
 
 	void snFixedConstraint::resolve()
 	{
 		//compute JV
-		snVector4f Rw = snMatrixTransform3(m_R, m_actor->getAngularVelocity());
-		snVector4f JV = (m_actor->getLinearVelocity() + Rw) * -1;
+		snVector4f Rw = m_actor->getAngularVelocity().cross(m_offset);
+		snVector4f JV = m_actor->getLinearVelocity() + Rw;
 
 		//compute lagrangian
-		snVector4f lagrangian = snMatrixTransform3(JV - m_bias, m_effectiveMass);
-
-		float lagrangianMagnitude = m_normalizedOffset.dot(lagrangian);
-
-		//clamp lagrangian along the offset direction
-		float oldAccLambda = m_accumulatedImpulseMagnitude;
-		m_accumulatedImpulseMagnitude = clamp(m_accumulatedImpulseMagnitude + lagrangianMagnitude, 0, SN_FLOAT_MAX);
-		lagrangianMagnitude = m_accumulatedImpulseMagnitude - oldAccLambda;
-		lagrangian = m_normalizedOffset * lagrangianMagnitude;
+		snVector4f lagrangian = snMatrixTransform3(-JV - m_bias, m_effectiveMass);
 
 		//compute the corrective velocity
 		snVector4f dv = lagrangian * m_actor->getInvMass();
-		snVector4f dw = snMatrixTransform3(m_invIR, lagrangian);
+		snVector4f dw = snMatrixTransform3(m_invIRT, lagrangian);
 		m_actor->setLinearVelocity(m_actor->getLinearVelocity() + dv);
 		m_actor->setAngularVelocity(m_actor->getAngularVelocity() + dw);
 	}

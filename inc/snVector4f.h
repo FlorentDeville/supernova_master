@@ -62,6 +62,10 @@ namespace Supernova
 	public:
 		__m128 m_vec;
 
+		//Bit mask where the only bit to 1 is the sign bit. In a 32 bits float, the bit sign is the most significant bit so
+		//this mask contains 4 floating point with a binaey value 0x80000000.
+		static const __m128 SIGNMASK;
+
 	public:
 		snVector4f(__m128 _Value)
 		{
@@ -90,6 +94,13 @@ namespace Supernova
 		{
 			snVector4f ret(_mm_sub_ps(m_vec, _Other.m_vec));
 			return ret;
+		}
+
+		inline snVector4f operator-() const
+		{
+			//To negate a float, we need to switch the bit sign.
+			//Using XOR operator with the bit mask will do so as the bit mask as a 1 only for the sign bit.
+			return _mm_xor_ps(m_vec, SIGNMASK);
 		}
 
 		inline snVector4f operator*(const snVector4f& _Other) const
@@ -250,16 +261,12 @@ namespace Supernova
 
 		inline void absolute()
 		{
-			__m128 zero = _mm_set1_ps(0);
-			__m128 minusV = _mm_sub_ps(zero, m_vec);
-			m_vec = _mm_max_ps(m_vec, minusV);
+			m_vec = _mm_andnot_ps(SIGNMASK, m_vec);
 		}
 
 		inline snVector4f getAbsolute()
 		{
-			__m128 zero = _mm_set1_ps(0);
-			__m128 minusV = _mm_sub_ps(zero, m_vec);
-			return snVector4f(_mm_max_ps(m_vec, minusV));
+			return _mm_andnot_ps(SIGNMASK, m_vec);
 		}
 
 		inline float& operator[](int id)

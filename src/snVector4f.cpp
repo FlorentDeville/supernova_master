@@ -32,68 +32,10 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_FIXED_CONSTRAINT_H
-#define SN_FIXED_CONSTRAINT_H
-
-#include "snIConstraint.h"
-#include "snMatrix44f.h"
+#include "snVector4f.h"
 
 namespace Supernova
 {
-	class snActor;
-
-	//Represent a constraint of a body staying at the same distance of a point in space.
-	class snFixedConstraint : public snIConstraint
-	{
-	protected:
-
-		//Actor this constraint has to be applied to.
-		snActor* m_actor;
-
-		//Point in space. The actor has to stay at the same distance to this point.
-		snVector4f m_fixedPoint;
-
-		//Skew matrix used to compute the cross product r X w
-		snMatrix44f m_R;
-
-		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
-		snMatrix44f m_effectiveMass;
-
-		//The distance between the fixed point and the actor's center of mass.
-		float m_distance;
-
-		//The time step. Necessary to compute baumgarte stabilization.
-		float m_dt;
-
-		//Velocity bias computed using baumgarte stabilization.
-		snVector4f m_bias;
-
-		//I-1 * RT
-		snMatrix44f m_invIRT;
-
-		//Vector from the actor origin to the fixed point.
-		snVector4f m_offset;
-
-		//Normalized vector going from the actor's center of mass to the constraint's fixed point.
-		snVector4f m_normalizedOffset;
-
-	public:
-		snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt);
-		~snFixedConstraint();
-
-		void prepare();
-
-		void resolve();
-
-		//Return the world coordinate of the fixed point.
-		snVector4f getFixedPosition() const;
-
-		//Return the distance between the fixed point and the actor.
-		float getDistance() const;
-
-		const snActor* getActor() const;
-
-	};
+	//Mask where the only bit is 1 is the most significant bit. It's the sign bit in a 32 bit float.
+	const __m128 snVector4f::SIGNMASK = _mm_castsi128_ps(_mm_set1_epi32(0x80000000));
 }
-
-#endif //ifndef SN_FIXED_CONSTRAINT_H
