@@ -985,7 +985,7 @@ namespace Devil
 
 		//set camera initial position
 		WORLD->getCamera()->setPosition(XMVectorSet(0, 80, 150, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(0, 80, 0, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(10, 75, 0, 1));
 		WORLD->getCamera()->setUp(XMVectorSet(0, 1, 0, 0));
 
 		//WORLD->deactivateCollisionPoint();
@@ -1070,9 +1070,9 @@ namespace Devil
 		float top = 100;
 		snActor* previousActor = 0;
 		{
-			float width = 5;
+			float width = 2;
 			float height = 5;
-			float depth = 5;
+			float depth = 2;
 			snVector4f pos(10, top, 0, 1);
 
 			//create actor
@@ -1108,15 +1108,15 @@ namespace Devil
 			WORLD->createFixedConstraint(constraint);
 		}
 		
-		const int LENGTH = 5;
+		const int LENGTH = 7;
 		const float LINK_LENGTH = 5;
 		const float TWO_LINK_LENGTH = LINK_LENGTH * 2;
 		for (int i = 0; i < LENGTH; ++i)
 		{
 
-			float width = 5;
+			float width = 2;
 			float height = 5;
-			float depth = 5;
+			float depth = 2;
 			top -= TWO_LINK_LENGTH;
 			snVector4f pos(10, top, 0, 1);
 

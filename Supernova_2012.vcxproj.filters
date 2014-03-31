@@ -82,9 +82,6 @@
     <ClInclude Include="inc\snIConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snDistanceConstraint.h">
-      <Filter>Simulation\Constraints</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snFrictionConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
@@ -95,6 +92,9 @@
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
     <ClInclude Include="inc\snContactConstraint.h">
+      <Filter>Simulation\Constraints</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snPointToPointConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
   </ItemGroup>
@@ -136,9 +136,6 @@
     <ClCompile Include="src\snScene.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
-    <ClCompile Include="src\snDistanceConstraint.cpp">
-      <Filter>Simulation\Constraints</Filter>
-    </ClCompile>
     <ClCompile Include="src\snFrictionConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
@@ -150,6 +147,12 @@
     </ClCompile>
     <ClCompile Include="src\snContactConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snPointToPointConstraint.cpp">
+      <Filter>Simulation\Constraints</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snVector4f.cpp">
+      <Filter>Tools</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
