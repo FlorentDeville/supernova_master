@@ -100,8 +100,8 @@ namespace Devil
 
 
 		//createScene1();
-		//createScene2();
-		createSceneWithconstraint();
+		createScene2();
+		//createSceneWithconstraint();
 
 		//test case to debug the clipping plan bug.
 		//createScene3();
@@ -417,13 +417,13 @@ namespace Devil
 
 		m_physicScene->setAngularSquaredSpeedThreshold(0.0001f);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.005f);
-		m_physicScene->setSolverIterationCount(20);
+		m_physicScene->setSolverIterationCount(5);
 		//set camera initial position
 		WORLD->getCamera()->setPosition(XMVectorSet(25, 30, 50, 1));
 		WORLD->getCamera()->setLookAt(XMVectorSet(15, 7, 0, 1));
 		WORLD->getCamera()->setUp(XMVectorSet(0, 1, 0, 0));
 
-		//WORLD->deactivateCollisionPoint();
+		WORLD->deactivateCollisionPoint();
 
 		XMFLOAT4 color1(0.8f, 1, 1, 1);
 		XMFLOAT4 color2(0.93f, 0.68f, 1, 1);
@@ -954,7 +954,7 @@ namespace Devil
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = 0.f;
 			act->getPhysicMaterial().m_friction = 1.f;
-			act->setAngularDamping(0.01f);
+			act->setAngularDampingCoeff(0.01f);
 
 			//create collider
 			snColliderBox* collider = 0;
@@ -1085,8 +1085,8 @@ namespace Devil
 			act->getPhysicMaterial().m_restitution = 0;
 			act->getPhysicMaterial().m_friction = 1;
 			act->setIsKinematic(false);
-			act->setLinearDamping(20);
-			act->setAngularDamping(20);
+			act->setLinearDampingCoeff(20);
+			act->setAngularDampingCoeff(20);
 			previousActor = act;
 
 			//create collider
@@ -1130,8 +1130,8 @@ namespace Devil
 			act->getPhysicMaterial().m_restitution = 0;
 			act->getPhysicMaterial().m_friction = 1;
 			act->setIsKinematic(false);
-			act->setAngularDamping(20);
-			act->setLinearDamping(5);
+			act->setAngularDampingCoeff(20);
+			act->setLinearDampingCoeff(5);
 
 			//create collider
 			snColliderBox* collider = 0;

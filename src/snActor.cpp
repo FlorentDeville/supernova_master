@@ -43,7 +43,7 @@
 
 namespace Supernova
 {
-	snActor::snActor() : m_material(), m_linearDamping(0.5f), m_angularDamping(0.f)
+	snActor::snActor() : m_material(), m_linearDampingCoeff(0.5f), m_angularDampingCoeff(0.f)
 	{
 		m_w = snVector4f(0, 0, 0, 0);
 		m_q = snVector4f(0, 0, 0, 1);
@@ -54,7 +54,7 @@ namespace Supernova
 		m_isStatic = false;
 	}
 
-	snActor::snActor(bool _isStatic) : m_material(), m_linearDamping(0.5f), m_angularDamping(0.f)
+	snActor::snActor(bool _isStatic) : m_material(), m_linearDampingCoeff(0.5f), m_angularDampingCoeff(0.f)
 	{
 		m_w = snVector4f(0, 0, 0, 0);
 		m_q = snVector4f(0, 0, 0, 1);
@@ -217,24 +217,24 @@ namespace Supernova
 		return m_invR;
 	}
 
-	void snActor::setLinearDamping(float _linearDamping)
+	void snActor::setLinearDampingCoeff(float _linearDampingCoeff)
 	{
-		m_linearDamping = _linearDamping;
+		m_linearDampingCoeff = _linearDampingCoeff;
 	}
 
-	void snActor::setAngularDamping(float _angularDamping)
+	void snActor::setAngularDampingCoeff(float _angularDampingCoeff)
 	{
-		m_angularDamping = _angularDamping;
+		m_angularDampingCoeff = _angularDampingCoeff;
 	}
 
-	float snActor::getLinearDamping() const
+	float snActor::getLinearDampingCoeff() const
 	{
-		return m_linearDamping;
+		return m_linearDampingCoeff;
 	}
 
-	float snActor::getAngularDamping() const
+	float snActor::getAngularDampingCoeff() const
 	{
-		return m_angularDamping;
+		return m_angularDampingCoeff;
 	}
 
 	void snActor::createColliderBox(snColliderBox** _box, int& _colliderId)
