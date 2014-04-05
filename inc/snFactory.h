@@ -79,6 +79,12 @@ namespace Supernova
 		//Delete a scene and all its actors.
 		void deleteScene(unsigned int _sceneId);
 
+		//Delete all scenes and all its actors
+		void deleteAllScenes();
+
+		//Update all the scenes using _dt as a time step.
+		void updateAllScenes(float _dt);
+
 		//Get a scene from its id. Return null if the scene can't be found.
 		snScene* getScene(unsigned int _sceneId);
 

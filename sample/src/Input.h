@@ -10,6 +10,10 @@ namespace Devil
 	class Input
 	{
 	private:
+		//singleton instance
+		static Input* m_instance;
+
+		//Array containing state of each key of keyboard
 		bool m_keys[256];
 
 		//Displacement of the mouse since the last frame.
@@ -21,11 +25,14 @@ namespace Devil
 		//Handle to the window
 		HWND m_windowHandle;
 
-	public:
+	private:
 		Input();
 		virtual ~Input();
 
-		void initialize(HWND _hwnd);
+	public:
+		static Input* getInstance();
+		bool initialize(HWND _hwnd);
+		void shutdown();
 
 		//Update the state of the inputs.
 		void update();
@@ -41,6 +48,10 @@ namespace Devil
 		//Reset the mouse position to the center of the window.
 		void resetMousePosition();
 	};
+
+	//get the Input singleton
+#define INPUT Input::getInstance()
+
 }
 
 #endif

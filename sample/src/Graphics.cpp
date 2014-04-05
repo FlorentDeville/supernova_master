@@ -29,15 +29,6 @@ namespace Devil
 		return m_Instance;
 	}
 
-	void Graphics::kill()
-	{
-		if (m_Instance != NULL)
-		{
-			delete m_Instance;
-			m_Instance = NULL;
-		}
-	}
-
 	Graphics::Graphics() : m_screenWidth(0), m_screenHeight(0)
 	{
 		m_D3D = 0;
@@ -50,65 +41,6 @@ namespace Devil
 	}
 
 	Graphics::~Graphics()
-	{
-	}
-
-	D3D* Graphics::getDirectXWrapper()
-	{
-		return m_D3D;
-	}
-
-	Camera* Graphics::getCamera()
-	{
-		return m_Camera;
-	}
-
-	int Graphics::getScreenWidth() const
-	{
-		return m_screenWidth;
-	}
-
-	int Graphics::getScreenHeight() const
-	{
-		return m_screenHeight;
-	}
-
-	bool Graphics::initialize(int screenWidth, int screenHeight, HWND hwnd, bool _fullScreen)
-	{
-		bool result;
-
-		// Create the Direct3D object.
-		m_D3D = new D3D();
-		if (!m_D3D)
-		{
-			return false;
-		}
-
-		// Initialize the Direct3D object.
-		result = m_D3D->initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, _fullScreen, SCREEN_DEPTH, SCREEN_NEAR);
-		if (!result)
-		{
-			MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
-			return false;
-		}
-
-		m_screenWidth = screenWidth;
-		m_screenHeight = screenHeight;
-
-		// Create the camera object.
-		m_Camera = new Camera();
-		if (!m_Camera)
-		{
-			return false;
-		}
-
-		// Set the initial position of the camera.
-		m_Camera->SetPosition(0.0f, 5.0f, -50.0f);
-
-		return true;
-	}
-
-	void Graphics::shutdown()
 	{
 		// Release the light object.
 		if (m_Light)
@@ -162,11 +94,87 @@ namespace Devil
 			{
 				(*i)->shutdown();
 				delete (*i);
+				*i = 0;
 			}
 		}
 		m_entityList.clear();
-		
-		return;
+	}
+
+	D3D* Graphics::getDirectXWrapper()
+	{
+		return m_D3D;
+	}
+
+	Camera* Graphics::getCamera()
+	{
+		return m_Camera;
+	}
+
+	int Graphics::getScreenWidth() const
+	{
+		return m_screenWidth;
+	}
+
+	int Graphics::getScreenHeight() const
+	{
+		return m_screenHeight;
+	}
+
+	void Graphics::clear()
+	{
+		for (std::vector<IGfxEntity*>::iterator i = m_entityList.begin(); i != m_entityList.end(); ++i)
+		{
+			if ((*i) != 0)
+			{
+				(*i)->shutdown();
+				delete (*i);
+				*i = 0;
+			}
+		}
+	}
+
+	bool Graphics::initialize(int screenWidth, int screenHeight, HWND hwnd, bool _fullScreen)
+	{
+		bool result;
+
+		// Create the Direct3D object.
+		m_D3D = new D3D();
+		if (!m_D3D)
+		{
+			return false;
+		}
+
+		// Initialize the Direct3D object.
+		result = m_D3D->initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, _fullScreen, SCREEN_DEPTH, SCREEN_NEAR);
+		if (!result)
+		{
+			MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
+			return false;
+		}
+
+		m_screenWidth = screenWidth;
+		m_screenHeight = screenHeight;
+
+		// Create the camera object.
+		m_Camera = new Camera();
+		if (!m_Camera)
+		{
+			return false;
+		}
+
+		// Set the initial position of the camera.
+		m_Camera->SetPosition(0.0f, 5.0f, -50.0f);
+
+		return true;
+	}
+
+	void Graphics::shutdown()
+	{
+		if (m_Instance != 0)
+		{
+			delete m_Instance;
+			m_Instance = 0;
+		}
 	}
 
 	void Graphics::BeginRender()

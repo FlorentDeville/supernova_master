@@ -166,15 +166,30 @@ namespace Supernova
 	void snScene::clearScene()
 	{
 		for (vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		{
+			if ((*i) == 0)
+				continue;
+
 			delete *i;
+		}
 		m_actors.clear();
 
 		for (vector<snIConstraint*>::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
+		{
+			if ((*i) == 0)
+				continue;
+
 			delete *i;
+		}
 		m_constraints.clear();
 
 		for (vector<snIConstraint*>::iterator i = m_collisionConstraints.begin(); i != m_collisionConstraints.end(); ++i)
+		{
+			if ((*i) == 0)
+				continue;
+
 			delete *i;
+		}
 		m_collisionConstraints.clear();
 	}
 

@@ -16,6 +16,9 @@
     <Filter Include="System">
       <UniqueIdentifier>{c3c7a18f-43a4-41bf-8caf-32291af4a283}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SceneManager">
+      <UniqueIdentifier>{f78f1e43-ae73-47b1-b05d-e1cea095ef60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -87,6 +90,9 @@
     </ClCompile>
     <ClCompile Include="..\src\EntityPointToPointConstraint.cpp">
       <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SceneManager.cpp">
+      <Filter>SceneManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +170,9 @@
     </ClInclude>
     <ClInclude Include="..\src\EntityPointToPointConstraint.h">
       <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SceneManager.h">
+      <Filter>SceneManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

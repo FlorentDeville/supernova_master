@@ -50,9 +50,8 @@ namespace Devil
 		m_Instance = 0;
 	}
 
-	bool World::initialize(Input* _input)
+	bool World::initialize()
 	{
-		m_input = _input;
 		m_collisionPoint = createCollisionPoint(1.f);
 		return true;
 	}
@@ -127,12 +126,12 @@ namespace Devil
 			delete *i;
 
 		m_EntityList.clear();
+		m_collisionPoint = 0;
 	}
 
 	void World::update()
 	{
-		m_input->update();
-
+		//update world
 		for (std::vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
 		{
 			if ((*i)->getIsActive())
@@ -151,11 +150,6 @@ namespace Devil
 		}
 
 		GRAPHICS->EndRender();
-	}
-
-	Input* World::getInput() const
-	{
-		return m_input;
 	}
 
 	EntityCamera* World::getCamera() const

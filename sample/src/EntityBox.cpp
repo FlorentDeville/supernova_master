@@ -10,7 +10,7 @@
 
 namespace Devil
 {
-	EntityBox::EntityBox()
+	EntityBox::EntityBox() : m_gfx(0)
 	{
 	}
 

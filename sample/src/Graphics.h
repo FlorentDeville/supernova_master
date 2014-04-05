@@ -53,7 +53,6 @@ namespace Devil
 
 	public:
 		static Graphics* getInstance();
-		static void kill();
 
 		
 		~Graphics();
@@ -76,6 +75,9 @@ namespace Devil
 
 		//Get the height of the screen in pixel.
 		int getScreenHeight() const;
+
+		//Delete all the graphics entity created
+		void clear();
 
 	private:
 		Graphics();

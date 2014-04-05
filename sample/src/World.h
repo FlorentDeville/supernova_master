@@ -25,8 +25,6 @@ namespace Devil
 	class EntityFixedConstraint;
 	class EntityPointToPointConstraint;
 
-	class Input;
-
 	class World
 	{
 	private:
@@ -36,8 +34,6 @@ namespace Devil
 
 		EntityCamera* m_camera;
 
-		Input* m_input;
-
 		EntityCollisionPoint* m_collisionPoint;
 
 	public:
@@ -46,7 +42,7 @@ namespace Devil
 		static World* getInstance();
 		static void shutdown();
 
-		bool initialize(Input* _input);
+		bool initialize();
 
 		EntitySphere* createSphere(float);
 		EntityBox* createBox(const XMFLOAT3&);
@@ -62,12 +58,12 @@ namespace Devil
 		void update();
 		void render();
 
-		Input* getInput() const;
 		EntityCamera* getCamera() const;
 
 		void toggleCollisionPointActivation();
 		void activateCollisionPoint();
 		void deactivateCollisionPoint();
+
 	private:
 		World();
 

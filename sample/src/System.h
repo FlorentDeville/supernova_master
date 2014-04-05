@@ -12,7 +12,6 @@ using Supernova::snVector4f;
 
 namespace Devil
 {
-	class Input;
 	class Graphics;
 	class EntitySphere;
 	
@@ -22,8 +21,6 @@ namespace Devil
 		LPCWSTR m_applicationName;
 		HINSTANCE m_hinstance;
 		HWND m_hwnd;
-
-		Input* m_Input;
 
 		EntitySphere* m_Sphere;
 
@@ -60,14 +57,6 @@ namespace Devil
 	private:
 		void initializeWindows(int&, int&);
 		void shutdownWindows();
-
-		void createScene1();
-		void createScene2();
-		void createScene3();
-		void createSceneWithconstraint();
-
-		snVector4f createTowerLevel(const snVector4f& _origin);
-		void createTower();
 	};
 
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

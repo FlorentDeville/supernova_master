@@ -31,128 +31,61 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#include "snFactory.h"
-#include "snScene.h"
+
+#ifndef SCENE_MANAGER_H
+#define SCENE_MANAGER_H
+
+#include <malloc.h>
 
 namespace Supernova
 {
-	snFactory* snFactory::m_instance = 0;
-
-	snFactory::snFactory()
-	{
-
-	}
-
-	snFactory::~snFactory()
-	{
-		deleteAllScenes();
-	}
-
-	snFactory* snFactory::getInstance()
-	{
-		if (m_instance == 0)
-			m_instance = new snFactory();
-
-		return m_instance;
-	}
-
-	bool snFactory::initialize()
-	{
-		return true;
-	}
-
-	bool snFactory::clean()
-	{
-		if (m_instance != 0)
-		{
-			delete m_instance;
-			m_instance = 0;
-		}
-
-		return true;
-	}
-
-	void snFactory::createScene(snScene** _newScene, int& _sceneId)
-	{
-		//create the new scene
-		*_newScene = new snScene();
-
-		//try to find an empty spot to store the pointer
-		for (unsigned int i = 0; i < m_scenes.size(); ++i)
-		{
-			if (m_scenes[i] != 0)
-				continue;
-
-			m_scenes[i] = *_newScene;
-			_sceneId = i;
-			return;
-		}
-
-		//no empty spot found so push back
-		_sceneId = m_scenes.size();
-		m_scenes.push_back(*_newScene);
-		
-		return;
-	}
-
-	void snFactory::deleteScene(unsigned int _sceneId)
-	{
-		//the id is out of range
-		if (_sceneId >= m_scenes.size())
-			return;
-
-		//get the scene
-		snScene* scene = m_scenes[_sceneId];
-
-		//the scene is already deleted
-		if (scene == 0)
-			return;
-
-		//delete the scene
-		delete scene;
-		m_scenes[_sceneId] = 0;
-	}
-
-	void snFactory::deleteAllScenes()
-	{
-		for (vector<snScene*>::iterator i = m_scenes.begin(); i != m_scenes.end(); ++i)
-		{
-			if ((*i) == 0)
-				continue;
-
-			delete *i;
-			*i = 0;
-		}
-
-		m_scenes.clear();
-	}
-
-	void snFactory::updateAllScenes(float _dt)
-	{
-		for (vector<snScene*>::iterator i = m_scenes.begin(); i != m_scenes.end(); ++i)
-		{
-			if ((*i) == 0)
-				continue;
-
-			(*i)->update(_dt);
-		}
-	}
-
-	snScene* snFactory::getScene(unsigned int _sceneId)
-	{
-		if (_sceneId >= m_scenes.size())
-			return 0;
-
-		return m_scenes[_sceneId];
-	}
-
-	void* snFactory::operator new(size_t _count)
-	{
-		return _aligned_malloc(_count, SN_ALIGN_SIZE);
-	}
-
-	void snFactory::operator delete(void* _p)
-	{
-		_aligned_free(_p);
-	}
+	class snVector4f;
+	class snScene;
 }
+using Supernova::snVector4f;
+using Supernova::snScene;
+
+namespace Devil
+{
+	class SceneManager
+	{
+	private:
+		static SceneManager* m_instance;
+
+	public:
+		static SceneManager* getInstance();
+
+		bool initialize();
+		void shutdown();
+
+		void update();
+
+		//Scene with simple boxes interactions.
+		void createScene1();
+
+		//Box Stacking
+		void createScene2();
+
+		//Constraints (rope)
+		void createScene3();
+
+		//CCD test
+		void createScene4();
+
+		//Stack + CCD
+		void createTower();
+
+	private:
+		SceneManager();
+		virtual ~SceneManager();
+
+		void clearScene() const;
+
+		snVector4f createTowerLevel(snScene* const _scene, const snVector4f& _origin) const;
+	};
+
+#define SCENEMGR SceneManager::getInstance()
+
+}
+
+#endif //ifndef SCENE_MANAGER_H

@@ -4,17 +4,26 @@
 
 namespace Devil
 {
+	//Initialize static instance
+	Input* Input::m_instance = 0;
 
 	Input::Input()
 	{
 	}
 
-
 	Input::~Input()
 	{
 	}
 
-	void Input::initialize(HWND _hwnd)
+	Input* Input::getInstance()
+	{
+		if (m_instance == 0)
+			m_instance = new Input();
+
+		return m_instance;
+	}
+
+	bool Input::initialize(HWND _hwnd)
 	{
 		m_windowHandle = _hwnd;
 
@@ -35,7 +44,14 @@ namespace Devil
 
 		resetMousePosition();
 		
-		return;
+		return true;
+	}
+
+	void Input::shutdown()
+	{
+		assert(m_instance != 0);
+		delete m_instance;
+		m_instance = 0;
 	}
 
 	void Input::update()

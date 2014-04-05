@@ -44,14 +44,14 @@ namespace Devil
 		XMVECTOR up = XMVector3Cross(left, forward);
 
 		//move forward
-		if (WORLD->getInput()->isKeyDown('Z'))
+		if (INPUT->isKeyDown('Z'))
 		{
 			forward = forward * linearCameraSpeed;
 
 			m_position = m_position + forward;
 			m_lookAt = m_lookAt + forward;
 		}
-		else if (WORLD->getInput()->isKeyDown('S')) //move backward
+		else if (INPUT->isKeyDown('S')) //move backward
 		{
 			forward = forward * linearCameraSpeed;
 
@@ -59,13 +59,13 @@ namespace Devil
 			m_lookAt = m_lookAt - forward;
 		}
 
-		if (WORLD->getInput()->isKeyDown('Q')) //move to the left
+		if (INPUT->isKeyDown('Q')) //move to the left
 		{
 			left = left * linearCameraSpeed;
 			m_position = m_position + left;
 			m_lookAt = m_lookAt + left;
 		}
-		else if (WORLD->getInput()->isKeyDown('D')) //move to the right
+		else if (INPUT->isKeyDown('D')) //move to the right
 		{
 			left = left * linearCameraSpeed;
 			m_position = m_position - left;
@@ -73,7 +73,7 @@ namespace Devil
 		}
 
 		//mouse movement since last update
-		XMFLOAT2 mouseOffset = WORLD->getInput()->getMouseDelta();
+		XMFLOAT2 mouseOffset = INPUT->getMouseDelta();
 
 		if (mouseOffset.x < 0)
 			m_lookAt = m_lookAt + left * angularCameraSpeed;
