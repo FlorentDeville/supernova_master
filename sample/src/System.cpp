@@ -216,6 +216,13 @@ namespace Devil
 	{
 		switch (umsg)
 		{
+			case WM_MOUSEWHEEL:
+			{
+				int ds = (int)wparam;
+				INPUT->setMouseWheel((float)ds);
+				return 0;
+			}
+
 			// Check if a key has been pressed on the keyboard.
 			case WM_KEYDOWN:
 			{

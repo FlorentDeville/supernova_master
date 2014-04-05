@@ -43,20 +43,36 @@ namespace Devil
 		//up vector
 		XMVECTOR up = XMVector3Cross(left, forward);
 
-		//move forward
-		if (INPUT->isKeyDown('Z'))
+		
+		const int WHEEL_SPEED = 4;
+		if (INPUT->getMouseWheel() > 0) //move forward
 		{
-			forward = forward * linearCameraSpeed;
+			forward = forward * linearCameraSpeed * WHEEL_SPEED;
 
 			m_position = m_position + forward;
 			m_lookAt = m_lookAt + forward;
-		}
-		else if (INPUT->isKeyDown('S')) //move backward
+			INPUT->setMouseWheel(0);
+		} 
+		else if(INPUT->getMouseWheel() < 0) //move backward
 		{
-			forward = forward * linearCameraSpeed;
+			forward = forward * linearCameraSpeed * WHEEL_SPEED;
 
 			m_position = m_position - forward;
 			m_lookAt = m_lookAt - forward;
+			INPUT->setMouseWheel(0);
+		}
+
+		if (INPUT->isKeyDown('Z'))//move up
+		{
+			XMVECTOR offset = up * linearCameraSpeed;
+			m_position = m_position + offset;
+			m_lookAt = m_lookAt + offset;
+		}
+		else if (INPUT->isKeyDown('S')) //move down
+		{
+			XMVECTOR offset = up * linearCameraSpeed;
+			m_position = m_position - offset;
+			m_lookAt = m_lookAt - offset;
 		}
 
 		if (INPUT->isKeyDown('Q')) //move to the left

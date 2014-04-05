@@ -19,6 +19,9 @@ namespace Devil
 		//Displacement of the mouse since the last frame.
 		XMFLOAT2 m_mouseDelta;
 
+		//displacement of the mouse wheel positive being forward and negative being backward.
+		float m_mouseWheel;
+
 		//Position of the center of the window
 		XMFLOAT2 m_wndCenter;
 
@@ -40,10 +43,16 @@ namespace Devil
 		void keyDown(unsigned int);
 		void keyUp(unsigned int);
 
+		//Set the mouse wheel displacement
+		void setMouseWheel(float _displacement);
+
 		bool isKeyDown(unsigned int);
 
 		//Return the mouse displacement since the last frame.
 		const XMFLOAT2& getMouseDelta() const;
+
+		//Get the mouse wheel displacement
+		float getMouseWheel() const;
 
 		//Reset the mouse position to the center of the window.
 		void resetMousePosition();

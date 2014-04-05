@@ -7,7 +7,7 @@ namespace Devil
 	//Initialize static instance
 	Input* Input::m_instance = 0;
 
-	Input::Input()
+	Input::Input() : m_mouseWheel(0)
 	{
 	}
 
@@ -88,6 +88,10 @@ namespace Devil
 		return;
 	}
 
+	void Input::setMouseWheel(float _displacement)
+	{
+		m_mouseWheel = _displacement;
+	}
 
 	bool Input::isKeyDown(unsigned int key)
 	{
@@ -98,6 +102,11 @@ namespace Devil
 	const XMFLOAT2& Input::getMouseDelta() const
 	{
 		return m_mouseDelta;
+	}
+
+	float Input::getMouseWheel() const
+	{
+		return m_mouseWheel;
 	}
 
 	void Input::resetMousePosition()
