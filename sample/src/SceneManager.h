@@ -75,6 +75,8 @@ namespace Devil
 		//Stack + CCD
 		void createTower();
 
+		void createSceneFriction();
+
 	private:
 		SceneManager();
 		virtual ~SceneManager();

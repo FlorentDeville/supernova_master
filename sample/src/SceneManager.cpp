@@ -107,6 +107,12 @@ namespace Devil
 			createTower();
 			INPUT->keyUp(116);
 		}
+		else if (INPUT->isKeyDown(117))//F6
+		{
+			clearScene();
+			createSceneFriction();
+			INPUT->keyUp(117);
+		}
 	}
 
 	void SceneManager::createScene1()
@@ -1007,6 +1013,200 @@ namespace Devil
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(1, 0, 0, 1));
 			kinematicBox->setActor(act);
+		}
+	}
+
+	void SceneManager::createSceneFriction()
+	{
+		//initialize the world
+		WORLD->initialize();
+
+		//create the physics scene
+		int sceneId = -1;
+		snScene* scene = 0;
+		SUPERNOVA->createScene(&scene, sceneId);
+		scene->setSolverIterationCount(4);
+		scene->setLinearSquaredSpeedThreshold(0.006f);
+		scene->setAngularSquaredSpeedThreshold(0.001f);
+
+		//create the camera.
+		XMVECTOR cameraPosition = XMVectorSet(120, 50, 0, 1);
+		XMVECTOR cameraLookAt = XMVectorSet(0, 7, 0, 1);
+		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
+		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
+
+
+		WORLD->activateCollisionPoint();
+
+		float slopeAngle = 3.14f * 0.25f;
+		//slope
+		{
+			float width = 50;
+			float height = 2;
+			float depth = 100;
+
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			scene->createActor(&act, actorId);
+
+			act->setName("slope");
+			act->setMass(100);
+			act->setPosition(snVector4f(0, 0, 0, 1));
+			act->setOrientationQuaternion(snQuaternionFromEuler(slopeAngle, 0, 0));
+
+			act->setIsKinematic(true);
+			act->getPhysicMaterial().m_restitution = 1.f;
+			act->getPhysicMaterial().m_friction = 1.f;
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			collider->setSize(snVector4f(width, height, depth, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			//create the world entity
+			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
+			kinematicBox->setActor(act);
+		}
+
+		//ground
+		{
+			float width = 500;
+			float height = 2;
+			float depth = 500;
+
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			scene->createActor(&act, actorId);
+
+			act->setName("ground");
+			act->setMass(100);
+			act->setPosition(snVector4f(0, -40, 0, 1));
+
+			act->setIsKinematic(true);
+			act->getPhysicMaterial().m_restitution = 0;
+			act->getPhysicMaterial().m_friction = 0.8f;
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			collider->setSize(snVector4f(width, height, depth, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			//create the world entity
+			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
+			kinematicBox->setActor(act);
+		}
+
+		XMFLOAT4 colors[5];
+		colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
+		colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
+		colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
+		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
+		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
+
+		//full friction, no restitution
+		{
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			scene->createActor(&act, actorId);
+			act->setName("full friction");
+			//act->setName("base_" + std::to_string(row) + "_" + std::to_string(i));
+			act->setMass(50);
+			act->setPosition(snVector4f(-10, 38, -30, 1));
+			act->setOrientationQuaternion(snQuaternionFromEuler(slopeAngle, 0, 0));
+			act->setIsKinematic(false);
+			act->getPhysicMaterial().m_restitution = -1.f;
+			act->getPhysicMaterial().m_friction = 1.f;
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			float cubeSize = 5;
+			collider->setSize(snVector4f(cubeSize, cubeSize, cubeSize, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[0]);
+			box->setActor(act);
+		}
+
+		//no friction, no restitution
+		{
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			scene->createActor(&act, actorId);
+			act->setName("no friction");
+			//act->setName("base_" + std::to_string(row) + "_" + std::to_string(i));
+			act->setMass(50);
+			act->setPosition(snVector4f(10, 38, -30, 1));
+			act->setOrientationQuaternion(snQuaternionFromEuler(slopeAngle, 0, 0));
+			act->setIsKinematic(false);
+			act->getPhysicMaterial().m_restitution = -1.f;
+			act->getPhysicMaterial().m_friction = -1.f;
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			float cubeSize = 5;
+			collider->setSize(snVector4f(cubeSize, cubeSize, cubeSize, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[2]);
+			box->setActor(act);
+		}
+
+		//half friction, no restitution
+		{
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			scene->createActor(&act, actorId);
+			act->setName("half friction");
+			act->setMass(50);
+			act->setPosition(snVector4f(0, 38, -30, 1));
+			act->setOrientationQuaternion(snQuaternionFromEuler(slopeAngle, 0, 0));
+			act->setIsKinematic(false);
+			act->getPhysicMaterial().m_restitution = -1.f;
+			act->getPhysicMaterial().m_friction = 0.f;
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			float cubeSize = 5;
+			collider->setSize(snVector4f(cubeSize, cubeSize, cubeSize, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[1]);
+			box->setActor(act);
 		}
 	}
 
