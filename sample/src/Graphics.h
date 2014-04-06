@@ -51,6 +51,9 @@ namespace Devil
 		//Height of the screen in pixels.
 		int m_screenHeight;
 
+		//Define the color to use to clear the screen.
+		XMVECTORF32 m_clearScreenColor;
+
 	public:
 		static Graphics* getInstance();
 
@@ -75,6 +78,9 @@ namespace Devil
 
 		//Get the height of the screen in pixel.
 		int getScreenHeight() const;
+
+		//Set the color to use to clear the screen.
+		void setClearScreenColor(const XMVECTORF32& _color);
 
 		//Delete all the graphics entity created
 		void clear();

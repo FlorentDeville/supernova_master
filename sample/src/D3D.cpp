@@ -405,19 +405,10 @@ namespace Devil
 		return;
 	}
 
-	void D3D::beginScene(float red, float green, float blue, float alpha)
+	void D3D::beginScene(const XMVECTORF32& _clearColor)
 	{
-		float color[4];
-
-
-		// Setup the color to clear the buffer to.
-		color[0] = red;
-		color[1] = green;
-		color[2] = blue;
-		color[3] = alpha;
-
 		// Clear the back buffer.
-		m_deviceContext->ClearRenderTargetView(m_renderTargetView, color);
+		m_deviceContext->ClearRenderTargetView(m_renderTargetView, _clearColor);
 
 		// Clear the depth buffer.
 		m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);

@@ -1021,6 +1021,8 @@ namespace Devil
 		//initialize the world
 		WORLD->initialize();
 
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+
 		//create the physics scene
 		int sceneId = -1;
 		snScene* scene = 0;
@@ -1030,7 +1032,7 @@ namespace Devil
 		scene->setAngularSquaredSpeedThreshold(0.001f);
 
 		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(120, 50, 0, 1);
+		XMVECTOR cameraPosition = XMVectorSet(80, 50, 0, 1);
 		XMVECTOR cameraLookAt = XMVectorSet(0, 7, 0, 1);
 		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
 		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
@@ -1117,6 +1119,7 @@ namespace Devil
 		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
 		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
 
+		float height = 35;
 		//full friction, no restitution
 		{
 			//create actor
@@ -1126,7 +1129,7 @@ namespace Devil
 			act->setName("full friction");
 			//act->setName("base_" + std::to_string(row) + "_" + std::to_string(i));
 			act->setMass(50);
-			act->setPosition(snVector4f(-10, 38, -30, 1));
+			act->setPosition(snVector4f(-10, height, -30, 1));
 			act->setOrientationQuaternion(snQuaternionFromEuler(slopeAngle, 0, 0));
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = -1.f;
@@ -1157,7 +1160,7 @@ namespace Devil
 			act->setName("no friction");
 			//act->setName("base_" + std::to_string(row) + "_" + std::to_string(i));
 			act->setMass(50);
-			act->setPosition(snVector4f(10, 38, -30, 1));
+			act->setPosition(snVector4f(10, height, -30, 1));
 			act->setOrientationQuaternion(snQuaternionFromEuler(slopeAngle, 0, 0));
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = -1.f;
@@ -1187,7 +1190,7 @@ namespace Devil
 			scene->createActor(&act, actorId);
 			act->setName("half friction");
 			act->setMass(50);
-			act->setPosition(snVector4f(0, 38, -30, 1));
+			act->setPosition(snVector4f(0, height, -30, 1));
 			act->setOrientationQuaternion(snQuaternionFromEuler(slopeAngle, 0, 0));
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = -1.f;

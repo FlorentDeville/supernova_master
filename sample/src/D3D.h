@@ -44,7 +44,10 @@ namespace Devil
 		bool initialize(int, int, bool, HWND, bool, float, float);
 		void shutdown();
 
-		void beginScene(float, float, float, float);
+		//Prepare the scene to be rendered.
+		//_clearColor is the color to use to clear the screen.
+		void beginScene(const XMVECTORF32& _clearColor);
+
 		void endScene();
 
 		ID3D11Device* getDevice();

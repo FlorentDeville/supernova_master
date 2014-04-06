@@ -29,7 +29,7 @@ namespace Devil
 		return m_Instance;
 	}
 
-	Graphics::Graphics() : m_screenWidth(0), m_screenHeight(0)
+	Graphics::Graphics() : m_screenWidth(0), m_screenHeight(0), m_clearScreenColor(Colors::Black)
 	{
 		m_D3D = 0;
 		m_Camera = 0;
@@ -120,6 +120,12 @@ namespace Devil
 		return m_screenHeight;
 	}
 
+	void Graphics::setClearScreenColor(const XMVECTORF32& _color)
+	{
+		m_clearScreenColor = _color;
+	}
+
+
 	void Graphics::clear()
 	{
 		for (std::vector<IGfxEntity*>::iterator i = m_entityList.begin(); i != m_entityList.end(); ++i)
@@ -180,10 +186,7 @@ namespace Devil
 	void Graphics::BeginRender()
 	{
 		// Clear the buffers to begin the scene.
-		m_D3D->beginScene(0.0f, 0.0f, 0.0f, 1.0f);
-
-		// Generate the view matrix based on the camera's position.
-		//m_Camera->Render();
+		m_D3D->beginScene(m_clearScreenColor);
 	}
 
 	void Graphics::EndRender()
