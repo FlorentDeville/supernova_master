@@ -108,6 +108,7 @@
     <ClCompile Include="..\src\LightShader.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\Model.cpp" />
+    <ClCompile Include="..\src\SceneManager.cpp" />
     <ClCompile Include="..\src\System.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />
     <ClCompile Include="..\src\TextureShader.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="..\src\Light.h" />
     <ClInclude Include="..\src\LightShader.h" />
     <ClInclude Include="..\src\Model.h" />
+    <ClInclude Include="..\src\SceneManager.h" />
     <ClInclude Include="..\src\System.h" />
     <ClInclude Include="..\src\Texture.h" />
     <ClInclude Include="..\src\TextureShader.h" />
