@@ -31,6 +31,10 @@ namespace Devil
 		ID3D11RenderTargetView* m_renderTargetView;
 		ID3D11Texture2D* m_depthStencilBuffer;
 		ID3D11DepthStencilState* m_depthStencilState;
+
+		//Depth stencil state used for 2D drawing
+		ID3D11DepthStencilState* m_depthDisabledStencilState;
+
 		ID3D11DepthStencilView* m_depthStencilView;
 		ID3D11RasterizerState* m_rasterState;
 		XMMATRIX m_projectionMatrix;
@@ -49,6 +53,10 @@ namespace Devil
 		void beginScene(const XMVECTORF32& _clearColor);
 
 		void endScene();
+
+		void TurnZBufferOn();
+		void TurnZBufferOff();
+
 
 		ID3D11Device* getDevice();
 		ID3D11DeviceContext* getDeviceContext();

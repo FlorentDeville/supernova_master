@@ -57,7 +57,7 @@ namespace Devil
 
 		// Initialize the windows api.
 		initializeWindows(screenWidth, screenHeight);
-
+		SetWindowText(m_hwnd, L"SUPERNOVA Demo1 (Florent Devillechabrol)");
 		// Initialize the graphics object.
 		result = GRAPHICS->initialize(screenWidth, screenHeight, m_hwnd, m_fullScreen);
 		if (!result)
@@ -189,7 +189,9 @@ namespace Devil
 				currentTime = (unsigned long)(currentClock.QuadPart - fpsTimeCounter) / tickPerMilliseconds;
 				if (currentTime >= 1000)
 				{
-					std::wstring strFPS = std::to_wstring(fpsCounter);
+					WORLD->setGraphicsFPS(fpsCounter);
+					WORLD->setPhysicsFPS(fpsCounterPhysics);
+					/*std::wstring strFPS = std::to_wstring(fpsCounter);
 
 					std::wstring title = L"Supernova G=";
 					title.append(strFPS);
@@ -198,7 +200,7 @@ namespace Devil
 					title.append(L" P=");
 					title.append(strFPS);
 
-					SetWindowText(m_hwnd, title.c_str());
+					SetWindowText(m_hwnd, title.c_str());*/
 
 					fpsTimeCounter = currentClock.QuadPart;
 					fpsCounter = 0;	

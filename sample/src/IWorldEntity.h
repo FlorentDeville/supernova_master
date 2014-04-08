@@ -39,6 +39,8 @@ namespace Devil
 		virtual void update() = 0;
 		virtual void render() = 0;
 
+		virtual void spriteRender(){};
+
 		void setPosition(const XMVECTOR& _position)
 		{ 
 			m_position = _position; 

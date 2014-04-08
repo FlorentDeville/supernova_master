@@ -24,6 +24,7 @@ namespace Devil
 	class EntityCamera;
 	class EntityFixedConstraint;
 	class EntityPointToPointConstraint;
+	class WorldHUD;
 
 	class World
 	{
@@ -35,6 +36,8 @@ namespace Devil
 		EntityCamera* m_camera;
 
 		EntityCollisionPoint* m_collisionPoint;
+
+		WorldHUD* m_hud;
 
 	public:
 		virtual ~World();
@@ -51,6 +54,7 @@ namespace Devil
 		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
 		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
 		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
+		WorldHUD* createHUD();
 
 		//Delete all entities from the world.
 		void clearWorld();
@@ -63,6 +67,9 @@ namespace Devil
 		void toggleCollisionPointActivation();
 		void activateCollisionPoint();
 		void deactivateCollisionPoint();
+
+		void setPhysicsFPS(int _physicsFPS) const;
+		void setGraphicsFPS(int _graphicsFPS) const;
 
 	private:
 		World();

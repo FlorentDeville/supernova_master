@@ -7,6 +7,7 @@
 #include "EntityCamera.h"
 #include "EntityFixedConstraint.h"
 #include "EntityPointToPointConstraint.h"
+#include "WorldHUD.h"
 #include "Input.h"
 #include "Graphics.h"
 
@@ -120,6 +121,14 @@ namespace Devil
 		return newEntity;
 	}
 
+	WorldHUD* World::createHUD()
+	{
+		WorldHUD* newHUD = new WorldHUD();
+		m_EntityList.push_back(newHUD);
+		m_hud = newHUD;
+		return newHUD;
+	}
+
 	void World::clearWorld()
 	{
 		for (vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
@@ -127,6 +136,7 @@ namespace Devil
 
 		m_EntityList.clear();
 		m_collisionPoint = 0;
+		m_hud = 0;
 	}
 
 	void World::update()
@@ -142,6 +152,7 @@ namespace Devil
 	void World::render()
 	{
 		GRAPHICS->BeginRender();
+		
 
 		for (std::vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
 		{
@@ -149,7 +160,15 @@ namespace Devil
 				(*i)->render();
 		}
 
-		GRAPHICS->EndRender();
+		GRAPHICS->spriteBeginRender();
+		for (std::vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
+		{
+			if ((*i)->getIsActive())
+				(*i)->spriteRender();
+		}
+		GRAPHICS->spriteEndRender();
+
+		GRAPHICS->EndRender();	
 	}
 
 	EntityCamera* World::getCamera() const
@@ -170,5 +189,17 @@ namespace Devil
 	void World::deactivateCollisionPoint()
 	{
 		m_collisionPoint->setIsActive(false);
+	}
+
+	void World::setPhysicsFPS(int _physicsFPS) const
+	{
+		if (m_hud != 0)
+			m_hud->setPhysicsFPS(_physicsFPS);
+	}
+
+	void World::setGraphicsFPS(int _graphicsFPS) const
+	{
+		if (m_hud != 0)
+			m_hud->setGraphicsFPS(_graphicsFPS);
 	}
 }

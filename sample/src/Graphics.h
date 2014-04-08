@@ -8,6 +8,15 @@
 #include "IGfxEntity.h"
 #include <DirectXColors.h>
 
+#include <string>
+using std::wstring;
+
+namespace DirectX
+{
+	class SpriteBatch;
+	class SpriteFont;
+}
+
 namespace Devil
 {
 	class D3D;
@@ -54,6 +63,11 @@ namespace Devil
 		//Define the color to use to clear the screen.
 		XMVECTORF32 m_clearScreenColor;
 
+		//DirectX object used to writ text on screen
+		SpriteBatch* m_spriteBatch;
+
+		//font consolas used to write text on screen
+		SpriteFont* m_spriteFontConsolas;
 	public:
 		static Graphics* getInstance();
 
@@ -65,6 +79,20 @@ namespace Devil
 		
 		void BeginRender();
 		void EndRender();
+
+		//Start rendering of sprites
+		void spriteBeginRender();
+
+		//end rendering of sprites.
+		void spriteEndRender();
+
+		// <summary>
+		// Write text on screen
+		// </summary>
+		// <param name="_text">the text to write on screen</param>
+		// <param name="_p">Position of the text on screen.</param>
+		// <param name="_scale">Uniform scaling to apply to the text.</param>
+		void writeText(const wstring& _text, const XMFLOAT2& _p, float _scale);
 
 		GfxEntitySphere* createSphere(float, const XMVECTOR& _color = Colors::White);
 		GfxEntityBox* createBox(const XMFLOAT3&, const XMFLOAT4&);

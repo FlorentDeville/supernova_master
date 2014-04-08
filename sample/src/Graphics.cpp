@@ -15,6 +15,8 @@
 #include "GfxEntityPlan.h"
 
 #include <DirectXMath.h>
+#include <SpriteBatch.h>
+#include <SpriteFont.h>
 using namespace DirectX;
 
 namespace Devil
@@ -29,7 +31,7 @@ namespace Devil
 		return m_Instance;
 	}
 
-	Graphics::Graphics() : m_screenWidth(0), m_screenHeight(0), m_clearScreenColor(Colors::Black)
+	Graphics::Graphics() : m_screenWidth(0), m_screenHeight(0), m_clearScreenColor(Colors::Black), m_spriteBatch(0), m_spriteFontConsolas(0)
 	{
 		m_D3D = 0;
 		m_Camera = 0;
@@ -86,6 +88,18 @@ namespace Devil
 			m_D3D->shutdown();
 			delete m_D3D;
 			m_D3D = 0;
+		}
+
+		if (m_spriteFontConsolas != 0)
+		{
+			delete m_spriteFontConsolas;
+			m_spriteFontConsolas = 0;
+		}
+
+		if (m_spriteBatch != 0)
+		{
+			delete m_spriteBatch;
+			m_spriteBatch = 0;
 		}
 
 		for (std::vector<IGfxEntity*>::iterator i = m_entityList.begin(); i != m_entityList.end(); ++i)
@@ -158,6 +172,10 @@ namespace Devil
 			return false;
 		}
 
+		//Create the sprite batch
+		m_spriteBatch = new SpriteBatch(m_D3D->getDeviceContext());
+		m_spriteFontConsolas = new SpriteFont(m_D3D->getDevice(), L"consolas.spritefont");
+
 		m_screenWidth = screenWidth;
 		m_screenHeight = screenHeight;
 
@@ -193,6 +211,25 @@ namespace Devil
 	{
 		// Present the rendered scene to the screen.
 		m_D3D->endScene();
+	}
+
+	void Graphics::spriteBeginRender()
+	{
+		m_spriteBatch->Begin();
+		m_D3D->TurnZBufferOff();
+	}
+
+	void Graphics::spriteEndRender()
+	{
+		m_spriteBatch->End();
+		m_D3D->TurnZBufferOn();
+	}
+
+	void Graphics::writeText(const wstring& _text, const XMFLOAT2& _p, float _scale)
+	{
+		//m_spriteBatch->Begin();
+		m_spriteFontConsolas->DrawString(m_spriteBatch, _text.c_str(), _p, Colors::Black, 0, XMFLOAT2(0, 0), XMFLOAT2(_scale, _scale));
+		//m_spriteBatch->End();
 	}
 
 	GfxEntitySphere* Graphics::createSphere(float _diameter, const XMVECTOR& _color)

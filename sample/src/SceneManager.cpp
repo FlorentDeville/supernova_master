@@ -35,11 +35,13 @@
 #include "SceneManager.h"
 #include <assert.h>
 
-#include "snFactory.h"
+
 #include "World.h"
+#include "WorldHUD.h"
 #include "Input.h"
 #include "Graphics.h"
 
+#include "snFactory.h"
 #include "snScene.h"
 #include "snActor.h"
 #include "snColliderBox.h"
@@ -118,6 +120,10 @@ namespace Devil
 	void SceneManager::createScene1()
 	{
 		WORLD->initialize();
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene 1 : Basic Test");
+
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
 		int sceneId = -1;
 		snScene* m_physicScene = 0;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
@@ -125,7 +131,9 @@ namespace Devil
 
 		m_physicScene->setAngularSquaredSpeedThreshold(0.0001f);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.005f);
-		m_physicScene->setSolverIterationCount(5);
+		int solverIterationCount = 5;
+		m_physicScene->setSolverIterationCount(solverIterationCount);
+		HUD->setSolverIterationCount(solverIterationCount);
 
 		//create camera
 		XMVECTOR cameraPosition = XMVectorSet(25, 30, 50, 1);
@@ -353,6 +361,12 @@ namespace Devil
 	void SceneManager::createScene2()
 	{
 		WORLD->initialize();
+
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene 2 : Stacking");
+
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+
 		//create the camera.
 		XMVECTOR cameraPosition = XMVectorSet(70, 50, 100, 1);
 		XMVECTOR cameraLookAt = XMVectorSet(15, 15, 0, 1);
@@ -363,7 +377,11 @@ namespace Devil
 		snScene* m_physicScene = 0;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
-		m_physicScene->setSolverIterationCount(60);
+
+		int solverIterationCount = 60;
+		m_physicScene->setSolverIterationCount(solverIterationCount);
+		HUD->setSolverIterationCount(solverIterationCount);
+
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.0005f);
 
@@ -530,11 +548,20 @@ namespace Devil
 	{
 		WORLD->initialize();
 
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene 3 : Constraints");
+
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+
 		snScene* m_physicScene = 0;
 		int sceneId = -1;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 4, 0, 0));
-		m_physicScene->setSolverIterationCount(4);
+
+		int solverIterationCount = 4;
+		m_physicScene->setSolverIterationCount(solverIterationCount);
+		HUD->setSolverIterationCount(solverIterationCount);
+
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
 
@@ -716,10 +743,19 @@ namespace Devil
 	{
 		WORLD->initialize();
 
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene 4 : Trash");
+
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+
 		int sceneId = -1;
 		snScene* m_physicScene = 0;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
-		m_physicScene->setSolverIterationCount(20);
+
+		int solverIterationCount = 20;
+		m_physicScene->setSolverIterationCount(solverIterationCount);
+		HUD->setSolverIterationCount(solverIterationCount);
+
 		m_physicScene->setBeta(0.2f);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 0.5f, 0, 0));
 
@@ -882,11 +918,18 @@ namespace Devil
 	void SceneManager::createTower()
 	{
 		WORLD->initialize();
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene 5 : Broken Tower");
 
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
 		int sceneId = -1;
 		snScene* m_physicScene = 0;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
-		m_physicScene->setSolverIterationCount(45);
+
+		int solverIterationCount = 45;
+		m_physicScene->setSolverIterationCount(solverIterationCount);
+		HUD->setSolverIterationCount(solverIterationCount);
+
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
 
@@ -1021,13 +1064,20 @@ namespace Devil
 		//initialize the world
 		WORLD->initialize();
 
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene 6 : Friction");
+
 		GRAPHICS->setClearScreenColor(Colors::DarkGray);
 
 		//create the physics scene
 		int sceneId = -1;
 		snScene* scene = 0;
 		SUPERNOVA->createScene(&scene, sceneId);
-		scene->setSolverIterationCount(4);
+
+		int solverIterationCount = 4;
+		scene->setSolverIterationCount(solverIterationCount);
+		HUD->setSolverIterationCount(solverIterationCount);
+
 		scene->setLinearSquaredSpeedThreshold(0.006f);
 		scene->setAngularSquaredSpeedThreshold(0.001f);
 
