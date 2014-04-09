@@ -64,6 +64,9 @@
       <AdditionalLibraryDirectories>..\..\extern\DirectXTK\Bin\Desktop_2012\Win32\Debug;$(WindowsSDK_LibraryPath_x86);..\..\bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Supernova_2012.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -86,6 +89,9 @@
       <AdditionalLibraryDirectories>..\..\extern\DirectXTK\Bin\Desktop_2012\Win32\Release;$(WindowsSDK_LibraryPath_x86);..\..\bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Supernova_2012.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp" />
@@ -113,6 +119,7 @@
     <ClCompile Include="..\src\Texture.cpp" />
     <ClCompile Include="..\src\TextureShader.cpp" />
     <ClCompile Include="..\src\World.cpp" />
+    <ClCompile Include="..\src\WorldHUD.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
@@ -141,6 +148,10 @@
     <ClInclude Include="..\src\Texture.h" />
     <ClInclude Include="..\src\TextureShader.h" />
     <ClInclude Include="..\src\World.h" />
+    <ClInclude Include="..\src\WorldHUD.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\consolas.spritefont" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
