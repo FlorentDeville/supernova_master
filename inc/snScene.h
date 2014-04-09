@@ -102,6 +102,12 @@ namespace Supernova
 		//Number of iteration to execute to solve the constraints.
 		int m_solverIterationCount;
 
+		//Time spent in the collision detection step
+		float m_collisionDetectionStepDuration;
+
+		//Time spent in the solving constraint step
+		float m_solverStepDuration;
+
 	public:
 		//Constructor. Scenes should be created using snFactory::createScene. If you create a scene yourself it is your responsability
 		//to delete it.
@@ -156,6 +162,12 @@ namespace Supernova
 
 		//Get the maximum authorized penetration between two actors.
 		float getMaxSlop() const;
+
+		//Get the duration of the collision detection step for the last iteration.
+		float getCollisionDetectionStepDuration() const;
+
+		//Get the duration of the solver step for the last iteration.
+		float getSolverStepDuration() const;
 
 		//Set the gravity to apply in the scene.
 		void setGravity(const snVector4f& _gravity);

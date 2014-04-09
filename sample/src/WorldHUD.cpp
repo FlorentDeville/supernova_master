@@ -34,6 +34,8 @@
 
 #include "WorldHUD.h"
 #include "Graphics.h"
+#include "snFactory.h"
+#include "snScene.h"
 
 namespace Devil
 {
@@ -64,18 +66,24 @@ namespace Devil
 		GRAPHICS->writeText(L"Graphics FPS : " + m_graphicsFPS, XMFLOAT2(1, height), 0.5);
 		height += LINE_HEIGHT;
 		GRAPHICS->writeText(L"Physics FPS : " + m_physicsFPS, XMFLOAT2(1, height), 0.5);
-
+		height += LINE_HEIGHT * 2;
+		GRAPHICS->writeText(L"Collision Detection : " + std::to_wstring(SUPERNOVA->getScene(0)->getCollisionDetectionStepDuration()) + L"ms", XMFLOAT2(1, height), 0.5);
+		height += LINE_HEIGHT;
+		GRAPHICS->writeText(L"Constraints Solver : " + std::to_wstring(SUPERNOVA->getScene(0)->getSolverStepDuration()) + L"ms", XMFLOAT2(1, height), 0.5);
 
 		height = 1;
-		GRAPHICS->writeText(L"F1 to F6 to switch scene", XMFLOAT2(GRAPHICS->getScreenWidth() - 250, height), 0.5);
+		float offset = 300;
+		GRAPHICS->writeText(L"F1 to F6 to switch scene", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"Z, Q, S, D to move around", XMFLOAT2(GRAPHICS->getScreenWidth() - 250, height), 0.5);
+		GRAPHICS->writeText(L"Z, Q, S, D to move around", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"Mouse to rotate", XMFLOAT2(GRAPHICS->getScreenWidth() - 250, height), 0.5);
+		GRAPHICS->writeText(L"Mouse to rotate", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"Mouse wheel to zoom in/out", XMFLOAT2(GRAPHICS->getScreenWidth() - 250, height), 0.5);
+		GRAPHICS->writeText(L"Mouse wheel to zoom in/out", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"SPACE to shoot a cube", XMFLOAT2(GRAPHICS->getScreenWidth() - 250, height), 0.5);
+		GRAPHICS->writeText(L"SPACE to shoot a cube", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
+		height += LINE_HEIGHT;
+		GRAPHICS->writeText(L"C, V to show/hide collision points", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 	}
 
 	void WorldHUD::setSceneName(const wstring _sceneName)

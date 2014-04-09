@@ -64,7 +64,7 @@ namespace Supernova
 	snCollision snScene::m_collisionService;
 
 	snScene::snScene() : m_beta(0.25f), m_maxSlop(0.05f), m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
-		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10)
+		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10), m_collisionDetectionStepDuration(0), m_solverStepDuration(0)
 	{
 	}
 
@@ -195,28 +195,24 @@ namespace Supernova
 
 	void snScene::update(float _deltaTime)
 	{
-		long long startCollision = snTimer::getCurrentTick();
+		long long startTimer = snTimer::getCurrentTick();
 
 		//compute collision points
 		computeCollisions(_deltaTime);
 
-		long long collisionDuration = snTimer::getElapsedTickCount(startCollision);
-		float seconds = snTimer::convertElapsedTickCountInSeconds(collisionDuration);
-		float milliseconds = snTimer::convertElapsedTickCountInMilliSeconds(collisionDuration);
-		float microseconds = snTimer::convertElapsedTickCountInMicroSeconds(collisionDuration);
-		std::wstring log = L"collision tick=" + std::to_wstring(collisionDuration) + L"\n";
-		log += L"  " + std::to_wstring(seconds) + L"s\n";
-		log += L"  " + std::to_wstring(milliseconds) + L"ms\n";
-		log += L"  " + std::to_wstring(microseconds) + L"µs\n\n";
-		//OutputDebugString(log.c_str());
-		
+		long long duration = snTimer::getElapsedTickCount(startTimer);
+		m_collisionDetectionStepDuration = snTimer::convertElapsedTickCountInMilliSeconds(duration);
 
 		//The constraints must be prepared before applying forces.
 		//applyForces updates the velocities with candidates velocities and we can't prepare constraints with candidate velocities.
 		prepareConstraints();
 
+		startTimer = snTimer::getCurrentTick();
 		//apply forces and compute candidate velocities for actors.
 		applyForces(_deltaTime);
+
+		duration = snTimer::getElapsedTickCount(startTimer);
+		m_solverStepDuration = snTimer::convertElapsedTickCountInMilliSeconds(duration);
 
 		//apply impulses
 		resolveAllConstraints();
@@ -248,6 +244,16 @@ namespace Supernova
 	float snScene::getMaxSlop() const
 	{
 		return m_maxSlop;
+	}
+
+	float snScene::getCollisionDetectionStepDuration() const
+	{
+		return m_collisionDetectionStepDuration;
+	}
+
+	float snScene::getSolverStepDuration() const
+	{
+		return m_solverStepDuration;
 	}
 
 	void snScene::setGravity(const snVector4f& _gravity)
