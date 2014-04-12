@@ -37,6 +37,8 @@
 
 #include <malloc.h>
 
+#include "snCollisionMode.h"
+
 namespace Supernova
 {
 	class snVector4f;
@@ -44,6 +46,7 @@ namespace Supernova
 }
 using Supernova::snVector4f;
 using Supernova::snScene;
+using Supernova::snCollisionMode;
 
 namespace Devil
 {
@@ -51,6 +54,9 @@ namespace Devil
 	{
 	private:
 		static SceneManager* m_instance;
+
+		//The collision mode to use when creating a scene.
+		snCollisionMode m_collisionMode;
 
 	public:
 		static SceneManager* getInstance();
@@ -76,6 +82,8 @@ namespace Devil
 		void createTower();
 
 		void createSceneFriction();
+
+		void setCollisionMode(snCollisionMode _collisionMode);
 
 	private:
 		SceneManager();

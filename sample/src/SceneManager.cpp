@@ -128,6 +128,7 @@ namespace Devil
 		snScene* m_physicScene = 0;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
+		m_physicScene->setCollisionMode(m_collisionMode);
 
 		m_physicScene->setAngularSquaredSpeedThreshold(0.0001f);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.005f);
@@ -377,6 +378,7 @@ namespace Devil
 		snScene* m_physicScene = 0;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
+		m_physicScene->setCollisionMode(m_collisionMode);
 
 		int solverIterationCount = 60;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
@@ -557,6 +559,7 @@ namespace Devil
 		int sceneId = -1;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 4, 0, 0));
+		m_physicScene->setCollisionMode(m_collisionMode);
 
 		int solverIterationCount = 4;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
@@ -751,6 +754,7 @@ namespace Devil
 		int sceneId = -1;
 		snScene* m_physicScene = 0;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
+		m_physicScene->setCollisionMode(m_collisionMode);
 
 		int solverIterationCount = 20;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
@@ -925,6 +929,7 @@ namespace Devil
 		int sceneId = -1;
 		snScene* m_physicScene = 0;
 		SUPERNOVA->createScene(&m_physicScene, sceneId);
+		m_physicScene->setCollisionMode(m_collisionMode);
 
 		int solverIterationCount = 45;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
@@ -1073,6 +1078,7 @@ namespace Devil
 		int sceneId = -1;
 		snScene* scene = 0;
 		SUPERNOVA->createScene(&scene, sceneId);
+		scene->setCollisionMode(m_collisionMode);
 
 		int solverIterationCount = 4;
 		scene->setSolverIterationCount(solverIterationCount);
@@ -1263,7 +1269,12 @@ namespace Devil
 		}
 	}
 
-	SceneManager::SceneManager()
+	void SceneManager::setCollisionMode(snCollisionMode _collisionMode)
+	{
+		m_collisionMode = _collisionMode;
+	}
+
+	SceneManager::SceneManager() : m_collisionMode(snCollisionMode::snECollisionModeSweepAndPrune)
 	{}
 
 	SceneManager::~SceneManager()

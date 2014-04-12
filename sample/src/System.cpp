@@ -275,10 +275,12 @@ namespace Devil
 				else if (key == '1')
 				{
 					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionModeBruteForce);
+					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionModeBruteForce);
 				}
 				else if (key == '2')
 				{
 					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionModeSweepAndPrune);
+					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionModeSweepAndPrune);
 				}
 				return 0;
 			}
