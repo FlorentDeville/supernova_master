@@ -70,6 +70,18 @@ namespace Devil
 		GRAPHICS->writeText(L"Collision Detection : " + std::to_wstring(SUPERNOVA->getScene(0)->getCollisionDetectionStepDuration()) + L"ms", XMFLOAT2(1, height), 0.5);
 		height += LINE_HEIGHT;
 		GRAPHICS->writeText(L"Constraints Solver : " + std::to_wstring(SUPERNOVA->getScene(0)->getSolverStepDuration()) + L"ms", XMFLOAT2(1, height), 0.5);
+		
+		height += LINE_HEIGHT;
+		switch (SUPERNOVA->getScene(0)->getCollisionMode())
+		{
+		case snCollisionMode::snECollisionModeBruteForce:
+			GRAPHICS->writeText(L"Collision Mode : Brute force", XMFLOAT2(1, height), 0.5);
+			break;
+
+		case snCollisionMode::snECollisionModeSweepAndPrune:
+			GRAPHICS->writeText(L"Collision Mode : Sweep and prune", XMFLOAT2(1, height), 0.5);
+			break;
+		}
 
 		height = 1;
 		float offset = 300;
@@ -84,6 +96,8 @@ namespace Devil
 		GRAPHICS->writeText(L"SPACE to shoot a cube", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
 		GRAPHICS->writeText(L"C, V to show/hide collision points", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
+		height += LINE_HEIGHT;
+		GRAPHICS->writeText(L"1, 2 to switch collision mode", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 	}
 
 	void WorldHUD::setSceneName(const wstring _sceneName)

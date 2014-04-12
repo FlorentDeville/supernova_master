@@ -112,6 +112,9 @@ namespace Supernova
 
 		snVector4f getWorldVertexOfFace(int _faceId) const;
 
+		//Compute the bounding volume for this collider
+		void computeAABB(snAABB * const _boundingVolume) const;
+
 	private:
 		void computeVertices();
 

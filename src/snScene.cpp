@@ -64,7 +64,8 @@ namespace Supernova
 	snCollision snScene::m_collisionService;
 
 	snScene::snScene() : m_beta(0.25f), m_maxSlop(0.05f), m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
-		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10), m_collisionDetectionStepDuration(0), m_solverStepDuration(0)
+		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10), m_collisionDetectionStepDuration(0), m_solverStepDuration(0),
+		m_sweepList(), m_sweepAxis(0), m_collisionMode(snECollisionModeSweepAndPrune)
 	{
 	}
 
@@ -121,6 +122,7 @@ namespace Supernova
 		//no existing spot found so push back
 		int actorId = m_actors.size();
 		m_actors.push_back(_actor);
+		m_sweepList.push_back(_actor);
 		return actorId;
 	}
 
@@ -183,14 +185,7 @@ namespace Supernova
 		}
 		m_constraints.clear();
 
-		for (vector<snIConstraint*>::iterator i = m_collisionConstraints.begin(); i != m_collisionConstraints.end(); ++i)
-		{
-			if ((*i) == 0)
-				continue;
-
-			delete *i;
-		}
-		m_collisionConstraints.clear();
+		m_sweepList.clear();
 	}
 
 	void snScene::update(float _deltaTime)
@@ -198,7 +193,16 @@ namespace Supernova
 		long long startTimer = snTimer::getCurrentTick();
 
 		//compute collision points
-		computeCollisions(_deltaTime);
+		switch (m_collisionMode)
+		{
+		case snCollisionMode::snECollisionModeBruteForce:
+			computeNaiveCollisions(_deltaTime);
+			break;
+
+		case snCollisionMode::snECollisionModeSweepAndPrune:
+			computeBroadPhaseCollisions(_deltaTime);
+			break;
+		}
 
 		long long duration = snTimer::getElapsedTickCount(startTimer);
 		m_collisionDetectionStepDuration = snTimer::convertElapsedTickCountInMilliSeconds(duration);
@@ -256,6 +260,11 @@ namespace Supernova
 		return m_solverStepDuration;
 	}
 
+	snCollisionMode snScene::getCollisionMode() const
+	{
+		return m_collisionMode;
+	}
+
 	void snScene::setGravity(const snVector4f& _gravity)
 	{
 		m_gravity = _gravity;
@@ -274,6 +283,11 @@ namespace Supernova
 	void snScene::setSolverIterationCount(int _solverIterationCount)
 	{
 		m_solverIterationCount = _solverIterationCount;
+	}
+
+	void snScene::setCollisionMode(snCollisionMode _collisionMode)
+	{
+		m_collisionMode = _collisionMode;
 	}
 
 	void* snScene::operator new(size_t _count)
@@ -367,11 +381,8 @@ namespace Supernova
 		//resolve the constraints
 		for (int i = 0; i < m_solverIterationCount; ++i)
 		{
-			for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
-			{
-				if ((*constraint)->getIsActive())
-					(*constraint)->resolve();
-			}
+			//resolve the contact constraints
+			m_contactConstraintManager.resolveActiveConstraints();
 
 			for (vector<snIConstraint*>::iterator constraint = m_constraints.begin(); constraint != m_constraints.end(); ++constraint)
 				(*constraint)->resolve();
@@ -381,101 +392,113 @@ namespace Supernova
 	void snScene::prepareConstraints()
 	{
 		//prepare the collision constraints
-		for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
-			(*constraint)->prepare();
+		m_contactConstraintManager.prepareActiveConstraint();
 
 		//prepare the scene constraints
 		for (vector<snIConstraint*>::iterator constraint = m_constraints.begin(); constraint != m_constraints.end(); ++constraint)
 			(*constraint)->prepare();
 	}
 
-	void snScene::computeCollisions(float _dt)
+	void snScene::computeNaiveCollisions(float _dt)
 	{
-#if _DEBUG
-			LARGE_INTEGER frequency;
-			QueryPerformanceFrequency(&frequency);
+		m_collisionPoints.clear();
 
-			float tickPerMilliseconds = (float)frequency.QuadPart * 0.001f;
-			float tickPerMicroseconds = tickPerMilliseconds * 0.001f;
-#endif
-			m_collisionPoints.clear();
+		if (m_actors.size() <= 1)
+			return;
 
-			if (m_actors.size() <= 1)
-				return;
+		m_contactConstraintManager.preBroadPhase();
 
-			unsigned int currentConstraintId = 0;
-
-			for (std::vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
+		for (std::vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
+		{
+			for (std::vector<snActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
 			{
-				for (std::vector<snActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
-				{
-					//do not check collision between twe static actors.
-					if ((*i)->getIsStatic() && (*j)->getIsStatic())
-						continue;
 
-					//check collisions SAT
-#if _DEBUG
-					LARGE_INTEGER startSAT;
-					QueryPerformanceCounter(&startSAT);
-#endif
-					snCollisionResult res = m_collisionService.queryTestCollision(*i, *j);
-					//snCollisionResult res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
-#if _DEBUG
-					LARGE_INTEGER endSAT;
-					QueryPerformanceCounter(&endSAT);
-					LONGLONG SATDuration = endSAT.QuadPart - startSAT.QuadPart;
+				//do not check collision between static actors.
+				if ((*i)->getIsStatic() && (*j)->getIsStatic())
+					continue;
 
-
-					//check collision GJK
-					LARGE_INTEGER startGJK;
-					QueryPerformanceCounter(&startGJK);
-					snVector4f simplex[4];
-					//snCollisionResult _res = m_GJK.queryIntersection(*(*i)->getCollider(0), *(*j)->getCollider(0));
-					LARGE_INTEGER endGJK;
-					QueryPerformanceCounter(&endGJK);
-					LONGLONG GJKDuration = endGJK.QuadPart - startGJK.QuadPart;
-#endif
-					//no collision, continue
-					if (!res.m_collision)
-						continue;
-
-					//make the contact points from the collision results
-					vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
-					for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
-					{
-						m_collisionPoints.push_back(*point);
-
-						//if a constraints already exists, take it and reuse it or else create it.
-						snContactConstraint* npConstraint = 0;
-						snFrictionConstraint* fConstraint = 0;
-						if (currentConstraintId < m_collisionConstraints.size())
-						{
-							npConstraint = static_cast<snContactConstraint*>(m_collisionConstraints[currentConstraintId]);
-							fConstraint = static_cast<snFrictionConstraint*>(m_collisionConstraints[++currentConstraintId]);
-							++currentConstraintId;
-						}
-						else
-						{
-							npConstraint = new snContactConstraint();
-							m_collisionConstraints.push_back(npConstraint);
-
-							fConstraint = new snFrictionConstraint();
-							m_collisionConstraints.push_back(fConstraint);
-							currentConstraintId += 2;
-						}
-
-						//initialize and activate the constraints
-						npConstraint->initialize(*i, *j, res.m_normal, *point, *penetrationIterator, this, _dt);
-						fConstraint->initialize(*i, *j, npConstraint);
-						npConstraint->setIsActive(true);
-						fConstraint->setIsActive(true);
-					}
-				}
+				computeCollisionDetection(_dt, *i, *j);
 			}
 
 			//deactivate all unused constraints
-			for (unsigned int i = currentConstraintId; i < m_collisionConstraints.size(); ++i)
-				m_collisionConstraints[i]->setIsActive(false);
+			m_contactConstraintManager.postBroadPhase();
+		}
+	}
+
+	void snScene::computeBroadPhaseCollisions(float _dt)
+	{
+		m_collisionPoints.clear();
+		m_contactConstraintManager.preBroadPhase();
+
+		//sort the list in ascending order
+		m_sweepList.sort([this](const snActor* _a, const snActor* _b)
+		{
+			return _a->getBoundingVolume()->m_min[m_sweepAxis] < _b->getBoundingVolume()->m_min[m_sweepAxis];	
+		});
+
+		snVector4f s, s2;
+
+		//loop through each actor in the scene using the sweep list
+		for (list<snActor*>::iterator i = m_sweepList.begin(); i != m_sweepList.end(); ++i)
+		{
+			//compute aabb center point
+			snVector4f center = ((*i)->getBoundingVolume()->m_max + (*i)->getBoundingVolume()->m_min) * 0.5f;
+
+			//compute sum and sum square to compute variance later
+			s = s + center;
+			s2 = s * s;
+
+			//test collision against all other actors
+			list<snActor*>::iterator j = i;
+			++j;
+			while (j != m_sweepList.end())
+			{
+				//check if the tested bounding volume(j) is too far to the current bounding volume (i)
+				if ((*j)->getBoundingVolume()->m_min[m_sweepAxis] > (*i)->getBoundingVolume()->m_max[m_sweepAxis])
+					break;
+
+				if (AABBOverlap((*i)->getBoundingVolume(), (*j)->getBoundingVolume()))
+					computeCollisionDetection(_dt, *i, *j);
+
+				++j;
+			}
 		}
 
+		m_contactConstraintManager.postBroadPhase();
+
+		//compute variance
+		snVector4f v = s2 - (s * s);
+
+		//update the axis to sort to take the axis with the greatest variance.
+		m_sweepAxis = 0;
+		if (v[1] > v[0]) m_sweepAxis = 1;
+		if (v[2] > v[m_sweepAxis]) m_sweepAxis = 2;
+
+	}
+
+	void snScene::computeCollisionDetection(float _dt, snActor* _a, snActor* _b)
+	{
+		snCollisionResult res = m_collisionService.queryTestCollision(_a, _b);
+
+		//no collision, leave
+		if (!res.m_collision)
+			return;
+
+		//make the collision constraints from the collision results
+		vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
+		for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
+		{
+			m_collisionPoints.push_back(*point);
+
+			//if a constraints already exists, take it and reuse it or else create it.
+			snContactConstraint* npConstraint = static_cast<snContactConstraint*>(m_contactConstraintManager.getAvailableConstraint());
+			snFrictionConstraint* fConstraint = static_cast<snFrictionConstraint*>(m_contactConstraintManager.getAvailableConstraint());
+
+			//initialize and activate the constraints
+			npConstraint->initialize(_a, _b, res.m_normal, *point, *penetrationIterator, this, _dt);
+			fConstraint->initialize(_a, _b, npConstraint);
+			npConstraint->setIsActive(true);
+			fConstraint->setIsActive(true);
+		}
+	}
 }

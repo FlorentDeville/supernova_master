@@ -39,10 +39,15 @@
 using std::vector;
 using std::string;
 
+#include <list>
+using std::list;
+
 #include "AlignmentAllocator.h"
 #include "snTypes.h"
 #include "snGJK.h"
 #include "snCollision.h"
+#include "snContactConstraintManager.h"
+#include "snCollisionMode.h"
 
 #ifdef _DEBUG
 namespace Devil
@@ -74,7 +79,7 @@ namespace Supernova
 		vector<snIConstraint*> m_constraints;
 
 		//List of constraints created by the collision detection system.
-		vector<snIConstraint*> m_collisionConstraints;
+		snContactConstraintManager m_contactConstraintManager;
 
 		//The list of collision points gathered during the previous update of the scene.
 		snVector4fVector m_collisionPoints;
@@ -107,6 +112,15 @@ namespace Supernova
 
 		//Time spent in the solving constraint step
 		float m_solverStepDuration;
+
+		//List of actor sorted using their AABB.
+		list<snActor*> m_sweepList;
+
+		//Index of the axis for the sweep and prune broad phase algorithm
+		int m_sweepAxis;
+
+		//The type of collision to use
+		snCollisionMode m_collisionMode;
 
 	public:
 		//Constructor. Scenes should be created using snFactory::createScene. If you create a scene yourself it is your responsability
@@ -169,6 +183,9 @@ namespace Supernova
 		//Get the duration of the solver step for the last iteration.
 		float getSolverStepDuration() const;
 
+		//Get the type of collision used.
+		snCollisionMode getCollisionMode() const;
+
 		//Set the gravity to apply in the scene.
 		void setGravity(const snVector4f& _gravity);
 
@@ -180,6 +197,9 @@ namespace Supernova
 
 		//Set the number of iteration to execute to resolve constraints.
 		void setSolverIterationCount(int _solverIterationCount);
+
+		//Set the collision mode to use in the scene
+		void setCollisionMode(snCollisionMode _collisionMode);
 
 		//Overridden new operator to create scene with correct alignement.
 		void* operator new(size_t _count);
@@ -200,8 +220,14 @@ namespace Supernova
 		//Prepare all the constraints. It must be called before resolving them.
 		void prepareConstraints();
 
-		//Check collisions in the scene and fill in an array of collision constraints.
-		void computeCollisions(float _dt);
+		//Check collisions using brute force algorithm (no broad phase) in the scene and fill in an array of collision constraints.
+		void computeNaiveCollisions(float _dt);
+
+		//Check collisions using sweep and prune broad phase and create collision constraints.
+		void computeBroadPhaseCollisions(float _dt);
+
+		//Compute tcollision detection between two actors and create the corresponding collision constraints.
+		void computeCollisionDetection(float _dt, snActor* _a, snActor* _b);
 	};
 }
 

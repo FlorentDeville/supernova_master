@@ -45,6 +45,7 @@ namespace Supernova
 	class snColliderBox;
 	class snColliderSphere;
 	class snColliderPlan;
+	struct snAABB;
 
 	//Type enum to identify the kind of collider
 	enum snEColliderType : unsigned char
@@ -113,6 +114,9 @@ namespace Supernova
 		void setOrigin(const snVector4f& _origin){ m_origin = _origin; }
 
 		const snVector4f& getWorldOrigin() const { return m_worldOrigin; }
+
+		//Compute the bounding volume for this collider
+		virtual void computeAABB(snAABB * const /*_boundingVolume*/) const {};
 
 		void* operator new(size_t _count)
 		{

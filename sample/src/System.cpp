@@ -191,16 +191,6 @@ namespace Devil
 				{
 					WORLD->setGraphicsFPS(fpsCounter);
 					WORLD->setPhysicsFPS(fpsCounterPhysics);
-					/*std::wstring strFPS = std::to_wstring(fpsCounter);
-
-					std::wstring title = L"Supernova G=";
-					title.append(strFPS);
-
-					strFPS = std::to_wstring(fpsCounterPhysics);
-					title.append(L" P=");
-					title.append(strFPS);
-
-					SetWindowText(m_hwnd, title.c_str());*/
 
 					fpsTimeCounter = currentClock.QuadPart;
 					fpsCounter = 0;	
@@ -281,6 +271,14 @@ namespace Devil
 
 					EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
 					box->setActor(act);
+				}
+				else if (key == '1')
+				{
+					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionModeBruteForce);
+				}
+				else if (key == '2')
+				{
+					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionModeSweepAndPrune);
 				}
 				return 0;
 			}

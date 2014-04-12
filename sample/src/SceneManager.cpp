@@ -466,7 +466,7 @@ namespace Devil
 			kinematicBox->setActor(act);
 		}
 
-		const int MAX_ROW = 14;
+		const int MAX_ROW = 15;
 		for (int row = MAX_ROW; row > 0; --row)
 		{
 			for (int i = 0; i < row; ++i)

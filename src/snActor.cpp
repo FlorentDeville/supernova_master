@@ -237,6 +237,16 @@ namespace Supernova
 		return m_angularDampingCoeff;
 	}
 
+	snAABB* snActor::getBoundingVolume()
+	{
+		return &m_boundingVolume;
+	}
+
+	const snAABB* snActor::getBoundingVolume() const
+	{
+		return &m_boundingVolume;
+	}
+
 	void snActor::createColliderBox(snColliderBox** _box, int& _colliderId)
 	{
 		*_box = new snColliderBox();
@@ -321,7 +331,15 @@ namespace Supernova
 		for (std::vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 			(*i)->setWorldTransform(transform);
 
+		computeBoundingVolume();
 		return true;
+	}
+
+	void snActor::computeBoundingVolume()
+	{
+		assert(m_colliders.size() == 1);
+
+		m_colliders[0]->computeAABB(&m_boundingVolume);
 	}
 
 	snPhysicMaterial& snActor::getPhysicMaterial()

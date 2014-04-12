@@ -39,6 +39,7 @@
 #include "snCollisionResult.h"
 #include "snMath.h"
 #include "snCollision.h"
+#include "snAABB.h"
 
 namespace Supernova
 {
@@ -342,5 +343,31 @@ namespace Supernova
 	snVector4f snColliderBox::getWorldVertexOfFace(int _faceId) const
 	{
 		return m_worldBox[m_idFaces[_faceId * 4]];
+	}
+
+	void snColliderBox::computeAABB(snAABB * const _boundingVolume) const
+	{
+		_boundingVolume->m_max = m_worldBox[0].m_vec;
+		_boundingVolume->m_min = m_worldBox[0].m_vec;
+
+		const __m128 BITWISE_NEG_FLAG = _mm_castsi128_ps(_mm_set1_epi32(0xffffffff));
+		for (int i = 1; i < 8; ++i)
+		{
+			//get the maximum
+			__m128 compare = _mm_cmpgt_ps(m_worldBox[i].m_vec, _boundingVolume->m_max.m_vec);
+			__m128 ncompare = _mm_xor_ps(compare, BITWISE_NEG_FLAG);
+
+			__m128 mask1 = _mm_and_ps(m_worldBox[i].m_vec, compare);
+			__m128 mask2 = _mm_and_ps(_boundingVolume->m_max.m_vec, ncompare);
+			_boundingVolume->m_max.m_vec = _mm_or_ps(mask1, mask2);
+
+			//get the minimum
+			compare = _mm_cmplt_ps(m_worldBox[i].m_vec, _boundingVolume->m_min.m_vec);
+			ncompare = _mm_xor_ps(compare, BITWISE_NEG_FLAG);
+
+			mask1 = _mm_and_ps(m_worldBox[i].m_vec, compare);
+			mask2 = _mm_and_ps(_boundingVolume->m_min.m_vec, ncompare);
+			_boundingVolume->m_min.m_vec = _mm_or_ps(mask1, mask2);
+		}
 	}
 }

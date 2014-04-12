@@ -38,7 +38,7 @@
 #include "snTypes.h"
 #include "snMatrix44f.h"
 #include "snPhysicMaterial.h"
-
+#include "snAABB.h"
 
 #include <vector>
 #include <string>
@@ -111,6 +111,9 @@ namespace Supernova
 
 		//Coefficient used to compute the amgular damping torque which is equal to -m_angularDamping * m_angularVelocity.
 		float m_angularDampingCoeff;
+
+		//AABB bounding volume used during broad phase.
+		snAABB m_boundingVolume;
 
 	public:
 
@@ -185,6 +188,10 @@ namespace Supernova
 
 		float getAngularDampingCoeff() const;
 
+		snAABB* getBoundingVolume();
+
+		const snAABB* getBoundingVolume() const;
+
 		//Create a collider box and add it to the actor. Return its id.
 		void createColliderBox(snColliderBox** _box, int& _colliderId);
 
@@ -203,6 +210,9 @@ namespace Supernova
 		std::vector<snICollider*>& getColliders();
 
 		bool updateCollider(const snVector4f& x, const snMatrix44f& _R);
+
+		//Compute the bounding volume based on the colliders contained by this actor.
+		void computeBoundingVolume();
 
 		//Return the physic material.
 		snPhysicMaterial& getPhysicMaterial();
