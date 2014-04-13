@@ -89,9 +89,6 @@ namespace Supernova
 
 		snGJK m_GJK;
 
-		//Maximum penetration authorized between two actors.
-		float m_maxSlop;
-
 		//Vector representing the gravity in the scene.
 		snVector4f m_gravity;
 
@@ -155,12 +152,6 @@ namespace Supernova
 
 		//Return the list of collision results for the last iteration of the engine.
 		const snVector4fVector& getCollisionPoints() const;
-
-		//Set the maximum authorized penetration between two actors.
-		void setMaxSlop(float _maxSlop);
-
-		//Get the maximum authorized penetration between two actors.
-		float getMaxSlop() const;
 
 		//Get the type of collision used.
 		snCollisionMode getCollisionMode() const;

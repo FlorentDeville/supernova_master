@@ -492,6 +492,7 @@ namespace Devil
 				act->setIsKinematic(false);
 				act->getPhysicMaterial().m_restitution = 0;
 				act->getPhysicMaterial().m_friction = 1;
+				act->setSkinDepth(0.025f);
 
 				//create collider
 				snColliderBox* collider = 0;

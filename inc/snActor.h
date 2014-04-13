@@ -115,6 +115,9 @@ namespace Supernova
 		//AABB bounding volume used during broad phase.
 		snAABB m_boundingVolume;
 
+		//Represent the maximum depth another actor can penetrate into the current actor.
+		float m_skinDepth;
+
 	public:
 
 		//Constructor. Actors should be created using snScene::createActor. If you create an actor yourself it is your responsability
@@ -184,9 +187,15 @@ namespace Supernova
 
 		void setAngularDampingCoeff(float _angularDamping);
 
+		//Set the maximum depth another actor can penetrate into this actor
+		void setSkinDepth(float _skinDepth);
+
 		float getLinearDampingCoeff() const;
 
 		float getAngularDampingCoeff() const;
+
+		//Get the maximum depth another actor can penetrate into this actor
+		float getSkinDepth() const;
 
 		snAABB* getBoundingVolume();
 

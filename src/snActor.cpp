@@ -43,7 +43,7 @@
 
 namespace Supernova
 {
-	snActor::snActor() : m_material(), m_linearDampingCoeff(0.5f), m_angularDampingCoeff(0.f)
+	snActor::snActor() : m_material(), m_linearDampingCoeff(0.5f), m_angularDampingCoeff(0.f), m_skinDepth(0.025f)
 	{
 		m_w = snVector4f(0, 0, 0, 0);
 		m_q = snVector4f(0, 0, 0, 1);
@@ -54,7 +54,7 @@ namespace Supernova
 		m_isStatic = false;
 	}
 
-	snActor::snActor(bool _isStatic) : m_material(), m_linearDampingCoeff(0.5f), m_angularDampingCoeff(0.f)
+	snActor::snActor(bool _isStatic) : m_material(), m_linearDampingCoeff(0.5f), m_angularDampingCoeff(0.f), m_skinDepth(0.025f)
 	{
 		m_w = snVector4f(0, 0, 0, 0);
 		m_q = snVector4f(0, 0, 0, 1);
@@ -227,6 +227,11 @@ namespace Supernova
 		m_angularDampingCoeff = _angularDampingCoeff;
 	}
 
+	void snActor::setSkinDepth(float _skinDepth)
+	{
+		m_skinDepth = _skinDepth;
+	}
+
 	float snActor::getLinearDampingCoeff() const
 	{
 		return m_linearDampingCoeff;
@@ -235,6 +240,11 @@ namespace Supernova
 	float snActor::getAngularDampingCoeff() const
 	{
 		return m_angularDampingCoeff;
+	}
+
+	float snActor::getSkinDepth() const
+	{
+		return m_skinDepth;
 	}
 
 	snAABB* snActor::getBoundingVolume()

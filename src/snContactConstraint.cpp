@@ -98,7 +98,8 @@ namespace Supernova
 		const float beta = 0.25f;
 
 		//compute the velocity correction
-		m_velocityBias = -restitution * relVel - beta / _dt * max<float>(0, m_penetrationDepth - m_scene->getMaxSlop());
+		float error = beta / _dt * max<float>(0, m_penetrationDepth - m_bodies[0]->getSkinDepth() - m_bodies[1]->getSkinDepth());
+		m_velocityBias = -restitution * relVel - error;
 
 	}
 

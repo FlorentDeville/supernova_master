@@ -67,7 +67,7 @@ namespace Supernova
 
 	snCollision snScene::m_collisionService;
 
-	snScene::snScene() : m_maxSlop(0.05f), m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
+	snScene::snScene() : m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
 		m_sweepList(), m_sweepAxis(0), m_collisionMode(snECollisionModeSweepAndPrune)
 	{
@@ -241,16 +241,6 @@ namespace Supernova
 	const snVector4fVector& snScene::getCollisionPoints() const
 	{
 		return m_collisionPoints;
-	}
-
-	void snScene::setMaxSlop(float _maxSlop)
-	{
-		m_maxSlop = _maxSlop;
-	}
-
-	float snScene::getMaxSlop() const
-	{
-		return m_maxSlop;
 	}
 
 	snCollisionMode snScene::getCollisionMode() const
