@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\AlignmentAllocator.h" />
+    <ClInclude Include="inc\snDebugger.h" />
     <ClInclude Include="inc\snAABB.h" />
     <ClInclude Include="inc\snActor.h" />
     <ClInclude Include="inc\snColliderBox.h" />
@@ -49,6 +50,7 @@
     <ClCompile Include="src\snColliderSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
     <ClCompile Include="src\snContactConstraintManager.cpp" />
+    <ClCompile Include="src\snDebugger.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />
@@ -106,7 +108,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRTDBG_MAP_ALLOC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRTDBG_MAP_ALLOC;SN_DEBUGGER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
@@ -125,7 +127,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;SN_DEBUGGER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>

@@ -134,7 +134,6 @@ namespace Devil
 		m_physicScene->setLinearSquaredSpeedThreshold(0.005f);
 		int solverIterationCount = 5;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
-		HUD->setSolverIterationCount(solverIterationCount);
 
 		//create camera
 		XMVECTOR cameraPosition = XMVectorSet(25, 30, 50, 1);
@@ -369,8 +368,8 @@ namespace Devil
 		GRAPHICS->setClearScreenColor(Colors::DarkGray);
 
 		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(70, 50, 100, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(15, 15, 0, 1);
+		XMVECTOR cameraPosition = XMVectorSet(100, 80, 140, 1);
+		XMVECTOR cameraLookAt = XMVectorSet(35, 22, 0, 1);
 		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
 		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
 
@@ -382,7 +381,6 @@ namespace Devil
 
 		int solverIterationCount = 60;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
-		HUD->setSolverIterationCount(solverIterationCount);
 
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.0005f);
@@ -563,7 +561,6 @@ namespace Devil
 
 		int solverIterationCount = 4;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
-		HUD->setSolverIterationCount(solverIterationCount);
 
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
@@ -758,7 +755,6 @@ namespace Devil
 
 		int solverIterationCount = 20;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
-		HUD->setSolverIterationCount(solverIterationCount);
 
 		m_physicScene->setBeta(0.2f);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 0.5f, 0, 0));
@@ -933,7 +929,6 @@ namespace Devil
 
 		int solverIterationCount = 45;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
-		HUD->setSolverIterationCount(solverIterationCount);
 
 		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
 		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
@@ -1082,7 +1077,6 @@ namespace Devil
 
 		int solverIterationCount = 4;
 		scene->setSolverIterationCount(solverIterationCount);
-		HUD->setSolverIterationCount(solverIterationCount);
 
 		scene->setLinearSquaredSpeedThreshold(0.006f);
 		scene->setAngularSquaredSpeedThreshold(0.001f);

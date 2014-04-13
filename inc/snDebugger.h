@@ -32,85 +32,53 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "WorldHUD.h"
-#include "Graphics.h"
-#include "snFactory.h"
-#include "snScene.h"
+#ifndef SN_DEBUGGER_H
+#define SN_DEBUGGER_H
 
-#ifdef SN_DEBUGGER
-#include "snDebugger.h"
-#endif //ifdef SN_DEBUGGER
+#include <map>
+using std::map;
 
-namespace Devil
+#include <string>
+using std::wstring;
+
+namespace Supernova
 {
-	WorldHUD::WorldHUD()
+	//Singleton storing debugging information accessible from the outside of the engine.
+	//In order to Supernova to register information, SN_DEBUGGER needs to be defined.
+	class snDebugger
 	{
+	private:
+		//Static and unique instance of the current class. It is a singleton.
+		static snDebugger* m_instance;
 
-	}
+		//Store debugging information. The key is the name of the information, the value is its value.
+		//It's a kind of equivalent to the watch window in visual studio.
+		map<wstring, wstring> m_watch;
 
-	WorldHUD::~WorldHUD()
-	{
+	public:
 
-	}
+		//Return the unique and global instance of the current class.
+		static snDebugger* getInstance();
 
-	void WorldHUD::update(){}
+		//Delete the singleton and clean up everything it has allocated.
+		void shutdown();
 
-	void WorldHUD::render(){}
+		//Set a value in the watch.
+		void setWatchExpression(wstring _name, wstring _value);
 
-	void WorldHUD::spriteRender()
-	{
-		const float SCALE = 0.4f;
-		const int LINE_HEIGHT = 17;
-		float height = 1;
-		GRAPHICS->writeText(L"SUPERNOVA", XMFLOAT2(1, height), 0.5);
-		height += LINE_HEIGHT;
-		GRAPHICS->writeText(m_sceneName, XMFLOAT2(1, height), 0.5);
-		height += LINE_HEIGHT * 2;
-		GRAPHICS->writeText(L"Graphics FPS : " + m_graphicsFPS, XMFLOAT2(1, height), 0.5);
-		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"Physics FPS : " + m_physicsFPS, XMFLOAT2(1, height), 0.5);
-		height += LINE_HEIGHT * 2;
+		//Returns the map containing all the watched values.
+		const map<wstring, wstring>& getWatch() const;
 
-		//display debugging information
-#ifdef SN_DEBUGGER
-		const map<wstring, wstring>& watch = DEBUGGER->getWatch();
-		for (map<wstring, wstring>::const_iterator i = watch.cbegin(); i != watch.cend(); ++i)
-		{
-			GRAPHICS->writeText(i->first + L" : " + i->second, XMFLOAT2(1, height), SCALE);
-			height += LINE_HEIGHT;
-		}
-#endif //ifdef SN_DEBUGGER
+	private:
+		//Default constructor
+		snDebugger();
 
-		//display controls
-		height = 1;
-		float offset = 300;
-		GRAPHICS->writeText(L"F1 to F6 to switch scene", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
-		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"Z, Q, S, D to move around", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
-		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"Mouse to rotate", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
-		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"Mouse wheel to zoom in/out", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
-		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"SPACE to shoot a cube", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
-		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"C, V to show/hide collision points", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
-		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"1, 2 to switch collision mode", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
-	}
+		//Destructor
+		virtual ~snDebugger();
+	};
 
-	void WorldHUD::setSceneName(const wstring _sceneName)
-	{
-		m_sceneName = _sceneName;
-	}
+	//Gives access to the debugger
+#define DEBUGGER snDebugger::getInstance()
 
-	void WorldHUD::setGraphicsFPS(int _graphicsFPS)
-	{
-		m_graphicsFPS = std::to_wstring(_graphicsFPS);
-	}
-
-	void WorldHUD::setPhysicsFPS(int _physicsFPS)
-	{
-		m_physicsFPS = std::to_wstring(_physicsFPS);
-	}
 }
+#endif //ifndef SN_DEBUGGER_H

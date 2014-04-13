@@ -49,6 +49,10 @@
 
 #include "snTimer.h"
 
+#ifdef SN_DEBUGGER
+#include "snDebugger.h"
+#endif //ifdef SN_DEBUGGER
+
 #ifdef _DEBUG
 #include <Windows.h>
 #include <string>
@@ -64,7 +68,7 @@ namespace Supernova
 	snCollision snScene::m_collisionService;
 
 	snScene::snScene() : m_beta(0.25f), m_maxSlop(0.05f), m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
-		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10), m_collisionDetectionStepDuration(0), m_solverStepDuration(0),
+		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
 		m_sweepList(), m_sweepAxis(0), m_collisionMode(snECollisionModeSweepAndPrune)
 	{
 	}
@@ -190,7 +194,9 @@ namespace Supernova
 
 	void snScene::update(float _deltaTime)
 	{
+#ifdef SN_DEBUGGER
 		long long startTimer = snTimer::getCurrentTick();
+#endif //ifdef SN_DEBUGGER
 
 		//compute collision points
 		switch (m_collisionMode)
@@ -204,19 +210,26 @@ namespace Supernova
 			break;
 		}
 
-		long long duration = snTimer::getElapsedTickCount(startTimer);
-		m_collisionDetectionStepDuration = snTimer::convertElapsedTickCountInMilliSeconds(duration);
+#ifdef SN_DEBUGGER
+		float durationMS = snTimer::convertElapsedTickCountInMilliSeconds(snTimer::getElapsedTickCount(startTimer));
+		DEBUGGER->setWatchExpression(L"Collision Detection (ms)", std::to_wstring(durationMS));
+#endif //ifdef SN_DEBUGGER
 
 		//The constraints must be prepared before applying forces.
 		//applyForces updates the velocities with candidates velocities and we can't prepare constraints with candidate velocities.
 		prepareConstraints();
 
+#ifdef SN_DEBUGGER
 		startTimer = snTimer::getCurrentTick();
+#endif //ifdef SN_DEBUGGER
+
 		//apply forces and compute candidate velocities for actors.
 		applyForces(_deltaTime);
 
-		duration = snTimer::getElapsedTickCount(startTimer);
-		m_solverStepDuration = snTimer::convertElapsedTickCountInMilliSeconds(duration);
+#ifdef SN_DEBUGGER
+		durationMS = snTimer::convertElapsedTickCountInMilliSeconds(snTimer::getElapsedTickCount(startTimer));
+		DEBUGGER->setWatchExpression(L"Constraint Solver (ms)", std::to_wstring(durationMS));
+#endif //ifdef SN_DEBUGGER
 
 		//apply impulses
 		resolveAllConstraints();
@@ -250,16 +263,6 @@ namespace Supernova
 		return m_maxSlop;
 	}
 
-	float snScene::getCollisionDetectionStepDuration() const
-	{
-		return m_collisionDetectionStepDuration;
-	}
-
-	float snScene::getSolverStepDuration() const
-	{
-		return m_solverStepDuration;
-	}
-
 	snCollisionMode snScene::getCollisionMode() const
 	{
 		return m_collisionMode;
@@ -283,11 +286,29 @@ namespace Supernova
 	void snScene::setSolverIterationCount(int _solverIterationCount)
 	{
 		m_solverIterationCount = _solverIterationCount;
+
+#ifdef SN_DEBUGGER
+		DEBUGGER->setWatchExpression(L"Solver Iteration Count", std::to_wstring(m_solverIterationCount));
+#endif
+
 	}
 
 	void snScene::setCollisionMode(snCollisionMode _collisionMode)
 	{
 		m_collisionMode = _collisionMode;
+
+#ifdef SN_DEBUGGER
+		switch (m_collisionMode)
+		{
+		case snCollisionMode::snECollisionModeBruteForce:
+			DEBUGGER->setWatchExpression(L"Collision Mode", L"Brute Force");
+			break;
+
+		case snCollisionMode::snECollisionModeSweepAndPrune:
+			DEBUGGER->setWatchExpression(L"Collision Mode", L"Sweep And Prune");
+			break;
+		}
+#endif //ifdef SN_DEBUGGER
 	}
 
 	void* snScene::operator new(size_t _count)
@@ -436,6 +457,7 @@ namespace Supernova
 			return _a->getBoundingVolume()->m_min[m_sweepAxis] < _b->getBoundingVolume()->m_min[m_sweepAxis];	
 		});
 
+		//sum and squared sum of the AABB center
 		snVector4f s, s2;
 
 		//loop through each actor in the scene using the sweep list
@@ -444,9 +466,9 @@ namespace Supernova
 			//compute aabb center point
 			snVector4f center = ((*i)->getBoundingVolume()->m_max + (*i)->getBoundingVolume()->m_min) * 0.5f;
 
-			//compute sum and sum square to compute variance later
+			//compute sum and sum squared to compute variance later
 			s = s + center;
-			s2 = s * s;
+			s2 = s2 + s * s;
 
 			//test collision against all other actors
 			list<snActor*>::iterator j = i;

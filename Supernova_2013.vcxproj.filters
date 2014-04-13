@@ -106,6 +106,9 @@
     <ClInclude Include="inc\snCollisionMode.h">
       <Filter>Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snDebugger.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -168,6 +171,9 @@
     </ClCompile>
     <ClCompile Include="src\snContactConstraintManager.cpp">
       <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snDebugger.cpp">
+      <Filter>Tools</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

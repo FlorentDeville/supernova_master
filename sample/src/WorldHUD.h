@@ -54,9 +54,6 @@ namespace Devil
 		//Frame per seconds for the physics engine
 		wstring m_physicsFPS;
 
-		//Number of iteration per frame for the physics solver
-		wstring m_solverIterationCount;
-
 	public:
 
 		WorldHUD();
@@ -72,9 +69,6 @@ namespace Devil
 		void setGraphicsFPS(int _graphicsFPS);
 
 		void setPhysicsFPS(int _physicsFPS);
-
-		void setSolverIterationCount(int _iterationCount);
-
 	};
 }
 

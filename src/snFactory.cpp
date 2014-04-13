@@ -34,6 +34,10 @@
 #include "snFactory.h"
 #include "snScene.h"
 
+#ifdef SN_DEBUGGER
+#include "snDebugger.h"
+#endif //ifdef SN_DEBUGGER
+
 namespace Supernova
 {
 	snFactory* snFactory::m_instance = 0;
@@ -68,6 +72,11 @@ namespace Supernova
 			delete m_instance;
 			m_instance = 0;
 		}
+
+#ifdef SN_DEBUGGER
+		//close the debugger
+		DEBUGGER->shutdown();
+#endif //ifdef SN_DEBUGGER
 
 		return true;
 	}
