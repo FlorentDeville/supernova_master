@@ -38,6 +38,11 @@ namespace Supernova
 {
 	bool AABBOverlap(snAABB const * const _a, snAABB const * const _b)
 	{
+		//if a->max >= b->min && a->min <= b->max 
+		//	return true
+		//else 
+		//	return false
+
 		__m128 compare = _mm_cmpge_ps(_a->m_max.m_vec, _b->m_min.m_vec);
 		__m128i iCompare = _mm_castps_si128(compare);
 		int resCompare1 = _mm_movemask_epi8(iCompare);

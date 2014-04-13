@@ -130,7 +130,6 @@ namespace Devil
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
 		m_physicScene->setCollisionMode(m_collisionMode);
 
-		m_physicScene->setAngularSquaredSpeedThreshold(0.0001f);
 		m_physicScene->setLinearSquaredSpeedThreshold(0.005f);
 		int solverIterationCount = 5;
 		m_physicScene->setSolverIterationCount(solverIterationCount);

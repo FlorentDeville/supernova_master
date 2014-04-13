@@ -73,6 +73,8 @@ namespace Devil
 
 		//display debugging information
 #ifdef SN_DEBUGGER
+		GRAPHICS->writeText(L"======WATCH======", XMFLOAT2(1, height), SCALE);
+		height += LINE_HEIGHT;
 		const map<wstring, wstring>& watch = DEBUGGER->getWatch();
 		for (map<wstring, wstring>::const_iterator i = watch.cbegin(); i != watch.cend(); ++i)
 		{
