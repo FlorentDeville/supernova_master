@@ -97,9 +97,6 @@ namespace Supernova
 		//The distance between the fixed point and the actor's center of mass.
 		float m_distance;
 
-		//The time step. Necessary to compute baumgarte stabilization.
-		float m_dt;
-
 		//Velocity bias computed using baumgarte stabilization.
 		snVector4f m_bias;
 
@@ -113,10 +110,10 @@ namespace Supernova
 		snVector4f m_normalizedOffset;
 
 	public:
-		snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt);
+		snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance);
 		~snFixedConstraint();
 
-		void prepare();
+		void prepare(float _dt);
 
 		void resolve();
 

@@ -65,7 +65,7 @@ namespace Supernova
 		snIConstraint* getAvailableConstraint();
 
 		//Prepare all the currently active constraints.
-		void prepareActiveConstraint();
+		void prepareActiveConstraint(float _dt);
 
 		//Solve all the currently active constraints.
 		void resolveActiveConstraints();

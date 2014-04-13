@@ -77,9 +77,6 @@ namespace Supernova
 		//Scene containing this constraints.
 		snScene const * m_scene;
 
-		//Delta time used to integrate the current step.
-		float m_dt;
-
 	public:
 		snContactConstraint();
 
@@ -87,9 +84,9 @@ namespace Supernova
 
 		//Give to the constraints the basic information it needs.
 		void initialize(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
-			snScene const * _scene, float _dt);
+			snScene const * _scene);
 
-		void prepare();
+		void prepare(float _dt);
 
 		void resolve();
 

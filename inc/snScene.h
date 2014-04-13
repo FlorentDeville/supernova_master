@@ -89,9 +89,6 @@ namespace Supernova
 
 		snGJK m_GJK;
 
-		//Coefficient of the penetration. Used to compute the bias velocity.
-		float m_beta;
-
 		//Maximum penetration authorized between two actors.
 		float m_maxSlop;
 
@@ -148,7 +145,7 @@ namespace Supernova
 		//Create a distance constraint between two actors and return the id of the constraint
 		snPointToPointConstraint* createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2);
 
-		snFixedConstraint* createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt);
+		snFixedConstraint* createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance);
 
 		//Delete all actors from the physics scene.
 		void clearScene();
@@ -158,12 +155,6 @@ namespace Supernova
 
 		//Return the list of collision results for the last iteration of the engine.
 		const snVector4fVector& getCollisionPoints() const;
-
-		//Set the coefficient of penetration.
-		void setBeta(float _beta);
-
-		//Get the coefficient of penetration.
-		float getBeta() const;
 
 		//Set the maximum authorized penetration between two actors.
 		void setMaxSlop(float _maxSlop);
@@ -206,16 +197,16 @@ namespace Supernova
 		void resolveAllConstraints();
 
 		//Prepare all the constraints. It must be called before resolving them.
-		void prepareConstraints();
+		void prepareConstraints(float _dt);
 
 		//Check collisions using brute force algorithm (no broad phase) in the scene and fill in an array of collision constraints.
-		void computeNaiveCollisions(float _dt);
+		void computeNaiveCollisions();
 
 		//Check collisions using sweep and prune broad phase and create collision constraints.
-		void computeBroadPhaseCollisions(float _dt);
+		void computeBroadPhaseCollisions();
 
 		//Compute tcollision detection between two actors and create the corresponding collision constraints.
-		void computeCollisionDetection(float _dt, snActor* _a, snActor* _b);
+		void computeCollisionDetection(snActor* _a, snActor* _b);
 	};
 }
 

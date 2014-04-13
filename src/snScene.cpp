@@ -67,7 +67,7 @@ namespace Supernova
 
 	snCollision snScene::m_collisionService;
 
-	snScene::snScene() : m_beta(0.25f), m_maxSlop(0.05f), m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
+	snScene::snScene() : m_maxSlop(0.05f), m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
 		m_sweepList(), m_sweepAxis(0), m_collisionMode(snECollisionModeSweepAndPrune)
 	{
@@ -162,9 +162,9 @@ namespace Supernova
 		return constraint;
 	}
 
-	snFixedConstraint* snScene::createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt)
+	snFixedConstraint* snScene::createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance)
 	{
-		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, _distance, _dt);
+		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, _distance);
 		m_constraints.push_back(constraint);
 		return constraint;
 	}
@@ -202,11 +202,11 @@ namespace Supernova
 		switch (m_collisionMode)
 		{
 		case snCollisionMode::snECollisionModeBruteForce:
-			computeNaiveCollisions(_deltaTime);
+			computeNaiveCollisions();
 			break;
 
 		case snCollisionMode::snECollisionModeSweepAndPrune:
-			computeBroadPhaseCollisions(_deltaTime);
+			computeBroadPhaseCollisions();
 			break;
 		}
 
@@ -217,7 +217,7 @@ namespace Supernova
 
 		//The constraints must be prepared before applying forces.
 		//applyForces updates the velocities with candidates velocities and we can't prepare constraints with candidate velocities.
-		prepareConstraints();
+		prepareConstraints(_deltaTime);
 
 #ifdef SN_DEBUGGER
 		startTimer = snTimer::getCurrentTick();
@@ -241,16 +241,6 @@ namespace Supernova
 	const snVector4fVector& snScene::getCollisionPoints() const
 	{
 		return m_collisionPoints;
-	}
-
-	void snScene::setBeta(float _beta)
-	{
-		m_beta = _beta;
-	}
-
-	float snScene::getBeta() const
-	{
-		return m_beta;
 	}
 
 	void snScene::setMaxSlop(float _maxSlop)
@@ -410,17 +400,17 @@ namespace Supernova
 		}
 	}
 
-	void snScene::prepareConstraints()
+	void snScene::prepareConstraints(float _dt)
 	{
 		//prepare the collision constraints
-		m_contactConstraintManager.prepareActiveConstraint();
+		m_contactConstraintManager.prepareActiveConstraint(_dt);
 
 		//prepare the scene constraints
 		for (vector<snIConstraint*>::iterator constraint = m_constraints.begin(); constraint != m_constraints.end(); ++constraint)
-			(*constraint)->prepare();
+			(*constraint)->prepare(_dt);
 	}
 
-	void snScene::computeNaiveCollisions(float _dt)
+	void snScene::computeNaiveCollisions()
 	{
 		m_collisionPoints.clear();
 
@@ -445,7 +435,7 @@ namespace Supernova
 #ifdef SN_DEBUGGER
 				++collisionQueriesCount;
 #endif //ifdef SN_DEBUGGER
-				computeCollisionDetection(_dt, *i, *j);
+				computeCollisionDetection(*i, *j);
 			}
 
 			//deactivate all unused constraints
@@ -457,7 +447,7 @@ namespace Supernova
 #endif //ifdef SN_DEBUGGER
 	}
 
-	void snScene::computeBroadPhaseCollisions(float _dt)
+	void snScene::computeBroadPhaseCollisions()
 	{
 		m_collisionPoints.clear();
 		m_contactConstraintManager.preBroadPhase();
@@ -512,7 +502,7 @@ namespace Supernova
 #ifdef 	SN_DEBUGGER
 					++collisionQueriesCount;
 #endif //ifdef SN_DEBUGGER
-					computeCollisionDetection(_dt, *i, *j);
+					computeCollisionDetection(*i, *j);
 				}
 				++j;
 			}
@@ -550,7 +540,7 @@ namespace Supernova
 #endif //idef SN_DEBUGGER
 	}
 
-	void snScene::computeCollisionDetection(float _dt, snActor* _a, snActor* _b)
+	void snScene::computeCollisionDetection(snActor* _a, snActor* _b)
 	{
 		snCollisionResult res = m_collisionService.queryTestCollision(_a, _b);
 
@@ -569,7 +559,7 @@ namespace Supernova
 			snFrictionConstraint* fConstraint = static_cast<snFrictionConstraint*>(m_contactConstraintManager.getAvailableConstraint());
 
 			//initialize and activate the constraints
-			npConstraint->initialize(_a, _b, res.m_normal, *point, *penetrationIterator, this, _dt);
+			npConstraint->initialize(_a, _b, res.m_normal, *point, *penetrationIterator, this);
 			fConstraint->initialize(_a, _b, npConstraint);
 			npConstraint->setIsActive(true);
 			fConstraint->setIsActive(true);

@@ -397,9 +397,9 @@ namespace Devil
 		float groundHeight = 0;
 		//ground
 		{
-			float width = 200;
+			float width = 2000;
 			float height = 2;
-			float depth = 200;
+			float depth = 2000;
 
 			//create actor
 			snActor* act = 0;
@@ -686,7 +686,7 @@ namespace Devil
 			box->setActor(act);
 
 			//create constraints
-			snFixedConstraint* constraint = m_physicScene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10, 0.016f);
+			snFixedConstraint* constraint = m_physicScene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 
@@ -755,7 +755,6 @@ namespace Devil
 		int solverIterationCount = 20;
 		m_physicScene->setSolverIterationCount(solverIterationCount);
 
-		m_physicScene->setBeta(0.2f);
 		m_physicScene->setGravity(snVector4f(0, -9.81f * 0.5f, 0, 0));
 
 		//create the camera.

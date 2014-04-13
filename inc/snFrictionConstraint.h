@@ -82,7 +82,7 @@ namespace Supernova
 		//Give to the constraint the basic information it needs.
 		void initialize(snActor* const _body1, snActor* const _body2, snContactConstraint const * _npConstraint);
 
-		void prepare();
+		void prepare(float _dt);
 
 		void resolve();
 	};

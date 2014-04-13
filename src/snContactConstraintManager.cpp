@@ -73,12 +73,12 @@ namespace Supernova
 		}
 	}
 
-	void snContactConstraintManager::prepareActiveConstraint()
+	void snContactConstraintManager::prepareActiveConstraint(float _dt)
 	{
 		for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
 		{
 			if ((*constraint)->getIsActive())
-				(*constraint)->prepare();
+				(*constraint)->prepare(_dt);
 		}
 		
 	}

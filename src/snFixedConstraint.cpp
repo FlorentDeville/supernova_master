@@ -38,15 +38,15 @@
 
 namespace Supernova
 {
-	snFixedConstraint::snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance, float _dt)
-		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_distance(_distance), m_dt(_dt)
+	snFixedConstraint::snFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance)
+		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_distance(_distance)
 	{
 		
 	}
 
 	snFixedConstraint::~snFixedConstraint(){}
 
-	void snFixedConstraint::prepare()
+	void snFixedConstraint::prepare(float _dt)
 	{
 		m_accumulatedImpulseMagnitude = 0;
 
@@ -85,7 +85,7 @@ namespace Supernova
 		float beta = 0.1f;
 
 		snVector4f deltaOffset = (m_normalizedOffset * m_distance) - m_offset;
-		m_bias = deltaOffset * (beta / m_dt);
+		m_bias = deltaOffset * (beta / _dt);
 	}
 
 	void snFixedConstraint::resolve()

@@ -114,7 +114,7 @@ namespace Supernova
 
 		virtual ~snPointToPointConstraint();
 
-		void prepare();
+		void prepare(float _dt);
 
 		void resolve();
 

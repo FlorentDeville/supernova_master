@@ -52,7 +52,7 @@ namespace Supernova
 		m_npConstraint = _npConstraint;
 	}
 
-	void snFrictionConstraint::prepare()
+	void snFrictionConstraint::prepare(float /*_dt*/)
 	{
 		m_accumulatedImpulseMagnitude = 0;
 		m_secondAccumulatedImpulseMagnitude = 0;
@@ -70,8 +70,6 @@ namespace Supernova
 		m_rCrossT0InvI[0] = snMatrixTransform3(tempA, m_bodies[0]->getInvWorldInertia());
 		snVector4f tempB = m_npConstraint->getRadius()[1].cross(m_tangent[0]);
 		m_rCrossT0InvI[1] = snMatrixTransform3(tempB, m_bodies[1]->getInvWorldInertia());
-		tempA.setW(0);
-		tempB.setW(0);
 		m_effectiveMass = 1.f / (sumInvMass +
 			(m_rCrossT0InvI[0].cross(m_npConstraint->getRadius()[0]) + m_rCrossT0InvI[1].cross(m_npConstraint->getRadius()[1])).dot(m_tangent[0]));
 

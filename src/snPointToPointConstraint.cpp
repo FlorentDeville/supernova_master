@@ -52,7 +52,7 @@ namespace Supernova
 	snPointToPointConstraint::~snPointToPointConstraint()
 	{}
 
-	void snPointToPointConstraint::prepare()
+	void snPointToPointConstraint::prepare(float _dt)
 	{
 		const int ACTOR_COUNT = 2;
 		snMatrix44f invMass[2];
@@ -100,10 +100,8 @@ namespace Supernova
 
 		//compute baumgarte stabilization
 		float beta = 0.1f;
-		float dt = 0.016f;
 		snVector4f error = m_worldPivot[0] - m_worldPivot[1];
-		m_bias = error * (beta / dt);
-		//m_bias = snVector4f(0, 0, 0, 0);
+		m_bias = error * (beta / _dt);
 	}
 
 	void snPointToPointConstraint::resolve()

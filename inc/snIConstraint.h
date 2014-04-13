@@ -58,8 +58,9 @@ namespace Supernova
 		//Default destructor
 		virtual ~snIConstraint(){}
 
-		//Prepare the constraint to be resolved precomputing all values not changing during the resolve update.
-		virtual void prepare() = 0;
+		//Prepare the constraint to be resolved precomputing all values not changing during the resolve step.
+		//_dt is the time step, it is used to compute baumgarte stabilization
+		virtual void prepare(float _dt) = 0;
 
 		//Resolve the constraint by computing a new velocity for the bodies.
 		virtual void resolve() = 0;

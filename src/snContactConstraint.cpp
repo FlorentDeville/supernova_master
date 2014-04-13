@@ -50,7 +50,7 @@ namespace Supernova
 	{}
 
 	void snContactConstraint::initialize(snActor* const _body1, snActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
-		snScene const * _scene, float _dt)
+		snScene const * _scene)
 	{
 		m_bodies[0] = _body1;
 		m_bodies[1] = _body2;
@@ -59,10 +59,9 @@ namespace Supernova
 		m_penetrationDepth = _penetrationDepth;
 		m_normal = _normal;
 		m_scene = _scene;
-		m_dt = _dt;
 	}
 
-	void snContactConstraint::prepare()
+	void snContactConstraint::prepare(float _dt)
 	{
 		m_accumulatedImpulseMagnitude = 0;
 
@@ -92,9 +91,14 @@ namespace Supernova
 		snVector4f v1 = m_bodies[1]->getLinearVelocity() + m_bodies[1]->getAngularVelocity().cross(m_radius[1]);
 		float relVel = m_normal.dot(v1 - v0);
 
-		//compute the bias
+		//compute the resitution coefficient as the average of the coeff of the actors
 		float restitution = (m_bodies[0]->getPhysicMaterial().m_restitution + m_bodies[1]->getPhysicMaterial().m_restitution) * 0.5f;
-		m_velocityBias = -restitution * relVel - m_scene->getBeta() / m_dt * max<float>(0, m_penetrationDepth - m_scene->getMaxSlop());
+
+		//the amount of correction to apply per frame.
+		const float beta = 0.25f;
+
+		//compute the velocity correction
+		m_velocityBias = -restitution * relVel - beta / _dt * max<float>(0, m_penetrationDepth - m_scene->getMaxSlop());
 
 	}
 
