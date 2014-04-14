@@ -83,6 +83,8 @@ namespace Devil
 
 		void createSceneFriction();
 
+		void createSceneDamping();
+
 		void setCollisionMode(snCollisionMode _collisionMode);
 
 	private:

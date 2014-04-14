@@ -100,7 +100,7 @@ namespace Devil
 		else if (INPUT->isKeyDown(115))//F4
 		{
 			clearScene();
-			createScene4();
+			createSceneDamping();
 			INPUT->keyUp(115);
 		}
 		else if (INPUT->isKeyDown(116))//F5
@@ -668,8 +668,8 @@ namespace Devil
 			act->getPhysicMaterial().m_restitution = 0;
 			act->getPhysicMaterial().m_friction = 1;
 			act->setIsKinematic(false);
-			act->setLinearDampingCoeff(20);
-			act->setAngularDampingCoeff(20);
+			//act->setLinearDampingCoeff(20);
+			//act->setAngularDampingCoeff(20);
 			previousActor = act;
 
 			//create collider
@@ -713,8 +713,8 @@ namespace Devil
 			act->getPhysicMaterial().m_restitution = 0;
 			act->getPhysicMaterial().m_friction = 1;
 			act->setIsKinematic(false);
-			act->setAngularDampingCoeff(20);
-			act->setLinearDampingCoeff(5);
+			act->setAngularDampingCoeff(0.1f);
+			act->setLinearDampingCoeff(0.1f);
 
 			//create collider
 			snColliderBox* collider = 0;
@@ -1259,6 +1259,166 @@ namespace Devil
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[1]);
 			box->setActor(act);
+		}
+	}
+
+	void SceneManager::createSceneDamping()
+	{
+		//initialize the world
+		WORLD->initialize();
+
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene 4 : Damping");
+
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+
+		//create the physics scene
+		int sceneId = -1;
+		snScene* scene = 0;
+		SUPERNOVA->createScene(&scene, sceneId);
+		scene->setCollisionMode(m_collisionMode);
+
+		int solverIterationCount = 4;
+		scene->setSolverIterationCount(solverIterationCount);
+
+		scene->setLinearSquaredSpeedThreshold(0.00f);
+		scene->setAngularSquaredSpeedThreshold(0.00f);
+
+		//create the camera.
+		XMVECTOR cameraPosition = XMVectorSet(50, 90, 80, 1);
+		XMVECTOR cameraLookAt = XMVectorSet(50, 60, 0, 1);
+		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
+		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
+
+
+		WORLD->activateCollisionPoint();
+
+		//ground
+		{
+			float width = 500;
+			float height = 2;
+			float depth = 500;
+
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			scene->createActor(&act, actorId);
+
+			act->setName("ground");
+			act->setMass(100);
+			act->setPosition(snVector4f(0, -40, 0, 1));
+
+			act->setIsKinematic(true);
+			act->getPhysicMaterial().m_restitution = 0;
+			act->getPhysicMaterial().m_friction = 0.8f;
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			collider->setSize(snVector4f(width, height, depth, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			//create the world entity
+			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
+			kinematicBox->setActor(act);
+		}
+
+		XMFLOAT4 colors[5];
+		colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
+		colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
+		colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
+		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
+		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
+
+		const int BOX_COUNT = 5;
+		snVector4f origin(0, 70, 0, 1);
+		for (int i = 0; i < BOX_COUNT; ++i)
+		{
+			float width = 5;
+			float height = 5;
+			float depth = 5;
+			snVector4f pos = origin + snVector4f(20 * i, 0, 0, 1);
+
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			scene->createActor(&act, actorId);
+			act->setName("d0");
+			act->setMass(50);
+			act->setPosition(pos);
+			act->getPhysicMaterial().m_restitution = 0;
+			act->getPhysicMaterial().m_friction = 1;
+			act->setIsKinematic(false);
+			//act->setLinearDampingCoeff(0.2f * i);
+			act->setAngularDampingCoeff(i*0.2f);
+			const int v = 5;
+			//act->setLinearVelocity(snVector4f(5, 0, 5, 0));
+			act->setAngularVelocity(snVector4f(0, v, 0, 0));
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			collider->setSize(snVector4f(width, height, depth, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[i]);
+			box->setActor(act);
+
+			//create constraints
+			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
+			WORLD->createFixedConstraint(constraint);
+		}
+
+		origin[1] = 50;
+		for (int i = 0; i < BOX_COUNT; ++i)
+		{
+			float width = 5;
+			float height = 5;
+			float depth = 5;
+			snVector4f pos = origin + snVector4f(20 * i, 0, 0, 1);
+
+			//create actor
+			snActor* act = 0;
+			int actorId = -1;
+			scene->createActor(&act, actorId);
+			act->setName("d0");
+			act->setMass(50);
+			act->setPosition(pos);
+			act->getPhysicMaterial().m_restitution = 0;
+			act->getPhysicMaterial().m_friction = 1;
+			act->setIsKinematic(false);
+			act->setLinearDampingCoeff(0.2f * i);
+			const int v = 10;
+			act->setLinearVelocity(snVector4f(v, 0, v, 0));
+			
+
+			//create collider
+			snColliderBox* collider = 0;
+			int colliderId = -1;
+			act->createColliderBox(&collider, colliderId);
+
+			collider->setSize(snVector4f(width, height, depth, 0));
+
+			//initialize
+			collider->initialize();
+			act->initialize();
+
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[i]);
+			box->setActor(act);
+
+			//create constraints
+			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
+			WORLD->createFixedConstraint(constraint);
 		}
 	}
 

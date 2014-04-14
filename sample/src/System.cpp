@@ -250,7 +250,6 @@ namespace Devil
 					act->setMass(50);
 					act->setPosition(pos);
 					act->setIsKinematic(false);
-					act->setLinearDampingCoeff(5);
 					snVector4f linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
 					linVel.normalize();
 					linVel = linVel * 300;

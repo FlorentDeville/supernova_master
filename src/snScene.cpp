@@ -308,24 +308,11 @@ namespace Supernova
 			//calculate weight
 			snVector4f W = m_gravity * (*i)->getMass();
 
-			//calculate linear damping
-			snVector4f linDamping = (*i)->getLinearVelocity() * -(*i)->getLinearDampingCoeff();
-
-			//compute sum of external forces.
-			snVector4f externalForces = W + linDamping;
-
 			//calculate linear velocity
-			snVector4f v = (*i)->getLinearVelocity() + (externalForces * _dt * (*i)->getInvMass());
-			
-			//compute angular damping
-			snVector4f angDamping = (*i)->getAngularVelocity() * -(*i)->getAngularDampingCoeff();
-
-			//compute angular velocity
-			snVector4f w = (*i)->getAngularVelocity() + snMatrixTransform3(angDamping, (*i)->getInvWorldInertia()) * _dt;
-			
+			snVector4f v = (*i)->getLinearVelocity() + (W * _dt * (*i)->getInvMass());
+	
 			//set state
 			(*i)->setLinearVelocity(v);
-			(*i)->setAngularVelocity(w);
 		}
 	}
 
@@ -336,6 +323,10 @@ namespace Supernova
 			//do not simulate static actors.
 			if ((*i)->getIsStatic())
 				continue;
+
+			//apply damping
+			(*i)->setLinearVelocity((*i)->getLinearVelocity() * (1 - (*i)->getLinearDampingCoeff() * _dt));
+			(*i)->setAngularVelocity((*i)->getAngularVelocity() * (1 - (*i)->getAngularDampingCoeff() * _dt));
 
 			//if the linear speed is too small, set it to 0.
 			float sqSpeed = (*i)->getLinearVelocity().squareNorme();
