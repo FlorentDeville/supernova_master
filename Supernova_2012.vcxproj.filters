@@ -97,6 +97,15 @@
     <ClInclude Include="inc\snPointToPointConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snDebugger.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snAABB.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snContactConstraintManager.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -153,6 +162,15 @@
     </ClCompile>
     <ClCompile Include="src\snVector4f.cpp">
       <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snDebugger.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snAABB.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snContactConstraintManager.cpp">
+      <Filter>Simulation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
