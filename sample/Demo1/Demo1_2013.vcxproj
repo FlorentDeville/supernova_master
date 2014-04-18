@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\ColorShader.h" />
+    <ClInclude Include="..\src\ComponentFloatingText.h" />
     <ClInclude Include="..\src\D3D.h" />
     <ClInclude Include="..\src\EffectProvider.h" />
     <ClInclude Include="..\src\EntityBox.h" />
@@ -137,6 +138,7 @@
     <ClInclude Include="..\src\GfxEntityPlan.h" />
     <ClInclude Include="..\src\GfxEntitySphere.h" />
     <ClInclude Include="..\src\Graphics.h" />
+    <ClInclude Include="..\src\IComponent.h" />
     <ClInclude Include="..\src\IGfxEntity.h" />
     <ClInclude Include="..\src\Input.h" />
     <ClInclude Include="..\src\IWorldEntity.h" />

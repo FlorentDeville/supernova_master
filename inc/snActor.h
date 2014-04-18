@@ -150,6 +150,10 @@ namespace Supernova
 
 		void computeWInvInertiaTensor();
 
+		float computeLinearSpeed() const;
+
+		float computeAngularSpeed() const;
+
 		const snMatrix44f& getWorldInertia()const;
 
 		const snMatrix44f& getInvWorldInertia()const;

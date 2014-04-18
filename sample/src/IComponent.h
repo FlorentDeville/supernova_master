@@ -31,94 +31,30 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef WORLD_H
-#define WORLD_H
+#ifndef I_COMPONENT_H
+#define I_COMPONENT_H
 
-#include <vector>
-
-#include <DirectXMath.h>
-using namespace DirectX;
-
-#include "ComponentFloatingText.h"
-
-namespace Supernova
-{
-	class snFixedConstraint;
-	class snPointToPointConstraint;
-	class snActor;
-}
-
-using namespace Supernova;
 namespace Devil
 {
-	class IWorldEntity;
-	class EntitySphere;
-	class EntityBox;
-	class EntityPlan;
-	class EntityCollisionPoint;
-	class EntityCamera;
-	class EntityFixedConstraint;
-	class EntityPointToPointConstraint;
-	class WorldHUD;
-
-	class IComponent;
-
-	class World
+	///////////////////////////////////////////
+	// Base class of components.
+	// A component is an object responsible of adding a behavior to an entity.
+	// It is updated and rendered after its owner entity has been updated and rendered.
+	// If an entity owns several components, the components are updated and rendered in the order they were created.
+	// Several entities can own the same component. It can be useful if a component needs two or more entities to be updated
+	// before being updated itself. It is the responsibility to the component to check if those entities were updated though.
+	// The system only assures that the update and render method of components will be called after each owner has been updated and rendered.
+	///////////////////////////////////////////
+	class IComponent
 	{
-	private:
-		static World* m_Instance;
-
-		std::vector<IWorldEntity*> m_EntityList;
-
-		//List of all the components created
-		std::vector<IComponent*> m_componentsList;
-
-		EntityCamera* m_camera;
-
-		EntityCollisionPoint* m_collisionPoint;
-
-		WorldHUD* m_hud;
-
 	public:
-		virtual ~World();
+		virtual ~IComponent(){};
 
-		static World* getInstance();
-		static void shutdown();
+		//Update the state of the component
+		virtual void update() = 0;
 
-		bool initialize();
-
-		EntitySphere* createSphere(float);
-		EntityBox* createBox(const XMFLOAT3&);
-		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);
-		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
-		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
-		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
-		WorldHUD* createHUD();
-		ComponentFloatingText<snActor, float>* createComponentFloatingText();
-
-		//Delete all entities from the world.
-		void clearWorld();
-
-		void update();
-		void render();
-
-		EntityCamera* getCamera() const;
-
-		void toggleCollisionPointActivation();
-		void activateCollisionPoint();
-		void deactivateCollisionPoint();
-
-		void setPhysicsFPS(int _physicsFPS) const;
-		void setGraphicsFPS(int _graphicsFPS) const;
-
-	private:
-		World();
-
-		EntityCollisionPoint* createCollisionPoint(float _diameter);
+		//Render the component.
+		virtual void render() = 0;
 	};
-
-#define WORLD World::getInstance()
 }
-
-#endif
+#endif //ifndef I_COMPONENT_H

@@ -134,6 +134,14 @@ namespace Devil
 		return m_screenHeight;
 	}
 
+	XMVECTOR Graphics::worldToScreen(const XMVECTOR& _world)
+	{
+		XMMATRIX viewMatrix, projectionMatrix;
+		getCamera()->GetViewMatrix(viewMatrix);
+		getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
+		return XMVector3Project(_world, 0, 0, m_screenWidth, m_screenHeight, 0, 1, projectionMatrix, viewMatrix, XMMatrixIdentity());
+	}
+
 	void Graphics::setClearScreenColor(const XMVECTORF32& _color)
 	{
 		m_clearScreenColor = _color;

@@ -107,6 +107,9 @@ namespace Devil
 		//Get the height of the screen in pixel.
 		int getScreenHeight() const;
 
+		//Convert a world space position into a screen space position
+		XMVECTOR worldToScreen(const XMVECTOR& _world);
+
 		//Set the color to use to clear the screen.
 		void setClearScreenColor(const XMVECTORF32& _color);
 

@@ -136,6 +136,16 @@ namespace Supernova
 		snMatrixMultiply3(WInvJ, RT, m_invWorldInertiaTensor);
 	}
 
+	float snActor::computeLinearSpeed() const
+	{
+		return m_v.norme();
+	}
+
+	float snActor::computeAngularSpeed() const
+	{
+		return m_w.norme();
+	}
+
 	const snMatrix44f& snActor::getWorldInertia()const
 	{
 		return m_worldInertiaTensor;

@@ -1281,8 +1281,8 @@ namespace Devil
 		int solverIterationCount = 4;
 		scene->setSolverIterationCount(solverIterationCount);
 
-		scene->setLinearSquaredSpeedThreshold(0.00f);
-		scene->setAngularSquaredSpeedThreshold(0.00f);
+		scene->setLinearSquaredSpeedThreshold(0.000001f);
+		scene->setAngularSquaredSpeedThreshold(0.000001f);
 
 		//create the camera.
 		XMVECTOR cameraPosition = XMVectorSet(50, 90, 80, 1);
@@ -1335,6 +1335,7 @@ namespace Devil
 		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
 		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
 
+		/////ANGULAR DAMPING////////////
 		const int BOX_COUNT = 5;
 		snVector4f origin(0, 70, 0, 1);
 		for (int i = 0; i < BOX_COUNT; ++i)
@@ -1354,10 +1355,8 @@ namespace Devil
 			act->getPhysicMaterial().m_restitution = 0;
 			act->getPhysicMaterial().m_friction = 1;
 			act->setIsKinematic(false);
-			//act->setLinearDampingCoeff(0.2f * i);
 			act->setAngularDampingCoeff(i*0.2f);
 			const int v = 5;
-			//act->setLinearVelocity(snVector4f(5, 0, 5, 0));
 			act->setAngularVelocity(snVector4f(0, v, 0, 0));
 
 			//create collider
@@ -1374,11 +1373,20 @@ namespace Devil
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[i]);
 			box->setActor(act);
 
+			//create floating text component
+			ComponentFloatingText<snActor, float>* floatingText = WORLD->createComponentFloatingText();
+			floatingText->setAnchor(box);
+			floatingText->setOffset(XMFLOAT2(-120, 50));
+			floatingText->addItem(L"Angular Damping", act, &snActor::getAngularDampingCoeff);
+			floatingText->addItem(L"Angular Speed", act, &snActor::computeAngularSpeed);
+			box->addComponent(floatingText);
+
 			//create constraints
 			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 
+		/////////LINEAR DAMPING/////////////
 		origin[1] = 50;
 		for (int i = 0; i < BOX_COUNT; ++i)
 		{
@@ -1415,6 +1423,14 @@ namespace Devil
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[i]);
 			box->setActor(act);
+
+			//create floating text component
+			ComponentFloatingText<snActor, float>* floatingText = WORLD->createComponentFloatingText();
+			floatingText->setAnchor(box);
+			floatingText->setOffset(XMFLOAT2(-120, 50));
+			floatingText->addItem(L"Linear Damping", act, &snActor::getLinearDampingCoeff);
+			floatingText->addItem(L"Linear Speed", act, &snActor::computeLinearSpeed);
+			box->addComponent(floatingText);
 
 			//create constraints
 			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
