@@ -38,4 +38,7 @@ namespace Supernova
 {
 	//Mask where the only bit is 1 is the most significant bit. It's the sign bit in a 32 bit float.
 	const __m128 snVector4f::SIGNMASK = _mm_castsi128_ps(_mm_set1_epi32(0x80000000));
+
+	//Vector set to 0
+	const snVector4f snVector4f::m_zero;
 }

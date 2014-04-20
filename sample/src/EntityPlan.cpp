@@ -5,7 +5,7 @@
 #include "D3D.h"
 
 #include "snVector4f.h"
-#include "snActor.h"
+#include "snIActor.h"
 
 namespace Devil
 {

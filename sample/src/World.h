@@ -45,7 +45,7 @@ namespace Supernova
 {
 	class snFixedConstraint;
 	class snPointToPointConstraint;
-	class snActor;
+	class snActorDynamic;
 }
 
 using namespace Supernova;
@@ -95,7 +95,8 @@ namespace Devil
 		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
 		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
 		WorldHUD* createHUD();
-		ComponentFloatingText<snActor, float>* createComponentFloatingText();
+
+		void addComponent(IComponent* _component){ m_componentsList.push_back(_component); }
 
 		//Delete all entities from the world.
 		void clearWorld();

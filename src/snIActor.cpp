@@ -31,103 +31,118 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef I_WORLD_ENTITY_H
-#define I_WORLD_ENTITY_H
 
-#include <DirectXMath.h>
-using namespace DirectX;
+#include "snIActor.h"
+#include "snICollider.h"
 
-//#include "snActor.h"
+#include <assert.h>
+
 namespace Supernova
 {
-	class snIActor;
-}
-using namespace Supernova;
 
-#include <vector>
-using std::vector;
-
-#include "IComponent.h"
-
-namespace Devil
-{
-	class IWorldEntity
+	snIActor:: ~snIActor()
 	{
-	protected:
-		XMVECTOR m_position;
-		XMFLOAT3 m_orientation;
-		XMFLOAT3 m_scale;
+		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+			delete *i;
 
-		/*actor representing this entity in the physics engine*/
-		snIActor* m_actor;
+		m_colliders.clear();
+	}
 
-		/*Indicates if the entity is active. A not active entity is not updated nor rendered.*/
-		bool m_isActive;
+	//Add a collider to the actor
+	void snIActor::addCollider(snICollider* _collider)
+	{
+		m_colliders.push_back(_collider);
+	}
 
-		//List of components attached to this entity.
-		vector<IComponent*> m_components;
+	//Get the name of the actor
+	string snIActor::getName() const
+	{
+		return m_name;
+	}
 
-	public:
-		IWorldEntity() : m_isActive(true), m_components()
-		{
-			m_position = XMVectorSet(0, 0, 0, 1);
-			m_orientation = XMFLOAT3(0, 0, 0);
-			m_scale = XMFLOAT3(1, 1, 1);
-		};
+	//return the list of colliders
+	vector<snICollider*>& snIActor::getColliders()
+	{
+		return m_colliders;
+	}
 
-		virtual ~IWorldEntity(){};
-		virtual void update() = 0;
-		virtual void render() = 0;
+	//Return the position of the actor.
+	snVector4f snIActor::getPosition() const
+	{
+		return m_x;
+	}
+	//Return the orientation represented as a quaternion
+	snVector4f snIActor::getOrientationQuaternion()
+	{
+		return m_q;
+	}
 
-		virtual void spriteRender(){};
 
-		void setPosition(const XMVECTOR& _position)
-		{ 
-			m_position = _position; 
-		}
+	//Return the orientation represented as a matrix.
+	const snMatrix44f& snIActor::getOrientationMatrix() const
+	{
+		return m_R;
+	}
 
-		void setOrientation(const XMFLOAT3& _orientation){ m_orientation = _orientation; }
+	//Return the inverse of orientation matrix.
+	const snMatrix44f& snIActor::getInverseOrientationMatrix() const
+	{
+		return m_invR;
+	}
 
-		void setScaling(const XMFLOAT3& _scaling){ m_scale = _scaling; }
+	//Get the maximum depth another actor can penetrate into this actor
+	float snIActor::getSkinDepth() const
+	{
+		return m_skinDepth;
+	}
 
-		void setActor(snIActor* _actor){ m_actor = _actor; }
+	//Return a pointer to the AABB.
+	const snAABB* snIActor::getBoundingVolume() const
+	{
+		return &m_boundingVolume;
+	}
 
-		void setIsActive(bool _isActive){ m_isActive = _isActive; }
+	//Return the physic material.
+	snPhysicMaterial& snIActor::getPhysicMaterial()
+	{
+		return m_material;
+	}
 
-		bool getIsActive() const { return m_isActive; }
+	//Return the type of actor
+	snActorType snIActor::getActorType() const
+	{
+		return m_typeOfActor;
+	}
 
-		//Return the list of components attached to this entity
-		vector<IComponent*> const & getComponents() { return m_components; }
+	//Set the name of the actor
+	void snIActor::setName(const string& _name)
+	{
+		m_name = _name;
+	}
 
-		//Return the position of the entity.
-		const XMVECTOR& getPosition() const { return m_position; }
+	//Set the maximum depth another actor can penetrate into this actor
+	void snIActor::setSkinDepth(float _skinDepth)
+	{
+		m_skinDepth = _skinDepth;
+	}
 
-		//Add a component to the entity
-		void addComponent(IComponent* _newComponent){ m_components.push_back(_newComponent); }
+	//Allocate an actor with the correct alignement
+	void* snIActor::operator new(size_t _count)
+	{
+		return _aligned_malloc(_count, SN_ALIGN_SIZE);
+	}
 
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, 16);
-		}
+	//Free the memory allocated for an actor
+	void snIActor::operator delete(void* _p)
+	{
+		_aligned_free(_p);
+	}
 
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
+	//Compute the bounding volume based on the colliders
+	void snIActor::computeBoundingVolume()
+	{
+		assert(m_colliders.size() == 1);
 
-		//Updat all the components of the entity
-		void updateComponents()
-		{
-			for (vector<IComponent*>::iterator i = m_components.begin(); i != m_components.end(); ++i)
-				(*i)->update();
-		}
-
-		void renderComponents()
-		{
-			for (vector<IComponent*>::iterator i = m_components.begin(); i != m_components.end(); ++i)
-				(*i)->render();
-		}
-	};
+		m_colliders[0]->computeAABB(&m_boundingVolume);
+	}
 }
-
-#endif //I_WORLD_ENTITY_H

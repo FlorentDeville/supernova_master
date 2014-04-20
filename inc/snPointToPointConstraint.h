@@ -36,7 +36,7 @@
 #define SN_POINT_TO_POINT_CONSTRAINT_H
 
 #include "snIConstraint.h"
-#include "snActor.h"
+#include "snIActor.h"
 
 namespace Supernova
 {
@@ -82,7 +82,7 @@ namespace Supernova
 	{
 	private:
 		//The two bodies which must respect the constraint.
-		snActor* m_actors[2];
+		snIActor* m_actors[2];
 
 		//Offset to the center of mass of the bodies. They must be expressed in local coordinates of the bodies.
 		snVector4f m_pivot[2];
@@ -110,7 +110,7 @@ namespace Supernova
 		//_bodyA and _bodyB are const pointers to snActor objects.
 		//_pivotA is the pivot point around which _bodyA can rotate. It is expressed in _bodyA local coordinate.
 		//_pivotB is the pivot point around which _bodyB can rotate. It is expressed in _bodyB local coordinate.
-		snPointToPointConstraint(snActor* const _actorA, const snVector4f& _pivotA, snActor* const _actorB, const snVector4f& _pivotB);
+		snPointToPointConstraint(snIActor* const _actorA, const snVector4f& _pivotA, snIActor* const _actorB, const snVector4f& _pivotB);
 
 		virtual ~snPointToPointConstraint();
 
@@ -119,7 +119,7 @@ namespace Supernova
 		void resolve();
 
 		//Return an array of two pointers to snActors
-		snActor const * const * getActors() const;
+		snIActor const * const * getActors() const;
 
 		//Return an array of vectors containing the pivot points in world coordinate for each actor of the constraint.
 		snVector4f const * getWPivot() const;

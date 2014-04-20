@@ -36,7 +36,7 @@
 #define SN_FRICTION_CONSTRAINT_H
 
 #include "snIConstraint.h"
-#include "snActor.h"
+#include "snIActor.h"
 
 namespace Supernova
 {
@@ -48,7 +48,7 @@ namespace Supernova
 	protected:
 
 		//The two bodies involved in this constraints.
-		snActor* m_bodies[2];
+		snIActor* m_bodies[2];
 
 		//coefficient used to compute the friction.
 		float m_frictionCoefficient;
@@ -80,7 +80,7 @@ namespace Supernova
 		virtual ~snFrictionConstraint();
 
 		//Give to the constraint the basic information it needs.
-		void initialize(snActor* const _body1, snActor* const _body2, snContactConstraint const * _npConstraint);
+		void initialize(snIActor* const _body1, snIActor* const _body2, snContactConstraint const * _npConstraint);
 
 		void prepare(float _dt);
 

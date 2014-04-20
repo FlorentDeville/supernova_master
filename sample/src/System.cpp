@@ -21,7 +21,7 @@
 
 #include "snColliderBox.h"
 #include "snScene.h"
-#include "snActor.h"
+#include "snActorDynamic.h"
 #include "snFactory.h"
 #include "snQuaternion.h"
 #include "snFixedConstraint.h"
@@ -84,7 +84,9 @@ namespace Devil
 		}
 
 		//Start with the first scene
-		SCENEMGR->createScene1();
+		//SCENEMGR->createBasicTest();
+		//SCENEMGR->createStacking();
+		SCENEMGR->createSceneDamping();
 
 		return true;
 	}
@@ -240,16 +242,14 @@ namespace Devil
 					snVector4f pos(WORLD->getCamera()->getPosition());
 
 					//create actor
-					snActor* act = 0;
+					snActorDynamic* act = 0;
 					int actorId = -1;
 
 					snScene* myScene = SUPERNOVA->getScene(0);
-					myScene->createActor(&act, actorId);
+					myScene->createActorDynamic(&act, actorId);
 					
 					act->setName("base");
-					act->setMass(50);
 					act->setPosition(pos);
-					act->setIsKinematic(false);
 					snVector4f linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
 					linVel.normalize();
 					linVel = linVel * 300;
@@ -259,14 +259,10 @@ namespace Devil
 					act->getPhysicMaterial().m_friction = 0;
 
 					//create collider
-					snColliderBox* collider = 0;
-					int colliderId = -1;
-					act->createColliderBox(&collider, colliderId);
-
+					snColliderBox* collider = new snColliderBox();
 					collider->setSize(snVector4f(width, height, depth, 0));
-
-					//initialize
-					collider->initialize();
+					act->addCollider(collider);
+					act->updateMassAndInertia(50);
 					act->initialize();
 
 					EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));

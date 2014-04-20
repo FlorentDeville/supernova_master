@@ -19,6 +19,9 @@
     <Filter Include="Simulation\Constraints">
       <UniqueIdentifier>{a729f281-7e66-4b23-b051-b373cdc32e26}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Simulation\Actors">
+      <UniqueIdentifier>{dbff446b-9159-4019-9f08-b6fdfaa4005f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\snCollision.h">
@@ -67,9 +70,6 @@
     <ClInclude Include="inc\snVector4f.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snActor.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snPhysicMaterial.h">
       <Filter>Simulation</Filter>
     </ClInclude>
@@ -109,6 +109,15 @@
     <ClInclude Include="inc\snDebugger.h">
       <Filter>Tools</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snIActor.h">
+      <Filter>Simulation\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snActorStatic.h">
+      <Filter>Simulation\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snActorDynamic.h">
+      <Filter>Simulation\Actors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -142,9 +151,6 @@
     <ClCompile Include="src\snQuaternion.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
-    <ClCompile Include="src\snActor.cpp">
-      <Filter>Simulation</Filter>
-    </ClCompile>
     <ClCompile Include="src\snScene.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
@@ -174,6 +180,15 @@
     </ClCompile>
     <ClCompile Include="src\snDebugger.cpp">
       <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snIActor.cpp">
+      <Filter>Simulation\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snActorStatic.cpp">
+      <Filter>Simulation\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snActorDynamic.cpp">
+      <Filter>Simulation\Actors</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

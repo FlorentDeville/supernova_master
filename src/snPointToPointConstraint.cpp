@@ -33,12 +33,12 @@
 /****************************************************************************/
 
 #include "snPointToPointConstraint.h"
-#include "snActor.h"
+#include "snIActor.h"
 #include "snMath.h"
 
 namespace Supernova
 {
-	snPointToPointConstraint::snPointToPointConstraint(snActor* const _bodyA, const snVector4f& _pivotA, snActor* const _bodyB,
+	snPointToPointConstraint::snPointToPointConstraint(snIActor* const _bodyA, const snVector4f& _pivotA, snIActor* const _bodyB,
 		const snVector4f& _pivotB)
 		: snIConstraint()
 	{
@@ -121,7 +121,7 @@ namespace Supernova
 		m_actors[1]->setAngularVelocity(m_actors[1]->getAngularVelocity() - snMatrixTransform3(m_InvIRT[1], lagrangian));
 	}
 
-	snActor const * const * snPointToPointConstraint::getActors() const
+	snIActor const * const * snPointToPointConstraint::getActors() const
 	{
 		return m_actors;
 	}

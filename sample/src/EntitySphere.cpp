@@ -10,7 +10,7 @@
 
 #include "snScene.h"
 
-#include "snActor.h"
+#include "snIActor.h"
 using namespace Supernova;
 
 namespace Devil

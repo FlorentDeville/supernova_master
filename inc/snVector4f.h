@@ -66,6 +66,9 @@ namespace Supernova
 		//this mask contains 4 floating point with a binaey value 0x80000000.
 		static const __m128 SIGNMASK;
 
+		//A vector with the four parameter set to 0
+		static const snVector4f m_zero;
+
 	public:
 		snVector4f(__m128 _Value)
 		{

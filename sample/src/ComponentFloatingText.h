@@ -62,7 +62,7 @@ namespace Devil
 	template<class T, class R>
 	class ComponentFloatingText : public IComponent
 	{
-	private:
+	private :
 
 		//The entity the text must be above
 		const IWorldEntity* m_anchor;
@@ -172,7 +172,7 @@ namespace Devil
 		m_offset = _offset;
 	}
 
-	template<class T, class R>void ComponentFloatingText<T, R>::addItem(const wstring& _name, T* _obj, getValue _getter)
+	template<class T, class R> void ComponentFloatingText<T, R>::addItem(const wstring& _name, T* _obj, getValue _getter)
 	{
 		m_items.push_back(std::make_tuple(_name, _obj, _getter));
 	}

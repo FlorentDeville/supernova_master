@@ -34,7 +34,8 @@
 
 #include "snScene.h"
 
-#include "snActor.h"
+#include "snActorDynamic.h"
+#include "snActorStatic.h"
 #include "snICollider.h"
 #include "snCollision.h"
 #include "snCollisionResult.h"
@@ -78,18 +79,18 @@ namespace Supernova
 		clearScene();
 	}
 
-	void snScene::createActor(snActor** _newActor, int& _actorId)
+	void snScene::createActorDynamic(snActorDynamic** _newActor, int& _actorId)
 	{
 		//create the actor
-		*_newActor = new snActor();
+		*_newActor = new snActorDynamic();
 
 		_actorId = attachActor(*_newActor);
 	}
 
-	void snScene::createStaticActor(snActor** _newActor, int& _actorId)
+	void snScene::createActorStatic(snActorStatic** _newActor, int& _actorId, const snVector4f& _position, const snVector4f& _orientation)
 	{
 		//create the actor
-		*_newActor = new snActor(true);
+		*_newActor = new snActorStatic(_position, _orientation);
 
 		//attach the actor to the current scene
 		_actorId = attachActor(*_newActor);
@@ -111,7 +112,7 @@ namespace Supernova
 
 	}
 
-	int snScene::attachActor(snActor* _actor)
+	int snScene::attachActor(snIActor* _actor)
 	{
 		//try to add it to the vector
 		for (unsigned int i = 0; i < m_actors.size(); ++i)
@@ -138,7 +139,7 @@ namespace Supernova
 		m_actors[_actorId] = 0;
 	}
 
-	snActor* snScene::getActor(unsigned int _actorId)
+	snIActor* snScene::getActor(unsigned int _actorId)
 	{
 		//id out of range
 		if (_actorId >= m_actors.size())
@@ -154,7 +155,7 @@ namespace Supernova
 		return m_constraints[_constraintId];
 	}
 
-	snPointToPointConstraint* snScene::createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, 
+	snPointToPointConstraint* snScene::createPointToPointConstraint(snIActor* const _body1, const snVector4f& _offset1, snIActor* const _body2, 
 		const snVector4f& _offset2)
 	{
 		snPointToPointConstraint* constraint = new snPointToPointConstraint(_body1, _offset1, _body2, _offset2);
@@ -162,7 +163,7 @@ namespace Supernova
 		return constraint;
 	}
 
-	snFixedConstraint* snScene::createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance)
+	snFixedConstraint* snScene::createFixedConstraint(snIActor* const _actor, const snVector4f& _fixedPoint, float _distance)
 	{
 		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, _distance);
 		m_constraints.push_back(constraint);
@@ -171,7 +172,7 @@ namespace Supernova
 
 	void snScene::clearScene()
 	{
-		for (vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
 			if ((*i) == 0)
 				continue;
@@ -303,13 +304,14 @@ namespace Supernova
 
 	void snScene::applyForces(float _dt)
 	{
-		for (vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
 			//calculate weight
-			snVector4f W = m_gravity * (*i)->getMass();
+			//snVector4f W = m_gravity * (*i)->getMass();
 
 			//calculate linear velocity
-			snVector4f v = (*i)->getLinearVelocity() + (W * _dt * (*i)->getInvMass());
+			//snVector4f v = (*i)->getLinearVelocity() + (W * _dt * (*i)->getInvMass());
+			snVector4f v = (*i)->getLinearVelocity() + (m_gravity * _dt);
 	
 			//set state
 			(*i)->setLinearVelocity(v);
@@ -318,53 +320,54 @@ namespace Supernova
 
 	void snScene::updatePosition(float _dt)
 	{
-		for (vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
-			//do not simulate static actors.
-			if ((*i)->getIsStatic())
-				continue;
+			(*i)->integrate(_dt, m_linearSquaredSpeedThreshold, m_angularSquaredSpeedThreshold);
+			////do not simulate static actors.
+			//if ((*i)->getIsStatic())
+			//	continue;
 
-			//apply damping
-			(*i)->setLinearVelocity((*i)->getLinearVelocity() * (1 - (*i)->getLinearDampingCoeff() * _dt));
-			(*i)->setAngularVelocity((*i)->getAngularVelocity() * (1 - (*i)->getAngularDampingCoeff() * _dt));
+			////apply damping
+			//(*i)->setLinearVelocity((*i)->getLinearVelocity() * (1 - (*i)->getLinearDampingCoeff() * _dt));
+			//(*i)->setAngularVelocity((*i)->getAngularVelocity() * (1 - (*i)->getAngularDampingCoeff() * _dt));
 
-			//if the linear speed is too small, set it to 0.
-			float sqSpeed = (*i)->getLinearVelocity().squareNorme();
-			if (sqSpeed < m_linearSquaredSpeedThreshold)
-				(*i)->setLinearVelocity(snVector4f());
+			////if the linear speed is too small, set it to 0.
+			//float sqSpeed = (*i)->getLinearVelocity().squareNorme();
+			//if (sqSpeed < m_linearSquaredSpeedThreshold)
+			//	(*i)->setLinearVelocity(snVector4f());
 
-			//if the angular speed is too small, set it to 0.
-			sqSpeed = (*i)->getAngularVelocity().squareNorme();
-			if (sqSpeed < m_angularSquaredSpeedThreshold)
-				(*i)->setAngularVelocity(snVector4f());
+			////if the angular speed is too small, set it to 0.
+			//sqSpeed = (*i)->getAngularVelocity().squareNorme();
+			//if (sqSpeed < m_angularSquaredSpeedThreshold)
+			//	(*i)->setAngularVelocity(snVector4f());
 
-			//calculate position
-			snVector4f x = (*i)->getPosition() + (*i)->getLinearVelocity() * _dt;
+			////calculate position
+			//snVector4f x = (*i)->getPosition() + (*i)->getLinearVelocity() * _dt;
 
-			//calculate velocity as quaternion using dq/dt = 0.5 * w * q
-			snVector4f qw;
-			snQuaternionMultiply((*i)->getAngularVelocity(), (*i)->getOrientationQuaternion(), qw);
-			qw = qw * 0.5f;
+			////calculate velocity as quaternion using dq/dt = 0.5 * w * q
+			//snVector4f qw;
+			//snQuaternionMultiply((*i)->getAngularVelocity(), (*i)->getOrientationQuaternion(), qw);
+			//qw = qw * 0.5f;
 
-			//calculate orientation
-			snVector4f q = (*i)->getOrientationQuaternion() + (qw * _dt);
-			snQuaternionNormalize(q, q);
+			////calculate orientation
+			//snVector4f q = (*i)->getOrientationQuaternion() + (qw * _dt);
+			//snQuaternionNormalize(q, q);
 
-			//compute orientation as a matrix
-			snMatrix44f snR;
-			snR.createRotationFromQuaternion(q);
+			////compute orientation as a matrix
+			//snMatrix44f snR;
+			//snR.createRotationFromQuaternion(q);
 
-			//set new state
-			(*i)->setPosition(x);
-			(*i)->setOrientationQuaternion(q);
-			(*i)->setOrientationMatrix(snR);
+			////set new state
+			//(*i)->setPosition(x);
+			//(*i)->setOrientationQuaternion(q);
+			//(*i)->setOrientationMatrix(snR);
 
-			//compute inertia in world coordinate
-			(*i)->computeWInertiaTensor();
-			(*i)->computeWInvInertiaTensor();
+			////compute inertia in world coordinate
+			//(*i)->computeWInertiaTensor();
+			//(*i)->computeWInvInertiaTensor();
 
-			//compute colliser in world coordinate
-			(*i)->updateCollider(x, snR);
+			////compute colliser in world coordinate
+			//(*i)->updateCollider(x, snR);
 		}
 	}
 
@@ -404,13 +407,13 @@ namespace Supernova
 		int collisionQueriesCount = 0;
 #endif // ifdef SN_DEBUGGER
 
-		for (std::vector<snActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
+		for (std::vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
 		{
-			for (std::vector<snActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
+			for (std::vector<snIActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
 			{
 
-				//do not check collision between static actors.
-				if ((*i)->getIsStatic() && (*j)->getIsStatic())
+				//check if the collision detection is enabled between the two actors
+				if (!isCollisionDetectionEnabled(*i, *j))
 					continue;
 
 #ifdef SN_DEBUGGER
@@ -438,7 +441,7 @@ namespace Supernova
 #endif //ifdef SN_DEBUGGER
 
 		//sort the list in ascending order
-		m_sweepList.sort([this](const snActor* _a, const snActor* _b)
+		m_sweepList.sort([this](const snIActor* _a, const snIActor* _b)
 		{
 			return _a->getBoundingVolume()->m_min[m_sweepAxis] < _b->getBoundingVolume()->m_min[m_sweepAxis];	
 		});
@@ -460,7 +463,7 @@ namespace Supernova
 #endif //ifdef SN_DEBUGGER
 
 		//loop through each actor in the scene using the sweep list
-		for (list<snActor*>::iterator i = m_sweepList.begin(); i != m_sweepList.end(); ++i)
+		for (list<snIActor*>::iterator i = m_sweepList.begin(); i != m_sweepList.end(); ++i)
 		{
 			//compute aabb center point
 			snVector4f center = ((*i)->getBoundingVolume()->m_max + (*i)->getBoundingVolume()->m_min) * 0.5f;
@@ -470,10 +473,17 @@ namespace Supernova
 			s2 = s2 + (center * center);
 
 			//test collision against all other actors
-			list<snActor*>::iterator j = i;
+			list<snIActor*>::iterator j = i;
 			++j;
 			while (j != m_sweepList.end())
 			{
+				//check if the collision detection is enabled between the two actors
+				if (!isCollisionDetectionEnabled(*i, *j))
+				{
+					++j;
+					continue;
+				}
+				
 				//check if the tested bounding volume(j) is too far to the current bounding volume (i)
 				if ((*j)->getBoundingVolume()->m_min[m_sweepAxis] > (*i)->getBoundingVolume()->m_max[m_sweepAxis])
 					break;
@@ -521,7 +531,7 @@ namespace Supernova
 #endif //idef SN_DEBUGGER
 	}
 
-	void snScene::computeCollisionDetection(snActor* _a, snActor* _b)
+	void snScene::computeCollisionDetection(snIActor* _a, snIActor* _b)
 	{
 		snCollisionResult res = m_collisionService.queryTestCollision(_a, _b);
 
@@ -545,5 +555,17 @@ namespace Supernova
 			npConstraint->setIsActive(true);
 			fConstraint->setIsActive(true);
 		}
+	}
+
+	//Check if the collision detection is enabled between the two actors
+	bool snScene::isCollisionDetectionEnabled(const snIActor* const _a, const snIActor* const _b)
+	{
+		//No colision detection between two statics or a kinematic and a static.
+		if ((_a->getActorType() == snActorType::snActorTypeStatic && _b->getActorType() == snActorType::snActorTypeStatic) ||
+			(_a->getActorType() == snActorType::snActorTypeStatic && _b->getActorType() == snActorType::snActorTypeKinematic) ||
+			(_a->getActorType() == snActorType::snActorTypeKinematic && _b->getActorType() == snActorType::snActorTypeStatic))
+			return false;
+
+		return true;
 	}
 }

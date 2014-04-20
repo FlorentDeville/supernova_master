@@ -31,103 +31,57 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef I_WORLD_ENTITY_H
-#define I_WORLD_ENTITY_H
 
-#include <DirectXMath.h>
-using namespace DirectX;
+#ifndef SN_ACTOR_STATIC_H
+#define SN_ACTOR_STATIC_H
 
-//#include "snActor.h"
+#include "snIActor.h"
+
 namespace Supernova
 {
-	class snIActor;
-}
-using namespace Supernova;
-
-#include <vector>
-using std::vector;
-
-#include "IComponent.h"
-
-namespace Devil
-{
-	class IWorldEntity
+	class SN_ALIGN snActorStatic : public snIActor
 	{
-	protected:
-		XMVECTOR m_position;
-		XMFLOAT3 m_orientation;
-		XMFLOAT3 m_scale;
-
-		/*actor representing this entity in the physics engine*/
-		snIActor* m_actor;
-
-		/*Indicates if the entity is active. A not active entity is not updated nor rendered.*/
-		bool m_isActive;
-
-		//List of components attached to this entity.
-		vector<IComponent*> m_components;
-
 	public:
-		IWorldEntity() : m_isActive(true), m_components()
-		{
-			m_position = XMVectorSet(0, 0, 0, 1);
-			m_orientation = XMFLOAT3(0, 0, 0);
-			m_scale = XMFLOAT3(1, 1, 1);
-		};
+		snActorStatic();
 
-		virtual ~IWorldEntity(){};
-		virtual void update() = 0;
-		virtual void render() = 0;
+		snActorStatic(const snVector4f& _position);
 
-		virtual void spriteRender(){};
+		snActorStatic(const snVector4f& _position, const snVector4f& _orientation);
 
-		void setPosition(const XMVECTOR& _position)
-		{ 
-			m_position = _position; 
-		}
+		~snActorStatic();
 
-		void setOrientation(const XMFLOAT3& _orientation){ m_orientation = _orientation; }
+#pragma region Virtual Getter
 
-		void setScaling(const XMFLOAT3& _scaling){ m_scale = _scaling; }
+		//Return the inverse of the mass
+		float getInvMass() const;
 
-		void setActor(snIActor* _actor){ m_actor = _actor; }
+		//Return the inverse of the inertia expressed in world coordinate
+		const snMatrix44f& getInvWorldInertia() const;
 
-		void setIsActive(bool _isActive){ m_isActive = _isActive; }
+		//Return the linear velocity
+		snVector4f getLinearVelocity() const;
 
-		bool getIsActive() const { return m_isActive; }
+		//Return the angular velocity
+		snVector4f getAngularVelocity() const;
 
-		//Return the list of components attached to this entity
-		vector<IComponent*> const & getComponents() { return m_components; }
+#pragma endregion
 
-		//Return the position of the entity.
-		const XMVECTOR& getPosition() const { return m_position; }
+#pragma region Virtual Setter
 
-		//Add a component to the entity
-		void addComponent(IComponent* _newComponent){ m_components.push_back(_newComponent); }
+		//Set the linear velocity
+		void setLinearVelocity(const snVector4f& _linearVelocity);
 
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, 16);
-		}
+		//Set the angular velocity
+		void setAngularVelocity(const snVector4f& _angularVelocity);
 
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
+#pragma endregion
 
-		//Updat all the components of the entity
-		void updateComponents()
-		{
-			for (vector<IComponent*>::iterator i = m_components.begin(); i != m_components.end(); ++i)
-				(*i)->update();
-		}
+		//Move the actor forward in time using _dt as a time step.
+		//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
+		//A static actor cannot move so this function doesn't do anyhthing.
+		void integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit);
 
-		void renderComponents()
-		{
-			for (vector<IComponent*>::iterator i = m_components.begin(); i != m_components.end(); ++i)
-				(*i)->render();
-		}
+		void initialize();
 	};
 }
-
-#endif //I_WORLD_ENTITY_H
+#endif //ifndef SN_ACTOR_STATIC_H

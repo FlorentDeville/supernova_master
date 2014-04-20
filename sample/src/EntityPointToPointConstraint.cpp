@@ -75,7 +75,7 @@ namespace Devil
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
-		snActor const * const * actors = m_constraint->getActors();
+		snIActor const * const * actors = m_constraint->getActors();
 
 		for (int i = 0; i < 2; ++i)
 		{

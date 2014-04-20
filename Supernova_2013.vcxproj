@@ -12,9 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\AlignmentAllocator.h" />
+    <ClInclude Include="inc\snActorDynamic.h" />
+    <ClInclude Include="inc\snActorStatic.h" />
     <ClInclude Include="inc\snDebugger.h" />
     <ClInclude Include="inc\snAABB.h" />
-    <ClInclude Include="inc\snActor.h" />
     <ClInclude Include="inc\snColliderBox.h" />
     <ClInclude Include="inc\snColliderPlan.h" />
     <ClInclude Include="inc\snColliderSphere.h" />
@@ -22,6 +23,7 @@
     <ClInclude Include="inc\snCollisionMode.h" />
     <ClInclude Include="inc\snCollisionResult.h" />
     <ClInclude Include="inc\snContactConstraintManager.h" />
+    <ClInclude Include="inc\snIActor.h" />
     <ClInclude Include="inc\snPointToPointConstraint.h" />
     <ClInclude Include="inc\snFactory.h" />
     <ClInclude Include="inc\snFeatureClipping.h" />
@@ -44,13 +46,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snAABB.cpp" />
-    <ClCompile Include="src\snActor.cpp" />
+    <ClCompile Include="src\snActorDynamic.cpp" />
+    <ClCompile Include="src\snActorStatic.cpp" />
     <ClCompile Include="src\snColliderBox.cpp" />
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
     <ClCompile Include="src\snContactConstraintManager.cpp" />
     <ClCompile Include="src\snDebugger.cpp" />
+    <ClCompile Include="src\snIActor.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />

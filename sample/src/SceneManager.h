@@ -67,25 +67,30 @@ namespace Devil
 		void update();
 
 		//Scene with simple boxes interactions.
-		void createScene1();
+		void createBasicTest();
 
 		//Box Stacking
-		void createScene2();
+		void createStacking();
 
 		//Constraints (rope)
-		void createScene3();
+		void createConstraints();
 
-		//CCD test
-		void createScene4();
+		////CCD test
+		//void createScene4();
 
-		//Stack + CCD
-		void createTower();
+		////Stack + CCD
+		//void createTower();
 
 		void createSceneFriction();
 
 		void createSceneDamping();
 
+		////Show difference between static, dynamic and kinematic
+		//void createSceneActorsType();
+
 		void setCollisionMode(snCollisionMode _collisionMode);
+		
+		void createGround(snScene* const _scene, float _restitution, float _friction);
 
 	private:
 		SceneManager();
@@ -93,7 +98,7 @@ namespace Devil
 
 		void clearScene() const;
 
-		snVector4f createTowerLevel(snScene* const _scene, const snVector4f& _origin) const;
+		//snVector4f createTowerLevel(snScene* const _scene, const snVector4f& _origin) const;
 	};
 
 #define SCENEMGR SceneManager::getInstance()

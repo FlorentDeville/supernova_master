@@ -45,8 +45,8 @@
 #include "Graphics.h"
 #include "IComponent.h"
 
-#include "snActor.h"
-using Supernova::snActor;
+#include "snIActor.h"
+using Supernova::snIActor;
 
 namespace Devil
 {
@@ -173,13 +173,6 @@ namespace Devil
 		m_EntityList.push_back(newHUD);
 		m_hud = newHUD;
 		return newHUD;
-	}
-
-	ComponentFloatingText<snActor, float>* World::createComponentFloatingText()
-	{
-		ComponentFloatingText<snActor, float>* newComponent = new ComponentFloatingText<snActor, float>();
-		m_componentsList.push_back(newComponent);
-		return newComponent;
 	}
 
 	void World::clearWorld()

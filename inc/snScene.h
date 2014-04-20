@@ -58,7 +58,9 @@ namespace Devil
 
 namespace Supernova
 {
-	class snActor;
+	class snIActor;
+	class snActorStatic;
+	class snActorDynamic;
 	class CollisionResult;
 	class snIConstraint;
 	class snPointToPointConstraint;
@@ -73,7 +75,7 @@ namespace Supernova
 		string m_name;
 
 		//List of actors in the scene.
-		vector<snActor*> m_actors;
+		vector<snIActor*> m_actors;
 
 		//List of constraints in the scene.
 		vector<snIConstraint*> m_constraints;
@@ -102,7 +104,7 @@ namespace Supernova
 		int m_solverIterationCount;
 
 		//List of actor sorted using their AABB.
-		list<snActor*> m_sweepList;
+		list<snIActor*> m_sweepList;
 
 		//Index of the axis for the sweep and prune broad phase algorithm
 		int m_sweepAxis;
@@ -119,30 +121,30 @@ namespace Supernova
 		virtual ~snScene();
 
 		//Create a new actor and add it to the scene.
-		void createActor(snActor** _newActor, int& _actorId);
+		void createActorDynamic(snActorDynamic** _newActor, int& _actorId);
 
 		//Create a new static actor.
-		void createStaticActor(snActor** _newActor, int& _actorId);
+		void createActorStatic(snActorStatic** _newActor, int& _actorId, const snVector4f& _position, const snVector4f& _orientation);
 
 		//Delete an actor
 		void deleteActor(unsigned int _actorId);
 
 		//Add the actor to the scene.
-		int attachActor(snActor* _actor);
+		int attachActor(snIActor* _actor);
 
 		//Remove the actor from the scene
 		void removeActor(unsigned int _actorId);
 
 		//Get an actor from its id. Returns 0 if the actor can't be found.
-		snActor* getActor(unsigned int _actorId);
+		snIActor* getActor(unsigned int _actorId);
 
 		//Get a constraint from its id.
 		snIConstraint* getConstraint(unsigned int _constraintId);
 
 		//Create a distance constraint between two actors and return the id of the constraint
-		snPointToPointConstraint* createPointToPointConstraint(snActor* const _body1, const snVector4f& _offset1, snActor* const _body2, const snVector4f& _offset2);
+		snPointToPointConstraint* createPointToPointConstraint(snIActor* const _body1, const snVector4f& _offset1, snIActor* const _body2, const snVector4f& _offset2);
 
-		snFixedConstraint* createFixedConstraint(snActor* const _actor, const snVector4f& _fixedPoint, float _distance);
+		snFixedConstraint* createFixedConstraint(snIActor* const _actor, const snVector4f& _fixedPoint, float _distance);
 
 		//Delete all actors from the physics scene.
 		void clearScene();
@@ -197,7 +199,10 @@ namespace Supernova
 		void computeBroadPhaseCollisions();
 
 		//Compute tcollision detection between two actors and create the corresponding collision constraints.
-		void computeCollisionDetection(snActor* _a, snActor* _b);
+		void computeCollisionDetection(snIActor* _a, snIActor* _b);
+
+		//Check if the collision detection is enabled between the two actors
+		bool isCollisionDetectionEnabled(const snIActor* const _a, const snIActor* const _b);
 	};
 }
 

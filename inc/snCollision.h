@@ -53,7 +53,7 @@ namespace Supernova
 	class snColliderBox;
 	class snColliderSphere;
 	class snColliderPlan;
-	class snActor;
+	class snIActor;
 
 	//Make collision tests between all the different types of colliders available.
 	class SN_ALIGN snCollision
@@ -75,7 +75,7 @@ namespace Supernova
 		snCollision();
 		virtual ~snCollision();
 
-		snCollisionResult queryTestCollision(snActor*, snActor*) const;
+		snCollisionResult queryTestCollision(snIActor*, snIActor*) const;
 
 		void* operator new(size_t _count)
 		{

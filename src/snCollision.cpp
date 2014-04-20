@@ -40,8 +40,7 @@
 #include "snCollisionResult.h"
 
 #include "snICollider.h"
-#include "snActor.h"
-
+#include "snIActor.h"
 #include "snMath.h"
 #include "snFeatureClipping.h"
 #include <assert.h>
@@ -60,7 +59,7 @@ namespace Supernova
 
 	snCollision::~snCollision(){}
 
-	snCollisionResult snCollision::queryTestCollision(snActor* _a1, snActor* _a2) const
+	snCollisionResult snCollision::queryTestCollision(snIActor* _a1, snIActor* _a2) const
 	{
 		std::vector<snICollider*>& c1 = _a1->getColliders();
 		std::vector<snICollider*>& c2 = _a2->getColliders();
@@ -89,8 +88,8 @@ namespace Supernova
 			
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
-		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const _c2, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
 		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
@@ -142,8 +141,8 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusBox_V2(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
-		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusBox_V2(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& /*_invR1*/,
+		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
 		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
@@ -423,8 +422,8 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
-		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
+	snCollisionResult snCollision::queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const _c2, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderSphere* _s1 = static_cast<const snColliderSphere*>(_c1);
 		const snColliderSphere* _s2 = static_cast<const snColliderSphere*>(_c2);
@@ -454,8 +453,8 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
-		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const _c2, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
 		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c2);
@@ -482,8 +481,8 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
-		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const /*_c2*/, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
@@ -518,8 +517,8 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
-		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2)
+	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const /*_c2*/, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c1);
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
