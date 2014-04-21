@@ -31,90 +31,81 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef WORLD_H
-#define WORLD_H
 
-#include <vector>
+#include "ComponentFollowPath.h"
+#include "snActorDynamic.h"
 
-#include <DirectXMath.h>
-using namespace DirectX;
-
-#include "ComponentFloatingText.h"
-
-namespace Supernova
-{
-	class snFixedConstraint;
-	class snPointToPointConstraint;
-	class snActorDynamic;
-}
-
-using namespace Supernova;
 namespace Devil
 {
-	class IWorldEntity;
-	class EntitySphere;
-	class EntityBox;
-	class EntityPlan;
-	class EntityCollisionPoint;
-	class EntityCamera;
-	class EntityFixedConstraint;
-	class EntityPointToPointConstraint;
-	class WorldHUD;
-
-	class IComponent;
-
-	class World
+	//Construct an instance of the class ComponentFollowPath
+	ComponentFollowPath::ComponentFollowPath(snActorDynamic* _actor, bool _loop, float _dt) : m_actor(_actor), m_loop(_loop), 
+		m_path(), m_nextWaypoint(1), m_previousWaypoint(0), m_dt(_dt)
 	{
-	private:
-		static World* m_Instance;
+	}
 
-		std::vector<IWorldEntity*> m_EntityList;
+	//Clean allocation made by the class ComponentFollowPath
+	ComponentFollowPath::~ComponentFollowPath()
+	{
+		for (vector<Waypoint*>::iterator i = m_path.begin(); i != m_path.end(); ++i)
+		{
+			delete *i;
+		}
 
-		EntityCamera* m_camera;
+		m_path.clear();
+	}
 
-		EntityCollisionPoint* m_collisionPoint;
+	//Update the component.
+	//It updated the position of the actor
+	void ComponentFollowPath::update()
+	{
+		//The next waypoint does not exist
+		if (m_nextWaypoint >= m_path.size())
+			return;
 
-		WorldHUD* m_hud;
+		//compute the direction
+		snVector4f direction = m_path[m_nextWaypoint]->m_position - m_path[m_previousWaypoint]->m_position;
+		float length = direction.squareNorme();
+		direction.normalize();
 
-	public:
-		virtual ~World();
+		//compute the next position
+		snVector4f nextPosition = m_actor->getPosition() + direction * m_path[m_nextWaypoint]->m_speed * m_dt;
 
-		static World* getInstance();
-		static void shutdown();
+		//check if we went too far
+		//compare the distance between the two waypoints and the distance between the first waypoint and the computed position.
+		float actorDistance = (nextPosition - m_path[m_previousWaypoint]->m_position).squareNorme();
+		if (length < actorDistance)
+		{
+			//we went too far then set the position to the waypoint to reach.
+			nextPosition = m_path[m_nextWaypoint]->m_position;
 
-		bool initialize();
+			//go to the next waypoint
+			++m_nextWaypoint;
+			++m_previousWaypoint;
 
-		EntitySphere* createSphere(float);
-		EntityBox* createBox(const XMFLOAT3&);
-		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);
-		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
-		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
-		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
-		WorldHUD* createHUD();
+			//if we can loop then wrap around
+			if (m_loop)
+			{
+				m_nextWaypoint = m_nextWaypoint % m_path.size();
+				m_previousWaypoint = m_previousWaypoint % m_path.size();
+			}
+		}
 
-		//Delete all entities from the world.
-		void clearWorld();
+		//set the position
+		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()));
+		m_actor->setKinematicPosition(nextPosition);
+		
+	}
 
-		void update();
-		void render();
+	//Do nothing
+	void ComponentFollowPath::render()
+	{}
 
-		EntityCamera* getCamera() const;
-
-		void toggleCollisionPointActivation();
-		void activateCollisionPoint();
-		void deactivateCollisionPoint();
-
-		void setPhysicsFPS(int _physicsFPS) const;
-		void setGraphicsFPS(int _graphicsFPS) const;
-
-	private:
-		World();
-
-		EntityCollisionPoint* createCollisionPoint(float _diameter);
-	};
-
-#define WORLD World::getInstance()
+	//Add a waypoint to the path in the last position
+	void ComponentFollowPath::addWaypoint(const snVector4f& _position, float _speed)
+	{
+		Waypoint* newWaypoint = new Waypoint();
+		newWaypoint->m_position = _position;
+		newWaypoint->m_speed = _speed;
+		m_path.push_back(newWaypoint);
+	}
 }
-
-#endif

@@ -149,12 +149,21 @@ namespace Devil
 			T* object = std::get<1>(*i);
 			getValue functionPtr = std::get<2>(*i);
 
-			//get the value to display
-			R value = (object->*functionPtr)();
+			wstring text;
+			if (functionPtr == 0)
+			{
+				text = title;
+			}
+			else
+			{
+				//get the value to display
+				R value = (object->*functionPtr)();
+				text = title + L":" + std::to_wstring(value);
+			}
 
 			//write text
 			pos.y += offsetHeight;
-			GRAPHICS->writeText(title + L":" + std::to_wstring(value), pos, SCALE);
+			GRAPHICS->writeText(text, pos, SCALE);
 			offsetHeight += LINEHEIGHT;
 		}
 

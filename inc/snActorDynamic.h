@@ -127,6 +127,9 @@ namespace Supernova
 		//Set if the actor is kinematic
 		void setIsKinematic(bool _isKinematic);
 
+		//Set the position of a kinematic actor
+		void setKinematicPosition(const snVector4f& _position);
+
 #pragma endregion
 
 		//Set the mass to the actor and update its inertia

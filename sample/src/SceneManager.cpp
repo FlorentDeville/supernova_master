@@ -50,6 +50,9 @@
 
 #include "EntityBox.h"
 
+#include "ComponentFollowPath.h"
+#include "ComponentFloatingText.h"
+
 using namespace Supernova;
 
 namespace Devil
@@ -110,12 +113,12 @@ namespace Devil
 			createSceneFriction();
 			INPUT->keyUp(116);
 		}
-		//else if (INPUT->isKeyDown(117))//F6
-		//{
-		//	clearScene();
-		//	createSceneFriction();
-		//	INPUT->keyUp(117);
-		//}
+		else if (INPUT->isKeyDown(117))//F6
+		{
+			clearScene();
+			createSceneActorsType();
+			INPUT->keyUp(117);
+		}
 	}
 
 	void SceneManager::createBasicTest()
@@ -379,7 +382,7 @@ namespace Devil
 			kinematicBox->setActor(act);
 		}
 
-		const int MAX_ROW = 15;
+		const int MAX_ROW = 14;
 		for (int row = MAX_ROW; row > 0; --row)
 		{
 			for (int i = 0; i < row; ++i)
@@ -566,325 +569,6 @@ namespace Devil
 			previousActor = act;
 		}
 	}
-
-	//void SceneManager::createScene4()
-	//{
-	//	WORLD->initialize();
-
-	//	WorldHUD* HUD = WORLD->createHUD();
-	//	HUD->setSceneName(L"Scene 4 : Trash");
-
-	//	GRAPHICS->setClearScreenColor(Colors::DarkGray);
-
-	//	int sceneId = -1;
-	//	snScene* m_physicScene = 0;
-	//	SUPERNOVA->createScene(&m_physicScene, sceneId);
-	//	m_physicScene->setCollisionMode(m_collisionMode);
-
-	//	int solverIterationCount = 20;
-	//	m_physicScene->setSolverIterationCount(solverIterationCount);
-
-	//	m_physicScene->setGravity(snVector4f(0, -9.81f * 0.5f, 0, 0));
-
-	//	//create the camera.
-	//	XMVECTOR cameraPosition = XMVectorSet(25, 30, 50, 1);
-	//	XMVECTOR cameraLookAt = XMVectorSet(15, 7, 0, 1);
-	//	XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-	//	WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
-	//	//WORLD->deactivateCollisionPoint();
-
-	//	XMFLOAT4 color1(0.8f, 1, 1, 1);
-	//	XMFLOAT4 color2(0.93f, 0.68f, 1, 1);
-	//	XMFLOAT4 color3(1, 0.8f, 0.678f, 1);
-	//	XMFLOAT4 color4(0.89f, 0.71f, 0.75f, 1);
-	//	XMFLOAT4 color5(0.96f, 0.48f, 0.63f, 1);
-
-	//	float groundHeight = 0;
-	//	//ground
-	//	{
-	//		float width = 1000;
-	//		float height = 2;
-	//		float depth = 1000;
-
-	//		//create actor
-	//		snActor* act = 0;
-	//		int actorId = -1;
-	//		m_physicScene->createActor(&act, actorId);
-	//		act->setName("ground");
-	//		act->setMass(100);
-	//		act->setPosition(snVector4f(0, 0, 0, 1));
-	//		act->setIsKinematic(true);
-	//		act->getPhysicMaterial().m_restitution = 1.f;
-	//		act->getPhysicMaterial().m_friction = 0.f;
-
-	//		//create collider
-	//		snColliderBox* collider = 0;
-	//		int colliderId = -1;
-	//		act->createColliderBox(&collider, colliderId);
-	//		collider->setSize(snVector4f(width, height, depth, 0));
-
-	//		//initialize
-	//		collider->initialize();
-	//		act->initialize();
-
-	//		EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-	//		kinematicBox->setActor(act);
-
-	//		groundHeight += height * 0.5f;
-	//	}
-
-	//	//back wall
-	//	//{
-	//	//	float width = 200;
-	//	//	float height = 200;
-	//	//	float depth = 2;
-
-	//	//	//create actor
-	//	//	snActor* act = 0;
-	//	//	int actorId = -1;
-	//	//	m_physicScene->createActor(&act, actorId);
-
-	//	//	act->setName("back");
-	//	//	act->setMass(100);
-	//	//	act->setPosition(snVector4f(0, 101, -80, 1));
-	//	//	act->setIsKinematic(true);
-	//	//	act->getPhysicMaterial().m_restitution = 1;
-	//	//	act->getPhysicMaterial().m_friction = 1;
-
-	//	//	//create collider
-	//	//	snColliderBox* collider = 0;
-	//	//	int colliderId = -1;
-	//	//	act->createColliderBox(&collider, colliderId);
-
-	//	//	collider->setSize(snVector4f(width, height, depth, 0));
-
-	//	//	//initialize
-	//	//	collider->initialize();
-	//	//	act->initialize();
-
-	//	//	//create world entity
-	//	//	EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-	//	//	kinematicBox->setActor(act);
-	//	//}
-
-	//	//platform
-	//	float platformHeight = 0;
-	//	{
-	//		float width = 7;
-	//		float height = 1;
-	//		float depth = 3;
-	//		snVector4f pos(width * 0.5f, 20 + height * 0.5f + 0, 0, 1);
-
-	//		//create actor
-	//		snActor* act = 0;
-	//		int actorId = -1;
-	//		m_physicScene->createActor(&act, actorId);
-	//		act->setName("platform");
-	//		act->setMass(1);
-	//		act->setPosition(pos);
-	//		float angle = 3.14f * 0.25f;
-	//		act->setOrientationQuaternion(snQuaternionFromEuler(angle, angle, 0));
-	//		act->setIsKinematic(false);
-	//		act->getPhysicMaterial().m_restitution = 0.f;
-	//		act->getPhysicMaterial().m_friction = 1.f;
-
-	//		//create collider
-	//		snColliderBox* collider = 0;
-	//		int colliderId = -1;
-	//		act->createColliderBox(&collider, colliderId);
-	//		collider->setSize(snVector4f(width, height, depth, 0));
-
-	//		//initialize
-	//		collider->initialize();
-	//		act->initialize();
-
-	//		EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), color2);
-	//		box->setActor(act);
-
-	//		platformHeight = pos.getY() + height * 0.5f;
-	//	}
-	//	return;
-	//	//dynamic
-	//	{
-	//		float width = 20;
-	//		float height = 1;
-	//		float depth = 3;
-	//		snVector4f pos(width * 0.5f, 30 + height * 0.5f + 0, 0, 1);
-
-	//		//create actor
-	//		snActor* act = 0;
-	//		int actorId = -1;
-	//		m_physicScene->createActor(&act, actorId);
-	//		act->setName("dymnamic");
-	//		act->setMass(1);
-	//		act->setPosition(pos);
-	//		act->setOrientationQuaternion(snQuaternionFromEuler(0, 3.14f * 0.5f, 0));
-	//		act->setIsKinematic(false);
-	//		act->getPhysicMaterial().m_restitution = 0.f;
-	//		act->getPhysicMaterial().m_friction = 1.f;
-	//		act->setAngularDampingCoeff(0.01f);
-
-	//		//create collider
-	//		snColliderBox* collider = 0;
-	//		int colliderId = -1;
-	//		act->createColliderBox(&collider, colliderId);
-	//		collider->setSize(snVector4f(width, height, depth, 0));
-
-	//		//initialize
-	//		collider->initialize();
-	//		act->initialize();
-
-	//		EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), color4);
-	//		box->setActor(act);
-
-	//		//blockTwoHeight = pos.getY() + height * 0.5f;
-	//	}
-	//}
-
-	//void SceneManager::createTower()
-	//{
-	//	WORLD->initialize();
-	//	WorldHUD* HUD = WORLD->createHUD();
-	//	HUD->setSceneName(L"Scene 5 : Broken Tower");
-
-	//	GRAPHICS->setClearScreenColor(Colors::DarkGray);
-	//	int sceneId = -1;
-	//	snScene* m_physicScene = 0;
-	//	SUPERNOVA->createScene(&m_physicScene, sceneId);
-	//	m_physicScene->setCollisionMode(m_collisionMode);
-
-	//	int solverIterationCount = 45;
-	//	m_physicScene->setSolverIterationCount(solverIterationCount);
-
-	//	m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
-	//	m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
-
-	//	//create the camera.
-	//	XMVECTOR cameraPosition = XMVectorSet(50, 50, 70, 1);
-	//	XMVECTOR cameraLookAt = XMVectorSet(0, 7, 0, 1);
-	//	XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-	//	WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
-
-	//	WORLD->deactivateCollisionPoint();
-
-
-	//	float groundHeight = 0;
-	//	//ground
-	//	{
-	//		float width = 2000;
-	//		float height = 2;
-	//		float depth = 2000;
-
-	//		//create actor
-	//		snActor* act = 0;
-	//		int actorId = -1;
-	//		m_physicScene->createActor(&act, actorId);
-
-	//		act->setName("ground");
-	//		act->setMass(100);
-	//		act->setPosition(snVector4f(0, 0, 0, 1));
-	//		act->setIsKinematic(true);
-	//		act->getPhysicMaterial().m_restitution = 0;
-	//		act->getPhysicMaterial().m_friction = 0.8f;
-
-	//		//create collider
-	//		snColliderBox* collider = 0;
-	//		int colliderId = -1;
-	//		act->createColliderBox(&collider, colliderId);
-
-	//		collider->setSize(snVector4f(width, height, depth, 0));
-
-	//		//initialize
-	//		collider->initialize();
-	//		act->initialize();
-
-	//		//create the world entity
-	//		EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-	//		kinematicBox->setActor(act);
-
-	//		groundHeight += height * 0.5f;
-	//	}
-
-	//	//back wall
-	//	{
-	//		float width = 200;
-	//		float height = 200;
-	//		float depth = 2;
-
-	//		//create actor
-	//		snActor* act = 0;
-	//		int actorId = -1;
-	//		m_physicScene->createActor(&act, actorId);
-
-	//		act->setName("back");
-	//		act->setMass(100);
-	//		act->setPosition(snVector4f(0, 101, -80, 1));
-	//		act->setIsKinematic(true);
-	//		act->getPhysicMaterial().m_restitution = 1;
-	//		act->getPhysicMaterial().m_friction = 1;
-
-	//		//create collider
-	//		snColliderBox* collider = 0;
-	//		int colliderId = -1;
-	//		act->createColliderBox(&collider, colliderId);
-
-	//		collider->setSize(snVector4f(width, height, depth, 0));
-
-	//		//initialize
-	//		collider->initialize();
-	//		act->initialize();
-
-	//		//create world entity
-	//		EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-	//		kinematicBox->setActor(act);
-	//	}
-
-	//	//tower
-	//	snVector4f origin(0, groundHeight, 0, 1);
-
-	//	int levelCount = 5;
-	//	for (int i = 0; i < levelCount; ++i)
-	//	{
-	//		origin = createTowerLevel(m_physicScene, origin);
-	//	}
-	//	return;
-	//	//projectile
-	//	{
-	//		float width = 2;
-	//		float height = 2;
-	//		float depth = 2;
-
-	//		//create actor
-	//		snActor* act = 0;
-	//		int actorId = -1;
-	//		m_physicScene->createActor(&act, actorId);
-
-	//		act->setName("ground");
-	//		act->setMass(500);
-	//		act->setPosition(snVector4f(-0, 20, 50, 1));
-	//		act->setLinearVelocity(snVector4f(15, 0, -50, 0));
-	//		act->setIsKinematic(false);
-	//		act->getPhysicMaterial().m_restitution = 0;
-	//		act->getPhysicMaterial().m_friction = 0.8f;
-
-	//		//create collider
-	//		snColliderBox* collider = 0;
-	//		int colliderId = -1;
-	//		act->createColliderBox(&collider, colliderId);
-
-	//		collider->setSize(snVector4f(width, height, depth, 0));
-
-	//		//initialize
-	//		collider->initialize();
-	//		act->initialize();
-
-	//		//create the world entity
-	//		EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(1, 0, 0, 1));
-	//		kinematicBox->setActor(act);
-	//	}
-	//}
 
 	void SceneManager::createSceneFriction()
 	{
@@ -1118,8 +802,7 @@ namespace Devil
 			floatingText->setOffset(XMFLOAT2(-120, 50));
 			floatingText->addItem(L"Angular Damping", act, &snActorDynamic::getAngularDampingCoeff);
 			floatingText->addItem(L"Angular Speed", act, &snActorDynamic::computeAngularSpeed);
-			box->addComponent(floatingText);
-			WORLD->addComponent(floatingText);
+			box->addPostUpdateComponent(floatingText);
 
 			//create constraints
 			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
@@ -1166,8 +849,7 @@ namespace Devil
 			floatingText->setOffset(XMFLOAT2(-120, 50));
 			floatingText->addItem(L"Linear Damping", act, &snActorDynamic::getLinearDampingCoeff);
 			floatingText->addItem(L"Linear Speed", act, &snActorDynamic::computeLinearSpeed);
-			box->addComponent(floatingText);
-			WORLD->addComponent(floatingText);
+			box->addPostUpdateComponent(floatingText);
 
 			//create constraints
 			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
@@ -1175,37 +857,150 @@ namespace Devil
 		}
 	}
 
-	//void SceneManager::createSceneActorsType()
-	//{
-	//	//initialize the world
-	//	WORLD->initialize();
+	void SceneManager::createSceneActorsType()
+	{
+		//initialize the world
+		WORLD->initialize();
 
-	//	WorldHUD* HUD = WORLD->createHUD();
-	//	HUD->setSceneName(L"Scene 4 : Damping");
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene : Static, Dynamic, Kinematic");
 
-	//	GRAPHICS->setClearScreenColor(Colors::DarkGray);
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
 
-	//	//create the physics scene
-	//	int sceneId = -1;
-	//	snScene* scene = 0;
-	//	SUPERNOVA->createScene(&scene, sceneId);
-	//	scene->setCollisionMode(m_collisionMode);
+		//create the physics scene
+		int sceneId = -1;
+		snScene* scene = 0;
+		SUPERNOVA->createScene(&scene, sceneId);
+		scene->setCollisionMode(m_collisionMode);
 
-	//	int solverIterationCount = 4;
-	//	scene->setSolverIterationCount(solverIterationCount);
+		int solverIterationCount = 4;
+		scene->setSolverIterationCount(solverIterationCount);
 
-	//	scene->setLinearSquaredSpeedThreshold(0.000001f);
-	//	scene->setAngularSquaredSpeedThreshold(0.000001f);
+		scene->setLinearSquaredSpeedThreshold(0.000001f);
+		scene->setAngularSquaredSpeedThreshold(0.000001f);
 
-	//	//create the camera.
-	//	XMVECTOR cameraPosition = XMVectorSet(50, 90, 80, 1);
-	//	XMVECTOR cameraLookAt = XMVectorSet(50, 60, 0, 1);
-	//	XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-	//	WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
+		//create the camera.
+		XMVECTOR cameraPosition = XMVectorSet(0, 110, 50, 1);
+		XMVECTOR cameraLookAt = XMVectorSet(0, 110, 0, 1);
+		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
+		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
 
 
-	//	WORLD->deactivateCollisionPoint();
-	//}
+		WORLD->activateCollisionPoint();
+
+		createGround(scene, 1, 1);
+
+		//this is a kinematic platform
+		{
+			float width = 20;
+			float height = 2;
+			float depth = 10;
+
+			//create the actor
+			snActorDynamic* kin = 0;
+			int actId = -1;
+			scene->createActorDynamic(&kin, actId);
+			kin->setIsKinematic(true);
+			kin->setName("kinematic");
+			kin->setPosition(snVector4f(0, 100, 0, 1));
+			kin->getPhysicMaterial().m_friction = 1.f;
+			kin->getPhysicMaterial().m_restitution = 0.f;
+
+			//create collider
+			snColliderBox* box = new snColliderBox();
+			box->setSize(snVector4f(width, height, depth, 0));
+
+			kin->addCollider(box);
+			kin->initialize();
+
+			//create entity
+			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[0]);
+			entity->setActor(kin);
+
+			//create path component
+			ComponentFollowPath* path = new ComponentFollowPath(kin, true, 1.f / 60.f);
+			float speed = 10.f;
+			path->addWaypoint(snVector4f(0, 100, 0, 1), speed);
+			path->addWaypoint(snVector4f(0, 90, 0, 1), speed);
+			entity->addPreUpdateComponent(path);
+
+			//create text component
+			ComponentFloatingText<EntityBox, int>* text = new ComponentFloatingText<EntityBox, int>();
+			text->setAnchor(entity);
+			text->addItem(L"KINEMATIC", 0, 0);
+			text->setOffset(XMFLOAT2(-40, 10));
+			entity->addPostUpdateComponent(text);
+
+		}
+
+		//this is a dynamic actor on the top of the kinematic actor
+		{
+			float width = 5;
+			float height = 5;
+			float depth = 5;
+
+			//create the actor
+			snActorDynamic* dyn = 0;
+			int actId = -1;
+			scene->createActorDynamic(&dyn, actId);
+			dyn->setName("dynamic");
+			dyn->setPosition(snVector4f(-2, 103.5, 0, 1));
+			dyn->getPhysicMaterial().m_friction = 1.f;
+			dyn->getPhysicMaterial().m_restitution = 0.f;
+
+			//create collider
+			snColliderBox* box = new snColliderBox();
+			box->setSize(snVector4f(width, height, depth, 0));
+
+			dyn->addCollider(box);
+			dyn->updateMassAndInertia(10);
+			dyn->initialize();
+
+			//create entity
+			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[1]);
+			entity->setActor(dyn);
+
+			//create text component
+			ComponentFloatingText<EntityBox, int>* text = new ComponentFloatingText<EntityBox, int>();
+			text->setAnchor(entity);
+			text->addItem(L"DYNAMIC", 0, 0);
+			text->setOffset(XMFLOAT2(-40, 10));
+			entity->addPostUpdateComponent(text);
+		}
+
+		//static object above the dynamic
+		{
+			float width = 15;
+			float height = 5;
+			float depth = 15;
+
+			//create the actor
+			snActorStatic* sta = 0;
+			int actId = -1;
+			scene->createActorStatic(&sta, actId, snVector4f(0, 110, 0, 1), snVector4f(0, 0, 0, 1));
+			sta->setName("static");
+			sta->getPhysicMaterial().m_friction = 1.f;
+			sta->getPhysicMaterial().m_restitution = 1.f;
+
+			//create collider
+			snColliderBox* box = new snColliderBox();
+			box->setSize(snVector4f(width, height, depth, 0));
+
+			sta->addCollider(box);
+			sta->initialize();
+
+			//create entity
+			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
+			entity->setActor(sta);
+
+			//create text component
+			ComponentFloatingText<EntityBox, int>* text = new ComponentFloatingText<EntityBox, int>();
+			text->setAnchor(entity);
+			text->addItem(L"STATIC", 0, 0);
+			text->setOffset(XMFLOAT2(-40, 10));
+			entity->addPostUpdateComponent(text);
+		}
+	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)
 	{
@@ -1241,7 +1036,13 @@ namespace Devil
 	}
 
 	SceneManager::SceneManager() : m_collisionMode(snCollisionMode::snECollisionModeSweepAndPrune)
-	{}
+	{
+		m_colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
+		m_colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
+		m_colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
+		m_colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
+		m_colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
+	}
 
 	SceneManager::~SceneManager()
 	{}

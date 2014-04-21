@@ -69,15 +69,6 @@ namespace Devil
 		}
 
 		m_EntityList.clear();
-
-		for (std::vector<IComponent*>::iterator i = m_componentsList.begin(); i != m_componentsList.end(); ++i)
-		{
-			if ((*i) != 0)
-			{
-				delete (*i);
-			}
-		}
-		m_componentsList.clear();
 	}
 
 	World* World::getInstance()
@@ -180,11 +171,7 @@ namespace Devil
 		for (vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
 			delete *i;
 
-		for (vector<IComponent*>::iterator i = m_componentsList.begin(); i != m_componentsList.end(); ++i)
-			delete *i;
-
 		m_EntityList.clear();
-		m_componentsList.clear();
 
 		m_collisionPoint = 0;
 		m_hud = 0;
@@ -197,8 +184,9 @@ namespace Devil
 		{
 			if ((*i)->getIsActive())
 			{
+				(*i)->preUpdateComponents();
 				(*i)->update();
-				(*i)->updateComponents();
+				(*i)->postUpdateComponents();
 			}
 			
 		}
@@ -213,8 +201,9 @@ namespace Devil
 		{
 			if ((*i)->getIsActive())
 			{
+				(*i)->preRenderComponents();
 				(*i)->render();
-				(*i)->renderComponents();
+				(*i)->postRenderComponents();
 			}
 		}
 

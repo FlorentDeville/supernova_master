@@ -86,7 +86,7 @@ namespace Devil
 		//Start with the first scene
 		//SCENEMGR->createBasicTest();
 		//SCENEMGR->createStacking();
-		SCENEMGR->createSceneDamping();
+		SCENEMGR->createSceneActorsType();
 
 		return true;
 	}

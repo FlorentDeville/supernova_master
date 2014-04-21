@@ -64,18 +64,31 @@ namespace Devil
 		/*Indicates if the entity is active. A not active entity is not updated nor rendered.*/
 		bool m_isActive;
 
-		//List of components attached to this entity.
-		vector<IComponent*> m_components;
+		//List of components attached to this entity and to update after updating the entity.
+		vector<IComponent*> m_postUpdateComponents;
+
+		//List of components to update before updating the entity.
+		vector<IComponent*> m_preUpdateComponents;
 
 	public:
-		IWorldEntity() : m_isActive(true), m_components()
+		IWorldEntity() : m_isActive(true), m_postUpdateComponents(), m_preUpdateComponents()
 		{
 			m_position = XMVectorSet(0, 0, 0, 1);
 			m_orientation = XMFLOAT3(0, 0, 0);
 			m_scale = XMFLOAT3(1, 1, 1);
 		};
 
-		virtual ~IWorldEntity(){};
+		virtual ~IWorldEntity()
+		{
+			for (vector<IComponent*>::iterator i = m_preUpdateComponents.begin(); i != m_preUpdateComponents.end(); ++i)
+				delete *i;
+			m_preUpdateComponents.clear();
+
+			for (vector<IComponent*>::iterator i = m_postUpdateComponents.begin(); i != m_postUpdateComponents.end(); ++i)
+				delete *i;
+			m_postUpdateComponents.clear();
+		};
+
 		virtual void update() = 0;
 		virtual void render() = 0;
 
@@ -97,13 +110,19 @@ namespace Devil
 		bool getIsActive() const { return m_isActive; }
 
 		//Return the list of components attached to this entity
-		vector<IComponent*> const & getComponents() { return m_components; }
+		vector<IComponent*> const & getPostUpdateComponents() { return m_postUpdateComponents; }
+
+		//Return the list of components to update before the entity
+		vector<IComponent*> const & getPreUpdateComponents() { return m_preUpdateComponents; }
 
 		//Return the position of the entity.
 		const XMVECTOR& getPosition() const { return m_position; }
 
 		//Add a component to the entity
-		void addComponent(IComponent* _newComponent){ m_components.push_back(_newComponent); }
+		void addPostUpdateComponent(IComponent* _newComponent){ m_postUpdateComponents.push_back(_newComponent); }
+
+		//Add a component to the entity. The component will be updated before the entity
+		void addPreUpdateComponent(IComponent* _newComponent){ m_preUpdateComponents.push_back(_newComponent); }
 
 		void* operator new(size_t _count)
 		{
@@ -116,15 +135,27 @@ namespace Devil
 		}
 
 		//Updat all the components of the entity
-		void updateComponents()
+		void postUpdateComponents()
 		{
-			for (vector<IComponent*>::iterator i = m_components.begin(); i != m_components.end(); ++i)
+			for (vector<IComponent*>::iterator i = m_postUpdateComponents.begin(); i != m_postUpdateComponents.end(); ++i)
 				(*i)->update();
 		}
 
-		void renderComponents()
+		void preUpdateComponents()
 		{
-			for (vector<IComponent*>::iterator i = m_components.begin(); i != m_components.end(); ++i)
+			for (vector<IComponent*>::iterator i = m_preUpdateComponents.begin(); i != m_preUpdateComponents.end(); ++i)
+				(*i)->update();
+		}
+
+		void postRenderComponents()
+		{
+			for (vector<IComponent*>::iterator i = m_postUpdateComponents.begin(); i != m_postUpdateComponents.end(); ++i)
+				(*i)->render();
+		}
+
+		void preRenderComponents()
+		{
+			for (vector<IComponent*>::iterator i = m_preUpdateComponents.begin(); i != m_preUpdateComponents.end(); ++i)
 				(*i)->render();
 		}
 	};

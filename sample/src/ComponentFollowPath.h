@@ -31,90 +31,90 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef WORLD_H
-#define WORLD_H
+
+#ifndef COMPONENT_FOLLOW_PATH_H
+#define COMPONENT_FOLLOW_PATH_H
+
+#include "IComponent.h"
+
+#include "snVector4f.h"
+using Supernova::snVector4f;
 
 #include <vector>
-
-#include <DirectXMath.h>
-using namespace DirectX;
-
-#include "ComponentFloatingText.h"
+using std::vector;
 
 namespace Supernova
 {
-	class snFixedConstraint;
-	class snPointToPointConstraint;
 	class snActorDynamic;
 }
 
-using namespace Supernova;
+using Supernova::snActorDynamic;
+
+
 namespace Devil
 {
-	class IWorldEntity;
-	class EntitySphere;
-	class EntityBox;
-	class EntityPlan;
-	class EntityCollisionPoint;
-	class EntityCamera;
-	class EntityFixedConstraint;
-	class EntityPointToPointConstraint;
-	class WorldHUD;
-
-	class IComponent;
-
-	class World
+	class Waypoint
 	{
-	private:
-		static World* m_Instance;
+	public:
+		//Position of the waypoint
+		snVector4f m_position;
 
-		std::vector<IWorldEntity*> m_EntityList;
-
-		EntityCamera* m_camera;
-
-		EntityCollisionPoint* m_collisionPoint;
-
-		WorldHUD* m_hud;
+		//Speed of the actor to reach this waypoint
+		float m_speed;
 
 	public:
-		virtual ~World();
+		void* operator new(size_t _count)
+		{
+			return _aligned_malloc(_count, SN_ALIGN_SIZE);
+		}
 
-		static World* getInstance();
-		static void shutdown();
-
-		bool initialize();
-
-		EntitySphere* createSphere(float);
-		EntityBox* createBox(const XMFLOAT3&);
-		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);
-		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
-		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
-		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
-		WorldHUD* createHUD();
-
-		//Delete all entities from the world.
-		void clearWorld();
-
-		void update();
-		void render();
-
-		EntityCamera* getCamera() const;
-
-		void toggleCollisionPointActivation();
-		void activateCollisionPoint();
-		void deactivateCollisionPoint();
-
-		void setPhysicsFPS(int _physicsFPS) const;
-		void setGraphicsFPS(int _graphicsFPS) const;
-
-	private:
-		World();
-
-		EntityCollisionPoint* createCollisionPoint(float _diameter);
+		void operator delete(void* _p)
+		{
+			_aligned_free(_p);
+		}
 	};
 
-#define WORLD World::getInstance()
-}
+	//////////////////////////////////////////////////////////
+	// Defines a path using waypoints the entity will follow.
+	//////////////////////////////////////////////////////////
+	class ComponentFollowPath : public IComponent
+	{
+	private:
+		//The actor to move
+		snActorDynamic* m_actor;
 
-#endif
+		//The list of waypoint making the path to follow
+		vector<Waypoint*> m_path;
+
+		//Flag to indicate if the actor as to loop the path or stop when it reaches the end.
+		bool m_loop;
+
+		//Id in the vector m_path of the next waypoint to reach
+		unsigned int m_nextWaypoint;
+
+		//Id in the vector m_path of the previous waypoint.
+		unsigned int m_previousWaypoint;
+
+		//Time interval between two updates.
+		float m_dt;
+	public:
+		//Construct an instance of the class ComponentFollowPath
+		ComponentFollowPath(snActorDynamic* _actor, bool _loop, float _dt);
+
+		//Clean allocation made by the class ComponentFollowPath
+		virtual ~ComponentFollowPath();
+
+		//Update the component.
+		//It updated the position of the actor
+		void update();
+
+		//Do nothing
+		void render();
+
+		//Add a waypoint to the path in the last position
+		void addWaypoint(const snVector4f& _position, float _speed);
+	};
+
+	
+}
+#endif //ifndef COMPONENT_FOLLOW_PATH_H

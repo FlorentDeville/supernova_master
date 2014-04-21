@@ -146,6 +146,15 @@ namespace Supernova
 			m_typeOfActor = snActorType::snActorTypeDynamic;
 	}
 
+	void snActorDynamic::setKinematicPosition(const snVector4f& _position)
+	{
+		assert(m_isKinematic);
+		setPosition(_position);
+
+		//compute colliders in world coordinate
+		updateCollidersAndAABB();
+	}
+
 	//Set the mass to the actor and update its inertia
 	void snActorDynamic::updateMassAndInertia(float _mass)
 	{
@@ -228,6 +237,9 @@ namespace Supernova
 	//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
 	void snActorDynamic::integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit)
 	{
+		if (m_isKinematic)
+			return;
+
 		//apply damping
 		m_v = m_v * (1 - m_linearDamping * _dt);
 		m_w = m_w * (1 - m_angularDamping * _dt);
@@ -258,13 +270,6 @@ namespace Supernova
 		m_R.createRotationFromQuaternion(m_q);
 
 		//set new state
-		//(*i)->setPosition(x);
-		//(*i)->setOrientationQuaternion(q);
-		//(*i)->setOrientationMatrix(snR);
-
-		//compute inertia in world coordinate
-		//(*i)->computeWInertiaTensor();
-		//(*i)->computeWInvInertiaTensor();
 		computeInvWorldInertia();
 
 		//compute colliders in world coordinate

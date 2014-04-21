@@ -48,6 +48,9 @@ using Supernova::snVector4f;
 using Supernova::snScene;
 using Supernova::snCollisionMode;
 
+#include <DirectXMath.h>
+using DirectX::XMFLOAT4;
+
 namespace Devil
 {
 	class SceneManager
@@ -57,6 +60,9 @@ namespace Devil
 
 		//The collision mode to use when creating a scene.
 		snCollisionMode m_collisionMode;
+
+		//Array of colors
+		XMFLOAT4 m_colors[5];
 
 	public:
 		static SceneManager* getInstance();
@@ -85,8 +91,8 @@ namespace Devil
 
 		void createSceneDamping();
 
-		////Show difference between static, dynamic and kinematic
-		//void createSceneActorsType();
+		//Show difference between static, dynamic and kinematic
+		void createSceneActorsType();
 
 		void setCollisionMode(snCollisionMode _collisionMode);
 		
