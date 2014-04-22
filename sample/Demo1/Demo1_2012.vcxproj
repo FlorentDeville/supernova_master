@@ -96,6 +96,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp" />
     <ClCompile Include="..\src\ColorShader.cpp" />
+    <ClCompile Include="..\src\ComponentFollowPath.cpp" />
     <ClCompile Include="..\src\D3D.cpp" />
     <ClCompile Include="..\src\EffectProvider.cpp" />
     <ClCompile Include="..\src\EntityBox.cpp" />
@@ -124,6 +125,8 @@
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\ColorShader.h" />
+    <ClInclude Include="..\src\ComponentFloatingText.h" />
+    <ClInclude Include="..\src\ComponentFollowPath.h" />
     <ClInclude Include="..\src\D3D.h" />
     <ClInclude Include="..\src\EffectProvider.h" />
     <ClInclude Include="..\src\EntityBox.h" />
@@ -137,6 +140,7 @@
     <ClInclude Include="..\src\GfxEntityPlan.h" />
     <ClInclude Include="..\src\GfxEntitySphere.h" />
     <ClInclude Include="..\src\Graphics.h" />
+    <ClInclude Include="..\src\IComponent.h" />
     <ClInclude Include="..\src\IGfxEntity.h" />
     <ClInclude Include="..\src\Input.h" />
     <ClInclude Include="..\src\IWorldEntity.h" />

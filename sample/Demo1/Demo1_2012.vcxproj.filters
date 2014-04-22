@@ -22,6 +22,12 @@
     <Filter Include="Graphics\font">
       <UniqueIdentifier>{4a2d33d3-7cfc-4c71-ad0e-49d00a840c7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="World\Components">
+      <UniqueIdentifier>{b7053a15-96f9-4de1-b3d2-9498a2c78271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World\Entities">
+      <UniqueIdentifier>{7dbe1097-20dc-424e-b37f-1c841ab99b77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -63,21 +69,6 @@
     <ClCompile Include="..\src\TextureShader.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\EntityBox.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\EntityCamera.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\EntityCollisionPoint.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\EntityPlan.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\EntitySphere.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\World.cpp">
       <Filter>World</Filter>
     </ClCompile>
@@ -88,17 +79,35 @@
       <Filter>System</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main.cpp" />
-    <ClCompile Include="..\src\EntityFixedConstraint.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\EntityPointToPointConstraint.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\SceneManager.cpp">
       <Filter>SceneManager</Filter>
     </ClCompile>
     <ClCompile Include="..\src\WorldHUD.cpp">
       <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntityBox.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntityCamera.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntityCollisionPoint.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntityFixedConstraint.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntityPlan.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntityPointToPointConstraint.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntitySphere.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ComponentFollowPath.cpp">
+      <Filter>World\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,21 +153,6 @@
     <ClInclude Include="..\src\TextureShader.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\EntityBox.h">
-      <Filter>World</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\EntityCamera.h">
-      <Filter>World</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\EntityCollisionPoint.h">
-      <Filter>World</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\EntityPlan.h">
-      <Filter>World</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\EntitySphere.h">
-      <Filter>World</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\IWorldEntity.h">
       <Filter>World</Filter>
     </ClInclude>
@@ -171,17 +165,41 @@
     <ClInclude Include="..\src\System.h">
       <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\EntityFixedConstraint.h">
-      <Filter>World</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\EntityPointToPointConstraint.h">
-      <Filter>World</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\SceneManager.h">
       <Filter>SceneManager</Filter>
     </ClInclude>
     <ClInclude Include="..\src\WorldHUD.h">
       <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityBox.h">
+      <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityCamera.h">
+      <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityCollisionPoint.h">
+      <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityFixedConstraint.h">
+      <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityPlan.h">
+      <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityPointToPointConstraint.h">
+      <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntitySphere.h">
+      <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\IComponent.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ComponentFloatingText.h">
+      <Filter>World\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ComponentFollowPath.h">
+      <Filter>World\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

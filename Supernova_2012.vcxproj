@@ -13,7 +13,8 @@
   <ItemGroup>
     <ClInclude Include="inc\AlignmentAllocator.h" />
     <ClInclude Include="inc\snAABB.h" />
-    <ClInclude Include="inc\snActor.h" />
+    <ClInclude Include="inc\snActorDynamic.h" />
+    <ClInclude Include="inc\snActorStatic.h" />
     <ClInclude Include="inc\snColliderBox.h" />
     <ClInclude Include="inc\snColliderPlan.h" />
     <ClInclude Include="inc\snColliderSphere.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="inc\snFrictionConstraint.h" />
     <ClInclude Include="inc\snGJK.h" />
     <ClInclude Include="inc\snGlobals.h" />
+    <ClInclude Include="inc\snIActor.h" />
     <ClInclude Include="inc\snICollider.h" />
     <ClInclude Include="inc\snIConstraint.h" />
     <ClInclude Include="inc\snMath.h" />
@@ -43,7 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snAABB.cpp" />
-    <ClCompile Include="src\snActor.cpp" />
+    <ClCompile Include="src\snActorDynamic.cpp" />
+    <ClCompile Include="src\snActorStatic.cpp" />
     <ClCompile Include="src\snColliderBox.cpp" />
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />
@@ -56,6 +59,7 @@
     <ClCompile Include="src\snFixedConstraint.cpp" />
     <ClCompile Include="src\snFrictionConstraint.cpp" />
     <ClCompile Include="src\snGJK.cpp" />
+    <ClCompile Include="src\snIActor.cpp" />
     <ClCompile Include="src\snMath.cpp" />
     <ClCompile Include="src\snMatrix44f.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />

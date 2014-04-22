@@ -67,9 +67,6 @@
     <ClInclude Include="inc\snVector4f.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snActor.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snPhysicMaterial.h">
       <Filter>Simulation</Filter>
     </ClInclude>
@@ -106,6 +103,15 @@
     <ClInclude Include="inc\snContactConstraintManager.h">
       <Filter>Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snActorDynamic.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snActorStatic.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snIActor.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -139,9 +145,6 @@
     <ClCompile Include="src\snQuaternion.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
-    <ClCompile Include="src\snActor.cpp">
-      <Filter>Simulation</Filter>
-    </ClCompile>
     <ClCompile Include="src\snScene.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
@@ -170,6 +173,15 @@
       <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\snContactConstraintManager.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snActorDynamic.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snActorStatic.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snIActor.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
   </ItemGroup>

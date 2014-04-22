@@ -84,9 +84,9 @@ namespace Devil
 		}
 
 		//Start with the first scene
-		//SCENEMGR->createBasicTest();
+		SCENEMGR->createBasicTest();
 		//SCENEMGR->createStacking();
-		SCENEMGR->createSceneActorsType();
+		//SCENEMGR->createSceneActorsType();
 
 		return true;
 	}
