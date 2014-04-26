@@ -70,6 +70,12 @@
     <ClCompile Include="src\snTimer.cpp" />
     <ClCompile Include="src\snVector4f.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\snVector4f-inl.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ExcludedFromBuild>
+    </None>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7A50E8D4-5550-4F71-8051-ECD68FA776CE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

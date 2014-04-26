@@ -63,224 +63,90 @@ namespace Supernova
 		__m128 m_vec;
 
 		//Bit mask where the only bit to 1 is the sign bit. In a 32 bits float, the bit sign is the most significant bit so
-		//this mask contains 4 floating point with a binaey value 0x80000000.
+		//this mask contains 4 floating point with a binary value 0x80000000.
 		static const __m128 SIGNMASK;
 
 		//A vector with the four parameter set to 0
 		static const snVector4f m_zero;
 
 	public:
-		snVector4f(__m128 _Value)
-		{
-			m_vec = _Value;
-		}
+		snVector4f(__m128 _Value);
 
-		snVector4f()
-		{
-			m_vec = _mm_setzero_ps();
-		}
+		snVector4f();
 
-		snVector4f(float _X, float _Y, float _Z, float _W)
-		{
-			m_vec = _mm_set_ps(_W, _Z, _Y, _X);
-		}
+		snVector4f(float _X, float _Y, float _Z, float _W);
 
-		~snVector4f(){}
+		~snVector4f();
 
-		inline snVector4f operator+(const snVector4f& _Other) const
-		{
-			snVector4f ret(_mm_add_ps(m_vec, _Other.m_vec));
-			return ret;
-		}
+		snVector4f operator+(const snVector4f& _Other) const;
 
-		inline snVector4f operator-(const snVector4f& _Other)const
-		{
-			snVector4f ret(_mm_sub_ps(m_vec, _Other.m_vec));
-			return ret;
-		}
+		snVector4f operator-(const snVector4f& _Other) const;
 
-		inline snVector4f operator-() const
-		{
-			//To negate a float, we need to switch the bit sign.
-			//Using XOR operator with the bit mask will do so as the bit mask as a 1 only for the sign bit.
-			return _mm_xor_ps(m_vec, SIGNMASK);
-		}
+		snVector4f operator-() const;
 
-		inline snVector4f operator*(const snVector4f& _Other) const
-		{
-			snVector4f ret(_mm_mul_ps(m_vec, _Other.m_vec));
-			return ret;
-		}
-
-		inline snVector4f operator*(float _Other) const
-		{
-			__m128 factor = _mm_set_ps1(_Other);
-			snVector4f ret(_mm_mul_ps(factor, m_vec));
-			return ret;
-		}
-
-		inline snVector4f operator*(int _other) const
-		{
-			__m128 factor = _mm_set_ps1((float)_other);
-			snVector4f ret(_mm_mul_ps(factor, m_vec));
-			return ret;
-		}
-
-		inline float dot4(const snVector4f& _other) const
-		{
-			__m128 mul = _mm_mul_ps(m_vec, _other.m_vec);
-			return mul.m128_f32[VEC4F_ID_X] + mul.m128_f32[VEC4F_ID_Y] + mul.m128_f32[VEC4F_ID_Z] + mul.m128_f32[VEC4F_ID_W];
-		}
-
-		inline float dot(const snVector4f& _other) const
-		{
-			__m128 mul = _mm_mul_ps(m_vec, _other.m_vec);
-			return mul.m128_f32[VEC4F_ID_X] + mul.m128_f32[VEC4F_ID_Y] + mul.m128_f32[VEC4F_ID_Z];
-		}
-
-		/*Dot product between _v1 and _v2. The W coordinate is ignored.*/
-		static inline float dot(const snVector4f& _V1, const snVector4f& _V2)
-		{
-			__m128 mul = _mm_mul_ps(_V1.m_vec, _V2.m_vec);
-			return mul.m128_f32[VEC4F_ID_X] + mul.m128_f32[VEC4F_ID_Y] + mul.m128_f32[VEC4F_ID_Z];
-		}
-
-		inline snVector4f cross(const snVector4f& _other) const
-		{
-			__m128 v1Left = _mm_shuffle_ps(m_vec, m_vec, _MM_SHUFFLE(VEC4F_ID_W, VEC4F_ID_X, VEC4F_ID_Z, VEC4F_ID_Y));
-			__m128 v1Right = _mm_shuffle_ps(m_vec, m_vec, _MM_SHUFFLE(VEC4F_ID_W, VEC4F_ID_Y, VEC4F_ID_X, VEC4F_ID_Z));
-
-			__m128 v2Left = _mm_shuffle_ps(_other.m_vec, _other.m_vec, _MM_SHUFFLE(VEC4F_ID_W, VEC4F_ID_Y, VEC4F_ID_X, VEC4F_ID_Z));
-			__m128 v2Right = _mm_shuffle_ps(_other.m_vec, _other.m_vec, _MM_SHUFFLE(VEC4F_ID_W, VEC4F_ID_X, VEC4F_ID_Z, VEC4F_ID_Y));
-
-			__m128 Left = _mm_mul_ps(v1Left, v2Left);
-			__m128 Right = _mm_mul_ps(v1Right, v2Right);
-
-			return snVector4f(_mm_sub_ps(Left, Right));
-		}
-
-		/*Cross product between _v1 and _v2. The W coordinate will be 0.*/
-		static inline snVector4f cross(const snVector4f& _V1, const snVector4f& _V2)
-		{
-			__m128 v1Left = _mm_shuffle_ps(_V1.m_vec, _V1.m_vec, _MM_SHUFFLE(VEC4F_ID_W, VEC4F_ID_X, VEC4F_ID_Z, VEC4F_ID_Y));
-			__m128 v1Right = _mm_shuffle_ps(_V1.m_vec, _V1.m_vec, _MM_SHUFFLE(VEC4F_ID_W, VEC4F_ID_Y, VEC4F_ID_X, VEC4F_ID_Z));
-
-			__m128 v2Left = _mm_shuffle_ps(_V2.m_vec, _V2.m_vec, _MM_SHUFFLE(VEC4F_ID_W, VEC4F_ID_Y, VEC4F_ID_X, VEC4F_ID_Z));
-			__m128 v2Right = _mm_shuffle_ps(_V2.m_vec, _V2.m_vec, _MM_SHUFFLE(VEC4F_ID_W, VEC4F_ID_X, VEC4F_ID_Z, VEC4F_ID_Y));
-
-			__m128 Left = _mm_mul_ps(v1Left, v2Left);
-			__m128 Right = _mm_mul_ps(v1Right, v2Right);
-
-			return snVector4f(_mm_sub_ps(Left, Right));
-		}
-
-		/*Calculate the length of the vector.*/
-		inline float norme() const
-		{
-			return sqrtf(squareNorme());
-		}
-
-		/*Return the squared length of the vector.*/
-		inline float squareNorme() const
-		{
-			__m128 square = _mm_mul_ps(m_vec, m_vec);
-			return square.m128_f32[VEC4F_ID_X] + square.m128_f32[VEC4F_ID_Y] + square.m128_f32[VEC4F_ID_Z];
-		}
-
-		/*Normalize the vector. Its direction remain the same but its length is set to 1.*/
-		inline void normalize()
-		{
-			float n = norme();
-			if (n == 0) return;
-			__m128 div = _mm_set_ps(1, n, n, n);
-			m_vec = _mm_div_ps(m_vec, div);
-		}
-
-		/*Set the vector to the length provided in parameter.*/
-		inline void setLength(float _length)
-		{
-			normalize();
-			__m128 l = _mm_set_ps(1, _length, _length, _length);
-			m_vec = _mm_mul_ps(m_vec, l);
-		}
-
-		static void mirror(const snVector4f& _incoming, const snVector4f& _normal, snVector4f& _out)
-		{
-			_out = (_normal * 2 * (-_incoming.dot(_normal))) + _incoming;
-		}
-
-		inline float getX() const
-		{
-			return VEC4FX;
-		}
-
-		inline float getY() const
-		{
-			return VEC4FY;
-		}
-
-		inline float getZ() const
-		{
-			return VEC4FZ;
-		}
-
-		inline float getW() const
-		{
-			return VEC4FW;
-		}
-
-		inline void setX(float _x)
-		{
-			VEC4FX = _x;
-		}
-
-		inline void setY(float _y)
-		{
-			VEC4FY = _y;
-		}
-
-		inline void setZ(float _z)
-		{
-			VEC4FZ = _z;
-		}
-
-		inline void setW(float _w)
-		{
-			VEC4FW = _w;
-		}
-
-		inline void set(float _X, float _Y, float _Z, float _W)
-		{
-			m_vec = _mm_set_ps(_W, _Z, _Y, _X);
-		}
-
-		inline bool operator == (const snVector4f& _other) const
-		{
-			__m128 vcmp = _mm_cmpeq_ps(m_vec, _other.m_vec);
-			__m128i ivcmp = _mm_castps_si128(vcmp);
-			int vmask = _mm_movemask_epi8(ivcmp);
-			return (vmask == 0xffff);
-		}
-
-		inline void absolute()
-		{
-			m_vec = _mm_andnot_ps(SIGNMASK, m_vec);
-		}
-
-		inline snVector4f getAbsolute()
-		{
-			return _mm_andnot_ps(SIGNMASK, m_vec);
-		}
-
-		inline float& operator[](int id)
-		{
-			return m_vec.m128_f32[id];
-		}
+		snVector4f operator*(const snVector4f& _Other) const;
 		
-		inline float operator[](int id) const
-		{
-			return m_vec.m128_f32[id];
-		}
+		snVector4f operator*(float _Other) const;
+		
+		snVector4f operator*(int _other) const;
+		
+		float dot4(const snVector4f& _other) const;
+		
+		float dot(const snVector4f& _other) const;
+		
+		/*Dot product between _v1 and _v2. The W coordinate is ignored.*/
+		static float dot(const snVector4f& _V1, const snVector4f& _V2);
+		
+		snVector4f cross(const snVector4f& _other) const;
+		
+		/*Cross product between _v1 and _v2. The W coordinate will be 0.*/
+		static snVector4f cross(const snVector4f& _V1, const snVector4f& _V2);
+		
+		/*Calculate the length of the vector.*/
+		float norme() const;
+	
+		/*Return the squared length of the vector.*/
+		float squareNorme() const;
+		
+		/*Normalize the vector. Its direction remain the same but its length is set to 1.*/
+		void normalize();
+		
+		/*Set the vector to the length provided in parameter.*/
+		void setLength(float _length);
+		
+		void mirror(const snVector4f& _incoming, const snVector4f& _normal, snVector4f& _out);
+		
+		float getX() const;
+		
+		float getY() const;
+		
+		float getZ() const;
+		
+		float getW() const;
+		
+		void setX(float _x);
+		
+		void setY(float _y);
+		
+		void setZ(float _z);
+		
+		void setW(float _w);
+		
+		void set(float _X, float _Y, float _Z, float _W);
+		
+		bool operator == (const snVector4f& _other) const;
+		
+		void absolute();
+		
+		snVector4f getAbsolute();
+		
+		float& operator[](int id);
+		
+		float operator[](int id) const;
+
+		//Compute a cosine interpolation between two vectors given a parameter t between 0 and 1
+		static snVector4f cosInterpolation(const snVector4f& _start, const snVector4f& _end, float _t);
+		
 	};
 }
 

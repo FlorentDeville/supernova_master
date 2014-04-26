@@ -43,6 +43,8 @@
 //The smallest absolute number a floating point variable can store
 #define SN_FLOAT_MIN FLT_MIN
 
+#define SN_PI 3.1415926f
+
 namespace Supernova
 {
 	class snVector4f;

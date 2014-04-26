@@ -35,7 +35,7 @@
 #ifndef SN_QUATERNION_H
 #define SN_QUATERNION_H
 
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 
 namespace Supernova
 {

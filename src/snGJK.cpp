@@ -33,7 +33,7 @@
 /****************************************************************************/
 
 #include "snGJK.h"
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 #include "snICollider.h"
 #include "snTypes.h"
 #include "snMath.h"

@@ -5,7 +5,7 @@
 #include "World.h"
 #include "Input.h"
 
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 namespace Devil
 {
 

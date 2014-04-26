@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 using namespace Supernova;
 
 namespace Devil

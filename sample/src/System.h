@@ -7,7 +7,7 @@
 #include "snScene.h"
 using Supernova::snScene;
 
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 using Supernova::snVector4f;
 
 namespace Devil

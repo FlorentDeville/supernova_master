@@ -37,7 +37,7 @@
 
 #include "IComponent.h"
 
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 using Supernova::snVector4f;
 
 #include <vector>

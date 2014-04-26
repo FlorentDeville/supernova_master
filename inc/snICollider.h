@@ -35,7 +35,7 @@
 #ifndef SN_ICOLLIDER_H
 #define SN_ICOLLIDER_H
 
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 #include "snMatrix44f.h"
 
 namespace Supernova

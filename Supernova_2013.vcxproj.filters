@@ -169,9 +169,6 @@
     <ClCompile Include="src\snPointToPointConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
-    <ClCompile Include="src\snVector4f.cpp">
-      <Filter>Tools</Filter>
-    </ClCompile>
     <ClCompile Include="src\snAABB.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
@@ -190,5 +187,13 @@
     <ClCompile Include="src\snActorDynamic.cpp">
       <Filter>Simulation\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="src\snVector4f.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\snVector4f-inl.h">
+      <Filter>Tools</Filter>
+    </None>
   </ItemGroup>
 </Project>

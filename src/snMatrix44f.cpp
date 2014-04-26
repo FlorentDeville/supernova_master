@@ -40,7 +40,7 @@ using std::cout;
 using std::endl;
 
 #include <math.h>
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 
 namespace Supernova
 {

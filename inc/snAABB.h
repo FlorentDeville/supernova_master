@@ -32,7 +32,7 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 
 namespace Supernova
 {

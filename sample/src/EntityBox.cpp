@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include "GfxEntityBox.h"
 
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 #include "snIActor.h"
 
 namespace Devil

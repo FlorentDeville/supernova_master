@@ -96,5 +96,8 @@ namespace Supernova
 		//Overridden delete operator to delete using the correct alignement.
 		void operator delete(void* _p);
 	};
+
+#include "snVector4f-inl.h"
+
 }
 #endif

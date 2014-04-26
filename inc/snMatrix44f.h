@@ -37,7 +37,7 @@
 
 #include <xmmintrin.h>
 #include "snGlobals.h"
-#include "snVector4f.h"
+#include "snVector4f-inl.h"
 
 namespace Supernova
 {
