@@ -76,6 +76,9 @@ namespace Supernova
 
 #pragma region Virtual Getter
 
+		//Return the mass
+		float getMass() const;
+
 		//Return the inverse of the mass
 		float getInvMass() const;
 

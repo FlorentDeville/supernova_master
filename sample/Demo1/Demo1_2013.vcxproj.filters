@@ -109,6 +109,9 @@
     <ClCompile Include="..\src\ComponentFollowPath.cpp">
       <Filter>World\Components</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\ComponentPathInterpolate.cpp">
+      <Filter>World\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -199,6 +202,9 @@
       <Filter>World\Components</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ComponentFollowPath.h">
+      <Filter>World\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ComponentPathInterpolate.h">
       <Filter>World\Components</Filter>
     </ClInclude>
   </ItemGroup>

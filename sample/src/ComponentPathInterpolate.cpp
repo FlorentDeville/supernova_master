@@ -32,115 +32,83 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snActorStatic.h"
-#include "snICollider.h"
+#include "ComponentPathInterpolate.h"
+#include "snActorDynamic.h"
 
-namespace Supernova
+#include "snTimer.h"
+using Supernova::snTimer;
+
+namespace Devil
 {
-
-	snActorStatic::snActorStatic()
+	//Construct an instance of the class ComponentFollowPath
+	ComponentPathInterpolate::ComponentPathInterpolate(snActorDynamic* _actor, bool _loop) : m_actor(_actor), m_loop(_loop),
+		m_path(), m_nextWaypoint(1), m_previousWaypoint(0), m_startTime(-1)
 	{
-		m_name = "default";
-		m_x = snVector4f();
-		m_q = snVector4f(0, 0, 0, 1);
-		m_skinDepth = 0.025f;
-		m_R.identity();
-		m_invR.identity();
-		m_typeOfActor = snActorType::snActorTypeStatic;
 	}
 
-	snActorStatic::snActorStatic(const snVector4f& _position)
+	//Clean allocation made by the class ComponentFollowPath
+	ComponentPathInterpolate::~ComponentPathInterpolate()
 	{
-		m_name = "default";
-		m_x = _position;
-		m_q = snVector4f(0, 0, 0, 1);
-		m_skinDepth = 0.025f;
-		m_R.identity();
-		m_invR.identity();
-		m_typeOfActor = snActorType::snActorTypeStatic;
-	}
-
-	snActorStatic::snActorStatic(const snVector4f& _position, const snVector4f& _orientation)
-	{
-		m_name = "default";
-		m_x = _position;
-		m_q = _orientation;
-		m_R.createRotationFromQuaternion(m_q);
-		m_invR = m_R.inverse();
-		m_skinDepth = 0.025f;
-		m_typeOfActor = snActorType::snActorTypeStatic;
-	}
-
-	snActorStatic::~snActorStatic()
-	{
-
-	}
-
-	float snActorStatic::getMass() const
-	{
-		return 0;
-	}
-
-	//Return the inverse of the mass
-	float snActorStatic::getInvMass() const
-	{
-		return 0;
-	}
-
-	//Return the inverse of the inertia expressed in world coordinate
-	const snMatrix44f& snActorStatic::getInvWorldInertia() const
-	{
-		return snMatrix44f::m_zero;
-	}
-
-	//Return the linear velocity
-	snVector4f snActorStatic::getLinearVelocity() const
-	{
-		return snVector4f::m_zero;
-	}
-
-	//Return the angular velocity
-	snVector4f snActorStatic::getAngularVelocity() const
-	{
-		return snVector4f::m_zero;
-	}
-
-	//Set the linear velocity
-	void snActorStatic::setLinearVelocity(const snVector4f& /*_linearVelocity*/)
-	{
-		return;
-	}
-
-	//Set the angular velocity
-	void snActorStatic::setAngularVelocity(const snVector4f& /*_angularVelocity*/)
-	{
-		return;
-	}
-
-	//Move the actor forward in time using _dt as a time step.
-	//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
-	//A static actor cannot move so this function doesn't do anyhthing.
-	void snActorStatic::integrate(float /*_dt*/, float /*_linearSpeed2Limit*/, float /*_angularSpeed2Limit*/)
-	{
-		return;
-	}
-
-	void snActorStatic::initialize()
-	{
-		//create the transform matrix
-		snMatrix44f translation;
-		translation.createTranslation(m_x);
-		snMatrix44f transform;
-		snMatrixMultiply4(m_R, translation, transform);
-
-		//loop through each colliders to initialize them
-		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		for (vector<WaypointTime*>::iterator i = m_path.begin(); i != m_path.end(); ++i)
 		{
-			(*i)->initialize();
-			(*i)->setWorldTransform(transform);				
+			delete *i;
 		}
 
-		//compute the AABB
-		computeBoundingVolume();
+		m_path.clear();
+	}
+
+	//Update the component.
+	//It updated the position of the actor
+	void ComponentPathInterpolate::update(float _dt)
+	{
+		//The next waypoint does not exist
+		if (m_nextWaypoint >= m_path.size())
+			return;
+
+		//if the time is negative, set it to the current time
+		if (m_startTime < 0)
+			m_startTime = snTimer::convertElapsedTickCountInSeconds(snTimer::getCurrentTick());
+
+		//compute the paramter of interpolation : waypoint time / elapsed time
+		double elapsedTime = snTimer::convertElapsedTickCountInSeconds(snTimer::getCurrentTick()) - m_startTime;
+		float _param = float(elapsedTime / m_path[m_nextWaypoint]->m_time);
+
+		//if the param is bigger than 1 then we go to the next waypoint
+		if (_param > 1)
+		{
+			_param = _param - 1;
+
+			//go to the next waypoint
+			++m_nextWaypoint;
+			++m_previousWaypoint;
+			m_startTime = snTimer::convertElapsedTickCountInSeconds(snTimer::getCurrentTick());
+
+			//if we can loop then wrap around
+			if (m_loop)
+			{
+				m_nextWaypoint = m_nextWaypoint % m_path.size();
+				m_previousWaypoint = m_previousWaypoint % m_path.size();
+			}
+		}
+
+		//compute the next position
+		snVector4f nextPosition = snVector4f::cosInterpolation(m_path[m_previousWaypoint]->m_position,
+			m_path[m_nextWaypoint]->m_position, _param);
+
+		//set the position
+		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()) * (1.f / _dt));
+	}
+
+	//Do nothing
+	void ComponentPathInterpolate::render()
+	{}
+
+	//Add a waypoint to the path in the last position
+	void ComponentPathInterpolate::addWaypoint(const snVector4f& _position, float _time)
+	{
+		WaypointTime* newWaypoint = new WaypointTime();
+		newWaypoint->m_position = _position;
+		newWaypoint->m_time = _time;
+		m_path.push_back(newWaypoint);
 	}
 }

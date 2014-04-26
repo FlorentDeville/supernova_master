@@ -255,7 +255,7 @@ namespace Supernova
 	inline snVector4f snVector4f::cosInterpolation(const snVector4f& _start, const snVector4f& _end, float _t)
 	{
 		float cosineT = (1.f - cosf(_t * SN_PI)) * 0.5f;
-		return (_start * (1 - cosineT) + _end * cosineT);
+		return (_start * (1.f - cosineT) + _end * cosineT);
 	}
 }
 

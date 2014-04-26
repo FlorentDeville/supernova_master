@@ -306,15 +306,10 @@ namespace Supernova
 	{
 		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
-			//calculate weight
-			//snVector4f W = m_gravity * (*i)->getMass();
-
-			//calculate linear velocity
-			//snVector4f v = (*i)->getLinearVelocity() + (W * _dt * (*i)->getInvMass());
-			snVector4f v = (*i)->getLinearVelocity() + (m_gravity * _dt);
-	
-			//set state
-			(*i)->setLinearVelocity(v);
+			//apply gravity only if the inverse of the mass is not zero.
+			//If it is zero, then the actor is static or kinematic so no gravity as to be applied.
+			if ((*i)->getInvMass() != 0)
+				(*i)->setLinearVelocity((*i)->getLinearVelocity() + (m_gravity * _dt));
 		}
 	}
 
@@ -323,51 +318,6 @@ namespace Supernova
 		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
 			(*i)->integrate(_dt, m_linearSquaredSpeedThreshold, m_angularSquaredSpeedThreshold);
-			////do not simulate static actors.
-			//if ((*i)->getIsStatic())
-			//	continue;
-
-			////apply damping
-			//(*i)->setLinearVelocity((*i)->getLinearVelocity() * (1 - (*i)->getLinearDampingCoeff() * _dt));
-			//(*i)->setAngularVelocity((*i)->getAngularVelocity() * (1 - (*i)->getAngularDampingCoeff() * _dt));
-
-			////if the linear speed is too small, set it to 0.
-			//float sqSpeed = (*i)->getLinearVelocity().squareNorme();
-			//if (sqSpeed < m_linearSquaredSpeedThreshold)
-			//	(*i)->setLinearVelocity(snVector4f());
-
-			////if the angular speed is too small, set it to 0.
-			//sqSpeed = (*i)->getAngularVelocity().squareNorme();
-			//if (sqSpeed < m_angularSquaredSpeedThreshold)
-			//	(*i)->setAngularVelocity(snVector4f());
-
-			////calculate position
-			//snVector4f x = (*i)->getPosition() + (*i)->getLinearVelocity() * _dt;
-
-			////calculate velocity as quaternion using dq/dt = 0.5 * w * q
-			//snVector4f qw;
-			//snQuaternionMultiply((*i)->getAngularVelocity(), (*i)->getOrientationQuaternion(), qw);
-			//qw = qw * 0.5f;
-
-			////calculate orientation
-			//snVector4f q = (*i)->getOrientationQuaternion() + (qw * _dt);
-			//snQuaternionNormalize(q, q);
-
-			////compute orientation as a matrix
-			//snMatrix44f snR;
-			//snR.createRotationFromQuaternion(q);
-
-			////set new state
-			//(*i)->setPosition(x);
-			//(*i)->setOrientationQuaternion(q);
-			//(*i)->setOrientationMatrix(snR);
-
-			////compute inertia in world coordinate
-			//(*i)->computeWInertiaTensor();
-			//(*i)->computeWInvInertiaTensor();
-
-			////compute colliser in world coordinate
-			//(*i)->updateCollider(x, snR);
 		}
 	}
 

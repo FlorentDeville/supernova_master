@@ -32,115 +32,84 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snActorStatic.h"
-#include "snICollider.h"
+#ifndef COMPONENT_PATH_INTERPOLATE_H
+#define COMPONENT_PATH_INTERPOLATE_H
+
+#include "IComponent.h"
+
+#include "snVector4f-inl.h"
+using Supernova::snVector4f;
 
 namespace Supernova
 {
+	class snActorDynamic;
+}
+using Supernova::snActorDynamic;
 
-	snActorStatic::snActorStatic()
+#include <vector>
+using std::vector;
+
+namespace Devil
+{
+	class WaypointTime
 	{
-		m_name = "default";
-		m_x = snVector4f();
-		m_q = snVector4f(0, 0, 0, 1);
-		m_skinDepth = 0.025f;
-		m_R.identity();
-		m_invR.identity();
-		m_typeOfActor = snActorType::snActorTypeStatic;
-	}
+	public:
+		//Position of the waypoint
+		snVector4f m_position;
 
-	snActorStatic::snActorStatic(const snVector4f& _position)
-	{
-		m_name = "default";
-		m_x = _position;
-		m_q = snVector4f(0, 0, 0, 1);
-		m_skinDepth = 0.025f;
-		m_R.identity();
-		m_invR.identity();
-		m_typeOfActor = snActorType::snActorTypeStatic;
-	}
+		//Speed of the actor to reach this waypoint
+		float m_time;
 
-	snActorStatic::snActorStatic(const snVector4f& _position, const snVector4f& _orientation)
-	{
-		m_name = "default";
-		m_x = _position;
-		m_q = _orientation;
-		m_R.createRotationFromQuaternion(m_q);
-		m_invR = m_R.inverse();
-		m_skinDepth = 0.025f;
-		m_typeOfActor = snActorType::snActorTypeStatic;
-	}
-
-	snActorStatic::~snActorStatic()
-	{
-
-	}
-
-	float snActorStatic::getMass() const
-	{
-		return 0;
-	}
-
-	//Return the inverse of the mass
-	float snActorStatic::getInvMass() const
-	{
-		return 0;
-	}
-
-	//Return the inverse of the inertia expressed in world coordinate
-	const snMatrix44f& snActorStatic::getInvWorldInertia() const
-	{
-		return snMatrix44f::m_zero;
-	}
-
-	//Return the linear velocity
-	snVector4f snActorStatic::getLinearVelocity() const
-	{
-		return snVector4f::m_zero;
-	}
-
-	//Return the angular velocity
-	snVector4f snActorStatic::getAngularVelocity() const
-	{
-		return snVector4f::m_zero;
-	}
-
-	//Set the linear velocity
-	void snActorStatic::setLinearVelocity(const snVector4f& /*_linearVelocity*/)
-	{
-		return;
-	}
-
-	//Set the angular velocity
-	void snActorStatic::setAngularVelocity(const snVector4f& /*_angularVelocity*/)
-	{
-		return;
-	}
-
-	//Move the actor forward in time using _dt as a time step.
-	//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
-	//A static actor cannot move so this function doesn't do anyhthing.
-	void snActorStatic::integrate(float /*_dt*/, float /*_linearSpeed2Limit*/, float /*_angularSpeed2Limit*/)
-	{
-		return;
-	}
-
-	void snActorStatic::initialize()
-	{
-		//create the transform matrix
-		snMatrix44f translation;
-		translation.createTranslation(m_x);
-		snMatrix44f transform;
-		snMatrixMultiply4(m_R, translation, transform);
-
-		//loop through each colliders to initialize them
-		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+	public:
+		void* operator new(size_t _count)
 		{
-			(*i)->initialize();
-			(*i)->setWorldTransform(transform);				
+			return _aligned_malloc(_count, SN_ALIGN_SIZE);
 		}
 
-		//compute the AABB
-		computeBoundingVolume();
-	}
+		void operator delete(void* _p)
+		{
+			_aligned_free(_p);
+		}
+	};
+
+	class ComponentPathInterpolate : public IComponent
+	{
+	private:
+		//The actor to move
+		snActorDynamic* m_actor;
+
+		//The list of waypoint making the path to follow
+		vector<WaypointTime*> m_path;
+
+		//Flag to indicate if the actor as to loop the path or stop when it reaches the end.
+		bool m_loop;
+
+		//Id in the vector m_path of the next waypoint to reach
+		unsigned int m_nextWaypoint;
+
+		//Id in the vector m_path of the previous waypoint.
+		unsigned int m_previousWaypoint;
+
+		//Time the component started the interpolation between the previous waypoint and the next waypoint
+		double m_startTime;
+
+	public:
+		//Construct an instance of the class ComponentFollowPath
+		ComponentPathInterpolate(snActorDynamic* _actor, bool _loop);
+
+		//Clean allocation made by the class ComponentFollowPath
+		virtual ~ComponentPathInterpolate();
+
+		//Update the component.
+		//It updated the position of the actor
+		void update(float _dt);
+
+		//Do nothing
+		void render();
+
+		//Add a waypoint to the path in the last position
+		void addWaypoint(const snVector4f& _position, float _time);
+	};
 }
+
+#endif //ifndef COMPONENT_PATH_INTERPOLATE_H

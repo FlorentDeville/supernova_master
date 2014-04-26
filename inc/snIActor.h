@@ -111,6 +111,9 @@ namespace Supernova
 		//return the list of colliders
 		vector<snICollider*>& getColliders();
 
+		//Return the mass. It returns 0 in case of a static or kinematic body
+		virtual float getMass() const = 0;
+
 		//Return the inverse of the mass
 		virtual float getInvMass() const = 0;
 
@@ -174,7 +177,7 @@ namespace Supernova
 
 #pragma endregion
 
-	
+
 		//Move the actor forward in time using _dt as a time step.
 		//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
 		virtual void integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit) = 0;

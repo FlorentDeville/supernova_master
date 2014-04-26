@@ -51,6 +51,7 @@
 #include "EntityBox.h"
 
 #include "ComponentFollowPath.h"
+#include "ComponentPathInterpolate.h"
 #include "ComponentFloatingText.h"
 
 using namespace Supernova;
@@ -902,7 +903,7 @@ namespace Devil
 			scene->createActorDynamic(&kin, actId);
 			kin->setIsKinematic(true);
 			kin->setName("kinematic");
-			kin->setPosition(snVector4f(0, 100, 0, 1));
+			kin->setPosition(snVector4f(-15, 100, 0, 1));
 			kin->getPhysicMaterial().m_friction = 1.f;
 			kin->getPhysicMaterial().m_restitution = 0.f;
 
@@ -918,12 +919,15 @@ namespace Devil
 			entity->setActor(kin);
 
 			//create path component
-			ComponentFollowPath* path = new ComponentFollowPath(kin, true);
-			float speed = 10.f;
+			//ComponentFollowPath* path = new ComponentFollowPath(kin, true);
+			ComponentPathInterpolate* path = new ComponentPathInterpolate(kin, true);
+			float speed = 5.f;
 			//path->addWaypoint(snVector4f(0, 100, 0, 1), speed);
-			///path->addWaypoint(snVector4f(0, 90, 0, 1), speed);
+			//path->addWaypoint(snVector4f(0, 90, 0, 1), speed);
+
 			path->addWaypoint(snVector4f(-15, 100, 0, 1), speed);
 			path->addWaypoint(snVector4f(15, 100, 0, 1), speed);
+
 			/*path->addWaypoint(snVector4f(15, 90, 0, 1), speed);
 			path->addWaypoint(snVector4f(-15, 90, 0, 1), speed);*/
 			entity->addPreUpdateComponent(path);
@@ -975,7 +979,7 @@ namespace Devil
 		//static left wall
 		{
 			float width = 1;
-			float height = 25;
+			float height = 45;
 			float depth = 25;
 
 			//create the actor
@@ -1008,7 +1012,7 @@ namespace Devil
 		//static right wall
 		{
 			float width = 1;
-			float height = 25;
+			float height = 45;
 			float depth = 25;
 
 			//create the actor

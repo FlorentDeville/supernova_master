@@ -57,6 +57,11 @@ namespace Supernova
 	snActorDynamic::~snActorDynamic()
 	{}
 
+	float snActorDynamic::getMass() const
+	{
+		return m_mass;
+	}
+
 	//Return the inverse of the mass
 	float snActorDynamic::getInvMass() const
 	{
@@ -237,9 +242,6 @@ namespace Supernova
 	//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
 	void snActorDynamic::integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit)
 	{
-		if (m_isKinematic)
-			return;
-
 		//apply damping
 		m_v = m_v * (1 - m_linearDamping * _dt);
 		m_w = m_w * (1 - m_angularDamping * _dt);
