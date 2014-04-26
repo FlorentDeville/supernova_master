@@ -892,9 +892,9 @@ namespace Devil
 
 		//this is a kinematic platform
 		{
-			float width = 20;
+			float width = 40;
 			float height = 2;
-			float depth = 10;
+			float depth = 40;
 
 			//create the actor
 			snActorDynamic* kin = 0;
@@ -918,10 +918,14 @@ namespace Devil
 			entity->setActor(kin);
 
 			//create path component
-			ComponentFollowPath* path = new ComponentFollowPath(kin, true, 1.f / 60.f);
+			ComponentFollowPath* path = new ComponentFollowPath(kin, true);
 			float speed = 10.f;
-			path->addWaypoint(snVector4f(0, 100, 0, 1), speed);
-			path->addWaypoint(snVector4f(0, 90, 0, 1), speed);
+			//path->addWaypoint(snVector4f(0, 100, 0, 1), speed);
+			///path->addWaypoint(snVector4f(0, 90, 0, 1), speed);
+			path->addWaypoint(snVector4f(-15, 100, 0, 1), speed);
+			path->addWaypoint(snVector4f(15, 100, 0, 1), speed);
+			/*path->addWaypoint(snVector4f(15, 90, 0, 1), speed);
+			path->addWaypoint(snVector4f(-15, 90, 0, 1), speed);*/
 			entity->addPreUpdateComponent(path);
 
 			//create text component
@@ -953,7 +957,7 @@ namespace Devil
 			box->setSize(snVector4f(width, height, depth, 0));
 
 			dyn->addCollider(box);
-			dyn->updateMassAndInertia(10);
+			dyn->updateMassAndInertia(100);
 			dyn->initialize();
 
 			//create entity
@@ -968,17 +972,50 @@ namespace Devil
 			entity->addPostUpdateComponent(text);
 		}
 
-		//static object above the dynamic
+		//static left wall
 		{
-			float width = 15;
-			float height = 5;
-			float depth = 15;
+			float width = 1;
+			float height = 25;
+			float depth = 25;
 
 			//create the actor
 			snActorStatic* sta = 0;
 			int actId = -1;
-			scene->createActorStatic(&sta, actId, snVector4f(0, 110, 0, 1), snVector4f(0, 0, 0, 1));
-			sta->setName("static");
+			scene->createActorStatic(&sta, actId, snVector4f(-15, 110, 0, 1), snVector4f(0, 0, 0, 1));
+			sta->setName("static left wall");
+			sta->getPhysicMaterial().m_friction = 1.f;
+			sta->getPhysicMaterial().m_restitution = 1.f;
+
+			//create collider
+			snColliderBox* box = new snColliderBox();
+			box->setSize(snVector4f(width, height, depth, 0));
+
+			sta->addCollider(box);
+			sta->initialize();
+
+			//create entity
+			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
+			entity->setActor(sta);
+
+			//create text component
+			ComponentFloatingText<EntityBox, int>* text = new ComponentFloatingText<EntityBox, int>();
+			text->setAnchor(entity);
+			text->addItem(L"STATIC", 0, 0);
+			text->setOffset(XMFLOAT2(-40, 10));
+			entity->addPostUpdateComponent(text);
+		}
+
+		//static right wall
+		{
+			float width = 1;
+			float height = 25;
+			float depth = 25;
+
+			//create the actor
+			snActorStatic* sta = 0;
+			int actId = -1;
+			scene->createActorStatic(&sta, actId, snVector4f(15, 110, 0, 1), snVector4f(0, 0, 0, 1));
+			sta->setName("static right wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
 

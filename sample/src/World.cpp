@@ -177,16 +177,16 @@ namespace Devil
 		m_hud = 0;
 	}
 
-	void World::update()
+	void World::update(float _dt)
 	{
 		//update world
 		for (std::vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
 		{
 			if ((*i)->getIsActive())
 			{
-				(*i)->preUpdateComponents();
+				(*i)->preUpdateComponents(_dt);
 				(*i)->update();
-				(*i)->postUpdateComponents();
+				(*i)->postUpdateComponents(_dt);
 			}
 			
 		}

@@ -95,18 +95,16 @@ namespace Devil
 		//Id in the vector m_path of the previous waypoint.
 		unsigned int m_previousWaypoint;
 
-		//Time interval between two updates.
-		float m_dt;
 	public:
 		//Construct an instance of the class ComponentFollowPath
-		ComponentFollowPath(snActorDynamic* _actor, bool _loop, float _dt);
+		ComponentFollowPath(snActorDynamic* _actor, bool _loop);
 
 		//Clean allocation made by the class ComponentFollowPath
 		virtual ~ComponentFollowPath();
 
 		//Update the component.
 		//It updated the position of the actor
-		void update();
+		void update(float _dt);
 
 		//Do nothing
 		void render();

@@ -135,16 +135,16 @@ namespace Devil
 		}
 
 		//Updat all the components of the entity
-		void postUpdateComponents()
+		void postUpdateComponents(float _dt)
 		{
 			for (vector<IComponent*>::iterator i = m_postUpdateComponents.begin(); i != m_postUpdateComponents.end(); ++i)
-				(*i)->update();
+				(*i)->update(_dt);
 		}
 
-		void preUpdateComponents()
+		void preUpdateComponents(float _dt)
 		{
 			for (vector<IComponent*>::iterator i = m_preUpdateComponents.begin(); i != m_preUpdateComponents.end(); ++i)
-				(*i)->update();
+				(*i)->update(_dt);
 		}
 
 		void postRenderComponents()

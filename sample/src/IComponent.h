@@ -51,7 +51,7 @@ namespace Devil
 		virtual ~IComponent(){};
 
 		//Update the state of the component
-		virtual void update() = 0;
+		virtual void update(float _dt) = 0;
 
 		//Render the component.
 		virtual void render() = 0;

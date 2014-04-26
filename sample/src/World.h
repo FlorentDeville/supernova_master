@@ -96,7 +96,7 @@ namespace Devil
 		//Delete all entities from the world.
 		void clearWorld();
 
-		void update();
+		void update(float _dt);
 		void render();
 
 		EntityCamera* getCamera() const;

@@ -149,6 +149,7 @@ namespace Devil
 				unsigned long currentTime = (unsigned long)(currentClock.QuadPart - m_lastTick) / tickPerMilliseconds;
 				if (currentTime > m_deltaTime)
 				{
+					float dt = m_deltaTime * 0.001f;
 					m_lastTick = currentClock.QuadPart;
 					LARGE_INTEGER clockStart;
 					QueryPerformanceCounter(&clockStart);
@@ -156,12 +157,12 @@ namespace Devil
 					//Update the inputs
 					INPUT->update();
 
-					//update all the scenes (there is just one anyway)
-					SUPERNOVA->updateAllScenes(m_deltaTime * 0.001f);
-					fpsCounterPhysics++;
-
 					//update the world
-					WORLD->update();
+					WORLD->update(dt);
+
+					//update all the scenes (there is just one anyway)
+					SUPERNOVA->updateAllScenes(dt);
+					fpsCounterPhysics++;
 
 					//Update the scene manager to check if a new scene as to be loaded.
 					SCENEMGR->update();

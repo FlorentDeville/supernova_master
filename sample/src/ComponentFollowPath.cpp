@@ -38,8 +38,8 @@
 namespace Devil
 {
 	//Construct an instance of the class ComponentFollowPath
-	ComponentFollowPath::ComponentFollowPath(snActorDynamic* _actor, bool _loop, float _dt) : m_actor(_actor), m_loop(_loop), 
-		m_path(), m_nextWaypoint(1), m_previousWaypoint(0), m_dt(_dt)
+	ComponentFollowPath::ComponentFollowPath(snActorDynamic* _actor, bool _loop) : m_actor(_actor), m_loop(_loop), 
+		m_path(), m_nextWaypoint(1), m_previousWaypoint(0)
 	{
 	}
 
@@ -56,7 +56,7 @@ namespace Devil
 
 	//Update the component.
 	//It updated the position of the actor
-	void ComponentFollowPath::update()
+	void ComponentFollowPath::update(float _dt)
 	{
 		//The next waypoint does not exist
 		if (m_nextWaypoint >= m_path.size())
@@ -68,7 +68,7 @@ namespace Devil
 		direction.normalize();
 
 		//compute the next position
-		snVector4f nextPosition = m_actor->getPosition() + direction * m_path[m_nextWaypoint]->m_speed * m_dt;
+		snVector4f nextPosition = m_actor->getPosition() + direction * m_path[m_nextWaypoint]->m_speed * _dt;
 
 		//check if we went too far
 		//compare the distance between the two waypoints and the distance between the first waypoint and the computed position.
@@ -91,7 +91,7 @@ namespace Devil
 		}
 
 		//set the position
-		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()));
+		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()) * (1.f/_dt));
 		m_actor->setKinematicPosition(nextPosition);
 		
 	}

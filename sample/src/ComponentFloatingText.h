@@ -92,7 +92,7 @@ namespace Devil
 		virtual ~ComponentFloatingText();
 
 		//Update the component
-		void update();
+		void update(float _dt);
 
 		//Render the text
 		void render();
@@ -120,7 +120,7 @@ namespace Devil
 
 	}
 
-	template<class T, class R> void ComponentFloatingText<T, R>::update()
+	template<class T, class R> void ComponentFloatingText<T, R>::update(float /*_dt*/)
 	{
 		//convert the world position of the anchor entity into screen position
 		XMVECTOR screen = GRAPHICS->worldToScreen(m_anchor->getPosition());
