@@ -32,50 +32,20 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snDebugger.h"
-
 namespace Supernova
 {
-	//Initialize the singleton pointer to 0. The function getInstance will create it.
-	snDebugger* snDebugger::m_instance = 0;
-
-	//Return the unique and global instance of the current class.
-	snDebugger* snDebugger::getInstance()
+	//List of flags defining behavior of actors when a collision is detected. They are bitfield.
+	enum snCollisionFlag : unsigned char
 	{
-		if (m_instance == 0)
-			m_instance = new snDebugger();
+		//Default value. 
+		//Collision response : enabled
+		//Events : disabled
+		CF_NO_FLAG = 0x00,
 
-		return m_instance;
-	}
+		//Do not apply a collision response
+		CF_NO_CONTACT_RESPONSE = 0x01,
 
-	//Delete the singleton and clean up everything it has allocated.
-	void snDebugger::shutdown()
-	{
-		delete m_instance;
-		m_instance = 0;
-	}
-
-	//Set a value in the watch.
-	void snDebugger::setWatchExpression(wstring _name, wstring _value)
-	{
-		m_watch[_name] = _value;
-	}
-
-	//Returns the map containing all the watched values.
-	const map<wstring, wstring>& snDebugger::getWatch() const
-	{
-		return m_watch;
-	}
-
-	void snDebugger::clearWatch()
-	{
-		m_watch.clear();
-	}
-
-	//Default constructor
-	snDebugger::snDebugger() : m_watch()
-	{}
-
-	//Destructor
-	snDebugger::~snDebugger(){}
+		//Enable contact events 
+		CF_CONTACT_CALLBACK = 0x02
+	};
 }

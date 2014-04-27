@@ -489,6 +489,19 @@ namespace Supernova
 		if (!res.m_collision)
 			return;
 
+		//check for collision callbacks
+		if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
+			_a->OnCollision(_b);
+		if (_b->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
+			_b->OnCollision(_a);
+
+		//check if a collision response is needed
+		if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE) ||
+			_b->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE))
+			return;
+
+		
+
 		//make the collision constraints from the collision results
 		vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
 		for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)

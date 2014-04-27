@@ -118,6 +118,9 @@
     <ClInclude Include="inc\snActorDynamic.h">
       <Filter>Simulation\Actors</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snCollisionFlag.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">

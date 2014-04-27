@@ -68,7 +68,7 @@ namespace Supernova
 
 		typedef map<unsigned short, snQueryTestCollisionFunction> snCollisionQueryMap;
 
-		//Map between a key and a collision query function. The key is
+		//Map between a key and a collision query function.
 		snCollisionQueryMap m_collisionQueryMap;
 
 	public:

@@ -126,6 +126,18 @@ namespace Supernova
 		m_skinDepth = _skinDepth;
 	}
 
+	void snIActor::setOnCollisionCallback(OnCollisionCallback _callback)
+	{
+		m_collisionCallback = _callback;
+	}
+
+	void snIActor::OnCollision(snIActor* const _other)
+	{
+		assert(m_collisionCallback != 0);
+
+		m_collisionCallback(this, _other);
+	}
+
 	//Allocate an actor with the correct alignement
 	void* snIActor::operator new(size_t _count)
 	{
@@ -136,6 +148,36 @@ namespace Supernova
 	void snIActor::operator delete(void* _p)
 	{
 		_aligned_free(_p);
+	}
+
+	//Add a collision flag to the actor
+	void snIActor::addCollisionFlag(snCollisionFlag _flag)
+	{
+		m_collisionFlag = m_collisionFlag | _flag;
+	}
+
+	//Remove the collision flag of the actor
+	void snIActor::removeCollisionFlag(snCollisionFlag _flag)
+	{
+		m_collisionFlag = m_collisionFlag & ~_flag;
+	}
+
+	//Set the collision flag
+	void snIActor::setCollisionFlag(snCollisionFlag _flag)
+	{
+		m_collisionFlag = _flag;
+	}
+
+	//Return the collision flag
+	unsigned char snIActor::getCollisionFlag()
+	{
+		return m_collisionFlag;
+	}
+
+	//Check if a collision flag is enabled.
+	bool snIActor::isEnabledCollisionFlag(snCollisionFlag _flag)
+	{
+		return (m_collisionFlag & _flag) != 0;
 	}
 
 	//Compute the bounding volume based on the colliders

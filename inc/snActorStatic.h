@@ -85,6 +85,12 @@ namespace Supernova
 		void integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit);
 
 		void initialize();
+
+	private:
+
+		//Initialize the actor with default values.
+		//This function must be called in the constructor.
+		void init(const snVector4f& _position, const snVector4f& _orientation);
 	};
 }
 #endif //ifndef SN_ACTOR_STATIC_H

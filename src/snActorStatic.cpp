@@ -40,35 +40,17 @@ namespace Supernova
 
 	snActorStatic::snActorStatic()
 	{
-		m_name = "default";
-		m_x = snVector4f();
-		m_q = snVector4f(0, 0, 0, 1);
-		m_skinDepth = 0.025f;
-		m_R.identity();
-		m_invR.identity();
-		m_typeOfActor = snActorType::snActorTypeStatic;
+		init(snVector4f(), snVector4f(0, 0, 0, 1));
 	}
 
 	snActorStatic::snActorStatic(const snVector4f& _position)
 	{
-		m_name = "default";
-		m_x = _position;
-		m_q = snVector4f(0, 0, 0, 1);
-		m_skinDepth = 0.025f;
-		m_R.identity();
-		m_invR.identity();
-		m_typeOfActor = snActorType::snActorTypeStatic;
+		init(_position, snVector4f(0, 0, 0, 1));
 	}
 
 	snActorStatic::snActorStatic(const snVector4f& _position, const snVector4f& _orientation)
 	{
-		m_name = "default";
-		m_x = _position;
-		m_q = _orientation;
-		m_R.createRotationFromQuaternion(m_q);
-		m_invR = m_R.inverse();
-		m_skinDepth = 0.025f;
-		m_typeOfActor = snActorType::snActorTypeStatic;
+		init(_position, _orientation);
 	}
 
 	snActorStatic::~snActorStatic()
@@ -142,5 +124,21 @@ namespace Supernova
 
 		//compute the AABB
 		computeBoundingVolume();
+	}
+
+	void snActorStatic::init(const snVector4f& _position, const snVector4f& _orientation)
+	{
+		m_name = "default";
+
+		m_x = _position;
+
+		m_q = _orientation;
+		m_R.createRotationFromQuaternion(m_q);
+		m_invR = m_R.inverse();
+
+		m_skinDepth = 0.025f;
+		m_typeOfActor = snActorType::snActorTypeStatic;
+		m_collisionFlag = snCollisionFlag::CF_NO_FLAG;
+		m_collisionCallback = 0;
 	}
 }

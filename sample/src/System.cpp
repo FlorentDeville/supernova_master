@@ -25,7 +25,7 @@
 #include "snFactory.h"
 #include "snQuaternion.h"
 #include "snFixedConstraint.h"
-
+#include "snDebugger.h"
 
 #include <string>
 #include <Windowsx.h>
@@ -149,6 +149,8 @@ namespace Devil
 				unsigned long currentTime = (unsigned long)(currentClock.QuadPart - m_lastTick) / tickPerMilliseconds;
 				if (currentTime > m_deltaTime)
 				{
+					DEBUGGER->clearWatch();
+
 					float dt = m_deltaTime * 0.001f;
 					m_lastTick = currentClock.QuadPart;
 					LARGE_INTEGER clockStart;

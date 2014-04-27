@@ -69,6 +69,9 @@ namespace Supernova
 		//Returns the map containing all the watched values.
 		const map<wstring, wstring>& getWatch() const;
 
+		//Clear the content of the watch
+		void clearWatch();
+
 	private:
 		//Default constructor
 		snDebugger();

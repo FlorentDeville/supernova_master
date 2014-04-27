@@ -47,6 +47,7 @@
 #include "snActorStatic.h"
 #include "snColliderBox.h"
 #include "snQuaternion.h"
+#include "snDebugger.h"
 
 #include "EntityBox.h"
 
@@ -976,7 +977,7 @@ namespace Devil
 			entity->addPostUpdateComponent(text);
 		}
 
-		//static left wall
+		//static right wall
 		{
 			float width = 1;
 			float height = 45;
@@ -986,7 +987,7 @@ namespace Devil
 			snActorStatic* sta = 0;
 			int actId = -1;
 			scene->createActorStatic(&sta, actId, snVector4f(-15, 110, 0, 1), snVector4f(0, 0, 0, 1));
-			sta->setName("static left wall");
+			sta->setName("static right wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
 
@@ -1009,7 +1010,7 @@ namespace Devil
 			entity->addPostUpdateComponent(text);
 		}
 
-		//static right wall
+		//static left wall
 		{
 			float width = 1;
 			float height = 45;
@@ -1019,9 +1020,23 @@ namespace Devil
 			snActorStatic* sta = 0;
 			int actId = -1;
 			scene->createActorStatic(&sta, actId, snVector4f(15, 110, 0, 1), snVector4f(0, 0, 0, 1));
-			sta->setName("static right wall");
+			sta->setName("static left wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
+			sta->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			sta->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			sta->setOnCollisionCallback([](snIActor* const _a, snIActor* const _b)
+			{
+				string strAName = _a->getName();
+				wstring _aName;
+				_aName.assign(strAName.begin(), strAName.end());
+
+				string strBName = _b->getName();
+				wstring _bName;
+				_bName.assign(strBName.begin(), strBName.end());
+				wstring text = _aName + L" VS " + _bName;
+				DEBUGGER->setWatchExpression(L"COLLISION CALLBACK", text);
+			});
 
 			//create collider
 			snColliderBox* box = new snColliderBox();

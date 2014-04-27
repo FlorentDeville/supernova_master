@@ -52,6 +52,9 @@ namespace Supernova
 		m_w = snVector4f(0, 0, 0, 0);
 		m_isKinematic = false;
 		m_typeOfActor = snActorType::snActorTypeDynamic;
+
+		m_collisionFlag = snCollisionFlag::CF_NO_FLAG;
+		m_collisionCallback = 0;
 	}
 
 	snActorDynamic::~snActorDynamic()

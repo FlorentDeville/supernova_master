@@ -44,9 +44,14 @@ using std::vector;
 #include "snMatrix44f.h"
 #include "snPhysicMaterial.h"
 #include "snAABB.h"
+#include "snCollisionFlag.h"
 
 namespace Supernova
 {
+	class snIActor;
+	//Define the signature of a callback function called when a collision is detected
+	typedef void(*OnCollisionCallback)(snIActor* const, snIActor* const);
+
 	//Forward declarations
 	class snICollider;
 
@@ -93,6 +98,13 @@ namespace Supernova
 
 		//Define the type of actor
 		snActorType m_typeOfActor;
+
+		//Flags defining behavior of the actor when a collision is detected
+		unsigned char m_collisionFlag;
+
+		//Function to call when a collision is detected on this actor. The collision flag CF_CONTACT_CALLBACK needs to be set in order
+		// to the callback to be called.
+		OnCollisionCallback m_collisionCallback;
 
 #pragma endregion
 
@@ -165,6 +177,9 @@ namespace Supernova
 		//Set the angular velocity
 		virtual void setAngularVelocity(const snVector4f& _angularVelocity) = 0;
 
+		//Set the collision callback
+		void setOnCollisionCallback(OnCollisionCallback _callback);
+
 #pragma endregion
 
 #pragma region Allocation
@@ -177,6 +192,24 @@ namespace Supernova
 
 #pragma endregion
 
+#pragma region Collision Flags
+
+		//Add a collision flag to the actor
+		void addCollisionFlag(snCollisionFlag _flag);
+
+		//Remove the collision flag of the actor
+		void removeCollisionFlag(snCollisionFlag _flag);
+
+		//Set the collision flag
+		void setCollisionFlag(snCollisionFlag _flag);
+
+		//Return the collision flag
+		unsigned char getCollisionFlag();
+
+		//Check if a collision flag is enabled.
+		bool isEnabledCollisionFlag(snCollisionFlag _flag);
+
+#pragma endregion
 
 		//Move the actor forward in time using _dt as a time step.
 		//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
@@ -185,6 +218,8 @@ namespace Supernova
 		//Initialize the actor so it is ready to be used in the scene. It has to be called and must be called after all the parameters of
 		// the actor and its colliders are set.
 		virtual void initialize() = 0;
+
+		void OnCollision(snIActor* const _other);
 
 	protected :
 		//Compute the bounding volume based on the colliders
