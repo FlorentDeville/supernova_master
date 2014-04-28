@@ -112,6 +112,9 @@
     <ClInclude Include="inc\snIActor.h">
       <Filter>Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snCollisionFlag.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
