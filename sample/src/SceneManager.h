@@ -94,6 +94,8 @@ namespace Devil
 		//Show difference between static, dynamic and kinematic
 		void createSceneActorsType();
 
+		void createSceneDomino();
+
 		void setCollisionMode(snCollisionMode _collisionMode);
 		
 		void createGround(snScene* const _scene, float _restitution, float _friction);

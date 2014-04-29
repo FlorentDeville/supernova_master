@@ -121,6 +121,12 @@ namespace Devil
 			createSceneActorsType();
 			INPUT->keyUp(117);
 		}
+		else if (INPUT->isKeyDown(118))//F7
+		{
+			clearScene();
+			createSceneDomino();
+			INPUT->keyUp(118);
+		}
 	}
 
 	void SceneManager::createBasicTest()
@@ -1055,6 +1061,115 @@ namespace Devil
 			text->addItem(L"STATIC", 0, 0);
 			text->setOffset(XMFLOAT2(-40, 10));
 			entity->addPostUpdateComponent(text);
+		}
+	}
+
+	void SceneManager::createSceneDomino()
+	{
+		//initialize the world
+		WORLD->initialize();
+
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene : Static, Dynamic, Kinematic");
+
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+
+		//create the physics scene
+		int sceneId = -1;
+		snScene* scene = 0;
+		SUPERNOVA->createScene(&scene, sceneId);
+		scene->setCollisionMode(m_collisionMode);
+
+		int solverIterationCount = 4;
+		scene->setSolverIterationCount(solverIterationCount);
+
+		scene->setLinearSquaredSpeedThreshold(0.000001f);
+		scene->setAngularSquaredSpeedThreshold(0.000001f);
+
+		//create the camera.
+		XMVECTOR cameraPosition = XMVectorSet(-20, 60, 60, 1);
+		XMVECTOR cameraLookAt = XMVectorSet(70, 0, 0, 1);
+		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
+		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
+
+
+		WORLD->deactivateCollisionPoint();
+
+		createGround(scene, 1, 1);
+
+		//create the path
+		snVector4f dominoSize(5, 10, 1, 0);
+
+		snVector4f path[4];
+		path[0] = snVector4f(0, dominoSize[1] * 0.5f, 0, 1);
+		path[1] = snVector4f(100, dominoSize[1] * 0.5f, 0, 1);
+		path[2] = snVector4f(100, dominoSize[1] * 0.5f, 100, 1);
+		path[3] = snVector4f(0, dominoSize[1] * 0.5f, 100, 1);
+
+		//create a line of domino
+		int dominoCount = 30;
+		float timeStep = 1.f / dominoCount;
+		
+		//snVector4f position(0, dominoSize[1] * 0.5f, 0, 1);
+		//snVector4f distance(dominoSize[1] * 0.7f, 0, 0, 1);
+
+		for (int i = 0; i < dominoCount; ++i)
+		{
+			//create actor
+			snActorDynamic* actor = 0;
+			int actorId = -1;
+			scene->createActorDynamic(&actor, actorId);
+			snVector4f position = snVector4f::catmullRomInterpolation(path[0], path[0], path[1], path[1], timeStep * i);
+			actor->setPosition(position);
+			actor->setOrientation(snQuaternionFromEuler(0, SN_PI * 0.5f, 0));
+			actor->getPhysicMaterial().m_friction = 0.1f;
+			actor->getPhysicMaterial().m_restitution = 0.f;
+
+			snColliderBox* collider = new snColliderBox();
+			collider->setSize(dominoSize);
+
+			actor->addCollider(collider);
+			actor->updateMassAndInertia(2);
+			actor->initialize();
+
+			//create entity
+			EntityBox* box = WORLD->createBox(XMFLOAT3(dominoSize[0], dominoSize[1], dominoSize[2]));
+			box->setActor(actor);
+
+			//update position
+			//position = position + distance;
+		}
+
+		//create the hammer
+		{
+			snVector4f constraintOrigin(0, dominoSize[1] * 1.9f, 0, 1);
+			snVector4f hammerOffset(-dominoSize[1] * 0.9f, dominoSize[1] * 0.9f, 0, 1);
+			snVector4f hammerPosition = snVector4f(0, dominoSize[1], 0, 1) + hammerOffset;
+			float constraintDistance = (constraintOrigin - hammerPosition).norme();
+
+			snActorDynamic* actor = 0;
+			int actorId = -1;
+			scene->createActorDynamic(&actor, actorId);
+			actor->setPosition(hammerPosition);
+			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
+			actor->getPhysicMaterial().m_friction = 0;
+			actor->getPhysicMaterial().m_restitution = 0.f;
+
+			snColliderBox* collider = new snColliderBox();
+			int size = 3;
+			collider->setSize(snVector4f(size, size, size, 0));
+
+			actor->addCollider(collider);
+			actor->updateMassAndInertia(10);
+			actor->initialize();
+
+			//create entity
+			EntityBox* box = WORLD->createBox(XMFLOAT3(size, size, size));
+			box->setActor(actor);
+
+			//create the fixed constraint
+			snFixedConstraint* constraint = scene->createFixedConstraint(actor, constraintOrigin, constraintDistance);
+			WORLD->createFixedConstraint(constraint);
 		}
 	}
 

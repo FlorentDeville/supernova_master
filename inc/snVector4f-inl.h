@@ -257,6 +257,18 @@ namespace Supernova
 		float cosineT = (1.f - cosf(_t * SN_PI)) * 0.5f;
 		return (_start * (1.f - cosineT) + _end * cosineT);
 	}
+
+	inline snVector4f snVector4f::catmullRomInterpolation(const snVector4f& _y0, const snVector4f& _y1, const snVector4f& _y2,
+		const snVector4f& _y3, float _t)
+	{
+		snVector4f a0 = (_y3 - _y0) * 0.5f + (_y1 - _y2) * 1.5f;//_y0 * -0.5f + _y1 * 1.5f - _y2 * 1.5f + _y3 * 0.5f;
+		snVector4f a1 = _y0 - _y1 * 2.5f + _y2 * 2 - _y3 * 0.5f;
+		snVector4f a2 = (_y2 - _y0) * 0.5f;
+
+		float t2 = _t * _t;
+
+		return a0 * t2 * _t + a1 * t2 + a2 * _t + _y1;
+	}
 }
 
 #endif //ifndef SN_VECTOR4F_INL

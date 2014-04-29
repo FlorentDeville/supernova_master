@@ -146,6 +146,10 @@ namespace Supernova
 
 		//Compute a cosine interpolation between two vectors given a parameter t between 0 and 1
 		static snVector4f cosInterpolation(const snVector4f& _start, const snVector4f& _end, float _t);
+
+		//Compute catmull rom interpolation.
+		static snVector4f catmullRomInterpolation(const snVector4f& _y0, const snVector4f& _y1, const snVector4f& _y2,
+			const snVector4f& _y3, float _t);
 		
 	};
 }
