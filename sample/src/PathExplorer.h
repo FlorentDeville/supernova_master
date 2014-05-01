@@ -32,42 +32,75 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_MATH_H
-#define SN_MATH_H
+#ifndef PATH_EXPLORER_H
+#define PATH_EXPLORER_H
 
-#include <cfloat>
+#include <vector>
+using std::vector;
 
-//The maximum number a floating point variable can store.
-#define SN_FLOAT_MAX FLT_MAX
-
-//The smallest absolute number a floating point variable can store
-#define SN_FLOAT_MIN FLT_MIN
-
-#define SN_PI 3.1415926f
+#include "snVector4f-inl.h"
+using Supernova::snVector4f;
 
 namespace Supernova
 {
-	class snVector4f;
 	class snMatrix44f;
-
-	//Clamp the value between min and max.
-	float clamp(float _value, float _min, float _max);
-
-	//Clamp a vector componentwise.
-	snVector4f clampComponents(const snVector4f& _v, float _min, float _max);
-
-	//Return true if the value is between the min and max value included.
-	bool isInRange(float _value, float _min, float _max);
-
-	//Return 1 if the float is positive, -1 if negative
-	int sign(float _value);
-
-	//compute an orthonormal basis for the vector _a. This is a code snippet from Erin Catto's blog.
-	void computeBasis(const snVector4f& _a, snVector4f& _b, snVector4f& _c);
-
-	//compute a frenet matrix from a catmull rom interpolation
-	void computeFrenetFromCatmullRom(const snVector4f& _a0, const snVector4f& _a1, const snVector4f& _a2, const snVector4f& _a3,
-		float _t, snMatrix44f& _frenet);
-
 }
-#endif //SN_MATH_H
+using Supernova::snMatrix44f;
+
+namespace Devil
+{
+	//Definition of the callback function called for every point on the path.
+	typedef void(*OnPathCallback)(const snMatrix44f&);
+
+	class PathExplorerWaypoint
+	{
+	public:
+		snVector4f m_controlPoint;
+		float m_distance;
+
+	public:
+		void* operator new(size_t _count)
+		{
+			return _aligned_malloc(_count, SN_ALIGN_SIZE);
+		}
+
+		void operator delete(void* _p)
+		{
+			_aligned_free(_p);
+		}
+	};
+
+	//Helper class used to create a path with catmull rom interpolation. A set of points are created along the path, separated by a given
+	// distance. A callback is called for each point found.
+	class PathExplorer
+	{
+	private:
+
+		//Control points defining the path.
+		vector<PathExplorerWaypoint*> m_path;
+
+		//function called every time a point is found along the path.
+		OnPathCallback m_callback;
+
+		//Indicates if the path loops.
+		bool m_loop;
+
+		//Indices of waypoint used to interpolate the path
+		unsigned int m_indices[4];
+
+	public:
+		PathExplorer(bool _loop);
+		~PathExplorer();
+
+		void addWaypoint(const snVector4f& _controlPoint, float _distance);
+		void setCallback(OnPathCallback _callback);
+
+		void run();
+
+	private:
+		bool nextPoint(const snVector4f& _previousPoint, float& _t, snMatrix44f& _frenet);
+
+	};
+}
+
+#endif //ifndef PATH_EXPLORER_H
