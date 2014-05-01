@@ -129,6 +129,12 @@ namespace Devil
 			createSceneDomino();
 			INPUT->keyUp(118);
 		}
+		else if (INPUT->isKeyDown(119))//F8
+		{
+			clearScene();
+			createTower();
+			INPUT->keyUp(119);
+		}
 	}
 
 	void SceneManager::createBasicTest()
@@ -579,6 +585,81 @@ namespace Devil
 			previousActor = act;
 		}
 	}
+
+	void SceneManager::createTower()
+	{
+		WORLD->initialize();
+
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene : Broken Tower");
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+		int sceneId = -1;
+		snScene* m_physicScene = 0;
+		SUPERNOVA->createScene(&m_physicScene, sceneId);
+		m_physicScene->setCollisionMode(m_collisionMode);
+
+		int solverIterationCount = 120;
+		m_physicScene->setSolverIterationCount(solverIterationCount);
+		//m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
+		m_physicScene->setAngularSquaredSpeedThreshold(0.f);
+		m_physicScene->setContactConstraintBeta(0.005f);
+
+		//create the camera.
+		XMVECTOR 	cameraPosition = XMVectorSet(50, 50, 100, 1);
+		XMVECTOR 	cameraLookAt = XMVectorSet(5, 7, 0, 1);
+		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
+		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
+		
+		WORLD->activateCollisionPoint();
+		
+		float 	groundHeight = 0;
+		
+		createGround(m_physicScene, 0, 1);
+		
+		//back 	wall
+		{
+			float width = 200;
+			float height = 200;
+			float depth = 2;
+
+			//create actor			
+			snActorStatic* 	act = 0;
+			
+			int actorId = -1;
+			
+			m_physicScene->createActorStatic(&act, actorId, snVector4f(0, 101, -80, 1), snVector4f(0, 0, 0, 1));
+			act->setName("back");
+			act->getPhysicMaterial().m_restitution = 1;
+			act->getPhysicMaterial().m_friction = 1;
+
+			//create collider				
+			snColliderBox* 	collider = new snColliderBox();
+			collider->setSize(snVector4f(width, height, depth, 0));
+			act->addCollider(collider);
+				
+			//initialize
+			act->initialize();
+			
+			//create 	world 	entity	
+			EntityBox* 	kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
+			kinematicBox->setActor(act);
+			
+		}
+		
+
+			
+		//tower
+		snVector4f origin(0, groundHeight, 0, 1);
+		int levelCount = 5;
+		for (int i = 0; i < levelCount; ++i)		
+		{
+			origin = createTowerLevel(m_physicScene, origin);	
+		}
+		
+		return;
+		
+	}
+
 
 	void SceneManager::createSceneFriction()
 	{
@@ -1307,115 +1388,110 @@ namespace Devil
 		WORLD->clearWorld();
 	}
 
-	//snVector4f SceneManager::createTowerLevel(snScene* const _scene, const snVector4f& _origin) const
-	//{
-	//	//colors
-	//	const int colorCount = 5;
-	//	XMFLOAT4 colors[colorCount];
-	//	colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
-	//	colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
-	//	colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
-	//	colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
-	//	colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
+	snVector4f SceneManager::createTowerLevel(snScene* const _scene, const snVector4f& _origin) const
+	{
+		//colors
+		const int colorCount = 5;
+		XMFLOAT4 colors[colorCount];
+		colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
+		colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
+		colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
+		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
+		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
 
-	//	float towerWidth = 20;
-	//	float pillarHeight = 5;
-	//	float pillarWidth = 2;
-	//	float pillarDepth = 2;
+		float towerWidth = 20;
+		float pillarHeight = 5;
+		float pillarWidth = 2;
+		float pillarDepth = 2;
 
-	//	const int pillarCount = 4;
-	//	snVector4f pillarPosition[pillarCount];
+		const int pillarCount = 4;
+		snVector4f pillarPosition[pillarCount];
 
-	//	float halfTowerWidth = towerWidth * 0.5f;
-	//	float halfPillarHeight = pillarHeight * 0.5f;
-	//	pillarPosition[0] = snVector4f(halfTowerWidth, halfPillarHeight, halfTowerWidth, 0);
-	//	pillarPosition[1] = snVector4f(-halfTowerWidth, halfPillarHeight, halfTowerWidth, 0);
-	//	pillarPosition[2] = snVector4f(-halfTowerWidth, halfPillarHeight, -halfTowerWidth, 0);
-	//	pillarPosition[3] = snVector4f(halfTowerWidth, halfPillarHeight, -halfTowerWidth, 0);
+		float halfTowerWidth = towerWidth * 0.5f;
+		float halfPillarHeight = pillarHeight * 0.5f;
+		pillarPosition[0] = snVector4f(halfTowerWidth, halfPillarHeight, halfTowerWidth, 0);
+		pillarPosition[1] = snVector4f(-halfTowerWidth, halfPillarHeight, halfTowerWidth, 0);
+		pillarPosition[2] = snVector4f(-halfTowerWidth, halfPillarHeight, -halfTowerWidth, 0);
+		pillarPosition[3] = snVector4f(halfTowerWidth, halfPillarHeight, -halfTowerWidth, 0);
 
-	//	//create pillars
-	//	for (int i = 0; i < pillarCount; ++i)
-	//	{
-	//		//create actor
-	//		snActor* act = 0;
-	//		int actorId = -1;
-	//		_scene->createActor(&act, actorId);
+		//create pillars
+		for (int i = 0; i < pillarCount; ++i)
+		{
+			//create actor
+			snActorDynamic* act = 0;
+			int actorId = -1;
+			_scene->createActorDynamic(&act, actorId);
 
-	//		snVector4f pos = pillarPosition[i] + _origin;
-	//		act->setName("pillar1");
-	//		act->setMass(50);
-	//		act->setPosition(pos);
-	//		act->setIsKinematic(false);
-	//		act->getPhysicMaterial().m_restitution = 0;
-	//		act->getPhysicMaterial().m_friction = 1;
+			snVector4f pos = pillarPosition[i] + _origin;
+			act->setName("pillar1");
+			
+			act->setPosition(pos);
+			act->setIsKinematic(false);
+			act->getPhysicMaterial().m_restitution = 0;
+			act->getPhysicMaterial().m_friction = 1;
 
-	//		//create collider
-	//		snColliderBox* collider = 0;
-	//		int colliderId = -1;
-	//		act->createColliderBox(&collider, colliderId);
+			//create collider
+			snColliderBox* collider = new snColliderBox();
+			collider->setSize(snVector4f(pillarWidth, pillarHeight, pillarDepth, 0));
+			act->addCollider(collider);
 
-	//		collider->setSize(snVector4f(pillarWidth, pillarHeight, pillarDepth, 0));
+			//initialize
+			act->updateMassAndInertia(50);
+			act->initialize();
 
-	//		//initialize
-	//		collider->initialize();
-	//		act->initialize();
+			EntityBox* box = WORLD->createBox(XMFLOAT3(pillarWidth, pillarHeight, pillarDepth), colors[actorId % colorCount]);
+			box->setActor(act);
+		}
 
-	//		EntityBox* box = WORLD->createBox(XMFLOAT3(pillarWidth, pillarHeight, pillarDepth), colors[actorId % colorCount]);
-	//		box->setActor(act);
-	//	}
+		float bedWidth = towerWidth + 2 * pillarWidth;
+		float bedDepth = pillarDepth * 2;
+		float bedHeight = 1;
 
-	//	float bedWidth = towerWidth + 2 * pillarWidth;
-	//	float bedDepth = pillarDepth * 2;
-	//	float bedHeight = 1;
+		float firstBedHeight = pillarHeight + bedHeight * 0.5f;
+		float secondBedHeight = firstBedHeight + bedHeight;
 
-	//	float firstBedHeight = pillarHeight + bedHeight * 0.5f;
-	//	float secondBedHeight = firstBedHeight + bedHeight;
+		snVector4f bedPosition[4];
+		bedPosition[0] = snVector4f(0, firstBedHeight, halfTowerWidth, 0);
+		bedPosition[1] = snVector4f(0, firstBedHeight, -halfTowerWidth, 0);
+		bedPosition[2] = snVector4f(halfTowerWidth, secondBedHeight, 0, 0);
+		bedPosition[3] = snVector4f(-halfTowerWidth, secondBedHeight, 0, 0);
 
-	//	snVector4f bedPosition[4];
-	//	bedPosition[0] = snVector4f(0, firstBedHeight, halfTowerWidth, 0);
-	//	bedPosition[1] = snVector4f(0, firstBedHeight, -halfTowerWidth, 0);
-	//	bedPosition[2] = snVector4f(halfTowerWidth, secondBedHeight, 0, 0);
-	//	bedPosition[3] = snVector4f(-halfTowerWidth, secondBedHeight, 0, 0);
+		snVector4f bedSize[4];
+		bedSize[0] = snVector4f(bedWidth, bedHeight, bedDepth, 0);
+		bedSize[1] = snVector4f(bedWidth, bedHeight, bedDepth, 0);
+		bedSize[2] = snVector4f(bedDepth, bedHeight, bedWidth, 0);
+		bedSize[3] = snVector4f(bedDepth, bedHeight, bedWidth, 0);
 
-	//	snVector4f bedSize[4];
-	//	bedSize[0] = snVector4f(bedWidth, bedHeight, bedDepth, 0);
-	//	bedSize[1] = snVector4f(bedWidth, bedHeight, bedDepth, 0);
-	//	bedSize[2] = snVector4f(bedDepth, bedHeight, bedWidth, 0);
-	//	bedSize[3] = snVector4f(bedDepth, bedHeight, bedWidth, 0);
+		//create bed between pillars
+		for (int i = 0; i < pillarCount; ++i)
+		{
+			//create actor
+			snActorDynamic* act = 0;
+			int actorId = -1;
+			_scene->createActorDynamic(&act, actorId);
 
-	//	//create bed between pillars
-	//	for (int i = 0; i < pillarCount; ++i)
-	//	{
-	//		//create actor
-	//		snActor* act = 0;
-	//		int actorId = -1;
-	//		_scene->createActor(&act, actorId);
+			snVector4f pos = bedPosition[i] + _origin;
+			act->setName("bed");
+			act->setPosition(pos);
+			act->setIsKinematic(false);
+			act->getPhysicMaterial().m_restitution = 0;
+			act->getPhysicMaterial().m_friction = 1.f;
 
-	//		snVector4f pos = bedPosition[i] + _origin;
-	//		act->setName("bed");
-	//		act->setMass(50);
-	//		act->setPosition(pos);
-	//		act->setIsKinematic(false);
-	//		act->getPhysicMaterial().m_restitution = 0;
-	//		act->getPhysicMaterial().m_friction = 0.9f;
+			//create collider
+			snColliderBox* collider = new snColliderBox();
+			collider->setSize(bedSize[i]);
+			act->addCollider(collider);
 
-	//		//create collider
-	//		snColliderBox* collider = 0;
-	//		int colliderId = -1;
-	//		act->createColliderBox(&collider, colliderId);
+			//initialize
+			act->updateMassAndInertia(50);
+			act->initialize();
 
-	//		collider->setSize(bedSize[i]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(bedSize[i].getX(), bedSize[i].getY(), bedSize[i].getZ()), colors[actorId % colorCount]);
+			box->setActor(act);
+		}
 
-	//		//initialize
-	//		collider->initialize();
-	//		act->initialize();
-
-	//		EntityBox* box = WORLD->createBox(XMFLOAT3(bedSize[i].getX(), bedSize[i].getY(), bedSize[i].getZ()), colors[actorId % colorCount]);
-	//		box->setActor(act);
-	//	}
-
-	//	return _origin + snVector4f(0, pillarHeight + 2 * bedHeight, 0, 0);
-	//}
+		return _origin + snVector4f(0, pillarHeight + 2 * bedHeight, 0, 0);
+	}
 
 	
 }

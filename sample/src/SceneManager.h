@@ -84,8 +84,8 @@ namespace Devil
 		////CCD test
 		//void createScene4();
 
-		////Stack + CCD
-		//void createTower();
+		//Stack
+		void createTower();
 
 		void createSceneFriction();
 
@@ -106,7 +106,7 @@ namespace Devil
 
 		void clearScene() const;
 
-		//snVector4f createTowerLevel(snScene* const _scene, const snVector4f& _origin) const;
+		snVector4f createTowerLevel(snScene* const _scene, const snVector4f& _origin) const;
 	};
 
 #define SCENEMGR SceneManager::getInstance()
