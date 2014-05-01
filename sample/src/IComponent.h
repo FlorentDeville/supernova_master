@@ -47,8 +47,17 @@ namespace Devil
 	///////////////////////////////////////////
 	class IComponent
 	{
+	protected:
+		bool m_isActive;
+
 	public:
 		virtual ~IComponent(){};
+
+		//Get if the component is active
+		bool getIsActive() const { return m_isActive; }
+
+		//Set if the component is active
+		void setIsActive(bool _isActive){ m_isActive = _isActive; }
 
 		//Update the state of the component
 		virtual void update(float _dt) = 0;

@@ -41,6 +41,7 @@ namespace Devil
 	ComponentFollowPath::ComponentFollowPath(snActorDynamic* _actor, bool _loop) : m_actor(_actor), m_loop(_loop), 
 		m_path(), m_nextWaypoint(1), m_previousWaypoint(0)
 	{
+		m_isActive = true;
 	}
 
 	//Clean allocation made by the class ComponentFollowPath

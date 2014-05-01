@@ -112,7 +112,7 @@ namespace Devil
 
 	template<class T, class R> ComponentFloatingText<T, R>::ComponentFloatingText() : m_offset(0, 0)
 	{
-
+		m_isActive = true;
 	}
 
 	template<class T, class R> ComponentFloatingText<T, R>::~ComponentFloatingText()

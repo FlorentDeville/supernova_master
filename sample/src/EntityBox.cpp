@@ -49,6 +49,12 @@ namespace Devil
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
+		if(m_wireframe)
+			GRAPHICS->getDirectXWrapper()->turnOnWireframeMode();
+
 		m_gfx->render(transform, viewMatrix, projectionMatrix);
+		
+		if(m_wireframe)
+			GRAPHICS->getDirectXWrapper()->turnOnFillMode();
 	}
 }

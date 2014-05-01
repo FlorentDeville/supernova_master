@@ -70,8 +70,11 @@ namespace Devil
 		//List of components to update before updating the entity.
 		vector<IComponent*> m_preUpdateComponents;
 
+		//Indicates if this entity has to be rendered in wireframe
+		bool m_wireframe;
+
 	public:
-		IWorldEntity() : m_isActive(true), m_postUpdateComponents(), m_preUpdateComponents()
+		IWorldEntity() : m_isActive(true), m_postUpdateComponents(), m_preUpdateComponents(), m_wireframe(false)
 		{
 			m_position = XMVectorSet(0, 0, 0, 1);
 			m_orientation = XMFLOAT3(0, 0, 0);
@@ -107,6 +110,8 @@ namespace Devil
 
 		void setIsActive(bool _isActive){ m_isActive = _isActive; }
 
+		void setWireframe(bool _isWireframe){ m_wireframe = _isWireframe; }
+
 		bool getIsActive() const { return m_isActive; }
 
 		//Return the list of components attached to this entity
@@ -138,25 +143,37 @@ namespace Devil
 		void postUpdateComponents(float _dt)
 		{
 			for (vector<IComponent*>::iterator i = m_postUpdateComponents.begin(); i != m_postUpdateComponents.end(); ++i)
-				(*i)->update(_dt);
+			{
+				if ((*i)->getIsActive())
+					(*i)->update(_dt);
+			}
 		}
 
 		void preUpdateComponents(float _dt)
 		{
 			for (vector<IComponent*>::iterator i = m_preUpdateComponents.begin(); i != m_preUpdateComponents.end(); ++i)
-				(*i)->update(_dt);
+			{
+				if ((*i)->getIsActive())
+					(*i)->update(_dt);
+			}
 		}
 
 		void postRenderComponents()
 		{
 			for (vector<IComponent*>::iterator i = m_postUpdateComponents.begin(); i != m_postUpdateComponents.end(); ++i)
-				(*i)->render();
+			{
+				if ((*i)->getIsActive())
+					(*i)->render();
+			}
 		}
 
 		void preRenderComponents()
 		{
 			for (vector<IComponent*>::iterator i = m_preUpdateComponents.begin(); i != m_preUpdateComponents.end(); ++i)
-				(*i)->render();
+			{
+				if ((*i)->getIsActive())
+					(*i)->render();
+			}
 		}
 	};
 }
