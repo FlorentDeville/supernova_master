@@ -82,6 +82,7 @@ namespace Devil
 		snVector4f up, left, forward;
 		up = m_constraint->getActor()->getPosition() - m_constraint->getFixedPosition();
 		up.normalize();
+		up[3] = 0;
 		computeBasis(up, left, forward);
 		XMMATRIX linkRotate;
 		linkRotate.r[0] = left.m_vec;
