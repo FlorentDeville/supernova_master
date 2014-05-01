@@ -1178,7 +1178,7 @@ namespace Devil
 			actor->setPosition(hammerPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
-			actor->getPhysicMaterial().m_restitution = 1.f;
+			actor->getPhysicMaterial().m_restitution = 0.f;
 			actor->setLinearDampingCoeff(0.5f);
 
 			snColliderBox* collider = new snColliderBox();
@@ -1196,6 +1196,67 @@ namespace Devil
 			//create the fixed constraint
 			snFixedConstraint* constraint = scene->createFixedConstraint(actor, constraintOrigin, constraintDistance);
 			WORLD->createFixedConstraint(constraint);
+		}
+
+		//create kinematic component holding the hammer
+		{
+			snActorDynamic* actor = 0;
+			int actorId = -1;
+			scene->createActorDynamic(&actor, actorId);
+			actor->setPosition(snVector4f(0, dominoSize[1] + 7, -130, 1));
+			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
+			actor->getPhysicMaterial().m_friction = 1;
+			actor->getPhysicMaterial().m_restitution = 0.f;
+			actor->setIsKinematic(true);
+
+			snColliderBox* collider = new snColliderBox();
+			float width = 15;
+			float height = 1;
+			float depth = 10;
+			collider->setSize(snVector4f(width, height, depth, 0));
+
+			actor->addCollider(collider);
+			actor->initialize();
+
+			//create entity
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth));
+			box->setActor(actor);
+			box->setWireframe(false);
+		}
+
+		//create trigger
+		{
+			snActorDynamic* actor = 0;
+			int actorId = -1;
+			scene->createActorDynamic(&actor, actorId);
+			actor->setPosition(snVector4f(0, 100, -130, 1));
+			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
+			actor->getPhysicMaterial().m_friction = 1;
+			actor->getPhysicMaterial().m_restitution = 0.f;
+
+			//make it a kinematic trigger
+			actor->setIsKinematic(true);
+			actor->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			actor->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+
+			snColliderBox* collider = new snColliderBox();
+			float width = 30;
+			float height = 30;
+			float depth = 30;
+			collider->setSize(snVector4f(width, height, depth, 0));
+
+			actor->addCollider(collider);
+			actor->initialize();
+
+			//create entity
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth));
+			box->setActor(actor);
+			box->setWireframe(true);
+
+			ComponentFloatingText<EntityBox, float>* text = new ComponentFloatingText<EntityBox, float>();
+			text->setAnchor(box);
+			text->addItem(L"TRIGGER", 0, 0);
+			box->addPostUpdateComponent(text);
 		}
 	}
 
