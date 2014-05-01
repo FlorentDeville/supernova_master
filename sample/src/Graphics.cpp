@@ -139,7 +139,7 @@ namespace Devil
 		XMMATRIX viewMatrix, projectionMatrix;
 		getCamera()->GetViewMatrix(viewMatrix);
 		getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
-		return XMVector3Project(_world, 0, 0, m_screenWidth, m_screenHeight, 0, 1, projectionMatrix, viewMatrix, XMMatrixIdentity());
+		return XMVector3Project(_world, 0, 0, (float)m_screenWidth, (float)m_screenHeight, 0, 1, projectionMatrix, viewMatrix, XMMatrixIdentity());
 	}
 
 	void Graphics::setClearScreenColor(const XMVECTORF32& _color)

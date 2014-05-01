@@ -36,7 +36,13 @@ namespace Devil
 		ID3D11DepthStencilState* m_depthDisabledStencilState;
 
 		ID3D11DepthStencilView* m_depthStencilView;
-		ID3D11RasterizerState* m_rasterState;
+
+		//Rasterizer state rendering in filled mode
+		ID3D11RasterizerState* m_rasterStateFilled;
+
+		//Rasterizer state rendering in wireframe mode
+		ID3D11RasterizerState* m_rasterStateWireframe;
+
 		XMMATRIX m_projectionMatrix;
 		XMMATRIX m_worldMatrix;
 		XMMATRIX m_orthoMatrix;
@@ -57,6 +63,12 @@ namespace Devil
 		void TurnZBufferOn();
 		void TurnZBufferOff();
 
+		//Change the rasterizer state so all the next drawing calls will be in filled mode.
+		void turnOnFillMode();
+
+		//Change the rasterizer state so all the next drawing calls will be in wireframe mode
+		void turnOnWireframeMode();
+
 
 		ID3D11Device* getDevice();
 		ID3D11DeviceContext* getDeviceContext();
@@ -76,6 +88,13 @@ namespace Devil
 		{
 			_aligned_free(_p);
 		}
+
+	private:
+		//Create the rasterizer state to render in filled mode.
+		bool createRasterStateFilled();
+
+		//Create the rasterizer state to render in wireframe mode.
+		bool createRasterStateWireframe();
 	};
 }
 

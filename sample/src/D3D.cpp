@@ -2,7 +2,7 @@
 
 namespace Devil
 {
-	D3D::D3D()
+	D3D::D3D() : m_rasterStateFilled(0), m_rasterStateWireframe(0)
 	{
 		m_swapChain = 0;
 		m_device = 0;
@@ -11,7 +11,6 @@ namespace Devil
 		m_depthStencilBuffer = 0;
 		m_depthStencilState = 0;
 		m_depthStencilView = 0;
-		m_rasterState = 0;
 		m_depthDisabledStencilState = 0;
 	}
 
@@ -38,7 +37,6 @@ namespace Devil
 		D3D11_TEXTURE2D_DESC depthBufferDesc;
 		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-		D3D11_RASTERIZER_DESC rasterDesc;
 		D3D11_VIEWPORT viewport;
 		float fieldOfView, screenAspect;
 
@@ -298,27 +296,13 @@ namespace Devil
 		// Bind the render target view and depth stencil buffer to the output render pipeline.
 		m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
 
-		// Setup the raster description which will determine how and what polygons will be drawn.
-		rasterDesc.AntialiasedLineEnable = true;
-		rasterDesc.CullMode = D3D11_CULL_BACK;
-		rasterDesc.DepthBias = 0;
-		rasterDesc.DepthBiasClamp = 0.0f;
-		rasterDesc.DepthClipEnable = true;
-		rasterDesc.FillMode = /*D3D11_FILL_WIREFRAME;*/D3D11_FILL_SOLID;
-		rasterDesc.FrontCounterClockwise = false;
-		rasterDesc.MultisampleEnable = false;
-		rasterDesc.ScissorEnable = false;
-		rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-		// Create the rasterizer state from the description we just filled out.
-		result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterState);
-		if (FAILED(result))
-		{
+		
+		// create rasterizer states and set the device context to the filled reasterizer.
+		if (!createRasterStateFilled())
 			return false;
-		}
-
-		// Now set the rasterizer state.
-		m_deviceContext->RSSetState(m_rasterState);
+		if (!createRasterStateWireframe())
+			return false;
+		m_deviceContext->RSSetState(m_rasterStateFilled);
 
 		// Setup the viewport for rendering.
 		viewport.Width = (float)screenWidth;
@@ -388,10 +372,16 @@ namespace Devil
 			m_depthDisabledStencilState = 0;
 		}
 
-		if (m_rasterState)
+		if (m_rasterStateFilled)
 		{
-			m_rasterState->Release();
-			m_rasterState = 0;
+			m_rasterStateFilled->Release();
+			m_rasterStateFilled = 0;
+		}
+
+		if (m_rasterStateWireframe)
+		{
+			m_rasterStateWireframe->Release();
+			m_rasterStateWireframe = 0;
 		}
 
 		if (m_depthStencilView)
@@ -480,6 +470,18 @@ namespace Devil
 		return;
 	}
 
+	//Change the rasterizer state so all the next drawing calls will be in filled mode.
+	void D3D::turnOnFillMode()
+	{
+		m_deviceContext->RSSetState(m_rasterStateFilled);
+	}
+
+	//Change the rasterizer state so all the next drawing calls will be in wireframe mode
+	void D3D::turnOnWireframeMode()
+	{
+		m_deviceContext->RSSetState(m_rasterStateWireframe);
+	}
+
 	ID3D11Device* D3D::getDevice()
 	{
 		return m_device;
@@ -516,5 +518,53 @@ namespace Devil
 		strcpy_s(cardName, 128, m_videoCardDescription);
 		memory = m_videoCardMemory;
 		return;
+	}
+
+	bool D3D::createRasterStateFilled()
+	{
+		D3D11_RASTERIZER_DESC rasterDesc;
+
+		// Setup the raster description which will determine how and what polygons will be drawn.
+		rasterDesc.AntialiasedLineEnable = true;
+		rasterDesc.CullMode = D3D11_CULL_BACK;
+		rasterDesc.DepthBias = 0;
+		rasterDesc.DepthBiasClamp = 0.0f;
+		rasterDesc.DepthClipEnable = true;
+		rasterDesc.FillMode = D3D11_FILL_SOLID;
+		rasterDesc.FrontCounterClockwise = false;
+		rasterDesc.MultisampleEnable = false;
+		rasterDesc.ScissorEnable = false;
+		rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+		// Create the rasterizer state from the description we just filled out.
+		HRESULT result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateFilled);
+		if (FAILED(result))
+			return false;
+
+		return true;
+	}
+
+	bool D3D::createRasterStateWireframe()
+	{
+		D3D11_RASTERIZER_DESC rasterDesc;
+
+		// Setup the raster description which will determine how and what polygons will be drawn.
+		rasterDesc.AntialiasedLineEnable = true;
+		rasterDesc.CullMode = D3D11_CULL_BACK;
+		rasterDesc.DepthBias = 0;
+		rasterDesc.DepthBiasClamp = 0.0f;
+		rasterDesc.DepthClipEnable = true;
+		rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+		rasterDesc.FrontCounterClockwise = false;
+		rasterDesc.MultisampleEnable = false;
+		rasterDesc.ScissorEnable = false;
+		rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+		// Create the rasterizer state from the description we just filled out.
+		HRESULT result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateWireframe);
+		if (FAILED(result))
+			return false;
+
+		return true;
 	}
 }
