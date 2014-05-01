@@ -55,6 +55,8 @@
 #include "ComponentPathInterpolate.h"
 #include "ComponentFloatingText.h"
 
+#include "PathExplorer.h"
+
 using namespace Supernova;
 
 namespace Devil
@@ -1070,7 +1072,7 @@ namespace Devil
 		WORLD->initialize();
 
 		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene : Static, Dynamic, Kinematic");
+		HUD->setSceneName(L"Scene : Domino");
 
 		GRAPHICS->setClearScreenColor(Colors::DarkGray);
 
@@ -1080,18 +1082,18 @@ namespace Devil
 		SUPERNOVA->createScene(&scene, sceneId);
 		scene->setCollisionMode(m_collisionMode);
 
-		int solverIterationCount = 4;
+		int solverIterationCount = 20;
 		scene->setSolverIterationCount(solverIterationCount);
-
+		scene->setContactConstraintBeta(0);
 		scene->setLinearSquaredSpeedThreshold(0.000001f);
 		scene->setAngularSquaredSpeedThreshold(0.000001f);
+		scene->setGravity(snVector4f(0, -9.81f * 5, 0, 0));
 
 		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(-20, 60, 60, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(70, 0, 0, 1);
+		XMVECTOR cameraPosition = XMVectorSet(0, 100, -300, 1);
+		XMVECTOR cameraLookAt = XMVectorSet(0, 0, 20, 1);
 		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
 		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
 
 		WORLD->deactivateCollisionPoint();
 
@@ -1100,28 +1102,42 @@ namespace Devil
 		//create the path
 		snVector4f dominoSize(5, 10, 1, 0);
 
-		snVector4f path[4];
-		path[0] = snVector4f(0, dominoSize[1] * 0.5f, 0, 1);
-		path[1] = snVector4f(100, dominoSize[1] * 0.5f, 0, 1);
-		path[2] = snVector4f(100, dominoSize[1] * 0.5f, 100, 1);
-		path[3] = snVector4f(0, dominoSize[1] * 0.5f, 100, 1);
+		PathExplorer explorer(false);
+		float distance = 4;
+		float height = dominoSize[1] * 0.5f;
+		explorer.addWaypoint(snVector4f(-20, height, 0, 1), distance);
+		explorer.addWaypoint(snVector4f(-110, height, 0, 1), distance);
+		explorer.addWaypoint(snVector4f(-10, height, -100, 1), distance);
+		explorer.addWaypoint(snVector4f(-130, height, -100, 1), distance);
 
-		//create a line of domino
-		int dominoCount = 30;
-		float timeStep = 1.f / dominoCount;
-		
-		//snVector4f position(0, dominoSize[1] * 0.5f, 0, 1);
-		//snVector4f distance(dominoSize[1] * 0.7f, 0, 0, 1);
+		explorer.addWaypoint(snVector4f(-130, height, 20, 1), distance);
 
-		for (int i = 0; i < dominoCount; ++i)
+		explorer.addWaypoint(snVector4f(110, height, 20, 1), distance);
+		explorer.addWaypoint(snVector4f(110, height, -120, 1), distance);
+		explorer.addWaypoint(snVector4f(0, height, 0, 1), distance);
+		explorer.addWaypoint(snVector4f(0, height, -120, 1), distance);
+
+		explorer.setCallback([](const snMatrix44f& _frenet)
 		{
 			//create actor
+			snVector4f dominoSize(5, 10, 1, 0);
 			snActorDynamic* actor = 0;
 			int actorId = -1;
-			scene->createActorDynamic(&actor, actorId);
-			snVector4f position = snVector4f::catmullRomInterpolation(path[0], path[0], path[1], path[1], timeStep * i);
-			actor->setPosition(position);
-			actor->setOrientation(snQuaternionFromEuler(0, SN_PI * 0.5f, 0));
+			SUPERNOVA->getScene(0)->createActorDynamic(&actor, actorId);
+			actor->setPosition(_frenet[3]);
+
+			//compute its orientation
+			float cos = _frenet[0][0];
+			float sin = _frenet[0][2];
+
+			float theta = acosf(cos);
+			if (sin < 0)
+				theta = SN_PI * 2 - theta;
+
+			snVector4f q = snQuaternionFromEuler(0, -theta, 0);
+
+			actor->setOrientation(q);
+
 			actor->getPhysicMaterial().m_friction = 0.1f;
 			actor->getPhysicMaterial().m_restitution = 0.f;
 
@@ -1129,22 +1145,31 @@ namespace Devil
 			collider->setSize(dominoSize);
 
 			actor->addCollider(collider);
-			actor->updateMassAndInertia(2);
+			actor->updateMassAndInertia(2.f);
 			actor->initialize();
 
-			//create entity
-			EntityBox* box = WORLD->createBox(XMFLOAT3(dominoSize[0], dominoSize[1], dominoSize[2]));
-			box->setActor(actor);
 
-			//update position
-			//position = position + distance;
-		}
+			//ugly but it works
+			const unsigned int COLOR_COUNT = 5;
+			XMFLOAT4 colors[COLOR_COUNT];
+			colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
+			colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
+			colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
+			colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
+			colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
+
+			//create entity
+			EntityBox* box = WORLD->createBox(XMFLOAT3(dominoSize[0], dominoSize[1], dominoSize[2]), colors[actorId % COLOR_COUNT]);
+			box->setActor(actor);
+		});
+
+		explorer.run();
 
 		//create the hammer
 		{
-			snVector4f constraintOrigin(0, dominoSize[1] * 1.9f, 0, 1);
-			snVector4f hammerOffset(-dominoSize[1] * 0.9f, dominoSize[1] * 0.9f, 0, 1);
-			snVector4f hammerPosition = snVector4f(0, dominoSize[1], 0, 1) + hammerOffset;
+			snVector4f constraintOrigin(0, dominoSize[1] * 1.9f, -120, 1);
+			snVector4f hammerOffset(0, dominoSize[1] * 0.9f, -dominoSize[1] * 0.9f, 1);
+			snVector4f hammerPosition = snVector4f(0, dominoSize[1], -120, 1) + hammerOffset;
 			float constraintDistance = (constraintOrigin - hammerPosition).norme();
 
 			snActorDynamic* actor = 0;
@@ -1152,11 +1177,12 @@ namespace Devil
 			scene->createActorDynamic(&actor, actorId);
 			actor->setPosition(hammerPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
-			actor->getPhysicMaterial().m_friction = 0;
-			actor->getPhysicMaterial().m_restitution = 0.f;
+			actor->getPhysicMaterial().m_friction = 1;
+			actor->getPhysicMaterial().m_restitution = 1.f;
+			actor->setLinearDampingCoeff(0.5f);
 
 			snColliderBox* collider = new snColliderBox();
-			int size = 3;
+			float size = 3;
 			collider->setSize(snVector4f(size, size, size, 0));
 
 			actor->addCollider(collider);
