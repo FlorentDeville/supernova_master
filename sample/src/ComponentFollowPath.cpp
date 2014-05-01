@@ -92,9 +92,7 @@ namespace Devil
 		}
 
 		//set the position
-		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()) * (1.f/_dt));
-		m_actor->setKinematicPosition(nextPosition);
-		
+		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()) * (1.f/_dt));	
 	}
 
 	//Do nothing

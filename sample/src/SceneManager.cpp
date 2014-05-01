@@ -928,17 +928,12 @@ namespace Devil
 			entity->setActor(kin);
 
 			//create path component
-			//ComponentFollowPath* path = new ComponentFollowPath(kin, true);
-			ComponentPathInterpolate* path = new ComponentPathInterpolate(kin, true);
+			ComponentFollowPath* path = new ComponentFollowPath(kin, true);
 			float speed = 5.f;
-			//path->addWaypoint(snVector4f(0, 100, 0, 1), speed);
-			//path->addWaypoint(snVector4f(0, 90, 0, 1), speed);
 
-			path->addWaypoint(snVector4f(-15, 100, 0, 1), speed);
-			path->addWaypoint(snVector4f(15, 100, 0, 1), speed);
+			path->addWaypoint(snVector4f(-10, 100, 0, 1), speed);
+			path->addWaypoint(snVector4f(10, 100, 0, 1), speed);
 
-			/*path->addWaypoint(snVector4f(15, 90, 0, 1), speed);
-			path->addWaypoint(snVector4f(-15, 90, 0, 1), speed);*/
 			entity->addPreUpdateComponent(path);
 
 			//create text component
