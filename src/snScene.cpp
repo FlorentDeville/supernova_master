@@ -70,7 +70,7 @@ namespace Supernova
 
 	snScene::snScene() : m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
-		m_sweepList(), m_sweepAxis(0), m_collisionMode(snECollisionModeSweepAndPrune)
+		m_sweepList(), m_sweepAxis(0), m_collisionMode(snECollisionModeSweepAndPrune), m_contactConstraintBeta(0.25f)
 	{
 	}
 
@@ -249,6 +249,11 @@ namespace Supernova
 		return m_collisionMode;
 	}
 
+	float snScene::getContactConstraintBeta() const
+	{
+		return m_contactConstraintBeta;
+	}
+
 	void snScene::setGravity(const snVector4f& _gravity)
 	{
 		m_gravity = _gravity;
@@ -290,6 +295,11 @@ namespace Supernova
 			break;
 		}
 #endif //ifdef SN_DEBUGGER
+	}
+
+	void snScene::setContactConstraintBeta(float _beta)
+	{
+		m_contactConstraintBeta = _beta;
 	}
 
 	void* snScene::operator new(size_t _count)

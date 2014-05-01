@@ -94,11 +94,8 @@ namespace Supernova
 		//compute the resitution coefficient as the average of the coeff of the actors
 		float restitution = (m_bodies[0]->getPhysicMaterial().m_restitution + m_bodies[1]->getPhysicMaterial().m_restitution) * 0.5f;
 
-		//the amount of correction to apply per frame.
-		const float beta = 0.25f;
-
 		//compute the velocity correction
-		float error = beta / _dt * max<float>(0, m_penetrationDepth - m_bodies[0]->getSkinDepth() - m_bodies[1]->getSkinDepth());
+		float error = m_scene->getContactConstraintBeta() / _dt * max<float>(0, m_penetrationDepth - m_bodies[0]->getSkinDepth() - m_bodies[1]->getSkinDepth());
 		m_velocityBias = -restitution * relVel - error;
 
 	}

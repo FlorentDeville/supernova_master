@@ -112,6 +112,9 @@ namespace Supernova
 		//The type of collision to use
 		snCollisionMode m_collisionMode;
 
+		//The amount of correction (baumgarte stabilization) to apply per frame for every contact constraints.
+		float m_contactConstraintBeta;
+
 	public:
 		//Constructor. Scenes should be created using snFactory::createScene. If you create a scene yourself it is your responsability
 		//to delete it.
@@ -158,6 +161,9 @@ namespace Supernova
 		//Get the type of collision used.
 		snCollisionMode getCollisionMode() const;
 
+		//Return the beta factor for the contact constraints. It is the amount of correction applied per frame.
+		float getContactConstraintBeta() const;
+
 		//Set the gravity to apply in the scene.
 		void setGravity(const snVector4f& _gravity);
 
@@ -172,6 +178,10 @@ namespace Supernova
 
 		//Set the collision mode to use in the scene
 		void setCollisionMode(snCollisionMode _collisionMode);
+
+		//Set the beta factor for contact constraints. It is the amount of correction to apply per frame. It should be between 0 and 1 and
+		//preferably low. The default value is 0.25.
+		void setContactConstraintBeta(float _beta);
 
 		//Overridden new operator to create scene with correct alignement.
 		void* operator new(size_t _count);
