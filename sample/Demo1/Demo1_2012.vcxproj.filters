@@ -28,6 +28,9 @@
     <Filter Include="World\Entities">
       <UniqueIdentifier>{7dbe1097-20dc-424e-b37f-1c841ab99b77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{00e696a0-0e5f-482e-bf1d-31cf281896d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -111,6 +114,9 @@
     </ClCompile>
     <ClCompile Include="..\src\ComponentPathInterpolate.cpp">
       <Filter>World\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PathExplorer.cpp">
+      <Filter>Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +212,9 @@
     </ClInclude>
     <ClInclude Include="..\src\ComponentPathInterpolate.h">
       <Filter>World\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PathExplorer.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
