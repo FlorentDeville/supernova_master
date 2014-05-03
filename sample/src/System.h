@@ -15,7 +15,7 @@ namespace Devil
 	class Graphics;
 	class EntitySphere;
 	
-	__declspec(align(16)) class System
+	class System
 	{
 	private:
 		LPCWSTR m_applicationName;
@@ -43,16 +43,6 @@ namespace Devil
 		void run();
 		void shutdown();
 		LRESULT CALLBACK messageHandler(HWND, UINT, WPARAM, LPARAM);
-
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, 16);
-		}
-
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
 
 	private:
 		void initializeWindows(int&, int&);
