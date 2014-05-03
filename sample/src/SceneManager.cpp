@@ -50,6 +50,7 @@
 #include "snDebugger.h"
 
 #include "EntityBox.h"
+#include "EntityCamera.h"
 
 #include "ComponentFollowPath.h"
 #include "ComponentPathInterpolate.h"
@@ -139,36 +140,15 @@ namespace Devil
 
 	void SceneManager::createBasicTest()
 	{
-		WORLD->initialize();
-		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene 1 : Basic Test");
+		createSandbox(L"Basic Test");
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setSolverIterationCount(5);
+		scene->setLinearSquaredSpeedThreshold(0.005f);
+		scene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
+		WORLD->getCamera()->setPosition(XMVectorSet(25, 30, 50, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(15, 7, 0, 1));
 
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
-		int sceneId = -1;
-
-		//create the scene
-		snScene* m_physicScene = 0;
-		SUPERNOVA->createScene(&m_physicScene, sceneId);
-		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
-		m_physicScene->setCollisionMode(m_collisionMode);
-		m_physicScene->setLinearSquaredSpeedThreshold(0.005f);
-		int solverIterationCount = 5;
-		m_physicScene->setSolverIterationCount(solverIterationCount);
-
-		//create camera
-		XMVECTOR cameraPosition = XMVectorSet(25, 30, 50, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(15, 7, 0, 1);
-		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
-		WORLD->deactivateCollisionPoint();
-		XMFLOAT4 color1(0.8f, 1, 1, 1);
-		XMFLOAT4 color2(0.93f, 0.68f, 1, 1);
-		XMFLOAT4 color3(1, 0.8f, 0.678f, 1);
-		XMFLOAT4 color4(0.89f, 0.71f, 0.75f, 1);
-		XMFLOAT4 color5(0.96f, 0.48f, 0.63f, 1);
 		float groundHeight = 0;
-		createGround(m_physicScene, 0.f, 0.f);
 		
 		//first block on the ground
 		float blockOneHeight = 0;
@@ -182,7 +162,7 @@ namespace Devil
 			//create actor
 			snActorDynamic* act = 0;
 			int actorId = -1;
-			m_physicScene->createActorDynamic(&act, actorId);
+			scene->createActorDynamic(&act, actorId);
 			_ASSERTE(_CrtCheckMemory());
 			act->setName("base");
 			act->setPosition(pos);
@@ -197,7 +177,7 @@ namespace Devil
 			act->updateMassAndInertia(200);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), color1);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[1]);
 			_ASSERTE(_CrtCheckMemory());
 			box->setActor(act);
 
@@ -215,7 +195,7 @@ namespace Devil
 			//create actor
 			snActorDynamic* act = 0;
 			int actorId = -1;
-			m_physicScene->createActorDynamic(&act, actorId);
+			scene->createActorDynamic(&act, actorId);
 			act->setName("platform");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -229,7 +209,7 @@ namespace Devil
 			act->updateMassAndInertia(100);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), color2);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
 			box->setActor(act);
 
 			platformHeight = pos.getY() + height * 0.5f;
@@ -246,7 +226,7 @@ namespace Devil
 			//create actor
 			snActorDynamic* act = 0;
 			int actorId = -1;
-			m_physicScene->createActorDynamic(&act, actorId);
+			scene->createActorDynamic(&act, actorId);
 			act->setName("two");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -260,7 +240,7 @@ namespace Devil
 			act->updateMassAndInertia(100);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), color3);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[3]);
 			box->setActor(act);
 
 			blockTwoHeight = pos.getY() + height * 0.5f;
@@ -276,7 +256,7 @@ namespace Devil
 			//create actor
 			snActorDynamic* act = 0;
 			int actorId = -1;
-			m_physicScene->createActorDynamic(&act, actorId);
+			scene->createActorDynamic(&act, actorId);
 			act->setName("three");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -291,7 +271,7 @@ namespace Devil
 			act->updateMassAndInertia(100);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), color5);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
 			box->setActor(act);
 
 			blockThreeHeight = pos.getY() + height * 0.5f;
@@ -307,7 +287,7 @@ namespace Devil
 			//create actor
 			snActorDynamic* act = 0;
 			int actorId = -1;
-			m_physicScene->createActorDynamic(&act, actorId);
+			scene->createActorDynamic(&act, actorId);
 			act->setName("dymnamic");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -322,7 +302,7 @@ namespace Devil
 			act->updateMassAndInertia(500);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), color4);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[0]);
 			box->setActor(act);
 
 			blockTwoHeight = pos.getY() + height * 0.5f;
@@ -331,44 +311,17 @@ namespace Devil
 
 	void SceneManager::createStacking()
 	{
-		WORLD->initialize();
-
-		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene 2 : Stacking");
-
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
-
-		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(100, 79, 140, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(35, 21, 0, 1);
-		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
-		int sceneId = -1;
-		snScene* m_physicScene = 0;
-		SUPERNOVA->createScene(&m_physicScene, sceneId);
-		m_physicScene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
-		m_physicScene->setCollisionMode(m_collisionMode);
-
-		int solverIterationCount = 60;
-		m_physicScene->setSolverIterationCount(solverIterationCount);
-
-		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
-		m_physicScene->setAngularSquaredSpeedThreshold(0.0005f);
-
-		//set camera initial position
-		WORLD->deactivateCollisionPoint();
-
-		XMFLOAT4 colors[5];
-		colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
-		colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
-		colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
-		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
-		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
+		createSandbox(L"Stacking");
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setSolverIterationCount(60);
+		scene->setLinearSquaredSpeedThreshold(0.006f);
+		scene->setAngularSquaredSpeedThreshold(0.0005f);
+		scene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
+		WORLD->getCamera()->setPosition(XMVectorSet(100, 79, 140, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(35, 21, 0, 1));
 	
 		//ground
 		float groundHeight = 0;
-		createGround(m_physicScene, 1, 0.8f);
 		
 		//back wall
 		{
@@ -380,7 +333,7 @@ namespace Devil
 			snActorStatic* act = 0;
 			int actorId = -1;
 			snVector4f position(0, 101, -80, 1);
-			m_physicScene->createActorStatic(&act, actorId, position, snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&act, actorId, position, snVector4f(0, 0, 0, 1));
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
@@ -413,7 +366,7 @@ namespace Devil
 				//create actor
 				snActorDynamic* act = 0;
 				int actorId = -1;
-				m_physicScene->createActorDynamic(&act, actorId);
+				scene->createActorDynamic(&act, actorId);
 
 				string strRow = std::to_string(row);
 				string strI = std::to_string(i);
@@ -434,7 +387,7 @@ namespace Devil
 				act->updateMassAndInertia(50);
 				act->initialize();
 
-				EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[(i + row) % 5]);
+				EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[(i + row) % 5]);
 				box->setActor(act);
 			}
 		}
@@ -442,41 +395,15 @@ namespace Devil
 
 	void SceneManager::createConstraints()
 	{
-		WORLD->initialize();
-
-		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene 3 : Constraints");
-
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
-
-		snScene* m_physicScene = 0;
-		int sceneId = -1;
-		SUPERNOVA->createScene(&m_physicScene, sceneId);
-		m_physicScene->setGravity(snVector4f(0, -9.81f * 4, 0, 0));
-		m_physicScene->setCollisionMode(m_collisionMode);
-
-		int solverIterationCount = 4;
-		m_physicScene->setSolverIterationCount(solverIterationCount);
-
-		m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
-		m_physicScene->setAngularSquaredSpeedThreshold(0.001f);
-
-		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(0, 80, 150, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(10, 75, 0, 1);
-		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
+		createSandbox(L"Constraints");
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setSolverIterationCount(4);
+		scene->setLinearSquaredSpeedThreshold(0.006f);
+		scene->setAngularSquaredSpeedThreshold(0.001f);
+		scene->setGravity(snVector4f(0, -9.81f * 4, 0, 0));
+		WORLD->getCamera()->setPosition(XMVectorSet(0, 80, 150, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(10, 75, 0, 1));
 		WORLD->activateCollisionPoint();
-
-		XMFLOAT4 colors[5];
-		colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
-		colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
-		colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
-		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
-		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
-
-		createGround(m_physicScene, 1, 1);
 
 		//back wall
 		{
@@ -487,7 +414,7 @@ namespace Devil
 			//create actor
 			snActorStatic* act = 0;
 			int actorId = -1;
-			m_physicScene->createActorStatic(&act, actorId, snVector4f(0, 101, -80, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&act, actorId, snVector4f(0, 101, -80, 1), snVector4f(0, 0, 0, 1));
 
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
@@ -517,7 +444,7 @@ namespace Devil
 			//create actor
 			snActorDynamic* act = 0;
 			int actorId = -1;
-			m_physicScene->createActorDynamic(&act, actorId);
+			scene->createActorDynamic(&act, actorId);
 			act->setName("d0");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -534,11 +461,11 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[4]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
 			box->setActor(act);
 
 			//create constraints
-			snFixedConstraint* constraint = m_physicScene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
+			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 
@@ -556,7 +483,7 @@ namespace Devil
 			//create actor
 			snActorDynamic* act = 0;
 			int actorId = -1;
-			m_physicScene->createActorDynamic(&act, actorId);
+			scene->createActorDynamic(&act, actorId);
 			act->setName("d1");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -574,11 +501,11 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[4]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
 			box->setActor(act);
 
 			//create p2p constraint
-			snPointToPointConstraint* p2pc = m_physicScene->createPointToPointConstraint(previousActor, snVector4f(0, -LINK_LENGTH, 0, 1),
+			snPointToPointConstraint* p2pc = scene->createPointToPointConstraint(previousActor, snVector4f(0, -LINK_LENGTH, 0, 1),
 				act, snVector4f(0, LINK_LENGTH, 0, 1));
 			WORLD->createPointToPointConstraint(p2pc);
 
@@ -588,34 +515,16 @@ namespace Devil
 
 	void SceneManager::createTower()
 	{
-		WORLD->initialize();
-
-		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene : Broken Tower");
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
-		int sceneId = -1;
-		snScene* m_physicScene = 0;
-		SUPERNOVA->createScene(&m_physicScene, sceneId);
-		m_physicScene->setCollisionMode(m_collisionMode);
-
-		int solverIterationCount = 120;
-		m_physicScene->setSolverIterationCount(solverIterationCount);
-		//m_physicScene->setLinearSquaredSpeedThreshold(0.006f);
-		m_physicScene->setAngularSquaredSpeedThreshold(0.f);
-		m_physicScene->setContactConstraintBeta(0.005f);
-
-		//create the camera.
-		XMVECTOR 	cameraPosition = XMVectorSet(50, 50, 100, 1);
-		XMVECTOR 	cameraLookAt = XMVectorSet(5, 7, 0, 1);
-		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-		
+		createSandbox(L"Tower");
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setSolverIterationCount(120); //Wooooooooo that's a lot!!!!!!
+		scene->setContactConstraintBeta(0.005f);
+		scene->setAngularSquaredSpeedThreshold(0.f);
+		WORLD->getCamera()->setPosition(XMVectorSet(50, 50, 100, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(5, 7, 0, 1));
 		WORLD->activateCollisionPoint();
 		
-		float 	groundHeight = 0;
-		
-		createGround(m_physicScene, 0, 1);
-		
+		float groundHeight = 0;
 		//back 	wall
 		{
 			float width = 200;
@@ -627,7 +536,7 @@ namespace Devil
 			
 			int actorId = -1;
 			
-			m_physicScene->createActorStatic(&act, actorId, snVector4f(0, 101, -80, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&act, actorId, snVector4f(0, 101, -80, 1), snVector4f(0, 0, 0, 1));
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
@@ -645,54 +554,26 @@ namespace Devil
 			kinematicBox->setActor(act);
 			
 		}
-		
 
-			
 		//tower
 		snVector4f origin(0, groundHeight, 0, 1);
 		int levelCount = 5;
 		for (int i = 0; i < levelCount; ++i)		
 		{
-			origin = createTowerLevel(m_physicScene, origin);	
+			origin = createTowerLevel(scene, origin);	
 		}
-		
-		return;
-		
 	}
-
 
 	void SceneManager::createSceneFriction()
 	{
-		//initialize the world
-		WORLD->initialize();
-
-		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene 6 : Friction");
-
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
-
-		//create the physics scene
-		int sceneId = -1;
-		snScene* scene = 0;
-		SUPERNOVA->createScene(&scene, sceneId);
-		scene->setCollisionMode(m_collisionMode);
-
-		int solverIterationCount = 4;
-		scene->setSolverIterationCount(solverIterationCount);
-
-		scene->setLinearSquaredSpeedThreshold(0.006f);
-		scene->setAngularSquaredSpeedThreshold(0.001f);
-
-		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(80, 50, 0, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(0, 7, 0, 1);
-		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
-
+		createSandbox(L"Friction");
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setSolverIterationCount(4);
+		WORLD->getCamera()->setPosition(XMVectorSet(80, 50, 0, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(0, 7, 0, 1));
 		WORLD->activateCollisionPoint();
 
-		float slopeAngle = 3.14f * 0.25f;
+		float slopeAngle = 3.14f * 0.22f;
 		//slope
 		{
 			float width = 50;
@@ -729,7 +610,7 @@ namespace Devil
 		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
 		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
 
-		float height = 35;
+		float height = 29.3f;
 		//full friction, no restitution
 		{
 			//create actor
@@ -814,43 +695,12 @@ namespace Devil
 
 	void SceneManager::createSceneDamping()
 	{
-		//initialize the world
-		WORLD->initialize();
-
-		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene 4 : Damping");
-
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
-
-		//create the physics scene
-		int sceneId = -1;
-		snScene* scene = 0;
-		SUPERNOVA->createScene(&scene, sceneId);
-		scene->setCollisionMode(m_collisionMode);
-
-		int solverIterationCount = 4;
-		scene->setSolverIterationCount(solverIterationCount);
-
-		scene->setLinearSquaredSpeedThreshold(0.000001f);
-		scene->setAngularSquaredSpeedThreshold(0.000001f);
-
-		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(50, 90, 80, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(50, 60, 0, 1);
-		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
-
+		createSandbox(L"Damping");
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setSolverIterationCount(4);
+		WORLD->getCamera()->setPosition(XMVectorSet(50, 90, 80, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(50, 60, 0, 1));
 		WORLD->activateCollisionPoint();
-
-		createGround(scene, 0, 0.8f);
-
-		XMFLOAT4 colors[5];
-		colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
-		colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);
-		colors[2] = XMFLOAT4(1, 0.8f, 0.678f, 1);
-		colors[3] = XMFLOAT4(0.89f, 0.71f, 0.75f, 1);
-		colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
 
 		/////ANGULAR DAMPING////////////
 		const int BOX_COUNT = 5;
@@ -884,7 +734,7 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[i]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[i]);
 			box->setActor(act);
 
 			//create floating text component
@@ -931,7 +781,7 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), colors[i]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[i]);
 			box->setActor(act);
 
 			//create floating text component
@@ -950,36 +800,13 @@ namespace Devil
 
 	void SceneManager::createSceneActorsType()
 	{
-		//initialize the world
-		WORLD->initialize();
+		createSandbox(L"Static, Dynamic, Kineatic");
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setSolverIterationCount(4);
 
-		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene : Static, Dynamic, Kinematic");
-
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
-
-		//create the physics scene
-		int sceneId = -1;
-		snScene* scene = 0;
-		SUPERNOVA->createScene(&scene, sceneId);
-		scene->setCollisionMode(m_collisionMode);
-
-		int solverIterationCount = 4;
-		scene->setSolverIterationCount(solverIterationCount);
-
-		scene->setLinearSquaredSpeedThreshold(0.000001f);
-		scene->setAngularSquaredSpeedThreshold(0.000001f);
-
-		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(0, 110, 50, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(0, 110, 0, 1);
-		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
-
+		WORLD->getCamera()->setPosition(XMVectorSet(0, 110, 50, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(0, 110, 0, 1));
 		WORLD->activateCollisionPoint();
-
-		createGround(scene, 1, 1);
 
 		//this is a kinematic platform
 		{
@@ -1145,36 +972,15 @@ namespace Devil
 
 	void SceneManager::createSceneDomino()
 	{
-		//initialize the world
-		WORLD->initialize();
+		createSandbox(L"Domino");
 
-		WorldHUD* HUD = WORLD->createHUD();
-		HUD->setSceneName(L"Scene : Domino");
-
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
-
-		//create the physics scene
-		int sceneId = -1;
-		snScene* scene = 0;
-		SUPERNOVA->createScene(&scene, sceneId);
-		scene->setCollisionMode(m_collisionMode);
-
-		int solverIterationCount = 20;
-		scene->setSolverIterationCount(solverIterationCount);
-		scene->setContactConstraintBeta(0);
-		scene->setLinearSquaredSpeedThreshold(0.000001f);
-		scene->setAngularSquaredSpeedThreshold(0.000001f);
+		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setGravity(snVector4f(0, -9.81f * 5, 0, 0));
+		scene->setContactConstraintBeta(0);
+		scene->setSolverIterationCount(20);
 
-		//create the camera.
-		XMVECTOR cameraPosition = XMVectorSet(0, 100, -300, 1);
-		XMVECTOR cameraLookAt = XMVectorSet(0, 0, 20, 1);
-		XMVECTOR cameraUp = XMVectorSet(0, 1, 0, 0);
-		WORLD->createCamera(cameraPosition, cameraLookAt, cameraUp);
-
-		WORLD->deactivateCollisionPoint();
-
-		createGround(scene, 1, 1);
+		WORLD->getCamera()->setPosition(XMVectorSet(0, 100, -240, 1));
+		WORLD->getCamera()->setLookAt(XMVectorSet(0, 0, 20, 1));
 
 		//create the path
 		snVector4f dominoSize(5, 10, 1, 0);
@@ -1517,5 +1323,153 @@ namespace Devil
 		return _origin + snVector4f(0, pillarHeight + 2 * bedHeight, 0, 0);
 	}
 
-	
+	void SceneManager::createSandbox(const wstring& _sceneName)
+	{
+		//initialize the world
+		WORLD->initialize();
+
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene : " + _sceneName);
+
+		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+
+		//create the physics scene
+		int sceneId = -1;
+		snScene* scene = 0;
+		SUPERNOVA->createScene(&scene, sceneId);
+		scene->setCollisionMode(m_collisionMode);
+
+		scene->setLinearSquaredSpeedThreshold(0.000001f);
+		scene->setAngularSquaredSpeedThreshold(0.000001f);
+
+		//create the camera.
+		WORLD->createCamera(XMVectorSet(0, 100, -100, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 0));
+
+		WORLD->deactivateCollisionPoint();
+
+		//create the box launcher
+		WORLD->createEntityBoxLauncher(1);
+
+		createGround(scene, 1, 1);
+
+		//create left wall 
+		{
+			snActorStatic* stat = 0;
+			int actorId = -1;
+			scene->createActorStatic(&stat, actorId, snVector4f(250, 250, 0, 1), snVector4f(0, 0, 0, 1));
+
+			//create collider
+			snColliderBox* collider = new snColliderBox();
+			collider->setSize(snVector4f(10, 500, 500, 0));
+			stat->addCollider(collider);
+			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			stat->setOnCollisionCallback([](snIActor* const _me, snIActor* const _other)
+			{
+				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
+				if (entity != 0)
+					entity->setIsActive(false);
+
+				_other->setIsActive(false);
+			});
+
+			//initialize the actor
+			stat->initialize();
+
+			//create the world entity
+			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(10, 500, 500));
+			kinematicBox->setActor(stat);
+			kinematicBox->setWireframe(true);
+		}
+
+		//create right wall 
+		{
+			snActorStatic* stat = 0;
+			int actorId = -1;
+			scene->createActorStatic(&stat, actorId, snVector4f(-250, 250, 0, 1), snVector4f(0, 0, 0, 1));
+
+			//create collider
+			snColliderBox* collider = new snColliderBox();
+			collider->setSize(snVector4f(10, 500, 500, 0));
+			stat->addCollider(collider);
+			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			stat->setOnCollisionCallback([](snIActor* const _me, snIActor* const _other)
+			{
+				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
+				if (entity != 0)
+					entity->setIsActive(false);
+
+				_other->setIsActive(false);
+			});
+
+			//initialize the actor
+			stat->initialize();
+
+			//create the world entity
+			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(10, 500, 500));
+			kinematicBox->setActor(stat);
+			kinematicBox->setWireframe(true);
+		}
+
+		//create front wall 
+		{
+			snActorStatic* stat = 0;
+			int actorId = -1;
+			scene->createActorStatic(&stat, actorId, snVector4f(0, 250, 250, 1), snVector4f(0, 0, 0, 1));
+
+			//create collider
+			snColliderBox* collider = new snColliderBox();
+			collider->setSize(snVector4f(500, 500, 10, 0));
+			stat->addCollider(collider);
+			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			stat->setOnCollisionCallback([](snIActor* const _me, snIActor* const _other)
+			{
+				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
+				if (entity != 0)
+					entity->setIsActive(false);
+
+				_other->setIsActive(false);
+			});
+
+			//initialize the actor
+			stat->initialize();
+
+			//create the world entity
+			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(500, 500, 10));
+			kinematicBox->setActor(stat);
+			kinematicBox->setWireframe(true);
+		}
+
+		//create back wall 
+		{
+			snActorStatic* stat = 0;
+			int actorId = -1;
+			scene->createActorStatic(&stat, actorId, snVector4f(0, 250, -250, 1), snVector4f(0, 0, 0, 1));
+
+			//create collider
+			snColliderBox* collider = new snColliderBox();
+			collider->setSize(snVector4f(500, 500, 10, 0));
+			stat->addCollider(collider);
+			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			stat->setOnCollisionCallback([](snIActor* const _me, snIActor* const _other)
+			{
+				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
+				if (entity != 0)
+					entity->setIsActive(false);
+
+				_other->setIsActive(false);
+			});
+
+			//initialize the actor
+			stat->initialize();
+
+			//create the world entity
+			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(500, 500, 10));
+			kinematicBox->setActor(stat);
+			kinematicBox->setWireframe(true);
+		}
+	}
 }

@@ -114,6 +114,8 @@ namespace Devil
 
 		bool getIsActive() const { return m_isActive; }
 
+		snIActor* getActor() const { return m_actor; }
+
 		//Return the list of components attached to this entity
 		vector<IComponent*> const & getPostUpdateComponents() { return m_postUpdateComponents; }
 

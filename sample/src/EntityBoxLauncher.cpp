@@ -32,89 +32,103 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "ComponentFollowPath.h"
+#include "EntityBoxLauncher.h"
+
+#include "snFactory.h"
+#include "snScene.h"
+#include "snVector4f-inl.h"
 #include "snActorDynamic.h"
+#include "snColliderBox.h"
+
+#include "World.h"
+#include "EntityCamera.h"
+#include "EntityBox.h"
+
+#include "Input.h"
 
 namespace Devil
 {
-	//Construct an instance of the class ComponentFollowPath
-	ComponentFollowPath::ComponentFollowPath(snActorDynamic* _actor, bool _loop) : m_actor(_actor), m_loop(_loop), 
-		m_path(), m_nextWaypoint(1), m_previousWaypoint(0)
-	{
-		m_isActive = true;
-	}
+	//Default constructor
+	EntityBoxLauncher::EntityBoxLauncher() : m_boxes(), m_count(0){}
 
-	//Clean allocation made by the class ComponentFollowPath
-	ComponentFollowPath::~ComponentFollowPath()
+	//Default destructor
+	EntityBoxLauncher::~EntityBoxLauncher(){}
+
+	//Initialize the launcher.
+	void EntityBoxLauncher::initialize(unsigned int _count)
 	{
-		for (vector<Waypoint*>::iterator i = m_path.begin(); i != m_path.end(); ++i)
+		m_count = _count;
+
+		for (unsigned int i = 0; i < _count; ++i)
 		{
-			delete *i;
+			float width = 5;
+			float height = 5;
+			float depth = 5;
+			
+			//create actor
+			snActorDynamic* act = 0;
+			int actorId = -1;
+
+			snScene* myScene = SUPERNOVA->getScene(0);
+			myScene->createActorDynamic(&act, actorId);
+
+			act->setName("projectile");
+			
+			act->getPhysicMaterial().m_restitution = 1;
+			act->getPhysicMaterial().m_friction = 0;
+
+			//create collider
+			snColliderBox* collider = new snColliderBox();
+			collider->setSize(snVector4f(width, height, depth, 0));
+			act->addCollider(collider);
+			act->updateMassAndInertia(50);
+			act->initialize();
+
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
+			box->setActor(act);
+
+			//deactive the entity
+			box->setIsActive(false);
+			act->setIsActive(false);
+
+			//store a pointer to the entity
+			m_boxes.push_back(box);
+
 		}
-
-		m_path.clear();
 	}
 
-	//Update the component.
-	//It updated the position of the actor
-	void ComponentFollowPath::update(float _dt)
+	void EntityBoxLauncher::update()
 	{
-		//The next waypoint does not exist
-		if (m_nextWaypoint >= m_path.size())
-		{
-			m_actor->setLinearVelocity(snVector4f(0, 0, 0, 1));
+		if (!INPUT->isKeyDown(' '))
 			return;
-		}
-		
 
-		//compute the direction
-		snVector4f direction = m_path[m_nextWaypoint]->m_position - m_path[m_previousWaypoint]->m_position;
-		float length = direction.squareNorme();
-		direction.normalize();
+		INPUT->keyUp(' ');
 
-		//compute the next position
-		snVector4f nextPosition = m_actor->getPosition() + direction * m_path[m_nextWaypoint]->m_speed * _dt;
+		//get the box
+		EntityBox* box = m_boxes[0];
+		snActorDynamic* act = static_cast<snActorDynamic*>(box->getActor());
 
-		//check if we went too far
-		//compare the distance between the two waypoints and the distance between the first waypoint and the computed position.
-		float actorDistance = (nextPosition - m_path[m_previousWaypoint]->m_position).squareNorme();
-		if (length < actorDistance)
-		{
-			//we went too far then set the position to the waypoint to reach.
-			nextPosition = m_path[m_nextWaypoint]->m_position;
+		//set its position
+		snVector4f pos(WORLD->getCamera()->getPosition());
+		act->setPosition(pos);
 
-			//go to the next waypoint
-			++m_nextWaypoint;
-			++m_previousWaypoint;
+		//set its linear velocity
+		snVector4f linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
+		linVel.normalize();
+		linVel = linVel * 300;
+		linVel.setW(0);
+		act->setLinearVelocity(linVel);
 
-			//if we can loop then wrap around
-			if (m_loop)
-			{
-				m_nextWaypoint = m_nextWaypoint % m_path.size();
-				m_previousWaypoint = m_previousWaypoint % m_path.size();
-			}
+		//set its orientation
+		act->setOrientation(snVector4f(0, 0, 0, 1));
 
-			if (m_nextWaypoint >= m_path.size())
-			{
-				m_actor->setLinearVelocity(snVector4f(0, 0, 0, 1));
-				return;
-			}
-		}
+		//set its angular velocity
+		act->setAngularVelocity(snVector4f(0, 0, 0, 0));
+		act->initialize();
 
-		//set the position
-		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()) * (1.f / _dt));	
+		box->setIsActive(true);
+		act->setIsActive(true);
 	}
 
-	//Do nothing
-	void ComponentFollowPath::render()
-	{}
-
-	//Add a waypoint to the path in the last position
-	void ComponentFollowPath::addWaypoint(const snVector4f& _position, float _speed)
-	{
-		Waypoint* newWaypoint = new Waypoint();
-		newWaypoint->m_position = _position;
-		newWaypoint->m_speed = _speed;
-		m_path.push_back(newWaypoint);
-	}
+	void EntityBoxLauncher::render(){}
 }

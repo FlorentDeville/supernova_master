@@ -55,6 +55,7 @@ namespace Supernova
 
 		m_collisionFlag = snCollisionFlag::CF_NO_FLAG;
 		m_collisionCallback = 0;
+		m_isActive = true;
 	}
 
 	snActorDynamic::~snActorDynamic()

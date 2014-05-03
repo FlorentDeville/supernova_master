@@ -40,6 +40,7 @@
 #include "EntityCamera.h"
 #include "EntityFixedConstraint.h"
 #include "EntityPointToPointConstraint.h"
+#include "EntityBoxLauncher.h"
 #include "WorldHUD.h"
 #include "Input.h"
 #include "Graphics.h"
@@ -166,6 +167,14 @@ namespace Devil
 		return newHUD;
 	}
 
+	EntityBoxLauncher* World::createEntityBoxLauncher(unsigned int _count)
+	{
+		EntityBoxLauncher* launcher = new EntityBoxLauncher();
+		launcher->initialize(_count);
+		m_EntityList.push_back(launcher);
+		return launcher;
+	}
+
 	void World::clearWorld()
 	{
 		for (vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
@@ -221,6 +230,17 @@ namespace Devil
 	EntityCamera* World::getCamera() const
 	{
 		return m_camera;
+	}
+
+	IWorldEntity* World::getEntityFromActor(snIActor* const _actor) const
+	{
+		for (std::vector<IWorldEntity*>::const_iterator i = m_EntityList.cbegin(); i != m_EntityList.cend(); ++i)
+		{
+			if ((*i)->getActor() == _actor)
+				return (*i);
+		}
+
+		return 0;
 	}
 
 	void World::toggleCollisionPointActivation()

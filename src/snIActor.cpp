@@ -60,6 +60,11 @@ namespace Supernova
 		return m_name;
 	}
 
+	bool snIActor::getIsActive() const
+	{
+		return m_isActive;
+	}
+
 	//return the list of colliders
 	vector<snICollider*>& snIActor::getColliders()
 	{
@@ -118,6 +123,11 @@ namespace Supernova
 	void snIActor::setName(const string& _name)
 	{
 		m_name = _name;
+	}
+
+	void snIActor::setIsActive(bool _isActive)
+	{
+		m_isActive = _isActive;
 	}
 
 	//Set the maximum depth another actor can penetrate into this actor

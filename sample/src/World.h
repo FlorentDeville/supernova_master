@@ -46,6 +46,7 @@ namespace Supernova
 	class snFixedConstraint;
 	class snPointToPointConstraint;
 	class snActorDynamic;
+	class snIActor;
 }
 
 using namespace Supernova;
@@ -60,6 +61,7 @@ namespace Devil
 	class EntityFixedConstraint;
 	class EntityPointToPointConstraint;
 	class WorldHUD;
+	class EntityBoxLauncher;
 
 	class IComponent;
 
@@ -92,6 +94,7 @@ namespace Devil
 		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
 		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
 		WorldHUD* createHUD();
+		EntityBoxLauncher* createEntityBoxLauncher(unsigned int _count);
 
 		//Delete all entities from the world.
 		void clearWorld();
@@ -100,6 +103,9 @@ namespace Devil
 		void render();
 
 		EntityCamera* getCamera() const;
+
+		//Return the entity owner of the actor
+		IWorldEntity* getEntityFromActor(snIActor* const _actor) const;
 
 		void toggleCollisionPointActivation();
 		void activateCollisionPoint();

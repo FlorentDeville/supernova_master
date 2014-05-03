@@ -235,44 +235,8 @@ namespace Devil
 				unsigned int key = (unsigned int)wparam;
 				// If a key is released then send it to the input object so it can unset the state for that key.
 				INPUT->keyUp(key);
-
-				if (key == 32) //SPACE key. All this code should be moved somewhere else
-				{
-					float width = 5;
-					float height = 5;
-					float depth = 5;
-					/*float space = 1.5;*/
-					/*float xOffset = -10;*/
-					snVector4f pos(WORLD->getCamera()->getPosition());
-
-					//create actor
-					snActorDynamic* act = 0;
-					int actorId = -1;
-
-					snScene* myScene = SUPERNOVA->getScene(0);
-					myScene->createActorDynamic(&act, actorId);
-					
-					act->setName("base");
-					act->setPosition(pos);
-					snVector4f linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
-					linVel.normalize();
-					linVel = linVel * 300;
-					linVel.setW(0);
-					act->setLinearVelocity(linVel);
-					act->getPhysicMaterial().m_restitution = 1;
-					act->getPhysicMaterial().m_friction = 0;
-
-					//create collider
-					snColliderBox* collider = new snColliderBox();
-					collider->setSize(snVector4f(width, height, depth, 0));
-					act->addCollider(collider);
-					act->updateMassAndInertia(50);
-					act->initialize();
-
-					EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
-					box->setActor(act);
-				}
-				else if (key == '1')
+				
+				if (key == '1')
 				{
 					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionModeBruteForce);
 					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionModeBruteForce);

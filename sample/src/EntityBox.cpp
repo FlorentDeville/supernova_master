@@ -28,12 +28,15 @@ namespace Devil
 
 	void EntityBox::update()
 	{
-		snVector4f newPosition = m_actor->getPosition();
-		m_position = XMVectorSet(newPosition.VEC4FX, newPosition.VEC4FY, newPosition.VEC4FZ, 1);
+		/*snVector4f newPosition = m_actor->getPosition();
+		m_position = XMVectorSet(newPosition.VEC4FX, newPosition.VEC4FY, newPosition.VEC4FZ, 1);*/
 	}
 
 	void EntityBox::render()
 	{
+		snVector4f newPosition = m_actor->getPosition();
+		m_position = XMVectorSet(newPosition.VEC4FX, newPosition.VEC4FY, newPosition.VEC4FZ, 1);
+
 		XMMATRIX translation = XMMatrixTranslationFromVector(m_position);
 		XMMATRIX orientation;
 		orientation.r[0] = m_actor->getOrientationMatrix().m_r[0].m_vec;

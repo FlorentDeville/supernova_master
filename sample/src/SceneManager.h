@@ -51,10 +51,12 @@ using Supernova::snCollisionMode;
 #include <DirectXMath.h>
 using DirectX::XMFLOAT4;
 
+#include <string>
+using std::wstring;
+
 namespace Devil
 {
 	class IComponent;
-
 	class SceneManager
 	{
 	private:
@@ -85,9 +87,6 @@ namespace Devil
 		//Constraints (rope)
 		void createConstraints();
 
-		////CCD test
-		//void createScene4();
-
 		//Stack
 		void createTower();
 
@@ -113,6 +112,9 @@ namespace Devil
 		void clearScene() const;
 
 		snVector4f createTowerLevel(snScene* const _scene, const snVector4f& _origin) const;
+
+		//Create the bisic actor of the world.
+		void createSandbox(const std::wstring& _sceneName);
 	};
 
 #define SCENEMGR SceneManager::getInstance()

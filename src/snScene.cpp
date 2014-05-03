@@ -316,6 +316,9 @@ namespace Supernova
 	{
 		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
+			if (!(*i)->getIsActive())
+				continue;
+
 			//apply gravity only if the inverse of the mass is not zero.
 			//If it is zero, then the actor is static or kinematic so no gravity as to be applied.
 			if ((*i)->getInvMass() != 0)
@@ -327,6 +330,9 @@ namespace Supernova
 	{
 		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
+			if (!(*i)->getIsActive())
+				continue;
+
 			(*i)->integrate(_dt, m_linearSquaredSpeedThreshold, m_angularSquaredSpeedThreshold);
 		}
 	}
@@ -369,8 +375,13 @@ namespace Supernova
 
 		for (std::vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
 		{
+			if (!(*i)->getIsActive())
+				continue;
+
 			for (std::vector<snIActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
 			{
+				if (!(*j)->getIsActive())
+					continue;
 
 				//check if the collision detection is enabled between the two actors
 				if (!isCollisionDetectionEnabled(*i, *j))
@@ -425,6 +436,9 @@ namespace Supernova
 		//loop through each actor in the scene using the sweep list
 		for (list<snIActor*>::iterator i = m_sweepList.begin(); i != m_sweepList.end(); ++i)
 		{
+			if (!(*i)->getIsActive())
+				continue;
+
 			//compute aabb center point
 			snVector4f center = ((*i)->getBoundingVolume()->m_max + (*i)->getBoundingVolume()->m_min) * 0.5f;
 
@@ -437,6 +451,13 @@ namespace Supernova
 			++j;
 			while (j != m_sweepList.end())
 			{
+				if (!(*j)->getIsActive())
+				{
+					++j;
+					continue;
+				}
+				
+
 				//check if the collision detection is enabled between the two actors
 				if (!isCollisionDetectionEnabled(*i, *j))
 				{

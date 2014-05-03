@@ -72,6 +72,9 @@ namespace Supernova
 		//name of the actor
 		string m_name;
 
+		//Flag to indicate if this actor is active or not.
+		bool m_isActive;
+
 		//list of collider defining collision geometry
 		vector<snICollider*> m_colliders;
 
@@ -120,6 +123,9 @@ namespace Supernova
 		//Get the name of the actor
 		string getName() const;
 
+		//Return if the actor is active or not.
+		bool getIsActive() const;
+
 		//return the list of colliders
 		vector<snICollider*>& getColliders();
 
@@ -167,6 +173,9 @@ namespace Supernova
 
 		//Set the name of the actor
 		void setName(const string& _name);
+
+		//Set if the actor is active or not.
+		void setIsActive(bool _isActive);
 
 		//Set the maximum depth another actor can penetrate into this actor
 		void setSkinDepth(float _skinDepth);
