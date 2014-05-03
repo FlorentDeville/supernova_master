@@ -133,9 +133,8 @@ namespace Supernova
 
 	void snIActor::OnCollision(snIActor* const _other)
 	{
-		assert(m_collisionCallback != 0);
-
-		m_collisionCallback(this, _other);
+		if (m_collisionCallback!= 0)
+			m_collisionCallback(this, _other);
 	}
 
 	//Allocate an actor with the correct alignement

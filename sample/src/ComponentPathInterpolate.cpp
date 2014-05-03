@@ -90,6 +90,10 @@ namespace Devil
 				m_nextWaypoint = m_nextWaypoint % m_path.size();
 				m_previousWaypoint = m_previousWaypoint % m_path.size();
 			}
+
+			//the next waypoint does not exist.
+			if (m_nextWaypoint >= m_path.size())
+				return;
 		}
 
 		//compute the next position

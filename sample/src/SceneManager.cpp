@@ -996,6 +996,7 @@ namespace Devil
 			kin->setPosition(snVector4f(-15, 100, 0, 1));
 			kin->getPhysicMaterial().m_friction = 1.f;
 			kin->getPhysicMaterial().m_restitution = 0.f;
+			kin->setLinearDampingCoeff(0.f);
 
 			//create collider
 			snColliderBox* box = new snColliderBox();
@@ -1278,8 +1279,10 @@ namespace Devil
 		{
 			snActorDynamic* actor = 0;
 			int actorId = -1;
+			snVector4f startPosition(0, dominoSize[1] + 7, -130, 1);
+			snVector4f endPosition(0, dominoSize[1] + 7, -150, 1);
 			scene->createActorDynamic(&actor, actorId);
-			actor->setPosition(snVector4f(0, dominoSize[1] + 7, -130, 1));
+			actor->setPosition(startPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
 			actor->getPhysicMaterial().m_restitution = 0.f;
@@ -1295,9 +1298,18 @@ namespace Devil
 			actor->initialize();
 
 			//create entity
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth));
+			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
 			box->setActor(actor);
 			box->setWireframe(false);
+
+			//create component moving the entity
+			//ComponentPathInterpolate* path = new ComponentPathInterpolate(actor, false);
+			ComponentFollowPath* path = new ComponentFollowPath(actor, false);
+			path->setIsActive(false);
+			path->addWaypoint(startPosition, 2);
+			path->addWaypoint(endPosition, 10);
+			box->addPreUpdateComponent(path);
+			m_dominoHammerBlockerPath = path;
 		}
 
 		//create trigger
@@ -1314,6 +1326,13 @@ namespace Devil
 			actor->setIsKinematic(true);
 			actor->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			actor->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			actor->setOnCollisionCallback([](snIActor * const _a, snIActor * const _b)
+			{
+				UNREFERENCED_PARAMETER(_a);
+				UNREFERENCED_PARAMETER(_b);
+
+				SCENEMGR->activateDominoSceneHammerBlocker();
+			});
 
 			snColliderBox* collider = new snColliderBox();
 			float width = 30;
@@ -1331,7 +1350,7 @@ namespace Devil
 
 			ComponentFloatingText<EntityBox, float>* text = new ComponentFloatingText<EntityBox, float>();
 			text->setAnchor(box);
-			text->addItem(L"TRIGGER", 0, 0);
+			text->addItem(L"SHOOT ME!!!!", 0, 0);
 			box->addPostUpdateComponent(text);
 		}
 	}
@@ -1362,6 +1381,11 @@ namespace Devil
 		//create the world entity
 		EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
 		kinematicBox->setActor(act);
+	}
+
+	void SceneManager::activateDominoSceneHammerBlocker()
+	{
+		m_dominoHammerBlockerPath->setIsActive(true);
 	}
 
 	void SceneManager::setCollisionMode(snCollisionMode _collisionMode)

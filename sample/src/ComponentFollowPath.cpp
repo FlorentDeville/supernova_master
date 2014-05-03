@@ -89,10 +89,13 @@ namespace Devil
 				m_nextWaypoint = m_nextWaypoint % m_path.size();
 				m_previousWaypoint = m_previousWaypoint % m_path.size();
 			}
+
+			if (m_nextWaypoint >= m_path.size())
+				return;
 		}
 
 		//set the position
-		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()) * (1.f/_dt));	
+		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()) * (1.f / _dt));	
 	}
 
 	//Do nothing

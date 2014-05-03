@@ -53,6 +53,8 @@ using DirectX::XMFLOAT4;
 
 namespace Devil
 {
+	class IComponent;
+
 	class SceneManager
 	{
 	private:
@@ -63,6 +65,8 @@ namespace Devil
 
 		//Array of colors
 		XMFLOAT4 m_colors[5];
+
+		IComponent* m_dominoHammerBlockerPath;
 
 	public:
 		static SceneManager* getInstance();
@@ -99,6 +103,8 @@ namespace Devil
 		void setCollisionMode(snCollisionMode _collisionMode);
 		
 		void createGround(snScene* const _scene, float _restitution, float _friction);
+
+		void activateDominoSceneHammerBlocker();
 
 	private:
 		SceneManager();
