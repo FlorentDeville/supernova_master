@@ -73,6 +73,14 @@ namespace Supernova
 		}
 	}
 
+	void snContactConstraintManager::getAvailableConstraints(snContactConstraint** _contact, snFrictionConstraint** _friction)
+	{
+		std::lock_guard<mutex> lock(m_protect);
+
+		 *_contact = static_cast<snContactConstraint*>(getAvailableConstraint());
+		 *_friction = static_cast<snFrictionConstraint*>(getAvailableConstraint());
+	}
+
 	void snContactConstraintManager::prepareActiveConstraint(float _dt)
 	{
 		for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)

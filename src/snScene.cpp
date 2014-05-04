@@ -540,8 +540,9 @@ namespace Supernova
 			m_collisionPoints.push_back(*point);
 
 			//if a constraints already exists, take it and reuse it or else create it.
-			snContactConstraint* npConstraint = static_cast<snContactConstraint*>(m_contactConstraintManager.getAvailableConstraint());
-			snFrictionConstraint* fConstraint = static_cast<snFrictionConstraint*>(m_contactConstraintManager.getAvailableConstraint());
+			snContactConstraint* npConstraint = 0;
+			snFrictionConstraint* fConstraint = 0;
+			m_contactConstraintManager.getAvailableConstraints(&npConstraint, &fConstraint);
 
 			//initialize and activate the constraints
 			npConstraint->initialize(_a, _b, res.m_normal, *point, *penetrationIterator, this);

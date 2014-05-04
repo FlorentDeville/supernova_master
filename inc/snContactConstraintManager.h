@@ -40,9 +40,14 @@
 #include <vector>
 using std::vector;
 
+#include <mutex>
+using std::mutex;
+
 namespace Supernova
 {
 	class snIConstraint;
+	class snContactConstraint;
+	class snFrictionConstraint;
 
 	//Store and manage the contact constraints used in a scene.
 	class snContactConstraintManager
@@ -54,6 +59,9 @@ namespace Supernova
 		//Id of the next available constraint
 		unsigned int m_currentConstraintId;
 
+		//Protect access to the list of constraints
+		mutex m_protect;
+
 	public:
 		//Default constructor
 		snContactConstraintManager();
@@ -61,8 +69,8 @@ namespace Supernova
 		//Destructor. Clean all the allocated constraints
 		~snContactConstraintManager();
 
-		//Return an available constraint. If no available constraint is found, it will be created.
-		snIConstraint* getAvailableConstraint();
+		//Return pointers to available contact and friction constraints.
+		void getAvailableConstraints(snContactConstraint** _contact, snFrictionConstraint** _friction);
 
 		//Prepare all the currently active constraints.
 		void prepareActiveConstraint(float _dt);
@@ -75,6 +83,11 @@ namespace Supernova
 
 		//Clean the manager after the broad phase step.
 		void postBroadPhase();
+
+	private:
+		//Return an available constraint. If no available constraint is found, it will be created.
+		//This function is private and must not be called from the outside for thread safety reasons.
+		snIConstraint* getAvailableConstraint();
 	};
 }
 
