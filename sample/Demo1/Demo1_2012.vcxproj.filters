@@ -118,6 +118,9 @@
     <ClCompile Include="..\src\PathExplorer.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\EntityBoxLauncher.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -215,6 +218,9 @@
     </ClInclude>
     <ClInclude Include="..\src\PathExplorer.h">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityBoxLauncher.h">
+      <Filter>World\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
