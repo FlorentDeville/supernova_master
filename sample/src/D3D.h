@@ -51,7 +51,7 @@ namespace Devil
 		D3D();
 		virtual ~D3D();
 
-		bool initialize(int, int, bool, HWND, bool, float, float);
+		bool initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear);
 		void shutdown();
 
 		//Prepare the scene to be rendered.

@@ -59,7 +59,7 @@ namespace Devil
 		initializeWindows(screenWidth, screenHeight);
 		SetWindowText(m_hwnd, L"SUPERNOVA Demo1 (Florent Devillechabrol)");
 		// Initialize the graphics object.
-		result = GRAPHICS->initialize(screenWidth, screenHeight, m_hwnd, m_fullScreen);
+		result = GRAPHICS->initialize(screenWidth, screenHeight, m_hwnd, _fullScreen, false);
 		if (!result)
 		{
 			return false;
@@ -148,7 +148,7 @@ namespace Devil
 				LARGE_INTEGER currentClock;
 				QueryPerformanceCounter(&currentClock);
 				unsigned long currentTime = (unsigned long)(currentClock.QuadPart - m_lastTick) / tickPerMilliseconds;
-				if (currentTime > m_deltaTime)
+				if (currentTime >= m_deltaTime)
 				{
 					DEBUGGER->clearWatch();
 
