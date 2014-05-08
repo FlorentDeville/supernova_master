@@ -107,7 +107,7 @@ namespace Supernova
 			//clip the incident polygon using the plane
 			snVector4fVector clipped;
 			clipPolygon(incidentPolygon, adjacentNormal, d, clipped);
-			incidentPolygon = clipped;
+			incidentPolygon.swap(clipped);
 		}
 
 		if (incidentPolygon.size() == 0)
