@@ -151,6 +151,9 @@ namespace Supernova
 		if (_polygon.size() == 0)
 			return;
 
+		//Reserve enough space to contain all the points of the source polygon to avoid several dynamic allocation later.
+		_clippedPolygon.reserve(_polygon.size());
+
 		snVector4f firstPoint = _polygon[_polygon.size() - 1];
 		for (snVector4fVectorConstIterator i = _polygon.cbegin(); i != _polygon.cend(); ++i)
 		{
