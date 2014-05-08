@@ -92,6 +92,7 @@ namespace Supernova
 		//get the list of plan to use for clipping
 		const int* adjacentFaces = ReferenceBox->getAdjacentFaces(ReferenceFaceId);
 		snVector4fVector incidentPolygon;
+		incidentPolygon.reserve(4);
 		for (int i = 0; i < 4; ++i)
 			incidentPolygon.push_back(Incident[i]);
 
@@ -124,6 +125,11 @@ namespace Supernova
 			snVector4f adjacentNormal = ReferenceBox->getWorldNormalOfFace(ReferenceFaceId);
 			snVector4f vertexInPlan = ReferenceBox->getWorldVertexOfFace(ReferenceFaceId);
 			float d = adjacentNormal.dot(vertexInPlan);
+
+			//Reserve space to avoid several dynamic allocations
+			_patchPenetrations.reserve(incidentPolygon.size());
+			_patch.reserve(incidentPolygon.size());
+
 			for (snVector4fVectorConstIterator vertex = incidentPolygon.cbegin(); vertex != incidentPolygon.cend(); ++vertex)
 			{
 				float dot = d - (*vertex).dot(adjacentNormal);
