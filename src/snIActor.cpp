@@ -189,6 +189,18 @@ namespace Supernova
 		return (m_collisionFlag & _flag) != 0;
 	}
 
+
+	bool snIActor::isCollisionDetectionEnabled(const snIActor* const _a, const snIActor* const _b)
+	{
+		//No colision detection between two statics or a kinematic and a static.
+		if ((_a->getActorType() == snActorType::snActorTypeStatic && _b->getActorType() == snActorType::snActorTypeStatic) ||
+			(_a->getActorType() == snActorType::snActorTypeStatic && _b->getActorType() == snActorType::snActorTypeKinematic) ||
+			(_a->getActorType() == snActorType::snActorTypeKinematic && _b->getActorType() == snActorType::snActorTypeStatic))
+			return false;
+
+		return true;
+	}
+
 	//Compute the bounding volume based on the colliders
 	void snIActor::computeBoundingVolume()
 	{

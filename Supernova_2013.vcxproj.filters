@@ -121,6 +121,9 @@
     <ClInclude Include="inc\snCollisionFlag.h">
       <Filter>Collision</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snSweepManager.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -192,6 +195,9 @@
     </ClCompile>
     <ClCompile Include="src\snVector4f.cpp">
       <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snSweepManager.cpp">
+      <Filter>Simulation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

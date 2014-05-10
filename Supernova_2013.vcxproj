@@ -41,6 +41,7 @@
     <ClInclude Include="inc\snQuaternion.h" />
     <ClInclude Include="inc\snScene.h" />
     <ClInclude Include="inc\snSimplex.h" />
+    <ClInclude Include="inc\snSweepManager.h" />
     <ClInclude Include="inc\snTimer.h" />
     <ClInclude Include="inc\snTypes.h" />
     <ClInclude Include="inc\snVector4f.h" />
@@ -68,6 +69,7 @@
     <ClCompile Include="src\snQuaternion.cpp" />
     <ClCompile Include="src\snScene.cpp" />
     <ClCompile Include="src\snSimplex.cpp" />
+    <ClCompile Include="src\snSweepManager.cpp" />
     <ClCompile Include="src\snTimer.cpp" />
     <ClCompile Include="src\snVector4f.cpp" />
   </ItemGroup>

@@ -48,6 +48,7 @@ using std::list;
 #include "snCollision.h"
 #include "snContactConstraintManager.h"
 #include "snCollisionMode.h"
+#include "snSweepManager.h"
 
 #ifdef _DEBUG
 namespace Devil
@@ -103,11 +104,8 @@ namespace Supernova
 		//Number of iteration to execute to solve the constraints.
 		int m_solverIterationCount;
 
-		//List of actor sorted using their AABB.
-		list<snIActor*> m_sweepList;
-
-		//Index of the axis for the sweep and prune broad phase algorithm
-		int m_sweepAxis;
+		//Manager handling the sweep and prune broad phase algorithm
+		snSweepManager m_sweepAndPrune;
 
 		//The type of collision to use
 		snCollisionMode m_collisionMode;

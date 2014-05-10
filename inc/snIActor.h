@@ -230,6 +230,9 @@ namespace Supernova
 
 		void OnCollision(snIActor* const _other);
 
+		//Check if we can make a collision detection test based on the type of actors
+		static bool isCollisionDetectionEnabled(const snIActor* const _a, const snIActor* const _b);
+
 	protected :
 		//Compute the bounding volume based on the colliders
 		void computeBoundingVolume();

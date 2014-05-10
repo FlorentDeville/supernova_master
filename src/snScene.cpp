@@ -70,8 +70,9 @@ namespace Supernova
 
 	snScene::snScene() : m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
-		m_sweepList(), m_sweepAxis(0), m_collisionMode(snECollisionModeSweepAndPrune), m_contactConstraintBeta(0.25f)
+		m_collisionMode(snECollisionModeSweepAndPrune), m_contactConstraintBeta(0.25f), m_sweepAndPrune()
 	{
+		m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
 	}
 
 	snScene::~snScene()
@@ -127,7 +128,7 @@ namespace Supernova
 		//no existing spot found so push back
 		int actorId = m_actors.size();
 		m_actors.push_back(_actor);
-		m_sweepList.push_back(_actor);
+		m_sweepAndPrune.addActor(_actor);
 		return actorId;
 	}
 
@@ -190,7 +191,7 @@ namespace Supernova
 		}
 		m_constraints.clear();
 
-		m_sweepList.clear();
+		m_sweepAndPrune.clearList();
 	}
 
 	void snScene::update(float _deltaTime)
@@ -404,112 +405,20 @@ namespace Supernova
 
 	void snScene::computeBroadPhaseCollisions()
 	{
+		//Clear the list of collision points
 		m_collisionPoints.clear();
+
+		//Prepare for the broad phase. First prepare the constraint manager then prepare the sweep and prune manager
 		m_contactConstraintManager.preBroadPhase();
+		m_sweepAndPrune.preBroadPhase();
 
-#ifdef SN_DEBUGGER
-		long long startTimer = snTimer::getCurrentTick();
-#endif //ifdef SN_DEBUGGER
+		//Apply the broad phase
+		m_sweepAndPrune.broadPhase();
 
-		//sort the list in ascending order
-		m_sweepList.sort([this](const snIActor* _a, const snIActor* _b)
-		{
-			return _a->getBoundingVolume()->m_min[m_sweepAxis] < _b->getBoundingVolume()->m_min[m_sweepAxis];	
-		});
-
-#ifdef SN_DEBUGGER
-		float durationMS = snTimer::convertElapsedTickCountInMilliSeconds(snTimer::getElapsedTickCount(startTimer));
-		DEBUGGER->setWatchExpression(L"Broad Phase - Sort (ms)", std::to_wstring(durationMS));
-#endif
-
-		//sum and squared sum of the AABB center
-		snVector4f s, s2;
-
-#ifdef 	SN_DEBUGGER
-		int collisionQueriesCount = 0;
-#endif //ifdef SN_DEBUGGER
-
-#ifdef SN_DEBUGGER
-		startTimer = snTimer::getCurrentTick();
-#endif //ifdef SN_DEBUGGER
-
-		//loop through each actor in the scene using the sweep list
-		for (list<snIActor*>::iterator i = m_sweepList.begin(); i != m_sweepList.end(); ++i)
-		{
-			if (!(*i)->getIsActive())
-				continue;
-
-			//compute aabb center point
-			snVector4f center = ((*i)->getBoundingVolume()->m_max + (*i)->getBoundingVolume()->m_min) * 0.5f;
-
-			//compute sum and sum squared to compute variance later
-			s = s + center;
-			s2 = s2 + (center * center);
-
-			//test collision against all other actors
-			list<snIActor*>::iterator j = i;
-			++j;
-			while (j != m_sweepList.end())
-			{
-				if (!(*j)->getIsActive())
-				{
-					++j;
-					continue;
-				}
-				
-
-				//check if the collision detection is enabled between the two actors
-				if (!isCollisionDetectionEnabled(*i, *j))
-				{
-					++j;
-					continue;
-				}
-				
-				//check if the tested bounding volume(j) is too far to the current bounding volume (i)
-				if ((*j)->getBoundingVolume()->m_min[m_sweepAxis] > (*i)->getBoundingVolume()->m_max[m_sweepAxis])
-					break;
-
-				if (AABBOverlap((*i)->getBoundingVolume(), (*j)->getBoundingVolume()))
-				{
-#ifdef 	SN_DEBUGGER
-					++collisionQueriesCount;
-#endif //ifdef SN_DEBUGGER
-					computeCollisionDetection(*i, *j);
-				}
-				++j;
-			}
-		}
-
+		//Post broad phase for the constraints manager and the sweep and prune manager.
 		m_contactConstraintManager.postBroadPhase();
+		m_sweepAndPrune.postBroadPhase();
 
-#ifdef SN_DEBUGGER
-		durationMS = snTimer::convertElapsedTickCountInMilliSeconds(snTimer::getElapsedTickCount(startTimer));
-		DEBUGGER->setWatchExpression(L"Broad Phase - Collision (ms)", std::to_wstring(durationMS));
-#endif
-		
-#ifdef SN_DEBUGGER
-		startTimer = snTimer::getCurrentTick();
-#endif //ifdef SN_DEBUGGER
-
-		//compute variance
-		snVector4f v = s2 - (s * s);
-		v.absolute();
-
-		//update the axis to sort to take the axis with the greatest variance.
-		m_sweepAxis = 0;
-		if (v[1] > v[0]) m_sweepAxis = 1;
-		if (v[2] > v[m_sweepAxis]) m_sweepAxis = 2;
-
-#ifdef SN_DEBUGGER
-		durationMS = snTimer::convertElapsedTickCountInMilliSeconds(snTimer::getElapsedTickCount(startTimer));
-		DEBUGGER->setWatchExpression(L"Broad Phase - Compute Variance (ms)", std::to_wstring(durationMS));
-#endif
-
-#ifdef SN_DEBUGGER
-		DEBUGGER->setWatchExpression(L"Collision Queries Count", std::to_wstring(collisionQueriesCount));
-		DEBUGGER->setWatchExpression(L"Sort Variance", std::to_wstring(v[0]) + L"," + std::to_wstring(v[1]) + L"," + std::to_wstring(v[2]));
-		DEBUGGER->setWatchExpression(L"Sort Axis", std::to_wstring(m_sweepAxis));
-#endif //idef SN_DEBUGGER
 	}
 
 	void snScene::computeCollisionDetection(snIActor* _a, snIActor* _b)
