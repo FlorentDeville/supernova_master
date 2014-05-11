@@ -37,7 +37,7 @@
 
 #include <xmmintrin.h>
 #include "snGlobals.h"
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 
 namespace Supernova
 {
@@ -50,7 +50,7 @@ namespace Supernova
 		static const int ROW_COUNT = 4;
 
 		//array representing the matrix. Each element is a row so the representation is row major.
-		snVector4f m_r[ROW_COUNT];
+		snVec m_r[ROW_COUNT];
 
 		static const snMatrix44f m_zero;
 
@@ -86,16 +86,16 @@ namespace Supernova
 		void operator=(const snMatrix44f& m)const;
 
 		/*Get the row with the index _id*/
-		inline snVector4f& operator[](int _id);
+		inline snVec& operator[](int _id);
 
 		/*Get the row with the index _id*/
-		inline snVector4f operator[](int _id) const;
+		inline snVec operator[](int _id) const;
 
 		/*create a translation matrix*/
 		void createTranslation(float x, float y, float z);
 
 		/*Create a translation matrix from a vector*/
-		void createTranslation(const snVector4f& v);
+		void createTranslation(const snVec& v);
 
 		/*create a rotation matrix around X axis*/
 		void createRotationX(float radiusAngle);
@@ -107,10 +107,10 @@ namespace Supernova
 		void createRotationZ(float radiusAngle);
 
 		/*create a rotation matrix a specific axis*/
-		void createRotation(const snVector4f& axis, float angle);
+		void createRotation(const snVec& axis, float angle);
 
 		/*create a non uniform scale matrix*/
-		void createScale(const snVector4f& s);
+		void createScale(const snVec& s);
 
 		/*create a uniform scale matrix*/
 		void createScale(float s);
@@ -119,10 +119,10 @@ namespace Supernova
 		void getOpenGLMatrix(double* matrix);
 
 		//calculate frenet matrix
-		void createFrenet(const snVector4f& position, const snVector4f& direction, const snVector4f& up);
+		void createFrenet(const snVec& position, const snVec& direction, const snVec& up);
 
 		//build a matrix using three vectors as columns
-		void buildColumn(const snVector4f& c1, const snVector4f& c2, const snVector4f& c3);
+		void buildColumn(const snVec& c1, const snVec& c2, const snVec& c3);
 
 		//calculate the determinant
 		float det()const;
@@ -131,27 +131,27 @@ namespace Supernova
 		void transpose(snMatrix44f& _transpose) const;
 
 		//Compute the rotation matrix from a quaternion
-		void createRotationFromQuaternion(const snVector4f& _q);
+		void createRotationFromQuaternion(const snVec& _q);
 	};
 
-	snVector4f& snMatrix44f::operator[](int _id)
+	snVec& snMatrix44f::operator[](int _id)
 	{
 		return m_r[_id];
 	}
 
-	snVector4f snMatrix44f::operator[](int _id) const
+	snVec snMatrix44f::operator[](int _id) const
 	{
 		return m_r[_id];
 	}
 
 	//Compute the product between a row vector and a matrix. The fourth element of the vector and the fourth line of the matrix are ignored.
-	snVector4f snMatrixTransform3(const snVector4f& _v, const snMatrix44f& _m);
+	snVec snMatrixTransform3(const snVec& _v, const snMatrix44f& _m);
 
 	//Compute the product between a row vector and a matrix.
-	snVector4f snMatrixTransform4(const snVector4f& _v, const snMatrix44f& _m);
+	snVec snMatrixTransform4(const snVec& _v, const snMatrix44f& _m);
 
 	//Compute the product between a matrix and a column vector. The fourth element of the vector and the fourth line of the matrix are ignored.
-	snVector4f snMatrixTransform3(const snMatrix44f& _m, const snVector4f& _v);
+	snVec snMatrixTransform3(const snMatrix44f& _m, const snVec& _v);
 
 	//Multiply two matrices _m1 and _m2 and set the result in _res.
 	void snMatrixMultiply4(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res);

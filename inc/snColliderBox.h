@@ -47,13 +47,13 @@ namespace Supernova
 		static const int FACE_COUNT = 6;
 
 		//size of the box: width, height, depth.
-		snVector4f m_size;
+		snVec m_size;
 
 		//Half size of the box
-		snVector4f m_extends;
+		snVec m_extends;
 
 		//Vertices composing the box.
-		snVector4f m_box[VERTEX_COUNT];
+		snVec m_box[VERTEX_COUNT];
 
 		/*List of indices of vertices making each face of the box. Widing is anticlockwise.*/
 		int m_idFaces[INDEX_COUNT];
@@ -62,10 +62,10 @@ namespace Supernova
 		int m_facesAdjacent[FACE_COUNT][4];
 
 		//Vertices composing the box in world coordinates.
-		snVector4f m_worldBox[VERTEX_COUNT];
+		snVec m_worldBox[VERTEX_COUNT];
 
 		//Normals expressed in wolrd coordinates.
-		snVector4f m_worldNormals[3];
+		snVec m_worldNormals[3];
 
 	public:
 		//Constructor. You should not create collider yourself. Use snActor::createColliderBox instead. If you create a collider yourself
@@ -84,33 +84,33 @@ namespace Supernova
 		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const;
 
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
-		snVector4f getFarthestPointInDirection(const snVector4f& _direction) const;
+		snVec getFarthestPointInDirection(const snVec& _direction) const;
 
 		//Project the collider along an axis and return the min and max value. The direction has to be expressed in world coordinate.
-		void computeProjection(const snVector4f& _direction, float& _min, float& _max) const;
+		void computeProjection(const snVec& _direction, float& _min, float& _max) const;
 
-		const snVector4f& getSize() const;
+		const snVec& getSize() const;
 
-		void setSize(const snVector4f& _size);
+		void setSize(const snVec& _size);
 
 		//Return an array containing the extends of the box for each axis.
-		const snVector4f& getExtends() const;
+		const snVec& getExtends() const;
 
 		/*Return an array of three vectors containing normals along x, y and z axis (in that order) and in world coordinates.*/
-		const snVector4f* getWorldNormal() const;
+		const snVec* getWorldNormal() const;
 
 		/*Calculate the closest point to the box of the point given in parameter.*/
-		snVector4f getClosestPoint(const snVector4f&) const;
+		snVec getClosestPoint(const snVec&) const;
 
 		//get the closest polygon projected onto the normal.
-		void getClosestPolygonProjected(const snVector4f& _n, snVector4f* const _polygon, int& _count) const;
+		void getClosestPolygonProjected(const snVec& _n, snVec* const _polygon, int& _count) const;
 
 		//return the normal in workd coordinate of the face
-		snVector4f getWorldNormalOfFace(int _faceId) const;
+		snVec getWorldNormalOfFace(int _faceId) const;
 
 		const int* getAdjacentFaces(int _faceId) const;
 
-		snVector4f getWorldVertexOfFace(int _faceId) const;
+		snVec getWorldVertexOfFace(int _faceId) const;
 
 		//Compute the bounding volume for this collider
 		void computeAABB(snAABB * const _boundingVolume) const;

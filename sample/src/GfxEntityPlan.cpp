@@ -7,6 +7,7 @@
 
 #include "EffectProvider.h"
 #include <Effects.h>
+using namespace DirectX;
 
 namespace Devil
 {

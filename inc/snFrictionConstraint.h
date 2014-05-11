@@ -57,13 +57,13 @@ namespace Supernova
 		snContactConstraint const * m_npConstraint;
 
 		//The two tangent vector along which the friction is applied.
-		snVector4f m_tangent[2];
+		snVec m_tangent[2];
 
 		//(r X T0)I-1
-		snVector4f m_rCrossT0InvI[2];
+		snVec m_rCrossT0InvI[2];
 
 		//(r X T1)I-1
-		snVector4f m_rCrossT1InvI[2];
+		snVec m_rCrossT1InvI[2];
 
 		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
 		float m_effectiveMass;

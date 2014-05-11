@@ -35,7 +35,6 @@
 #ifndef SN_ICOLLIDER_H
 #define SN_ICOLLIDER_H
 
-#include "snVector4f-inl.h"
 #include "snMatrix44f.h"
 
 namespace Supernova
@@ -61,20 +60,21 @@ namespace Supernova
 
 	protected:
 		/*Origin of the shape in local coordinates.*/
-		snVector4f m_origin;
+		snVec m_origin;
 
 		/*Origin of the shape in world coordinate.*/
-		snVector4f m_worldOrigin;
+		snVec m_worldOrigin;
 
 		//The type of collider
 		snEColliderType m_typeOfCollider;
 
 	public:
-		snICollider() : m_origin(0, 0, 0, 1)
+		snICollider()
 		{
+			m_origin = Supernova::Vector::snVec4Set(0, 0, 0, 1);
 		}
 
-		snICollider(const snVector4f& _Origin) : m_origin(_Origin)
+		snICollider(const snVec& _Origin) : m_origin(_Origin)
 		{
 		}
 
@@ -90,30 +90,30 @@ namespace Supernova
 		virtual void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const = 0;
 
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
-		virtual snVector4f getFarthestPointInDirection(const snVector4f& /*_direction*/) const { return snVector4f(); };
+		virtual snVec getFarthestPointInDirection(const snVec& /*_direction*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
 
 		//Project the collider along an axis and return the min and max value. The direction has to be expressed in world coordinate.
-		virtual void computeProjection(const snVector4f& _direction, float& _min, float& _max) const = 0;
+		virtual void computeProjection(const snVec& _direction, float& _min, float& _max) const = 0;
 
 		//Get the closest polygon projected onto the normal.
-		virtual void getClosestPolygonProjected(const snVector4f& /*_n*/, snVector4f* const /*_polygon*/, int& /*_count*/) const{};
+		virtual void getClosestPolygonProjected(const snVec& /*_n*/, snVec* const /*_polygon*/, int& /*_count*/) const{};
 
 		//Get the ids of all the adjacent faces.
 		virtual const int* getAdjacentFaces(int /*_faceId*/) const { return 0; };
 
 		//Return the normal in world coordinate of the face
-		virtual snVector4f getWorldNormalOfFace(int /*_faceId*/) const { return snVector4f(); };
+		virtual snVec getWorldNormalOfFace(int /*_faceId*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
 
-		virtual snVector4f getWorldVertexOfFace(int /*_faceId*/) const { return snVector4f(); };
+		virtual snVec getWorldVertexOfFace(int /*_faceId*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
 
-		const snVector4f& getOrigin() const { return m_origin; }
+		const snVec& getOrigin() const { return m_origin; }
 
 		snEColliderType getTypeOfCollider() const { return m_typeOfCollider; }
 
 		//Set the origin of the collider.
-		void setOrigin(const snVector4f& _origin){ m_origin = _origin; }
+		void setOrigin(const snVec& _origin){ m_origin = _origin; }
 
-		const snVector4f& getWorldOrigin() const { return m_worldOrigin; }
+		const snVec& getWorldOrigin() const { return m_worldOrigin; }
 
 		//Compute the bounding volume for this collider
 		virtual void computeAABB(snAABB * const /*_boundingVolume*/) const {};

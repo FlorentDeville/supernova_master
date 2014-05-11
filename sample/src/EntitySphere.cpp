@@ -11,7 +11,8 @@
 #include "snScene.h"
 
 #include "snIActor.h"
-using namespace Supernova;
+
+using namespace DirectX;
 
 namespace Devil
 {
@@ -32,8 +33,7 @@ namespace Devil
 
 	void EntitySphere::update()
 	{
-		snVector4f newPosition = m_actor->getPosition();
-		m_position = XMVectorSet(newPosition.VEC4FX, newPosition.VEC4FY, newPosition.VEC4FZ, 1);
+		m_position = m_actor->getPosition();
 	}
 
 	void EntitySphere::render()

@@ -32,15 +32,15 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 
 namespace Supernova
 {
 	//Represent a axis aligned bounding box.
 	struct snAABB
 	{
-		snVector4f m_min;
-		snVector4f m_max;
+		snVec m_min;
+		snVec m_max;
 	};
 
 	//Return true if the two axis aligned bounding boxes are overlaping. return false otherwise.

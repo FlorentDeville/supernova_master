@@ -57,8 +57,10 @@
 #include "ComponentFloatingText.h"
 
 #include "PathExplorer.h"
+#include "snMath.h"
 
 using namespace Supernova;
+using namespace Supernova::Vector;
 
 namespace Devil
 {
@@ -144,9 +146,9 @@ namespace Devil
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setSolverIterationCount(5);
 		scene->setLinearSquaredSpeedThreshold(0.005f);
-		scene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
-		WORLD->getCamera()->setPosition(XMVectorSet(25, 30, 50, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(15, 7, 0, 1));
+		scene->setGravity(snVec4Set(0, -9.81f * 2, 0, 0));
+		WORLD->getCamera()->setPosition(snVec4Set(25, 30, 50, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(15, 7, 0, 1));
 
 		float groundHeight = 0;
 		
@@ -157,7 +159,7 @@ namespace Devil
 			float height = 7;
 			float depth = 10;
 
-			snVector4f pos(0, groundHeight + height * 0.5f, 0, 1);
+			snVec pos = snVec4Set(0, groundHeight + height * 0.5f, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -172,7 +174,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 			act->updateMassAndInertia(200);
 			act->initialize();
@@ -181,7 +183,7 @@ namespace Devil
 			_ASSERTE(_CrtCheckMemory());
 			box->setActor(act);
 
-			blockOneHeight = pos.getY() + height * 0.5f;
+			blockOneHeight = snVec4GetY(pos) + height * 0.5f;
 		}
 
 		//platform
@@ -190,7 +192,7 @@ namespace Devil
 			float width = 15;
 			float height = 0.5;
 			float depth = 3;
-			snVector4f pos(width * 0.5f, blockOneHeight + height * 0.5f + 0, 0, 1);
+			snVec pos = snVec4Set(width * 0.5f, blockOneHeight + height * 0.5f + 0, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -204,7 +206,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 			act->updateMassAndInertia(100);
 			act->initialize();
@@ -212,7 +214,7 @@ namespace Devil
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
 			box->setActor(act);
 
-			platformHeight = pos.getY() + height * 0.5f;
+			platformHeight = snVec4GetY(pos) + height * 0.5f;
 		}
 
 		//second block
@@ -221,7 +223,7 @@ namespace Devil
 			float width = 3;
 			float height = 3;
 			float depth = 3;
-			snVector4f pos(2, platformHeight + height * 0.5f, 0, 1);
+			snVec pos = snVec4Set(2, platformHeight + height * 0.5f, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -235,7 +237,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 			act->updateMassAndInertia(100);
 			act->initialize();
@@ -243,7 +245,7 @@ namespace Devil
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[3]);
 			box->setActor(act);
 
-			blockTwoHeight = pos.getY() + height * 0.5f;
+			blockTwoHeight = snVec4GetY(pos) + height * 0.5f;
 		}
 
 		float blockThreeHeight = 0;
@@ -251,7 +253,7 @@ namespace Devil
 			float width = 3;
 			float height = 3;
 			float depth = 3;
-			snVector4f pos(2, blockTwoHeight + height * 0.5f, 0, 1);
+			snVec pos = snVec4Set(2, blockTwoHeight + height * 0.5f, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -265,7 +267,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			act->updateMassAndInertia(100);
@@ -274,7 +276,7 @@ namespace Devil
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
 			box->setActor(act);
 
-			blockThreeHeight = pos.getY() + height * 0.5f;
+			blockThreeHeight = snVec4GetY(pos) + height * 0.5f;
 		}
 
 		//dynamic
@@ -282,7 +284,7 @@ namespace Devil
 			float width = 3;
 			float height = 3;
 			float depth = 3;
-			snVector4f pos(11, platformHeight + height * 0.5f + 25, 0, 1);
+			snVec pos = snVec4Set(11, platformHeight + height * 0.5f + 25, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -296,7 +298,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			act->updateMassAndInertia(500);
@@ -305,7 +307,7 @@ namespace Devil
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[0]);
 			box->setActor(act);
 
-			blockTwoHeight = pos.getY() + height * 0.5f;
+			blockTwoHeight = snVec4GetY(pos) + height * 0.5f;
 		}
 	}
 
@@ -316,9 +318,9 @@ namespace Devil
 		scene->setSolverIterationCount(60);
 		scene->setLinearSquaredSpeedThreshold(0.006f);
 		scene->setAngularSquaredSpeedThreshold(0.0005f);
-		scene->setGravity(snVector4f(0, -9.81f * 2, 0, 0));
-		WORLD->getCamera()->setPosition(XMVectorSet(100, 79, 140, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(35, 21, 0, 1));
+		scene->setGravity(snVec4Set(0, -9.81f * 2, 0, 0));
+		WORLD->getCamera()->setPosition(snVec4Set(100, 79, 140, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(35, 21, 0, 1));
 	
 		//ground
 		float groundHeight = 0;
@@ -332,15 +334,15 @@ namespace Devil
 			//create actor
 			snActorStatic* act = 0;
 			int actorId = -1;
-			snVector4f position(0, 101, -80, 1);
-			scene->createActorStatic(&act, actorId, position, snVector4f(0, 0, 0, 1));
+			snVec position = snVec4Set(0, 101, -80, 1);
+			scene->createActorStatic(&act, actorId, position, snVec4Set(0, 0, 0, 1));
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -361,7 +363,7 @@ namespace Devil
 				float depth = 5;
 				float space = 1.5;
 				float xOffset = -10;
-				snVector4f pos((MAX_ROW - row) * width * 0.5f + (width + space) * i + xOffset, groundHeight + height * 0.5f + height * (MAX_ROW - row), 0, 1);
+				snVec pos = snVec4Set((MAX_ROW - row) * width * 0.5f + (width + space) * i + xOffset, groundHeight + height * 0.5f + height * (MAX_ROW - row), 0, 1);
 
 				//create actor
 				snActorDynamic* act = 0;
@@ -380,7 +382,7 @@ namespace Devil
 
 				//create collider
 				snColliderBox* collider = new snColliderBox();
-				collider->setSize(snVector4f(width, height, depth, 0));
+				collider->setSize(snVec4Set(width, height, depth, 0));
 				act->addCollider(collider);
 
 				//initialize
@@ -400,9 +402,9 @@ namespace Devil
 		scene->setSolverIterationCount(4);
 		scene->setLinearSquaredSpeedThreshold(0.006f);
 		scene->setAngularSquaredSpeedThreshold(0.001f);
-		scene->setGravity(snVector4f(0, -9.81f * 4, 0, 0));
-		WORLD->getCamera()->setPosition(XMVectorSet(0, 80, 150, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(10, 75, 0, 1));
+		scene->setGravity(snVec4Set(0, -9.81f * 4, 0, 0));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 80, 150, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(10, 75, 0, 1));
 		WORLD->activateCollisionPoint();
 
 		//back wall
@@ -414,7 +416,7 @@ namespace Devil
 			//create actor
 			snActorStatic* act = 0;
 			int actorId = -1;
-			scene->createActorStatic(&act, actorId, snVector4f(0, 101, -80, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&act, actorId, snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
 
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
@@ -422,7 +424,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -439,7 +441,7 @@ namespace Devil
 			float width = 2;
 			float height = 5;
 			float depth = 2;
-			snVector4f pos(10, top, 0, 1);
+			snVec pos = snVec4Set(10, top, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -454,7 +456,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -465,7 +467,7 @@ namespace Devil
 			box->setActor(act);
 
 			//create constraints
-			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
+			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVec4Set(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 
@@ -478,7 +480,7 @@ namespace Devil
 			float height = 5;
 			float depth = 2;
 			top -= TWO_LINK_LENGTH;
-			snVector4f pos(10, top, 0, 1);
+			snVec pos = snVec4Set(10, top, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -494,7 +496,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -505,8 +507,8 @@ namespace Devil
 			box->setActor(act);
 
 			//create p2p constraint
-			snPointToPointConstraint* p2pc = scene->createPointToPointConstraint(previousActor, snVector4f(0, -LINK_LENGTH, 0, 1),
-				act, snVector4f(0, LINK_LENGTH, 0, 1));
+			snPointToPointConstraint* p2pc = scene->createPointToPointConstraint(previousActor, snVec4Set(0, -LINK_LENGTH, 0, 1),
+				act, snVec4Set(0, LINK_LENGTH, 0, 1));
 			WORLD->createPointToPointConstraint(p2pc);
 
 			previousActor = act;
@@ -520,8 +522,8 @@ namespace Devil
 		scene->setSolverIterationCount(120); //Wooooooooo that's a lot!!!!!!
 		scene->setContactConstraintBeta(0.005f);
 		scene->setAngularSquaredSpeedThreshold(0.f);
-		WORLD->getCamera()->setPosition(XMVectorSet(50, 50, 100, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(5, 7, 0, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(50, 50, 100, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(5, 7, 0, 1));
 		WORLD->activateCollisionPoint();
 		
 		float groundHeight = 0;
@@ -536,14 +538,14 @@ namespace Devil
 			
 			int actorId = -1;
 			
-			scene->createActorStatic(&act, actorId, snVector4f(0, 101, -80, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&act, actorId, snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
 
 			//create collider				
 			snColliderBox* 	collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 				
 			//initialize
@@ -556,7 +558,7 @@ namespace Devil
 		}
 
 		//tower
-		snVector4f origin(0, groundHeight, 0, 1);
+		snVec origin = snVec4Set(0, groundHeight, 0, 1);
 		int levelCount = 5;
 		for (int i = 0; i < levelCount; ++i)		
 		{
@@ -569,8 +571,8 @@ namespace Devil
 		createSandbox(L"Friction");
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setSolverIterationCount(4);
-		WORLD->getCamera()->setPosition(XMVectorSet(80, 50, 0, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(0, 7, 0, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(80, 50, 0, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 7, 0, 1));
 		WORLD->activateCollisionPoint();
 
 		float slopeAngle = 3.14f * 0.22f;
@@ -583,14 +585,14 @@ namespace Devil
 			//create actor
 			snActorStatic* act = 0;
 			int actorId = -1;
-			scene->createActorStatic(&act, actorId, snVector4f(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
+			scene->createActorStatic(&act, actorId, snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
 			act->setName("slope");
 			act->getPhysicMaterial().m_restitution = 1.f;
 			act->getPhysicMaterial().m_friction = 1.f;
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -618,7 +620,7 @@ namespace Devil
 			int actorId = -1;
 			scene->createActorDynamic(&act, actorId);
 			act->setName("full friction");
-			act->setPosition(snVector4f(-10, height, -30, 1));
+			act->setPosition(snVec4Set(-10, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = -1.f;
@@ -627,7 +629,7 @@ namespace Devil
 			//create collider
 			snColliderBox* collider = new snColliderBox();
 			float cubeSize = 5;
-			collider->setSize(snVector4f(cubeSize, cubeSize, cubeSize, 0));
+			collider->setSize(snVec4Set(cubeSize, cubeSize, cubeSize, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -645,7 +647,7 @@ namespace Devil
 			int actorId = -1;
 			scene->createActorDynamic(&act, actorId);
 			act->setName("no friction");
-			act->setPosition(snVector4f(10, height, -30, 1));
+			act->setPosition(snVec4Set(10, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = -1.f;
@@ -654,7 +656,7 @@ namespace Devil
 			//create collider
 			snColliderBox* collider = new snColliderBox();
 			float cubeSize = 5;
-			collider->setSize(snVector4f(cubeSize, cubeSize, cubeSize, 0));
+			collider->setSize(snVec4Set(cubeSize, cubeSize, cubeSize, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -672,7 +674,7 @@ namespace Devil
 			int actorId = -1;
 			scene->createActorDynamic(&act, actorId);
 			act->setName("half friction");
-			act->setPosition(snVector4f(0, height, -30, 1));
+			act->setPosition(snVec4Set(0, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = -1.f;
@@ -681,7 +683,7 @@ namespace Devil
 			//create collider
 			snColliderBox* collider = new snColliderBox();
 			float cubeSize = 5;
-			collider->setSize(snVector4f(cubeSize, cubeSize, cubeSize, 0));
+			collider->setSize(snVec4Set(cubeSize, cubeSize, cubeSize, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -698,19 +700,19 @@ namespace Devil
 		createSandbox(L"Damping");
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setSolverIterationCount(4);
-		WORLD->getCamera()->setPosition(XMVectorSet(50, 90, 80, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(50, 60, 0, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(50, 90, 80, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(50, 60, 0, 1));
 		WORLD->activateCollisionPoint();
 
 		/////ANGULAR DAMPING////////////
 		const int BOX_COUNT = 5;
-		snVector4f origin(0, 70, 0, 1);
+		snVec origin = snVec4Set(0, 70, 0, 1);
 		for (int i = 0; i < BOX_COUNT; ++i)
 		{
 			float width = 5;
 			float height = 5;
 			float depth = 5;
-			snVector4f pos = origin + snVector4f(20.f * i, 0, 0, 1);
+			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -723,11 +725,11 @@ namespace Devil
 			act->setIsKinematic(false);
 			act->setAngularDampingCoeff(i*0.2f);
 			const float v = 5;
-			act->setAngularVelocity(snVector4f(0, v, 0, 0));
+			act->setAngularVelocity(snVec4Set(0, v, 0, 0));
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -746,18 +748,18 @@ namespace Devil
 			box->addPostUpdateComponent(floatingText);
 
 			//create constraints
-			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
+			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVec4Set(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 
 		/////////LINEAR DAMPING/////////////
-		origin[1] = 50;
+		snVec4SetY(origin, 50);
 		for (int i = 0; i < BOX_COUNT; ++i)
 		{
 			float width = 5;
 			float height = 5;
 			float depth = 5;
-			snVector4f pos = origin + snVector4f(20.f * i, 0, 0, 1);
+			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 1);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -770,11 +772,11 @@ namespace Devil
 			act->setIsKinematic(false);
 			act->setLinearDampingCoeff(0.2f * i);
 			const float v = 10;
-			act->setLinearVelocity(snVector4f(v, 0, v, 0));
+			act->setLinearVelocity(snVec4Set(v, 0, v, 0));
 			
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -793,7 +795,7 @@ namespace Devil
 			box->addPostUpdateComponent(floatingText);
 
 			//create constraints
-			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVector4f(0, 10, 0, 0), 10);
+			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVec4Set(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 	}
@@ -804,8 +806,8 @@ namespace Devil
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setSolverIterationCount(4);
 
-		WORLD->getCamera()->setPosition(XMVectorSet(0, 110, 50, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(0, 110, 0, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 110, 50, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 110, 0, 1));
 		WORLD->activateCollisionPoint();
 
 		//this is a kinematic platform
@@ -820,14 +822,14 @@ namespace Devil
 			scene->createActorDynamic(&kin, actId);
 			kin->setIsKinematic(true);
 			kin->setName("kinematic");
-			kin->setPosition(snVector4f(-15, 100, 0, 1));
+			kin->setPosition(snVec4Set(-15, 100, 0, 1));
 			kin->getPhysicMaterial().m_friction = 1.f;
 			kin->getPhysicMaterial().m_restitution = 0.f;
 			kin->setLinearDampingCoeff(0.f);
 
 			//create collider
 			snColliderBox* box = new snColliderBox();
-			box->setSize(snVector4f(width, height, depth, 0));
+			box->setSize(snVec4Set(width, height, depth, 0));
 
 			kin->addCollider(box);
 			kin->initialize();
@@ -840,8 +842,8 @@ namespace Devil
 			ComponentFollowPath* path = new ComponentFollowPath(kin, true);
 			float speed = 5.f;
 
-			path->addWaypoint(snVector4f(-10, 100, 0, 1), speed);
-			path->addWaypoint(snVector4f(10, 100, 0, 1), speed);
+			path->addWaypoint(snVec4Set(-10, 100, 0, 1), speed);
+			path->addWaypoint(snVec4Set(10, 100, 0, 1), speed);
 
 			entity->addPreUpdateComponent(path);
 
@@ -865,13 +867,13 @@ namespace Devil
 			int actId = -1;
 			scene->createActorDynamic(&dyn, actId);
 			dyn->setName("dynamic");
-			dyn->setPosition(snVector4f(-2, 103.5, 0, 1));
+			dyn->setPosition(snVec4Set(-2, 103.5, 0, 1));
 			dyn->getPhysicMaterial().m_friction = 1.f;
 			dyn->getPhysicMaterial().m_restitution = 0.f;
 
 			//create collider
 			snColliderBox* box = new snColliderBox();
-			box->setSize(snVector4f(width, height, depth, 0));
+			box->setSize(snVec4Set(width, height, depth, 0));
 
 			dyn->addCollider(box);
 			dyn->updateMassAndInertia(100);
@@ -898,14 +900,14 @@ namespace Devil
 			//create the actor
 			snActorStatic* sta = 0;
 			int actId = -1;
-			scene->createActorStatic(&sta, actId, snVector4f(-15, 110, 0, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&sta, actId, snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
 			sta->setName("static right wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
 
 			//create collider
 			snColliderBox* box = new snColliderBox();
-			box->setSize(snVector4f(width, height, depth, 0));
+			box->setSize(snVec4Set(width, height, depth, 0));
 
 			sta->addCollider(box);
 			sta->initialize();
@@ -931,7 +933,7 @@ namespace Devil
 			//create the actor
 			snActorStatic* sta = 0;
 			int actId = -1;
-			scene->createActorStatic(&sta, actId, snVector4f(15, 110, 0, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&sta, actId, snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
 			sta->setName("static left wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
@@ -952,7 +954,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* box = new snColliderBox();
-			box->setSize(snVector4f(width, height, depth, 0));
+			box->setSize(snVec4Set(width, height, depth, 0));
 
 			sta->addCollider(box);
 			sta->initialize();
@@ -975,49 +977,49 @@ namespace Devil
 		createSandbox(L"Domino");
 
 		snScene* scene = SUPERNOVA->getScene(0);
-		scene->setGravity(snVector4f(0, -9.81f * 5, 0, 0));
+		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
 		scene->setContactConstraintBeta(0);
 		scene->setSolverIterationCount(20);
 
-		WORLD->getCamera()->setPosition(XMVectorSet(0, 100, -240, 1));
-		WORLD->getCamera()->setLookAt(XMVectorSet(0, 0, 20, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 100, -240, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 20, 1));
 
 		//create the path
-		snVector4f dominoSize(5, 10, 1, 0);
+		snVec dominoSize = snVec4Set(5, 10, 1, 0);
 
 		PathExplorer explorer(false);
 		float distance = 4;
-		float height = dominoSize[1] * 0.5f;
-		explorer.addWaypoint(snVector4f(-20, height, 0, 1), distance);
-		explorer.addWaypoint(snVector4f(-110, height, 0, 1), distance);
-		explorer.addWaypoint(snVector4f(-10, height, -100, 1), distance);
-		explorer.addWaypoint(snVector4f(-130, height, -100, 1), distance);
+		float height = snVec4GetY(dominoSize) * 0.5f;
+		explorer.addWaypoint(snVec4Set(-20, height, 0, 1), distance);
+		explorer.addWaypoint(snVec4Set(-110, height, 0, 1), distance);
+		explorer.addWaypoint(snVec4Set(-10, height, -100, 1), distance);
+		explorer.addWaypoint(snVec4Set(-130, height, -100, 1), distance);
 
-		explorer.addWaypoint(snVector4f(-130, height, 20, 1), distance);
+		explorer.addWaypoint(snVec4Set(-130, height, 20, 1), distance);
 
-		explorer.addWaypoint(snVector4f(110, height, 20, 1), distance);
-		explorer.addWaypoint(snVector4f(110, height, -120, 1), distance);
-		explorer.addWaypoint(snVector4f(0, height, 0, 1), distance);
-		explorer.addWaypoint(snVector4f(0, height, -120, 1), distance);
+		explorer.addWaypoint(snVec4Set(110, height, 20, 1), distance);
+		explorer.addWaypoint(snVec4Set(110, height, -120, 1), distance);
+		explorer.addWaypoint(snVec4Set(0, height, 0, 1), distance);
+		explorer.addWaypoint(snVec4Set(0, height, -120, 1), distance);
 
 		explorer.setCallback([](const snMatrix44f& _frenet)
 		{
 			//create actor
-			snVector4f dominoSize(5, 10, 1, 0);
+			snVec dominoSize = snVec4Set(5, 10, 1, 0);
 			snActorDynamic* actor = 0;
 			int actorId = -1;
 			SUPERNOVA->getScene(0)->createActorDynamic(&actor, actorId);
 			actor->setPosition(_frenet[3]);
 
 			//compute its orientation
-			float cos = _frenet[0][0];
-			float sin = _frenet[0][2];
+			float cos = snVec4GetX(_frenet[0]);
+			float sin = snVec4GetZ(_frenet[0]);
 
 			float theta = acosf(cos);
 			if (sin < 0)
 				theta = SN_PI * 2 - theta;
 
-			snVector4f q = snQuaternionFromEuler(0, -theta, 0);
+			snVec q = snQuaternionFromEuler(0, -theta, 0);
 
 			actor->setOrientation(q);
 
@@ -1042,7 +1044,7 @@ namespace Devil
 			colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
 
 			//create entity
-			EntityBox* box = WORLD->createBox(XMFLOAT3(dominoSize[0], dominoSize[1], dominoSize[2]), colors[actorId % COLOR_COUNT]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(dominoSize), snVec4GetY(dominoSize), snVec4GetZ(dominoSize)), colors[actorId % COLOR_COUNT]);
 			box->setActor(actor);
 		});
 
@@ -1050,10 +1052,10 @@ namespace Devil
 
 		//create the hammer
 		{
-			snVector4f constraintOrigin(0, dominoSize[1] * 1.9f, -120, 1);
-			snVector4f hammerOffset(0, dominoSize[1] * 0.9f, -dominoSize[1] * 0.9f, 1);
-			snVector4f hammerPosition = snVector4f(0, dominoSize[1], -120, 1) + hammerOffset;
-			float constraintDistance = (constraintOrigin - hammerPosition).norme();
+			snVec constraintOrigin = snVec4Set(0, snVec4GetY(dominoSize) * 1.9f, -120, 1);
+			snVec hammerOffset = snVec4Set(0, snVec4GetY(dominoSize) * 0.9f, -snVec4GetY(dominoSize) * 0.9f, 1);
+			snVec hammerPosition = snVec4Set(0, snVec4GetY(dominoSize), -120, 1) + hammerOffset;
+			float constraintDistance = snVec3Norme(constraintOrigin - hammerPosition);
 
 			snActorDynamic* actor = 0;
 			int actorId = -1;
@@ -1066,7 +1068,7 @@ namespace Devil
 
 			snColliderBox* collider = new snColliderBox();
 			float size = 3;
-			collider->setSize(snVector4f(size, size, size, 0));
+			collider->setSize(snVec4Set(size, size, size, 0));
 
 			actor->addCollider(collider);
 			actor->updateMassAndInertia(10);
@@ -1085,8 +1087,8 @@ namespace Devil
 		{
 			snActorDynamic* actor = 0;
 			int actorId = -1;
-			snVector4f startPosition(0, dominoSize[1] + 7, -130, 1);
-			snVector4f endPosition(0, dominoSize[1] + 7, -150, 1);
+			snVec startPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -130, 1);
+			snVec endPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -150, 1);
 			scene->createActorDynamic(&actor, actorId);
 			actor->setPosition(startPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
@@ -1098,7 +1100,7 @@ namespace Devil
 			float width = 15;
 			float height = 1;
 			float depth = 10;
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 
 			actor->addCollider(collider);
 			actor->initialize();
@@ -1123,7 +1125,7 @@ namespace Devil
 			snActorDynamic* actor = 0;
 			int actorId = -1;
 			scene->createActorDynamic(&actor, actorId);
-			actor->setPosition(snVector4f(0, 100, -130, 1));
+			actor->setPosition(snVec4Set(0, 100, -130, 1));
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
 			actor->getPhysicMaterial().m_restitution = 0.f;
@@ -1144,7 +1146,7 @@ namespace Devil
 			float width = 30;
 			float height = 30;
 			float depth = 30;
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(snVec4Set(width, height, depth, 0));
 
 			actor->addCollider(collider);
 			actor->initialize();
@@ -1170,15 +1172,15 @@ namespace Devil
 		//create actor
 		snActorStatic* act = 0;
 		int actorId = -1;
-		snVector4f position(0, -1, 0, 1);
-		_scene->createActorStatic(&act, actorId, position, snVector4f(0, 0, 0, 1));
+		snVec position = snVec4Set(0, -1, 0, 1);
+		_scene->createActorStatic(&act, actorId, position, snVec4Set(0, 0, 0, 1));
 		act->setName("ground");
 		act->getPhysicMaterial().m_restitution = _restitution;
 		act->getPhysicMaterial().m_friction = _friction;
 
 		//create collider
 		snColliderBox* collider = new snColliderBox();
-		collider->setSize(snVector4f(width, height, depth, 0));
+		collider->setSize(snVec4Set(width, height, depth, 0));
 		act->addCollider(collider);
 
 		//initialize the actor
@@ -1218,7 +1220,7 @@ namespace Devil
 		WORLD->clearWorld();
 	}
 
-	snVector4f SceneManager::createTowerLevel(snScene* const _scene, const snVector4f& _origin) const
+	snVec SceneManager::createTowerLevel(snScene* const _scene, const snVec& _origin) const
 	{
 		//colors
 		const int colorCount = 5;
@@ -1235,14 +1237,14 @@ namespace Devil
 		float pillarDepth = 2;
 
 		const int pillarCount = 4;
-		snVector4f pillarPosition[pillarCount];
+		snVec pillarPosition[pillarCount];
 
 		float halfTowerWidth = towerWidth * 0.5f;
 		float halfPillarHeight = pillarHeight * 0.5f;
-		pillarPosition[0] = snVector4f(halfTowerWidth, halfPillarHeight, halfTowerWidth, 0);
-		pillarPosition[1] = snVector4f(-halfTowerWidth, halfPillarHeight, halfTowerWidth, 0);
-		pillarPosition[2] = snVector4f(-halfTowerWidth, halfPillarHeight, -halfTowerWidth, 0);
-		pillarPosition[3] = snVector4f(halfTowerWidth, halfPillarHeight, -halfTowerWidth, 0);
+		pillarPosition[0] = snVec4Set(halfTowerWidth, halfPillarHeight, halfTowerWidth, 0);
+		pillarPosition[1] = snVec4Set(-halfTowerWidth, halfPillarHeight, halfTowerWidth, 0);
+		pillarPosition[2] = snVec4Set(-halfTowerWidth, halfPillarHeight, -halfTowerWidth, 0);
+		pillarPosition[3] = snVec4Set(halfTowerWidth, halfPillarHeight, -halfTowerWidth, 0);
 
 		//create pillars
 		for (int i = 0; i < pillarCount; ++i)
@@ -1252,7 +1254,7 @@ namespace Devil
 			int actorId = -1;
 			_scene->createActorDynamic(&act, actorId);
 
-			snVector4f pos = pillarPosition[i] + _origin;
+			snVec pos = pillarPosition[i] + _origin;
 			act->setName("pillar1");
 			
 			act->setPosition(pos);
@@ -1262,7 +1264,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(pillarWidth, pillarHeight, pillarDepth, 0));
+			collider->setSize(snVec4Set(pillarWidth, pillarHeight, pillarDepth, 0));
 			act->addCollider(collider);
 
 			//initialize
@@ -1280,17 +1282,17 @@ namespace Devil
 		float firstBedHeight = pillarHeight + bedHeight * 0.5f;
 		float secondBedHeight = firstBedHeight + bedHeight;
 
-		snVector4f bedPosition[4];
-		bedPosition[0] = snVector4f(0, firstBedHeight, halfTowerWidth, 0);
-		bedPosition[1] = snVector4f(0, firstBedHeight, -halfTowerWidth, 0);
-		bedPosition[2] = snVector4f(halfTowerWidth, secondBedHeight, 0, 0);
-		bedPosition[3] = snVector4f(-halfTowerWidth, secondBedHeight, 0, 0);
+		snVec bedPosition[4];
+		bedPosition[0] = snVec4Set(0, firstBedHeight, halfTowerWidth, 0);
+		bedPosition[1] = snVec4Set(0, firstBedHeight, -halfTowerWidth, 0);
+		bedPosition[2] = snVec4Set(halfTowerWidth, secondBedHeight, 0, 0);
+		bedPosition[3] = snVec4Set(-halfTowerWidth, secondBedHeight, 0, 0);
 
-		snVector4f bedSize[4];
-		bedSize[0] = snVector4f(bedWidth, bedHeight, bedDepth, 0);
-		bedSize[1] = snVector4f(bedWidth, bedHeight, bedDepth, 0);
-		bedSize[2] = snVector4f(bedDepth, bedHeight, bedWidth, 0);
-		bedSize[3] = snVector4f(bedDepth, bedHeight, bedWidth, 0);
+		snVec bedSize[4];
+		bedSize[0] = snVec4Set(bedWidth, bedHeight, bedDepth, 0);
+		bedSize[1] = snVec4Set(bedWidth, bedHeight, bedDepth, 0);
+		bedSize[2] = snVec4Set(bedDepth, bedHeight, bedWidth, 0);
+		bedSize[3] = snVec4Set(bedDepth, bedHeight, bedWidth, 0);
 
 		//create bed between pillars
 		for (int i = 0; i < pillarCount; ++i)
@@ -1300,7 +1302,7 @@ namespace Devil
 			int actorId = -1;
 			_scene->createActorDynamic(&act, actorId);
 
-			snVector4f pos = bedPosition[i] + _origin;
+			snVec pos = bedPosition[i] + _origin;
 			act->setName("bed");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -1316,11 +1318,11 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(bedSize[i].getX(), bedSize[i].getY(), bedSize[i].getZ()), colors[actorId % colorCount]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(bedSize[i]), snVec4GetY(bedSize[i]), snVec4GetZ(bedSize[i])), colors[actorId % colorCount]);
 			box->setActor(act);
 		}
 
-		return _origin + snVector4f(0, pillarHeight + 2 * bedHeight, 0, 0);
+		return _origin + snVec4Set(0, pillarHeight + 2 * bedHeight, 0, 0);
 	}
 
 	void SceneManager::createSandbox(const wstring& _sceneName)
@@ -1331,7 +1333,7 @@ namespace Devil
 		WorldHUD* HUD = WORLD->createHUD();
 		HUD->setSceneName(L"Scene : " + _sceneName);
 
-		GRAPHICS->setClearScreenColor(Colors::DarkGray);
+		GRAPHICS->setClearScreenColor(DirectX::Colors::DarkGray);
 
 		//create the physics scene
 		int sceneId = -1;
@@ -1343,7 +1345,7 @@ namespace Devil
 		scene->setAngularSquaredSpeedThreshold(0.000001f);
 
 		//create the camera.
-		WORLD->createCamera(XMVectorSet(0, 100, -100, 1), XMVectorSet(0, 0, 0, 1), XMVectorSet(0, 1, 0, 0));
+		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
 
 		WORLD->deactivateCollisionPoint();
 
@@ -1356,11 +1358,11 @@ namespace Devil
 		{
 			snActorStatic* stat = 0;
 			int actorId = -1;
-			scene->createActorStatic(&stat, actorId, snVector4f(250, 250, 0, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&stat, actorId, snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(10, 500, 500, 0));
+			collider->setSize(snVec4Set(10, 500, 500, 0));
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
@@ -1386,11 +1388,11 @@ namespace Devil
 		{
 			snActorStatic* stat = 0;
 			int actorId = -1;
-			scene->createActorStatic(&stat, actorId, snVector4f(-250, 250, 0, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&stat, actorId, snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(10, 500, 500, 0));
+			collider->setSize(snVec4Set(10, 500, 500, 0));
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
@@ -1416,11 +1418,11 @@ namespace Devil
 		{
 			snActorStatic* stat = 0;
 			int actorId = -1;
-			scene->createActorStatic(&stat, actorId, snVector4f(0, 250, 250, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&stat, actorId, snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(500, 500, 10, 0));
+			collider->setSize(snVec4Set(500, 500, 10, 0));
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
@@ -1446,11 +1448,11 @@ namespace Devil
 		{
 			snActorStatic* stat = 0;
 			int actorId = -1;
-			scene->createActorStatic(&stat, actorId, snVector4f(0, 250, -250, 1), snVector4f(0, 0, 0, 1));
+			scene->createActorStatic(&stat, actorId, snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(500, 500, 10, 0));
+			collider->setSize(snVec4Set(500, 500, 10, 0));
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);

@@ -5,7 +5,7 @@
 
 #include <vector>
 using namespace std;
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 
 namespace Supernova
 {
@@ -20,7 +20,7 @@ namespace Devil
 	{
 	private:
 		GfxEntitySphere* m_gfx;
-		vector<snVector4f> m_locations;
+		vector<snVec> m_locations;
 
 	public:
 		EntityCollisionPoint();
@@ -31,7 +31,7 @@ namespace Devil
 		void update();
 		void render();
 
-		void addLocation(const snVector4f& _location);
+		void addLocation(const snVec& _location);
 		void clearLocations();
 
 		void* operator new(size_t _count)

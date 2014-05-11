@@ -1,5 +1,7 @@
 #include "D3D.h"
 
+using namespace DirectX;
+
 namespace Devil
 {
 	D3D::D3D() : m_rasterStateFilled(0), m_rasterStateWireframe(0)

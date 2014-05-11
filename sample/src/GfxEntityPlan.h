@@ -4,8 +4,10 @@
 #include "IGfxEntity.h"
 #include <Effects.h>
 
-using namespace DirectX;
-//class BasicEffect;
+using DirectX::BasicEffect;
+using DirectX::XMFLOAT2;
+using DirectX::XMFLOAT4;
+using DirectX::XMMATRIX;
 
 namespace Devil
 {

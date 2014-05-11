@@ -8,6 +8,8 @@
 #include "snScene.h"
 #include "snFactory.h"
 
+using namespace DirectX;
+
 namespace Devil
 {
 	EntityCollisionPoint::EntityCollisionPoint() : IWorldEntity()
@@ -35,15 +37,15 @@ namespace Devil
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
-		const snVector4fVector& contacts = SUPERNOVA->getScene(0)->getCollisionPoints();
-		for (snVector4fVectorConstIterator i = contacts.cbegin(); i != contacts.cend(); ++i)
+		const snVecVector& contacts = SUPERNOVA->getScene(0)->getCollisionPoints();
+		for (snVecVectorConstIterator i = contacts.cbegin(); i != contacts.cend(); ++i)
 		{
-			XMMATRIX transform = XMMatrixTranslationFromVector(i->m_vec);
+			XMMATRIX transform = XMMatrixTranslationFromVector(*i);
 			m_gfx->render(transform, viewMatrix, projectionMatrix);
 		}
 	}
 
-	void EntityCollisionPoint::addLocation(const snVector4f& _location)
+	void EntityCollisionPoint::addLocation(const snVec& _location)
 	{
 		m_locations.push_back(_location);
 	}

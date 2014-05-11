@@ -39,6 +39,8 @@
 #include "snDebugger.h"
 #endif //idef SN_DEBUGGER
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 	//Default constructor
@@ -74,11 +76,11 @@ namespace Supernova
 		//sort the list in ascending order
 		m_sortedActors.sort([this](const snIActor* _a, const snIActor* _b)
 		{
-			return _a->getBoundingVolume()->m_min[m_axis] < _b->getBoundingVolume()->m_min[m_axis];
+			return snVec4GetById(_a->getBoundingVolume()->m_min, m_axis) < snVec4GetById(_b->getBoundingVolume()->m_min, m_axis);
 		});
 
-		m_sum = snVector4f(0, 0, 0, 0);
-		m_squaredSum = snVector4f(0, 0, 0, 0);
+		m_sum = snVec4Set(0, 0, 0, 0);
+		m_squaredSum = snVec4Set(0, 0, 0, 0);
 
 #ifdef SN_DEBUGGER
 		//Number of pair found 
@@ -97,7 +99,7 @@ namespace Supernova
 				continue;
 
 			//compute aabb center point
-			snVector4f center = ((*i)->getBoundingVolume()->m_max + (*i)->getBoundingVolume()->m_min) * 0.5f;
+			snVec center = ((*i)->getBoundingVolume()->m_max + (*i)->getBoundingVolume()->m_min) * 0.5f;
 
 			//compute sum and sum squared to compute variance later
 			m_sum = m_sum + center;
@@ -123,7 +125,7 @@ namespace Supernova
 				}
 
 				//check if the tested bounding volume(j) is too far to the current bounding volume (i)
-				if ((*j)->getBoundingVolume()->m_min[m_axis] > (*i)->getBoundingVolume()->m_max[m_axis])
+				if (snVec4GetById((*j)->getBoundingVolume()->m_min, m_axis) > snVec4GetById((*i)->getBoundingVolume()->m_max, m_axis))
 					break;
 
 				if (AABBOverlap((*i)->getBoundingVolume(), (*j)->getBoundingVolume()))
@@ -150,12 +152,12 @@ namespace Supernova
 	void snSweepManager::postBroadPhase()
 	{
 		//compute variance (no need to divide by the number of elements)
-		snVector4f v = m_squaredSum - (m_sum * m_sum);
-		v.absolute();
+		snVec v = m_squaredSum - (m_sum * m_sum);
+		snVec4Absolute(v);
 
 		//update the axis to sort to take the axis with the greatest variance.
 		m_axis = 0;
-		if (v[1] > v[0]) m_axis = 1;
-		if (v[2] > v[m_axis]) m_axis = 2;
+		if (snVec4GetById(v, 1) > snVec4GetById(v, 0)) m_axis = 1;
+		if (snVec4GetById(v, 2) > snVec4GetById(v, m_axis)) m_axis = 2;
 	}
 }

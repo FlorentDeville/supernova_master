@@ -5,8 +5,11 @@
 #include "Camera.h"
 #include "GfxEntityBox.h"
 
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 #include "snIActor.h"
+
+using namespace Supernova::Vector;
+using namespace DirectX;
 
 namespace Devil
 {
@@ -34,15 +37,15 @@ namespace Devil
 
 	void EntityBox::render()
 	{
-		snVector4f newPosition = m_actor->getPosition();
-		m_position = XMVectorSet(newPosition.VEC4FX, newPosition.VEC4FY, newPosition.VEC4FZ, 1);
+		snVec newPosition = m_actor->getPosition();
+		m_position = XMVectorSet(snVec4GetX(newPosition), snVec4GetY(newPosition), snVec4GetZ(newPosition), 1);
 
 		XMMATRIX translation = XMMatrixTranslationFromVector(m_position);
 		XMMATRIX orientation;
-		orientation.r[0] = m_actor->getOrientationMatrix().m_r[0].m_vec;
-		orientation.r[1] = m_actor->getOrientationMatrix().m_r[1].m_vec;
-		orientation.r[2] = m_actor->getOrientationMatrix().m_r[2].m_vec;
-		orientation.r[3] = m_actor->getOrientationMatrix().m_r[3].m_vec;
+		orientation.r[0] = m_actor->getOrientationMatrix().m_r[0];
+		orientation.r[1] = m_actor->getOrientationMatrix().m_r[1];
+		orientation.r[2] = m_actor->getOrientationMatrix().m_r[2];
+		orientation.r[3] = m_actor->getOrientationMatrix().m_r[3];
 
 		XMMATRIX scaling = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
 

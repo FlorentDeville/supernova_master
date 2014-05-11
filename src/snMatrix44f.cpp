@@ -34,13 +34,9 @@
 
 #include "snMatrix44f.h"
 
+#include <cstring>
 
-#include <iostream>
-using std::cout;
-using std::endl;
-
-#include <math.h>
-#include "snVector4f-inl.h"
+using namespace Supernova::Vector;
 
 namespace Supernova
 {
@@ -82,7 +78,7 @@ namespace Supernova
 		for (int k = 0; k < 4; k++)
 		{
 			//inverse line if a[k][k] = 0;
-			if (A.m_r[k].m_vec.m128_f32[k] == 0)
+			if (A.m_r[k].m128_f32[k] == 0)
 			{
 				int i = 0;
 				bool over = false;
@@ -94,20 +90,20 @@ namespace Supernova
 						continue;
 					}
 
-					if (A.m_r[i].m_vec.m128_f32[k] != 0)
+					if (A.m_r[i].m128_f32[k] != 0)
 					{
 						over = true;
 
 						//inverse row i and k
 						for (int h = 0; h < 4; h++)
 						{
-							float temp = A.m_r[i].m_vec.m128_f32[h];
-							A.m_r[i].m_vec.m128_f32[h] = A.m_r[k].m_vec.m128_f32[h];
-							A.m_r[k].m_vec.m128_f32[h] = temp;
+							float temp = A.m_r[i].m128_f32[h];
+							A.m_r[i].m128_f32[h] = A.m_r[k].m128_f32[h];
+							A.m_r[k].m128_f32[h] = temp;
 
-							temp = I.m_r[i].m_vec.m128_f32[h];
-							I.m_r[i].m_vec.m128_f32[h] = I.m_r[k].m_vec.m128_f32[h];
-							I.m_r[k].m_vec.m128_f32[h] = temp;
+							temp = I.m_r[i].m128_f32[h];
+							I.m_r[i].m128_f32[h] = I.m_r[k].m128_f32[h];
+							I.m_r[k].m128_f32[h] = temp;
 						}
 					}
 					i++;
@@ -118,13 +114,13 @@ namespace Supernova
 			}
 
 			//simplify the line to put a 1 in a[k][k]
-			if (A.m_r[k].m_vec.m128_f32[k] != 1)
+			if (A.m_r[k].m128_f32[k] != 1)
 			{
-				float coeff = 1.f / A.m_r[k].m_vec.m128_f32[k];
+				float coeff = 1.f / A.m_r[k].m128_f32[k];
 				for (int h = 0; h < 4; h++)
 				{
-					A.m_r[k].m_vec.m128_f32[h] *= coeff;
-					I.m_r[k].m_vec.m128_f32[h] *= coeff;
+					A.m_r[k].m128_f32[h] *= coeff;
+					I.m_r[k].m128_f32[h] *= coeff;
 				}
 			}
 
@@ -134,29 +130,17 @@ namespace Supernova
 				if (i == k)
 					continue;
 
-				float coeff = A.m_r[i].m_vec.m128_f32[k];
+				float coeff = A.m_r[i].m128_f32[k];
 
 				for (int h = 0; h < 4; h++)
 				{
-					A.m_r[i].m_vec.m128_f32[h] = A.m_r[i].m_vec.m128_f32[h] - coeff * A.m_r[k].m_vec.m128_f32[h];
-					I.m_r[i].m_vec.m128_f32[h] = I.m_r[i].m_vec.m128_f32[h] - coeff * I.m_r[k].m_vec.m128_f32[h];
+					A.m_r[i].m128_f32[h] = A.m_r[i].m128_f32[h] - coeff * A.m_r[k].m128_f32[h];
+					I.m_r[i].m128_f32[h] = I.m_r[i].m128_f32[h] - coeff * I.m_r[k].m128_f32[h];
 				}
 			}
 		}
 
 		return I;
-	}
-
-	/*Display in std out*/
-	void snMatrix44f::display()const
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-				cout << m_r[i].m_vec.m128_f32[j] << " ";
-
-			cout << endl;
-		}
 	}
 
 	/*addition*/
@@ -204,11 +188,11 @@ namespace Supernova
 	void snMatrix44f::createTranslation(float x, float y, float z)
 	{
 		identity();
-		m_r[3] = snVector4f(x, y, z, 1);
+		m_r[3] = snVec4Set(x, y, z, 1);
 	}
 
 	/*Create a translation matrix from a vector*/
-	void snMatrix44f::createTranslation(const snVector4f& v)
+	void snMatrix44f::createTranslation(const snVec& v)
 	{
 		identity();
 		m_r[3] = v;
@@ -220,8 +204,8 @@ namespace Supernova
 		identity();
 		float c = cos(radiusAngle);
 		float s = sin(radiusAngle);
-		m_r[1] = snVector4f(0, c, s, 0);
-		m_r[2] = snVector4f(0, -s, c, 0);
+		m_r[1] = snVec4Set(0, c, s, 0);
+		m_r[2] = snVec4Set(0, -s, c, 0);
 	}
 
 	/*create a rotation matrix around Y axis*/
@@ -230,8 +214,8 @@ namespace Supernova
 		identity();
 		float c = cos(radiusAngle);
 		float s = sin(radiusAngle);
-		m_r[0] = snVector4f(c, 0, -s, 0);
-		m_r[2] = snVector4f(s, 0, c, 0);
+		m_r[0] = snVec4Set(c, 0, -s, 0);
+		m_r[2] = snVec4Set(s, 0, c, 0);
 	}
 
 	/*create a rotation matrix around Z axis*/
@@ -241,46 +225,46 @@ namespace Supernova
 		float c = cos(radiusAngle);
 		float s = sin(radiusAngle);
 
-		m_r[0] = snVector4f(c, s, 0, 0);
-		m_r[1] = snVector4f(-s, c, 0, 0);
+		m_r[0] = snVec4Set(c, s, 0, 0);
+		m_r[1] = snVec4Set(-s, c, 0, 0);
 	}
 
 	/*create a rotation matrix a specific axis*/
-	void snMatrix44f::createRotation(const snVector4f& axis, float angle)
+	void snMatrix44f::createRotation(const snVec& axis, float angle)
 	{
 		float c = cos(angle);
 		float s = sin(angle);
 
-		snVector4f axisSquared = axis * axis;
-		snVector4f axisTimesS = axis * s;
-		snVector4f axisTimesOneMinusC = axis * (1 - c);
+		snVec axisSquared = axis * axis;
+		snVec axisTimesS = axis * s;
+		snVec axisTimesOneMinusC = axis * (1 - c);
 
-		m_r[0] = snVector4f(axisSquared.getX() + (1 - axisSquared.getX()) * c,
-			axis.getX() * axisTimesOneMinusC.getY() - axisTimesS.getZ(),
-			axis.getX() * axisTimesOneMinusC.getZ() + axisTimesS.getY(),
+		m_r[0] = snVec4Set(snVec4GetX(axisSquared) + (1 - snVec4GetX(axisSquared)) * c,
+			snVec4GetX(axis) * snVec4GetY(axisTimesOneMinusC) - snVec4GetZ(axisTimesS),
+			snVec4GetX(axis) * snVec4GetZ(axisTimesOneMinusC)+ snVec4GetY(axisTimesS),
 			0);
 
-		m_r[1] = snVector4f(axis.VEC4FX * axisTimesOneMinusC.getY() + axisTimesS.getZ(),
-			axisSquared.getY() + (1 - axisSquared.getY()) * c,
-			axis.VEC4FY * axisTimesOneMinusC.getZ() - axisTimesS.getX(),
+		m_r[1] = snVec4Set(snVec4GetX(axis) * snVec4GetY(axisTimesOneMinusC)+ snVec4GetZ(axisTimesS),
+			snVec4GetY(axisSquared) + (1 - snVec4GetY(axisSquared)) * c,
+			snVec4GetY(axis) * snVec4GetZ(axisTimesOneMinusC) - snVec4GetX(axisTimesS),
 			0);
 
-		m_r[2] = snVector4f(axis.VEC4FX * axisTimesOneMinusC.getZ() - axisTimesS.getY(),
-			axis.VEC4FY * axisTimesOneMinusC.getZ() + axisTimesS.getX(),
-			axisSquared.getZ() + (1 - axisSquared.getZ()) * c,
+		m_r[2] = snVec4Set(snVec4GetX(axis) * snVec4GetZ(axisTimesOneMinusC) - snVec4GetY(axisTimesS),
+			snVec4GetY(axis) * snVec4GetZ(axisTimesOneMinusC) + snVec4GetX(axisTimesS),
+			snVec4GetZ(axisSquared) + (1 - snVec4GetZ(axisSquared)) * c,
 			0);
 
-		m_r[3] = snVector4f(0, 0, 0, 1);
+		m_r[3] = snVec4Set(0, 0, 0, 1);
 	}
 
 	/*create a non uniform scale matrix*/
-	void snMatrix44f::createScale(const snVector4f& s)
+	void snMatrix44f::createScale(const snVec& s)
 	{
 		identity();
 
-		m_r[0].m_vec.m128_f32[0] = s.getX();
-		m_r[1].m_vec.m128_f32[1] = s.getY();
-		m_r[2].m_vec.m128_f32[2] = s.getZ();
+		m_r[0].m128_f32[0] = snVec4GetX(s);
+		m_r[1].m128_f32[1] = snVec4GetY(s);
+		m_r[2].m128_f32[2] = snVec4GetZ(s);
 	}
 
 	/*create a uniform scale matrix*/
@@ -288,97 +272,97 @@ namespace Supernova
 	{
 		identity();
 
-		m_r[0].m_vec.m128_f32[0] = s;
-		m_r[1].m_vec.m128_f32[1] = s;
-		m_r[2].m_vec.m128_f32[2] = s;
+		m_r[0].m128_f32[0] = s;
+		m_r[1].m128_f32[1] = s;
+		m_r[2].m128_f32[2] = s;
 	}
 
 	/*fill the matrix using opengl model of matrix*/
 	void snMatrix44f::getOpenGLMatrix(double* matrix)
 	{
-		matrix[0] = m_r[0].getX();
-		matrix[1] = m_r[0].getY();
-		matrix[2] = m_r[0].getZ();
-		matrix[3] = m_r[0].getW();
+		matrix[0] = snVec4GetX(m_r[0]);
+		matrix[1] = snVec4GetY(m_r[0]);
+		matrix[2] = snVec4GetZ(m_r[0]);
+		matrix[3] = snVec4GetW(m_r[0]);
 
-		matrix[4] = m_r[1].getX();
-		matrix[5] = m_r[1].getY();
-		matrix[6] = m_r[1].getZ();
-		matrix[7] = m_r[1].getW();
+		matrix[4] = snVec4GetX(m_r[1]);
+		matrix[5] = snVec4GetY(m_r[1]);
+		matrix[6] = snVec4GetZ(m_r[1]);
+		matrix[7] = snVec4GetW(m_r[1]);
 
-		matrix[8] = m_r[2].getX();
-		matrix[9] = m_r[2].getY();
-		matrix[10] = m_r[2].getZ();
-		matrix[11] = m_r[2].getW();
+		matrix[8] = snVec4GetX(m_r[2]);
+		matrix[9] = snVec4GetY(m_r[2]);
+		matrix[10] = snVec4GetZ(m_r[2]);
+		matrix[11] = snVec4GetW(m_r[2]);
 
-		matrix[12] = m_r[3].getX();
-		matrix[13] = m_r[3].getY();
-		matrix[14] = m_r[3].getZ();
-		matrix[15] = m_r[3].getW();
+		matrix[12] = snVec4GetX(m_r[3]);
+		matrix[13] = snVec4GetY(m_r[3]);
+		matrix[14] = snVec4GetZ(m_r[3]);
+		matrix[15] = snVec4GetW(m_r[3]);
 
 	}
 
 	//calculate frenet matrix
-	void snMatrix44f::createFrenet(const snVector4f& position, const snVector4f& direction, const snVector4f& up)
+	void snMatrix44f::createFrenet(const snVec& position, const snVec& direction, const snVec& up)
 	{
 
-		snVector4f normal = snVector4f::cross(direction, up);
+		snVec normal = snVec3Cross(direction, up);
 		normal = normal * -1;
-		normal.normalize();
+		snVec3Normalize(normal);
 
-		snVector4f binormal = snVector4f::cross(direction, normal);
-		binormal.normalize();
+		snVec binormal = snVec3Cross(direction, normal);
+		snVec3Normalize(binormal);
 
 		m_r[0] = normal;
 		m_r[1] = binormal;
 		m_r[2] = direction;
 		m_r[3] = position;
 
-		m_r[3].m_vec.m128_f32[3] = 0;
-		m_r[4] = snVector4f(0, 0, 0, 1);
+		m_r[3].m128_f32[3] = 0;
+		m_r[4] = snVec4Set(0, 0, 0, 1);
 	}
 
 	//build a matrix using three vectors as columns
-	void snMatrix44f::buildColumn(const snVector4f& c1, const snVector4f& c2, const snVector4f& c3)
+	void snMatrix44f::buildColumn(const snVec& c1, const snVec& c2, const snVec& c3)
 	{
-		m_r[0] = snVector4f(c1.getX(), c2.getX(), c3.getX(), 0);
-		m_r[1] = snVector4f(c1.getY(), c2.getY(), c3.getY(), 0);
-		m_r[2] = snVector4f(c1.getZ(), c2.getZ(), c3.getZ(), 0);
-		m_r[3] = snVector4f(0, 0, 0, 1);
+		m_r[0] = snVec4Set(snVec4GetX(c1), snVec4GetX(c2), snVec4GetX(c3), 0);
+		m_r[1] = snVec4Set(snVec4GetY(c1), snVec4GetY(c2), snVec4GetY(c3), 0);
+		m_r[2] = snVec4Set(snVec4GetZ(c1), snVec4GetZ(c2), snVec4GetZ(c3), 0);
+		m_r[3] = snVec4Set(0, 0, 0, 1);
 	}
 
 	//calculate the determinant
 	float snMatrix44f::det()const
 	{
-		float detM0 = m_r[1].getY() * m_r[2].getZ() * m_r[3].getW() +
-			m_r[1].getZ() * m_r[2].getW() * m_r[3].getY() +
-			m_r[1].getW() * m_r[2].getY() * m_r[3].getZ() -
-			m_r[1].getW() * m_r[2].getZ() * m_r[3].getY() -
-			m_r[2].getW() * m_r[3].getZ() * m_r[1].getY() -
-			m_r[3].getW() * m_r[1].getZ() * m_r[2].getY();
+		float detM0 = snVec4GetY(m_r[1]) * snVec4GetZ(m_r[2]) * snVec4GetW(m_r[3]) +
+			snVec4GetZ(m_r[1]) * snVec4GetW(m_r[2]) * snVec4GetY(m_r[3]) +
+			snVec4GetW(m_r[1]) * snVec4GetY(m_r[2]) * snVec4GetZ(m_r[3]) -
+			snVec4GetW(m_r[1]) * snVec4GetZ(m_r[2]) * snVec4GetY(m_r[3]) -
+			snVec4GetW(m_r[2]) * snVec4GetZ(m_r[3]) * snVec4GetY(m_r[1]) -
+			snVec4GetW(m_r[3]) * snVec4GetZ(m_r[1]) * snVec4GetY(m_r[2]);
 
-		float detM1 = m_r[1].getX() * m_r[2].getZ() * m_r[3].getW() +
-			m_r[2].getX() * m_r[3].getY() * m_r[1].getW() +
-			m_r[1].getZ() * m_r[2].getW() * m_r[3].getX() -
-			m_r[1].getW() * m_r[2].getZ() * m_r[3].getX() -
-			m_r[2].getW() * m_r[3].getY() * m_r[1].getX() -
-			m_r[3].getW() * m_r[1].getZ() * m_r[2].getX();
+		float detM1 = snVec4GetX(m_r[1]) * snVec4GetZ(m_r[2]) * snVec4GetW(m_r[3]) +
+			snVec4GetX(m_r[2]) * snVec4GetY(m_r[3]) * snVec4GetW(m_r[1]) +
+			snVec4GetZ(m_r[1]) * snVec4GetW(m_r[2]) * snVec4GetX(m_r[3]) -
+			snVec4GetW(m_r[1]) * snVec4GetZ(m_r[2]) * snVec4GetX(m_r[3]) -
+			snVec4GetW(m_r[2]) * snVec4GetY(m_r[3]) * snVec4GetX(m_r[1]) -
+			snVec4GetW(m_r[3]) * snVec4GetZ(m_r[1]) * snVec4GetX(m_r[2]);
 
-		float detM2 = m_r[1].getX() * m_r[2].getY() * m_r[3].getW() +
-			m_r[2].getX() * m_r[3].getY() * m_r[1].getW() +
-			m_r[1].getY() * m_r[2].getW() * m_r[3].getX() -
-			m_r[1].getW() * m_r[2].getY() * m_r[3].getX() -
-			m_r[2].getW() * m_r[3].getY() * m_r[1].getX() -
-			m_r[3].getW() * m_r[1].getY() * m_r[2].getX();
+		float detM2 = snVec4GetX(m_r[1]) * snVec4GetY(m_r[2]) * snVec4GetW(m_r[3]) +
+			snVec4GetX(m_r[2]) * snVec4GetY(m_r[3]) * snVec4GetW(m_r[1]) +
+			snVec4GetY(m_r[1]) * snVec4GetW(m_r[2]) * snVec4GetX(m_r[3]) -
+			snVec4GetW(m_r[1]) * snVec4GetY(m_r[2]) * snVec4GetX(m_r[3]) -
+			snVec4GetW(m_r[2]) * snVec4GetY(m_r[3]) * snVec4GetX(m_r[1]) -
+			snVec4GetW(m_r[3]) * snVec4GetY(m_r[1]) * snVec4GetX(m_r[2]);
 
-		float detM3 = m_r[1].getX() * m_r[2].getY() * m_r[3].getZ() +
-			m_r[2].getX() * m_r[3].getY() * m_r[1].getZ() +
-			m_r[1].getY() * m_r[2].getZ() * m_r[3].getX() -
-			m_r[1].getZ() * m_r[2].getY() * m_r[3].getX() -
-			m_r[2].getZ() * m_r[3].getY() * m_r[1].getX() -
-			m_r[3].getZ() * m_r[1].getY() * m_r[2].getX();
+		float detM3 = snVec4GetX(m_r[1]) * snVec4GetY(m_r[2]) * snVec4GetZ(m_r[3]) +
+			snVec4GetX(m_r[2]) * snVec4GetY(m_r[3]) * snVec4GetZ(m_r[1]) +
+			snVec4GetY(m_r[1]) * snVec4GetZ(m_r[2]) * snVec4GetX(m_r[3]) -
+			snVec4GetZ(m_r[1]) * snVec4GetY(m_r[2]) * snVec4GetX(m_r[3]) -
+			snVec4GetZ(m_r[2]) * snVec4GetY(m_r[3]) * snVec4GetX(m_r[1]) -
+			snVec4GetZ(m_r[3]) * snVec4GetY(m_r[1]) * snVec4GetX(m_r[2]);
 
-		return m_r[0].getX() * detM0 - m_r[0].getY() * detM1 + m_r[0].getZ() * detM2 - m_r[0].getW() * detM3;
+		return snVec4GetX(m_r[0]) * detM0 - snVec4GetY(m_r[0]) * detM1 + snVec4GetZ(m_r[0]) * detM2 - snVec4GetW(m_r[0]) * detM3;
 	}
 
 	void snMatrix44f::transpose(snMatrix44f& _transpose) const
@@ -403,26 +387,26 @@ namespace Supernova
 		// transpose row 2 = 02 12 22 32 //shuffle(s1, s2, shuffle(2, 0, 2, 0))
 		// transpose row 3 = 03 13 23 33 //shuffle(s1, s2, shuffle(3, 1, 3, 1))
 
-		__m128 s1 = _mm_shuffle_ps(m_r[0].m_vec, m_r[1].m_vec, _MM_SHUFFLE(1, 0, 1, 0));
-		__m128 s2 = _mm_shuffle_ps(m_r[2].m_vec, m_r[3].m_vec, _MM_SHUFFLE(1, 0, 1, 0));
+		__m128 s1 = _mm_shuffle_ps(m_r[0], m_r[1], _MM_SHUFFLE(1, 0, 1, 0));
+		__m128 s2 = _mm_shuffle_ps(m_r[2], m_r[3], _MM_SHUFFLE(1, 0, 1, 0));
 
 		_transpose.m_r[0] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(2, 0, 2, 0));
 		_transpose.m_r[1] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(3, 1, 3, 1));
 
-		s1 = _mm_shuffle_ps(m_r[0].m_vec, m_r[1].m_vec, _MM_SHUFFLE(3, 2, 3, 2));
-		s2 = _mm_shuffle_ps(m_r[2].m_vec, m_r[3].m_vec, _MM_SHUFFLE(3, 2, 3, 2));
+		s1 = _mm_shuffle_ps(m_r[0], m_r[1], _MM_SHUFFLE(3, 2, 3, 2));
+		s2 = _mm_shuffle_ps(m_r[2], m_r[3], _MM_SHUFFLE(3, 2, 3, 2));
 
 		_transpose.m_r[2] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(2, 0, 2, 0));
 		_transpose.m_r[3] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(3, 1, 3, 1));
 	}
 
-	void snMatrix44f::createRotationFromQuaternion(const snVector4f& _q)
+	void snMatrix44f::createRotationFromQuaternion(const snVec& _q)
 	{
 		const __m128 Constant1110 = { 1.0f, 1.0f, 1.0f, 0.0f };
 		const __m128 Mask = _mm_castsi128_ps(_mm_set_epi32(0, -1, -1, -1));
 		
-		__m128 Q0 = _mm_add_ps(_q.m_vec, _q.m_vec);
-		__m128 Q1 = _mm_mul_ps(_q.m_vec, Q0);
+		__m128 Q0 = _mm_add_ps(_q, _q);
+		__m128 Q1 = _mm_mul_ps(_q, Q0);
 
 		__m128 V0 = _mm_shuffle_ps(Q1, Q1, _MM_SHUFFLE(3, 0, 0, 1));
 		V0 = _mm_and_ps(V0, Mask);
@@ -431,11 +415,11 @@ namespace Supernova
 		__m128 R0 = _mm_sub_ps(Constant1110, V0);
 		R0 = _mm_sub_ps(R0, V1);
 
-		V0 = _mm_shuffle_ps(_q.m_vec, _q.m_vec, _MM_SHUFFLE(3, 1, 0, 0));
+		V0 = _mm_shuffle_ps(_q, _q, _MM_SHUFFLE(3, 1, 0, 0));
 		V1 = _mm_shuffle_ps(Q0, Q0, _MM_SHUFFLE(3, 2, 1, 2));
 		V0 = _mm_mul_ps(V0, V1);
 
-		V1 = _mm_shuffle_ps(_q.m_vec, _q.m_vec, _MM_SHUFFLE(3, 3, 3, 3));
+		V1 = _mm_shuffle_ps(_q, _q, _MM_SHUFFLE(3, 3, 3, 3));
 		__m128 V2 = _mm_shuffle_ps(Q0, Q0, _MM_SHUFFLE(3, 0, 2, 1));
 		V1 = _mm_mul_ps(V1, V2);
 
@@ -458,52 +442,52 @@ namespace Supernova
 
 		Q1 = _mm_shuffle_ps(V1, R0, _MM_SHUFFLE(3, 2, 1, 0));
 		m_r[2] = Q1;
-		m_r[3] = snVector4f( 0, 0, 0, 1 );
+		m_r[3] = snVec4Set(0, 0, 0, 1);
 	}
 
-	snVector4f snMatrixTransform3(const snVector4f& _v, const snMatrix44f& _m)
+	snVec snMatrixTransform3(const snVec& _v, const snMatrix44f& _m)
 	{
 		//compute v.[i] * m[i] = r[i] the res = sum(r[i])
 
-		__m128 vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(0, 0, 0, 0));
-		__m128 res = _mm_mul_ps(vTemp, _m.m_r[0].m_vec);
+		__m128 vTemp = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 res = _mm_mul_ps(vTemp, _m.m_r[0]);
 
-		vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(1, 1, 1, 1));
-		__m128 mul = _mm_mul_ps(vTemp, _m.m_r[1].m_vec);
+		vTemp = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 mul = _mm_mul_ps(vTemp, _m.m_r[1]);
 		res = _mm_add_ps(res, mul);
 
-		vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(2, 2, 2, 2));
-		mul = _mm_mul_ps(vTemp, _m.m_r[2].m_vec);
+		vTemp = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(2, 2, 2, 2));
+		mul = _mm_mul_ps(vTemp, _m.m_r[2]);
 		res = _mm_add_ps(res, mul);
 
 		return res;
 	}
 
-	snVector4f snMatrixTransform4(const snVector4f& _v, const snMatrix44f& _m)
+	snVec snMatrixTransform4(const snVec& _v, const snMatrix44f& _m)
 	{
 		//compute v.[i] * m[i] = r[i] the res = sum(r[i])
-		__m128 vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(0, 0, 0, 0));
-		__m128 res = _mm_mul_ps(vTemp, _m[0].m_vec);
+		__m128 vTemp = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(0, 0, 0, 0));
+		__m128 res = _mm_mul_ps(vTemp, _m[0]);
 
-		vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(1, 1, 1, 1));
-		__m128 mul = _mm_mul_ps(vTemp, _m[1].m_vec);
+		vTemp = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(1, 1, 1, 1));
+		__m128 mul = _mm_mul_ps(vTemp, _m[1]);
 		res = _mm_add_ps(res, mul);
 
-		vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(2, 2, 2, 2));
-		mul = _mm_mul_ps(vTemp, _m[2].m_vec);
+		vTemp = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(2, 2, 2, 2));
+		mul = _mm_mul_ps(vTemp, _m[2]);
 		res = _mm_add_ps(res, mul);
 
-		vTemp = _mm_shuffle_ps(_v.m_vec, _v.m_vec, _MM_SHUFFLE(3, 3, 3, 3));
-		mul = _mm_mul_ps(vTemp, _m[3].m_vec);
+		vTemp = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(3, 3, 3, 3));
+		mul = _mm_mul_ps(vTemp, _m[3]);
 		res = _mm_add_ps(res, mul);
 
 		return res;
 	}
 
-	snVector4f snMatrixTransform3(const snMatrix44f& _m, const snVector4f& _v)
+	snVec snMatrixTransform3(const snMatrix44f& _m, const snVec& _v)
 	{
 		//compute first matrix column time X
-		return snVector4f(_m[0].dot(_v), _m[1].dot(_v), _m[2].dot(_v), 0);
+		return snVec4Set(snVec3Dot(_v, _m[0]), snVec3Dot(_v, _m[1]), snVec3Dot(_v, _m[2]), 0);
 	}
 
 	void snMatrixMultiply4(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res)
@@ -519,6 +503,6 @@ namespace Supernova
 		_res[0] = snMatrixTransform4(_m1[0], _m2);
 		_res[1] = snMatrixTransform4(_m1[1], _m2);
 		_res[2] = snMatrixTransform4(_m1[2], _m2);
-		_res[3] = snVector4f(0, 0, 0, 1);
+		_res[3] = snVec4Set(0, 0, 0, 1);
 	}
 }

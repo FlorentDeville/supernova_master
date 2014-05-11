@@ -2,7 +2,8 @@
 #define LIGHT_H
 
 #include <DirectXMath.h>
-using namespace DirectX;
+using DirectX::XMFLOAT4;
+using DirectX::XMFLOAT3;
 
 namespace Devil
 {

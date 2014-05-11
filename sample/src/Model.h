@@ -4,12 +4,8 @@
 #include <DirectXMath.h>
 #include "Texture.h"
 
-using namespace DirectX;
-
-//class ID3D11Device;
-//class ID3D11DeviceContext;
-//class ID3D11Buffer;
-//class Texture;
+using DirectX::XMFLOAT3;
+using DirectX::XMFLOAT2;
 
 namespace Devil
 {	

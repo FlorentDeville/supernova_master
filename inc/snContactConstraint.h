@@ -51,22 +51,22 @@ namespace Supernova
 		snIActor* m_bodies[2];
 
 		//Collision normal going from the second body to the first one.
-		snVector4f m_normal;
+		snVec m_normal;
 
 		//The collision point between the two bodies expressed in world coordinates.
-		snVector4f m_collisionPoint;
+		snVec m_collisionPoint;
 
 		//Penetration depth of the two actors.
 		float m_penetrationDepth;
 
 		//collision point - center of mass
-		snVector4f m_radius[2];
+		snVec m_radius[2];
 
 		//r X N
-		snVector4f m_rCrossN[2];
+		snVec m_rCrossN[2];
 
 		//(r X N)I-1
-		snVector4f m_rCrossNInvI[2];
+		snVec m_rCrossNInvI[2];
 
 		//Bias velocity
 		float m_velocityBias;
@@ -83,7 +83,7 @@ namespace Supernova
 		virtual ~snContactConstraint();
 
 		//Give to the constraints the basic information it needs.
-		void initialize(snIActor* const _body1, snIActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
+		void initialize(snIActor* const _body1, snIActor* const _body2, const snVec& _normal, const snVec& _collisionPoint, float _penetrationDepth,
 			snScene const * _scene);
 
 		void prepare(float _dt);
@@ -91,10 +91,10 @@ namespace Supernova
 		void resolve();
 
 		//Return the collision normal
-		snVector4f const & getNormal() const;
+		snVec const & getNormal() const;
 
 		//Return an array of two vector containing the radius of each actor.
-		snVector4f const * getRadius() const;
+		snVec const * getRadius() const;
 	};
 }
 

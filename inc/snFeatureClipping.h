@@ -39,7 +39,6 @@
 
 namespace Supernova
 {
-	class snVector4f;
 	class snICollider;
 
 	//Find the collision points of two intersecting colliders using the clipping plan algorithms.
@@ -54,16 +53,16 @@ namespace Supernova
 		virtual ~snFeatureClipping();
 
 		//Find the collision patch of two intersecting colliders.
-		bool findContactPatch(const snICollider& _c1, const snICollider& _c2, const snVector4f& _normal, 
-			snVector4fVector& _patch, vector<float>& _patchPenetrations) const;
+		bool findContactPatch(const snICollider& _c1, const snICollider& _c2, const snVec& _normal, 
+			snVecVector& _patch, vector<float>& _patchPenetrations) const;
 
 	private:
 
 		//Clip a polygon to keep only the points on the back side of a plan.
-		void clipPolygon(const snVector4fVector& _polygon, const snVector4f& _n, float _d, snVector4fVector& _clippedPolygon) const;
+		void clipPolygon(const snVecVector& _polygon, const snVec& _n, float _d, snVecVector& _clippedPolygon) const;
 
 		//Compute the intersection between a plane and a line.
-		void computeIntersection(const snVector4f& _n, float _d, const snVector4f& _start, const snVector4f& _end, snVector4f& _intersection) const;
+		void computeIntersection(const snVec& _n, float _d, const snVec& _start, const snVec& _end, snVec& _intersection) const;
 
 	};
 }

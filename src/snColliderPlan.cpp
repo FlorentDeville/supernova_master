@@ -1,28 +1,29 @@
 #include "snColliderPlan.h"
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 	snColliderPlan::snColliderPlan(float width, float height)
 	{
 		m_typeOfCollider = snEColliderPlan;
-		snVector4f corners[4];
+		snVec corners[4];
 
 		float halfWidth = width * 0.5f;
 		float halfHeight = height * 0.5f;
 
-		corners[0] = snVector4f(halfWidth, 0, halfHeight, 1);
-		corners[1] = snVector4f(halfWidth, 0, -halfHeight, 1);
-		corners[2] = snVector4f(-halfWidth, 0, -halfHeight, 1);
-		corners[3] = snVector4f(-halfWidth, 0, halfHeight, 1);
+		corners[0] = snVec4Set(halfWidth, 0, halfHeight, 1);
+		corners[1] = snVec4Set(halfWidth, 0, -halfHeight, 1);
+		corners[2] = snVec4Set(-halfWidth, 0, -halfHeight, 1);
+		corners[3] = snVec4Set(-halfWidth, 0, halfHeight, 1);
 
 		initialize(corners);
 	}
 
-	snColliderPlan::snColliderPlan(const snVector4f* _corners)
+	snColliderPlan::snColliderPlan(const snVec* _corners)
 	{
 		initialize(_corners);
 	}
-
 
 	snColliderPlan::~snColliderPlan()
 	{
@@ -38,32 +39,32 @@ namespace Supernova
 		m_worldNormal = snMatrixTransform3(m_normal, _transform);
 	}
 
-	const snVector4f& snColliderPlan::getNormal()const
+	const snVec& snColliderPlan::getNormal()const
 	{
 		return m_normal;
 	}
 
-	const snVector4f* snColliderPlan::getCorners()const
+	const snVec* snColliderPlan::getCorners()const
 	{
 		return m_corners;
 	}
 
-	snVector4f snColliderPlan::getLocalCenterOfMass() const
+	snVec snColliderPlan::getLocalCenterOfMass() const
 	{
-		return snVector4f(0, 0, 0, 1);
+		return snVec4Set(0, 0, 0, 1);
 	}
 
-	const snVector4f& snColliderPlan::getWorldNormal() const
+	const snVec& snColliderPlan::getWorldNormal() const
 	{
 		return m_worldNormal;
 	}
 
-	const snVector4f* snColliderPlan::getWorldCorners() const
+	const snVec* snColliderPlan::getWorldCorners() const
 	{
 		return m_worldCorners;
 	}
 
-	snVector4f snColliderPlan::getProjection(const snVector4f& _o) const
+	snVec snColliderPlan::getProjection(const snVec& _o) const
 	{
 		//Here is the idea:
 		//P = O - Nl (1) and as P is in the plan it is solution of the plan equation P.N = -d (2)
@@ -77,18 +78,18 @@ namespace Supernova
 
 	}
 
-	float snColliderPlan::getDistance(const snVector4f& _o) const
+	float snColliderPlan::getDistance(const snVec& _o) const
 	{
 		//compute -d in ax + by + cy = -d using the normal and a corner
-		float minusD = getWorldNormal().dot(getWorldCorners()[0]);
+		float minusD = snVec3Dot(getWorldNormal(), getWorldCorners()[0]);
 
 		//compute l
-		float l = (-minusD + getWorldNormal().dot(_o)) / getWorldNormal().squareNorme();
+		float l = (-minusD + snVec3Dot(getWorldNormal(), _o)) / snVec3SquaredNorme(getWorldNormal());
 
 		return l;
 	}
 
-	void snColliderPlan::initialize(const snVector4f* _corners)
+	void snColliderPlan::initialize(const snVec* _corners)
 	{
 		//m_TypeOfCollider = ColliderType::Collider_Plan;
 
@@ -96,16 +97,13 @@ namespace Supernova
 			m_corners[i] = _corners[i];
 
 		//calculate edges vector
-		snVector4f e1 = m_corners[1] - m_corners[0];
-		snVector4f e2 = m_corners[1] - m_corners[2];
-
-		e1.VEC4FW = 0;
-		e2.VEC4FW = 0;
+		snVec e1 = m_corners[1] - m_corners[0];
+		snVec e2 = m_corners[1] - m_corners[2];
 
 		//calculate normal
-		m_normal = e2.cross(e1);
-		m_normal.normalize();
-		m_normal.VEC4FW = 0;
+		m_normal = snVec3Cross(e2, e1);
+		snVec3Normalize(m_normal);
+		snVec4SetW(m_normal, 0);
 
 		//calculate aabb
 		//m_aabb[0] = m_aabb[1] = m_corners[0];
@@ -127,6 +125,6 @@ namespace Supernova
 		}*/
 	}
 
-	void snColliderPlan::computeProjection(const snVector4f& /*_direction*/, float& /*_min*/, float& /*_max*/) const
+	void snColliderPlan::computeProjection(const snVec& /*_direction*/, float& /*_min*/, float& /*_max*/) const
 	{}
 }

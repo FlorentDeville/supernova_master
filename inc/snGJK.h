@@ -40,7 +40,6 @@
 namespace Supernova
 {
 	class snICollider;
-	class snVector4f;
 	class snCollisionResult;
 	class snSimplex;
 
@@ -62,24 +61,24 @@ namespace Supernova
 
 	private:
 		//Compute the point from the minkowski difference in a particular direction for two colliders
-		snVector4f support(const snICollider& _c1, const snICollider& _c2, const snVector4f& _direction) const;
+		snVec support(const snICollider& _c1, const snICollider& _c2, const snVec& _direction) const;
 
 		//Check if a simplex contains the origin. If the simplex does not contain the origin, the simplex and the direction are updated.
-		bool doSimplex(snVector4f* const _simplex, int& _simplexCount, snVector4f& _direction) const;
+		bool doSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
 
 		//Check a simplex made of two points (a line).
-		bool checkOneSimplex(snVector4f* const _simplex, int& _simplexCount, snVector4f& _direction) const;
+		bool checkOneSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
 
 		//Check a simplex made of three points (a triangle)
-		bool checkTwoSimplex(snVector4f* const _simplex, int& _simplexCount, snVector4f& _direction) const;
+		bool checkTwoSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
 
 		//Check a simplex made of four points (tetrahedron).
-		bool checkThreeSimplex(snVector4f* const _simplex, int& _simplexCount, snVector4f& _direction) const;
+		bool checkThreeSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
 
 		//Expand a simplex and return the collision normal.
-		snVector4f expandPolytope(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2) const;
+		snVec expandPolytope(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2) const;
 
-		bool expandPolytopeV2(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVector4f& _normal) const;
+		bool expandPolytopeV2(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal) const;
 	};
 }
 

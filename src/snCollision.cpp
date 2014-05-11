@@ -45,6 +45,8 @@
 #include "snFeatureClipping.h"
 #include <assert.h>
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 	snCollision::snCollision()
@@ -67,8 +69,8 @@ namespace Supernova
 		return invokeQueryTestCollision(c1[0], _a1->getPosition(), _a1->getInverseOrientationMatrix(), c2[0], _a2->getPosition(), _a2->getInverseOrientationMatrix());
 	}
 
-	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& _invR1,
-		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& _invR2) const
+	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snVec& _p1, const snMatrix44f& _invR1,
+		const snICollider* const _c2, const snVec& _p2, const snMatrix44f& _invR2) const
 	{
 		unsigned short key = SN_COLLISION_KEY(_c1->getTypeOfCollider(), _c2->getTypeOfCollider());
 		snCollisionQueryMap::const_iterator i = m_collisionQueryMap.find(key);
@@ -88,21 +90,21 @@ namespace Supernova
 			
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const _c2, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const _c2, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
 		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
 
 		snCollisionResult res;
 
-		const snVector4f* s1Normals;
-		const snVector4f* s2Normals;
+		const snVec* s1Normals;
+		const snVec* s2Normals;
 
 		s1Normals = _b1->getWorldNormal();
 		s2Normals = _b2->getWorldNormal();
 
-		snVector4f smallestOverlapNormal;
+		snVec smallestOverlapNormal;
 		float smallestOverlap = SN_FLOAT_MAX;		
 
 		//compute collider overlap using the normals
@@ -121,8 +123,8 @@ namespace Supernova
 		{
 			for (int j = i; j < NORMAL_COUNT; ++j)
 			{
-				snVector4f cross = s1Normals[i].cross(s2Normals[j]);
-				if (cross.squareNorme() != 1.f) continue;
+				snVec cross = snVec3Cross(s1Normals[i], s2Normals[j]);
+				if (snVec3SquaredNorme(cross) != 1.f) continue;
 				bool overlapRes = computeOverlap(*_b1, *_b2, cross, smallestOverlapNormal, smallestOverlap);
 				if (!overlapRes) return res;
 			}
@@ -141,32 +143,32 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusBox_V2(const snICollider* const _c1, const snVector4f& _p1, const snMatrix44f& /*_invR1*/,
-		const snICollider* const _c2, const snVector4f& _p2, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusBox_V2(const snICollider* const _c1, const snVec& _p1, const snMatrix44f& /*_invR1*/,
+		const snICollider* const _c2, const snVec& _p2, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
 		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
-		const snVector4f* s1Normals = _b1->getWorldNormal();
-		const snVector4f* s2Normals = _b2->getWorldNormal();
-		snVector4f smallestOverlapNormal;
+		const snVec* s1Normals = _b1->getWorldNormal();
+		const snVec* s2Normals = _b2->getWorldNormal();
+		snVec smallestOverlapNormal;
 		float smallestOverlap = SN_FLOAT_MAX;
 
 		snCollisionResult res;
 
-		snVector4f ea = _b1->getExtends();
-		snVector4f eb = _b2->getExtends();
+		snVec ea = _b1->getExtends();
+		snVec eb = _b2->getExtends();
 
 		//compute rotation matrix expressing b in a's coordinate frame.
 		snMatrix44f orientationA;
 		orientationA[0] = s1Normals[0];
 		orientationA[1] = s1Normals[1];
 		orientationA[2] = s1Normals[2];
-		orientationA[3] = _mm_set1_ps(0);
+		orientationA[3] = snVec4Set(0, 0, 0, 0);
 		snMatrix44f orientationB;
 		orientationB[0] = s2Normals[0];
 		orientationB[1] = s2Normals[1];
 		orientationB[2] = s2Normals[2];
-		orientationB[3] = _mm_set1_ps(0);
+		orientationB[3] = snVec4Set(0, 0, 0, 0);
 		snMatrix44f transOrientationB;
 		orientationB.transpose(transOrientationB);
 		
@@ -174,26 +176,26 @@ namespace Supernova
 		snMatrixMultiply3(orientationA, transOrientationB, R);
 
 		//compute translation vector t
-		snVector4f ds = _p2 - _p1;
+		snVec ds = _p2 - _p1;
 		//Bring translation into a's coordinate frame
-		snVector4f t(ds.dot(s1Normals[0]), ds.dot(s1Normals[1]), ds.dot(s1Normals[2]), 0);
+		snVec t = snVec4Set(snVec3Dot(ds, s1Normals[0]), snVec3Dot(ds, s1Normals[1]), snVec3Dot(ds, s1Normals[2]), 0);
 
 		//compute common subexpressions
 		snMatrix44f absR;
-		snVector4f perturbation(0.0001f, 0.0001f, 0.0001f, 0);
+		snVec perturbation = snVec4Set(0.0001f, 0.0001f, 0.0001f, 0);
 		for (int i = 0; i < 3; ++i)
 		{
-			absR[i] = R[i].getAbsolute() + perturbation;
+			absR[i] = snVec4GetAbsolute(R[i]) + perturbation;
 		}
 
 		for (int i = 0; i < 3; ++i)
 		{
 			//test axis A0, A1, A2
-			float ra = ea[i];
-			float rb = eb.dot(absR[i]);
+			float ra = snVec4GetById(ea, i);
+			float rb = snVec3Dot(eb, absR[i]);
 
 			//compute overlap
-			float overlap = ra + rb - fabs(t[i]);
+			float overlap = ra + rb - fabs(snVec4GetById(t, i));
 
 			//no overlap, it means the current tested axis is a separate axis so there is no collision.
 			if (overlap <= 0.f)
@@ -201,7 +203,7 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(s1Normals[i].dot(ds));
+				int s = sign(snVec3Dot(s1Normals[i], ds));
 				smallestOverlapNormal = s1Normals[i] * -s;
 				smallestOverlap = overlap;
 			}
@@ -210,12 +212,12 @@ namespace Supernova
 		//test axis B0, B1, B2
 		for (int i = 0; i < 3; ++i)
 		{
-			snVector4f absRColI(absR[0][i], absR[1][i], absR[2][i], 0);
-			float ra = ea.dot(absRColI);
-			float rb = eb[i];
+			snVec absRColI = snVec4Set(snVec4GetById(absR[0], i), snVec4GetById(absR[1], i), snVec4GetById(absR[2], i), 0);
+			float ra = snVec3Dot(ea, absRColI);
+			float rb = snVec4GetById(eb, i);
 
-			snVector4f RColI(R[0][i], R[1][i], R[2][i], 0);
-			float at = t.dot(RColI);
+			snVec RColI = snVec4Set(snVec4GetById(R[0], i), snVec4GetById(R[1], i), snVec4GetById(R[2], i), 0);
+			float at = snVec3Dot(t, RColI);
 
 			float overlap = ra + rb - fabs(at);
 			if (overlap <= 0.f)
@@ -223,19 +225,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(s2Normals[i].dot(ds));
+				int s = sign(snVec3Dot(s2Normals[i], ds));
 				smallestOverlapNormal = s2Normals[i] * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A0 x B0
-		snVector4f cross = s1Normals[0].cross(s2Normals[0]);
-		if (cross.squareNorme() == 1.f)
+		snVec cross = snVec3Cross(s1Normals[0], s2Normals[0]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[2] * R[1][0] - t[1] * R[2][0]);
-			float ra = ea[1] * absR[2][0] + ea[2] * absR[1][0];
-			float rb = eb[1] * absR[0][2] + eb[2] * absR[0][1];
+			float tDotL = fabsf(snVec4GetById(t, 2) * snVec4GetById(R[1], 0) - snVec4GetById(t, 1) * snVec4GetById(R[2], 0));
+			float ra = snVec4GetById(ea, 1) * snVec4GetById(absR[2], 0) + snVec4GetById(ea, 2) * snVec4GetById(absR[1], 0);
+			float rb = snVec4GetById(eb, 1) * snVec4GetById(absR[0], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[0], 1);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -243,19 +245,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A0 x B1
-		cross = s1Normals[0].cross(s2Normals[1]);
-		if (cross.squareNorme() == 1.f)
+		cross = snVec3Cross(s1Normals[0], s2Normals[1]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[2] * R[1][1] - t[1] * R[2][1]);
-			float ra = ea[1] * absR[2][1] + ea[2] * absR[1][1];
-			float rb = eb[0] * absR[0][2] + eb[2] * absR[0][0];
+			float tDotL = fabsf(snVec4GetById(t, 2) * snVec4GetById(R[1], 1) - snVec4GetById(t, 1) * snVec4GetById(R[2], 1));
+			float ra = snVec4GetById(ea, 1) * snVec4GetById(absR[2], 1) + snVec4GetById(ea, 2) * snVec4GetById(absR[1], 1);
+			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[0], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[0], 0);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -263,19 +265,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A0 x B2
-		cross = s1Normals[0].cross(s2Normals[2]);
-		if (cross.squareNorme() == 1.f)
+		cross = snVec3Cross(s1Normals[0], s2Normals[2]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[2] * R[1][2] - t[1] * R[2][2]);
-			float ra = ea[1] * absR[2][2] + ea[2] * absR[1][2];
-			float rb = eb[0] * absR[0][1] + eb[1] * absR[0][0];
+			float tDotL = fabsf(snVec4GetById(t, 2) * snVec4GetById(R[1], 2) - snVec4GetById(t, 1) * snVec4GetById(R[2], 2));
+			float ra = snVec4GetById(ea, 1) * snVec4GetById(absR[2], 2) + snVec4GetById(ea, 2) * snVec4GetById(absR[1], 2);
+			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[0], 1) + snVec4GetById(eb, 1) * snVec4GetById(absR[0], 0);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -283,19 +285,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A1 x B0
-		cross = s1Normals[1].cross(s2Normals[0]);
-		if (cross.squareNorme() == 1.f)
+		cross = snVec3Cross(s1Normals[1], s2Normals[0]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[0] * R[2][0] - t[2] * R[0][0]);
-			float ra = ea[0] * absR[2][0] + ea[2] * absR[0][0];
-			float rb = eb[1] * absR[1][2] + eb[2] * absR[1][1];
+			float tDotL = fabsf(snVec4GetById(t, 0) * snVec4GetById(R[2], 0) - snVec4GetById(t, 2) * snVec4GetById(R[0], 0));
+			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[2], 0) + snVec4GetById(ea, 2) * snVec4GetById(absR[0], 0);
+			float rb = snVec4GetById(eb, 1) * snVec4GetById(absR[1], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[1], 1);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -303,19 +305,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A1 x B1
-		cross = s1Normals[1].cross(s2Normals[1]);
-		if (cross.squareNorme() == 1.f)
+		cross = snVec3Cross(s1Normals[1], s2Normals[1]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[0] * R[2][1] - t[2] * R[0][1]);
-			float ra = ea[0] * absR[2][1] + ea[2] * absR[0][1];
-			float rb = eb[0] * absR[1][2] + eb[2] * absR[1][1];
+			float tDotL = fabsf(snVec4GetById(t, 0) * snVec4GetById(R[2], 1) - snVec4GetById(t, 2) * snVec4GetById(R[0], 1));
+			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[2], 1) + snVec4GetById(ea, 2) * snVec4GetById(absR[0], 1);
+			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[1], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[1], 1);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -323,19 +325,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A1 x B2
-		cross = s1Normals[1].cross(s2Normals[2]);
-		if (cross.squareNorme() == 1.f)
+		cross = snVec3Cross(s1Normals[1], s2Normals[2]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[0] * R[2][2] - t[2] * R[0][2]);
-			float ra = ea[0] * absR[2][2] + ea[2] * absR[0][2];
-			float rb = eb[0] * absR[1][1] + eb[1] * absR[1][0];
+			float tDotL = fabsf(snVec4GetById(t, 0) * snVec4GetById(R[2], 2) - snVec4GetById(t, 2) * snVec4GetById(R[0], 2));
+			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[2], 2) + snVec4GetById(ea, 2) * snVec4GetById(absR[0], 2);
+			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[1], 1) + snVec4GetById(eb, 1) * snVec4GetById(absR[1], 0);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -343,19 +345,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A2 x B0
-		cross = s1Normals[2].cross(s2Normals[0]);
-		if (cross.squareNorme() == 1.f)
+		cross = snVec3Cross(s1Normals[2], s2Normals[0]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[1] * R[0][0] - t[0] * R[1][0]);
-			float ra = ea[0] * absR[1][0] + ea[1] * absR[0][0];
-			float rb = eb[1] * absR[2][2] + eb[2] * absR[2][1];
+			float tDotL = fabsf(snVec4GetById(t, 1) * snVec4GetById(R[0], 0) - snVec4GetById(t, 0) * snVec4GetById(R[1], 0));
+			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[1], 0) + snVec4GetById(ea, 1) * snVec4GetById(absR[0], 0);
+			float rb = snVec4GetById(eb, 1) * snVec4GetById(absR[2], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[2], 1);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -363,19 +365,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A2 x B1
-		cross = s1Normals[2].cross(s2Normals[1]);
-		if (cross.squareNorme() == 1.f)
+		cross = snVec3Cross(s1Normals[2], s2Normals[1]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[1] * R[0][1] - t[0] * R[1][1]);
-			float ra = ea[0] * absR[1][1] + ea[1] * absR[0][1];
-			float rb = eb[0] * absR[2][2] + eb[2] * absR[2][0];
+			float tDotL = fabsf(snVec4GetById(t, 1) * snVec4GetById(R[0], 1) - snVec4GetById(t, 0) * snVec4GetById(R[1], 1));
+			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[1], 1) + snVec4GetById(ea, 1) * snVec4GetById(absR[0], 1);
+			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[2], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[2], 0);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -383,19 +385,19 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
 		}
 
 		//A2 x B2
-		cross = s1Normals[2].cross(s2Normals[2]);
-		if (cross.squareNorme() == 1.f)
+		cross = snVec3Cross(s1Normals[2], s2Normals[2]);
+		if (snVec3SquaredNorme(cross) == 1.f)
 		{
-			float tDotL = fabsf(t[1] * R[0][2] - t[0] * R[1][2]);
-			float ra = ea[0] * absR[1][2] + ea[1] * absR[0][2];
-			float rb = eb[0] * absR[2][1] + eb[1] * absR[2][0];
+			float tDotL = fabsf(snVec4GetById(t, 1) * snVec4GetById(R[0], 2) - snVec4GetById(t, 0) * snVec4GetById(R[1], 2));
+			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[1], 2) + snVec4GetById(ea, 1) * snVec4GetById(absR[0], 2);
+			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[2], 1) + snVec4GetById(eb, 1) * snVec4GetById(absR[2], 0);
 
 			float overlap = ra + rb - tDotL;
 			if (overlap <= 0.f)
@@ -403,7 +405,7 @@ namespace Supernova
 
 			if (smallestOverlap > overlap)
 			{
-				int s = sign(cross.dot(ds));
+				int s = sign(snVec3Dot(cross, ds));
 				smallestOverlapNormal = cross * -s;
 				smallestOverlap = overlap;
 			}
@@ -422,8 +424,8 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const _c2, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const _c2, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderSphere* _s1 = static_cast<const snColliderSphere*>(_c1);
 		const snColliderSphere* _s2 = static_cast<const snColliderSphere*>(_c2);
@@ -431,21 +433,20 @@ namespace Supernova
 		snCollisionResult res;
 
 		//Get the vector between the sphere's origins.
-		snVector4f vecDistance = _s1->getWorldOrigin() - _s2->getWorldOrigin();
+		snVec vecDistance = _s1->getWorldOrigin() - _s2->getWorldOrigin();
 
 		//Calculate the minimum distance between the spheres
 		float squaredMinDistance = _s1->getRadius() + _s2->getRadius();
 		squaredMinDistance *= squaredMinDistance;
 
 		//If the distance between the centers is inferior to the sum or radius then collision.
-		if (squaredMinDistance > vecDistance.squareNorme())
+		if (squaredMinDistance > snVec3SquaredNorme(vecDistance))
 		{
 			res.m_collision = true;
 			res.m_normal = vecDistance;
-			res.m_normal.normalize();
-			res.m_normal.VEC4FW = 0;
-
-			res.m_penetrations.push_back(sqrtf(squaredMinDistance) - vecDistance.norme());
+			snVec3Normalize(res.m_normal);
+			snVec4SetW(res.m_normal, 0);
+			res.m_penetrations.push_back(sqrtf(squaredMinDistance) - snVec3Norme(vecDistance));
 
 		}
 		
@@ -453,8 +454,8 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const _c2, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const _c2, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
 		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c2);
@@ -462,10 +463,10 @@ namespace Supernova
 		snCollisionResult res;
 
 		//Get the closest point to the box.
-		snVector4f closestPoint = _box->getClosestPoint(_sphere->getWorldOrigin());
+		snVec closestPoint = _box->getClosestPoint(_sphere->getWorldOrigin());
 
 		//Get the distance (squared) between the closest point and the sphere center.
-		float squaredDistanceClosestPoint = (_sphere->getWorldOrigin() - closestPoint).squareNorme();
+		float squaredDistanceClosestPoint = snVec3SquaredNorme(_sphere->getWorldOrigin() - closestPoint);
 		float squaredRadius = _sphere->getRadius() * _sphere->getRadius();
 
 		//If the closest point distance is bigger than the radius then no collision (all distances are squared).
@@ -474,15 +475,15 @@ namespace Supernova
 
 		res.m_collision = true;
 		res.m_normal = (_sphere->getWorldOrigin() - closestPoint);
-		res.m_normal.normalize();
-		res.m_normal.VEC4FW = 0;
+		snVec3Normalize(res.m_normal);
+		snVec4SetW(res.m_normal, 0);
 		res.m_penetrations.push_back(-sqrtf(squaredDistanceClosestPoint) + sqrtf(squaredRadius));
 		res.m_contacts.push_back(_sphere->getWorldOrigin() - res.m_normal * _sphere->getRadius());
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const /*_c2*/, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const /*_c2*/, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
@@ -491,15 +492,15 @@ namespace Supernova
 		float boxDistance = fabsf(_plan->getDistance(_box->getWorldOrigin()));
 		
 		//get the extends
-		snVector4f extends = _box->getSize() * 0.5f;
+		snVec extends = _box->getSize() * 0.5f;
 
 		//get the box normals
-		const snVector4f* s1Normals = _box->getWorldNormal();
+		const snVec* s1Normals = _box->getWorldNormal();
 
 		//compute the minimum distance between the box and the plan
-		float minDistance = extends.VEC4FX * fabsf(s1Normals[0].dot(_plan->getWorldNormal())) +
-			extends.VEC4FY * fabsf(s1Normals[1].dot(_plan->getWorldNormal())) +
-			extends.VEC4FZ * fabsf(s1Normals[2].dot(_plan->getWorldNormal()));
+		float minDistance = snVec4GetX(extends) * fabsf(snVec3Dot(s1Normals[0], _plan->getWorldNormal())) +
+			snVec4GetY(extends) * fabsf(snVec3Dot(s1Normals[1], _plan->getWorldNormal())) +
+			snVec4GetZ(extends) * fabsf(snVec3Dot(s1Normals[2], _plan->getWorldNormal()));
 		
 		//compare the real distance to the min distance
 		float overlap = boxDistance - minDistance;
@@ -517,8 +518,8 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snVector4f& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const /*_c2*/, const snVector4f& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
+		const snICollider* const /*_c2*/, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
 	{
 		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c1);
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
@@ -539,7 +540,7 @@ namespace Supernova
 		}
 	}
 
-	bool snCollision::computeOverlap(const snICollider& _c1, const snICollider& _c2, const snVector4f& _axis, snVector4f& _separatingAxis, float& _overlap)
+	bool snCollision::computeOverlap(const snICollider& _c1, const snICollider& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap)
 	{
 		float minS1, minS2, maxS1, maxS2;
 

@@ -36,7 +36,7 @@
 
 #include "snFactory.h"
 #include "snScene.h"
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 #include "snActorDynamic.h"
 #include "snColliderBox.h"
 
@@ -45,6 +45,8 @@
 #include "EntityBox.h"
 
 #include "Input.h"
+
+using namespace Supernova::Vector;
 
 namespace Devil
 {
@@ -79,7 +81,7 @@ namespace Devil
 
 			//create collider
 			snColliderBox* collider = new snColliderBox();
-			collider->setSize(snVector4f(width, height, depth, 0));
+			collider->setSize(Supernova::Vector::snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 			act->updateMassAndInertia(50);
 			act->initialize();
@@ -109,21 +111,23 @@ namespace Devil
 		snActorDynamic* act = static_cast<snActorDynamic*>(box->getActor());
 
 		//set its position
-		snVector4f pos(WORLD->getCamera()->getPosition());
+		snVec pos;
+		pos = WORLD->getCamera()->getPosition();
 		act->setPosition(pos);
 
 		//set its linear velocity
-		snVector4f linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
-		linVel.normalize();
+		snVec linVel;
+		linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
+		Supernova::Vector::snVec3Normalize(linVel);
 		linVel = linVel * 300;
-		linVel.setW(0);
+		Supernova::Vector::snVec4SetW(linVel, 0);
 		act->setLinearVelocity(linVel);
 
 		//set its orientation
-		act->setOrientation(snVector4f(0, 0, 0, 1));
+		act->setOrientation(Supernova::Vector::snVec4Set(0, 0, 0, 1));
 
 		//set its angular velocity
-		act->setAngularVelocity(snVector4f(0, 0, 0, 0));
+		act->setAngularVelocity(Supernova::Vector::snVec4Set(0, 0, 0, 0));
 		act->initialize();
 
 		box->setIsActive(true);

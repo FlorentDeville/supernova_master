@@ -79,10 +79,10 @@ namespace Supernova
 		vector<snICollider*> m_colliders;
 
 		//position of the actor
-		snVector4f m_x;
+		snVec m_x;
 
 		//orientation represented as a quaternion
-		snVector4f m_q;
+		snVec m_q;
 
 		//orientation represented as a matrix
 		snMatrix44f m_R;
@@ -139,16 +139,16 @@ namespace Supernova
 		virtual const snMatrix44f& getInvWorldInertia()const = 0;
 
 		//Return the position of the actor.
-		snVector4f getPosition() const;
+		snVec getPosition() const;
 
 		//Return the linear velocity
-		virtual snVector4f getLinearVelocity() const = 0;
+		virtual snVec getLinearVelocity() const = 0;
 
 		//Return the angular velocity
-		virtual snVector4f getAngularVelocity() const = 0;
+		virtual snVec getAngularVelocity() const = 0;
 
 		//Return the orientation represented as a quaternion
-		snVector4f getOrientationQuaternion();
+		snVec getOrientationQuaternion();
 
 		//Return the orientation represented as a matrix.
 		const snMatrix44f& getOrientationMatrix() const;
@@ -181,10 +181,10 @@ namespace Supernova
 		void setSkinDepth(float _skinDepth);
 
 		//Set the linear velocity
-		virtual void setLinearVelocity(const snVector4f& _linearVelocity) = 0;
+		virtual void setLinearVelocity(const snVec& _linearVelocity) = 0;
 
 		//Set the angular velocity
-		virtual void setAngularVelocity(const snVector4f& _angularVelocity) = 0;
+		virtual void setAngularVelocity(const snVec& _angularVelocity) = 0;
 
 		//Set the collision callback
 		void setOnCollisionCallback(OnCollisionCallback _callback);

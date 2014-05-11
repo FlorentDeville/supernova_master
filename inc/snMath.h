@@ -45,16 +45,17 @@
 
 #define SN_PI 3.1415926f
 
+#include "snVec.inl"
+
 namespace Supernova
 {
-	class snVector4f;
 	class snMatrix44f;
 
 	//Clamp the value between min and max.
 	float clamp(float _value, float _min, float _max);
 
 	//Clamp a vector componentwise.
-	snVector4f clampComponents(const snVector4f& _v, float _min, float _max);
+	snVec clampComponents(const snVec& _v, float _min, float _max);
 
 	//Return true if the value is between the min and max value included.
 	bool isInRange(float _value, float _min, float _max);
@@ -63,11 +64,13 @@ namespace Supernova
 	int sign(float _value);
 
 	//compute an orthonormal basis for the vector _a. This is a code snippet from Erin Catto's blog.
-	void computeBasis(const snVector4f& _a, snVector4f& _b, snVector4f& _c);
+	void computeBasis(const snVec& _a, snVec& _b, snVec& _c);
 
 	//compute a frenet matrix from a catmull rom interpolation
-	void computeFrenetFromCatmullRom(const snVector4f& _a0, const snVector4f& _a1, const snVector4f& _a2, const snVector4f& _a3,
+	void computeFrenetFromCatmullRom(const snVec& _a0, const snVec& _a1, const snVec& _a2, const snVec& _a3,
 		float _t, snMatrix44f& _frenet);
+
+	snVec cosInterpolation(const snVec& _start, const snVec& _end, float _t);
 
 }
 #endif //SN_MATH_H

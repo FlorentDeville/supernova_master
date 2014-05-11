@@ -38,18 +38,20 @@
 
 #include <assert.h>
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 	snActorDynamic::snActorDynamic() : m_linearDamping(0.01f), m_angularDamping(0.f)
 	{
 		m_name = "default";
-		m_x = snVector4f();
-		m_q = snVector4f(0, 0, 0, 1);
+		m_x = snVec4Set(0, 0, 0, 1);
+		m_q = snVec4Set(0, 0, 0, 1);
 		m_skinDepth = 0.025f;
 		m_R.identity();
 		m_invR.identity();
 
-		m_w = snVector4f(0, 0, 0, 0);
+		m_w = snVec4Set(0, 0, 0, 0);
 		m_isKinematic = false;
 		m_typeOfActor = snActorType::snActorTypeDynamic;
 
@@ -79,13 +81,13 @@ namespace Supernova
 	}
 
 	//Return the linear velocity
-	snVector4f snActorDynamic::getLinearVelocity() const
+	snVec snActorDynamic::getLinearVelocity() const
 	{
 		return m_v;
 	}
 
 	//Return the angular velocity
-	snVector4f snActorDynamic::getAngularVelocity() const
+	snVec snActorDynamic::getAngularVelocity() const
 	{
 		return m_w;
 	}
@@ -103,13 +105,13 @@ namespace Supernova
 	}
 
 	//Set the linear velocity
-	void snActorDynamic::setLinearVelocity(const snVector4f& _linearVelocity)
+	void snActorDynamic::setLinearVelocity(const snVec& _linearVelocity)
 	{
 		m_v = _linearVelocity;
 	}
 
 	//Set the angular velocity
-	void snActorDynamic::setAngularVelocity(const snVector4f& _angularVelocity)
+	void snActorDynamic::setAngularVelocity(const snVec& _angularVelocity)
 	{
 		m_w = _angularVelocity;
 	}
@@ -127,13 +129,13 @@ namespace Supernova
 	}
 
 	//Set the position of the actor
-	void snActorDynamic::setPosition(const snVector4f& _position)
+	void snActorDynamic::setPosition(const snVec& _position)
 	{
 		m_x = _position;
 	}
 
 	//Set the orientation of the actor
-	void snActorDynamic::setOrientation(const snVector4f& _orientation)
+	void snActorDynamic::setOrientation(const snVec& _orientation)
 	{
 		m_q = _orientation;
 		m_R.createRotationFromQuaternion(m_q);
@@ -155,7 +157,7 @@ namespace Supernova
 			m_typeOfActor = snActorType::snActorTypeDynamic;
 	}
 
-	void snActorDynamic::setKinematicPosition(const snVector4f& _position)
+	void snActorDynamic::setKinematicPosition(const snVec& _position)
 	{
 		assert(m_isKinematic);
 		setPosition(_position);
@@ -207,13 +209,13 @@ namespace Supernova
 	//Compute the angular speed of the actor
 	float snActorDynamic::computeAngularSpeed() const
 	{
-		return m_w.norme();
+		return snVec3Norme(m_w);
 	}
 
 	//Compute the linear speed of the actor
 	float snActorDynamic::computeLinearSpeed() const
 	{
-		return m_v.norme();
+		return snVec3Norme(m_v);
 	}
 
 	//Compute the inverse of the inertia tensor expressed in world coordinates
@@ -251,20 +253,20 @@ namespace Supernova
 		m_w = m_w * (1 - m_angularDamping * _dt);
 		
 		//if the linear speed is too small, set it to 0.
-		float sqSpeed = m_v.squareNorme();
+		float sqSpeed = snVec3SquaredNorme(m_v);
 		if (sqSpeed < _linearSpeed2Limit)
-			m_v = snVector4f();
+			m_v = snVec();
 
 		//if the angular speed is too small, set it to 0.
-		sqSpeed = m_w.squareNorme();
+		sqSpeed = snVec3SquaredNorme(m_w);
 		if (sqSpeed < _angularSpeed2Limit)
-			m_w = snVector4f();
+			m_w = snVec();
 
 		//calculate position using euler integration
 		m_x = m_x + m_v * _dt;
 
 		//calculate velocity as quaternion using dq/dt = 0.5 * w * q
-		snVector4f qw;
+		snVec qw;
 		snQuaternionMultiply(m_w, m_q, qw);
 		qw = qw * 0.5f;
 

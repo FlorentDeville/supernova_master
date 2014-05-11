@@ -4,8 +4,10 @@
 #include "Camera.h"
 #include "D3D.h"
 
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 #include "snIActor.h"
+
+using namespace DirectX;
 
 namespace Devil
 {
@@ -29,8 +31,7 @@ namespace Devil
 
 	void EntityPlan::update()
 	{
-		snVector4f newPosition = m_actor->getPosition();
-		m_position = XMVectorSet(newPosition.VEC4FX, newPosition.VEC4FY, newPosition.VEC4FZ, 1);
+		m_position = m_actor->getPosition();
 	}
 
 	void EntityPlan::render()

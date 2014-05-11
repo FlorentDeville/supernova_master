@@ -35,6 +35,9 @@
 #include "ComponentFollowPath.h"
 #include "snActorDynamic.h"
 
+using namespace Supernova;
+using namespace Supernova::Vector;
+
 namespace Devil
 {
 	//Construct an instance of the class ComponentFollowPath
@@ -62,22 +65,22 @@ namespace Devil
 		//The next waypoint does not exist
 		if (m_nextWaypoint >= m_path.size())
 		{
-			m_actor->setLinearVelocity(snVector4f(0, 0, 0, 1));
+			m_actor->setLinearVelocity(snVec4Set(0, 0, 0, 1));
 			return;
 		}
 		
 
 		//compute the direction
-		snVector4f direction = m_path[m_nextWaypoint]->m_position - m_path[m_previousWaypoint]->m_position;
-		float length = direction.squareNorme();
-		direction.normalize();
+		snVec direction = m_path[m_nextWaypoint]->m_position - m_path[m_previousWaypoint]->m_position;
+		float length = snVec3SquaredNorme(direction);
+		snVec3Normalize(direction);
 
 		//compute the next position
-		snVector4f nextPosition = m_actor->getPosition() + direction * m_path[m_nextWaypoint]->m_speed * _dt;
+		snVec nextPosition = m_actor->getPosition() + direction * m_path[m_nextWaypoint]->m_speed * _dt;
 
 		//check if we went too far
 		//compare the distance between the two waypoints and the distance between the first waypoint and the computed position.
-		float actorDistance = (nextPosition - m_path[m_previousWaypoint]->m_position).squareNorme();
+		float actorDistance = snVec3SquaredNorme(nextPosition - m_path[m_previousWaypoint]->m_position);
 		if (length < actorDistance)
 		{
 			//we went too far then set the position to the waypoint to reach.
@@ -96,7 +99,7 @@ namespace Devil
 
 			if (m_nextWaypoint >= m_path.size())
 			{
-				m_actor->setLinearVelocity(snVector4f(0, 0, 0, 1));
+				m_actor->setLinearVelocity(snVec4Set(0, 0, 0, 1));
 				return;
 			}
 		}
@@ -110,7 +113,7 @@ namespace Devil
 	{}
 
 	//Add a waypoint to the path in the last position
-	void ComponentFollowPath::addWaypoint(const snVector4f& _position, float _speed)
+	void ComponentFollowPath::addWaypoint(const snVec& _position, float _speed)
 	{
 		Waypoint* newWaypoint = new Waypoint();
 		newWaypoint->m_position = _position;

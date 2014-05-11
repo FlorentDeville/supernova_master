@@ -35,13 +35,15 @@
 #include "snSimplex.h"
 #include "snMath.h"
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 	snSimplex::snSimplex() : m_vertexBuffer(), m_indexBuffer(), m_triangleCount(0), m_validTriangle(){}
 
 	snSimplex::~snSimplex(){}
 
-	int snSimplex::addVertex(const snVector4f& _v)
+	int snSimplex::addVertex(const snVec& _v)
 	{
 		int id = m_vertexBuffer.size();
 		m_vertexBuffer.push_back(_v);
@@ -57,7 +59,7 @@ namespace Supernova
 		return m_triangleCount++;
 	}
 
-	void snSimplex::expand(const snVector4f& _v, int _triangleId)
+	void snSimplex::expand(const snVec& _v, int _triangleId)
 	{
 		//add the vertex
 		int idNewVertex = addVertex(_v);
@@ -88,7 +90,7 @@ namespace Supernova
 		return m_triangleCount;
 	}
 
-	void snSimplex::getTriangle(int _triangleId, snVector4f& _v1, snVector4f& _v2, snVector4f& _v3) const
+	void snSimplex::getTriangle(int _triangleId, snVec& _v1, snVec& _v2, snVec& _v3) const
 	{
 		int indexBufferId = _triangleId * 3;
 
@@ -106,7 +108,7 @@ namespace Supernova
 		_id3 = m_indexBuffer[indexBufferId + 2];
 	}
 
-	void snSimplex::computeTriangleClosestToOrigin(int& _triangleId, snVector4f& _normal, float& _distance) const
+	void snSimplex::computeTriangleClosestToOrigin(int& _triangleId, snVec& _normal, float& _distance) const
 	{
 		_distance = SN_FLOAT_MAX;
 
@@ -118,22 +120,22 @@ namespace Supernova
 				continue;
 
 			//get the triangle
-			snVector4f vertices[3];
+			snVec vertices[3];
 			getTriangle(triangleId, vertices[0], vertices[1], vertices[2]);
 
 			//compute the triangle normal going to the origin
-			snVector4f e1 = vertices[0] - vertices[2];
-			snVector4f e2 = vertices[1] - vertices[2];
-			snVector4f n = e1.cross(e2);
-			n.normalize();
+			snVec e1 = vertices[0] - vertices[2];
+			snVec e2 = vertices[1] - vertices[2];
+			snVec n = snVec3Cross(e1, e2);
+			snVec3Normalize(n);
 
 			//compute the distance to the origin
-			snVector4f AO = snVector4f(0, 0, 0, 1) - vertices[0];
-			float distance = n.dot(AO);
+			snVec AO = snVec4Set(0, 0, 0, 1) - vertices[0];
+			float distance = snVec3Dot(n, AO);
 
 			int side = sign(distance);
 			distance *= side;
-			n = n * side;
+			n = n * (float)side;
 
 			//the distance is greater
 			if (distance >= _distance)
@@ -143,7 +145,7 @@ namespace Supernova
 			}
 			
 			computeClosestPointToOriginInTriangle(triangleId, AO);
-			distance = AO.norme();
+			distance = snVec3Norme(AO);
 			if (distance >= _distance)
 			{
 				m_validTriangle[triangleId] = false;
@@ -158,33 +160,33 @@ namespace Supernova
 				_normal = n;
 			else
 			{
-				AO.normalize();
+				snVec3Normalize(AO);
 				_normal = AO * -1;
 			}
 		}
 	}
 
-	void snSimplex::computeClosestPointToOriginInTriangle(int _triangleId, snVector4f& _closestPoint) const
+	void snSimplex::computeClosestPointToOriginInTriangle(int _triangleId, snVec& _closestPoint) const
 	{
 		int index = _triangleId * 3;
-		snVector4f a = m_vertexBuffer[m_indexBuffer[index]];
-		snVector4f b = m_vertexBuffer[m_indexBuffer[index + 1]];
-		snVector4f c = m_vertexBuffer[m_indexBuffer[index + 2]];
+		snVec a = m_vertexBuffer[m_indexBuffer[index]];
+		snVec b = m_vertexBuffer[m_indexBuffer[index + 1]];
+		snVec c = m_vertexBuffer[m_indexBuffer[index + 2]];
 
-		snVector4f ab = b - a;
-		snVector4f ac = c - a;
-		snVector4f ap = snVector4f(0, 0, 0, 1) - a;
-		float d1 = ab.dot(ap);
-		float d2 = ac.dot(ap);
+		snVec ab = b - a;
+		snVec ac = c - a;
+		snVec ap = snVec4Set(0, 0, 0, 1) - a;
+		float d1 = snVec3Dot(ab, ap);
+		float d2 = snVec3Dot(ac, ap);
 		if (d1 <= 0.f && d2 <= 0.f)
 		{
 			_closestPoint = a;
 			return;
 		}
 
-		snVector4f bp = snVector4f(0, 0, 0, 1) - b;
-		float d3 = ab.dot(bp);
-		float d4 = ac.dot(bp);
+		snVec bp = snVec4Set(0, 0, 0, 1) - b;
+		float d3 = snVec3Dot(ab, bp);
+		float d4 = snVec3Dot(ac, bp);
 		if (d3 >= 0.f && d4 <= d3)
 		{
 			_closestPoint = b;
@@ -199,9 +201,9 @@ namespace Supernova
 			return;
 		}
 
-		snVector4f cp = snVector4f(0, 0, 0, 1) - c;
-		float d5 = ab.dot(cp);
-		float d6 = ac.dot(cp);
+		snVec cp = snVec4Set(0, 0, 0, 1) - c;
+		float d5 = snVec3Dot(ab, cp);
+		float d6 = snVec3Dot(ac, cp);
 		if (d6 >= 0.f && d5 <= d6)
 		{
 			_closestPoint = c;
@@ -230,15 +232,15 @@ namespace Supernova
 		_closestPoint = a + ab * v + ac * w;
 	}
 
-	snVector4f snSimplex::computeClosestPointForSegment(const snVector4f& _e1, const snVector4f& _e2, const snVector4f& _p) const
+	snVec snSimplex::computeClosestPointForSegment(const snVec& _e1, const snVec& _e2, const snVec& _p) const
 	{
-		snVector4f edge = _e2 - _e1;
-		float length = edge.norme();
-		edge.normalize();
+		snVec edge = _e2 - _e1;
+		float length = snVec3Norme(edge);
+		snVec3Normalize(edge);
 
-		snVector4f e1p = _p - _e1;
+		snVec e1p = _p - _e1;
 
-		float distance = edge.dot(e1p);
+		float distance = snVec3Dot(edge, e1p);
 		distance = clamp(distance, 0.f, length);
 
 		return _e1 + (edge * distance);

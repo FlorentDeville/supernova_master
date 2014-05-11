@@ -5,8 +5,6 @@
 
 namespace Supernova
 {
-	class snVector4f;
-
 	class snColliderSphere : public snICollider
 	{
 	private:
@@ -18,17 +16,17 @@ namespace Supernova
 
 		snColliderSphere(float);
 
-		snColliderSphere(float, const snVector4f&);
+		snColliderSphere(float, const snVec&);
 
 		float getRadius()const;
 
-		snVector4f getWorldOrigin()const;
+		snVec getWorldOrigin()const;
 
 		void setWorldTransform(const snMatrix44f& _transform);
 
-		snVector4f getLocalCenterOfMass() const;
+		snVec getLocalCenterOfMass() const;
 
-		void computeProjection(const snVector4f& _direction, float& _min, float& _max) const;
+		void computeProjection(const snVec& _direction, float& _min, float& _max) const;
 	};
 }
 

@@ -38,7 +38,7 @@
 #include <list>
 using std::list;
 
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 
 namespace Supernova
 {
@@ -64,10 +64,10 @@ namespace Supernova
 		snScene* m_scene;
 
 		//sum of AABB's centers used to compute the variance.
-		snVector4f m_sum;
+		snVec m_sum;
 
 		//Squared sum of AABB's centers used to compute the variance.
-		snVector4f m_squaredSum;
+		snVec m_squaredSum;
 
 #ifdef SN_DEBUGGER
 		//Number of pair found 

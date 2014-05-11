@@ -50,17 +50,17 @@ namespace Supernova
 		bool m_collision;
 
 		//Normal of the collision point. Its direction is from the second body to the first one.
-		snVector4f m_normal;
+		snVec m_normal;
 
 		//List of contact points
-		snVector4fVector m_contacts;
+		snVecVector m_contacts;
 
 		//List of penetration depth.
 		vector<float> m_penetrations;
 
 	public:
 
-		snCollisionResult() : m_collision(false), m_normal(0, 0, 0, 0), m_contacts(), m_penetrations(){}
+		snCollisionResult() : m_collision(false), m_normal(), m_contacts(), m_penetrations(){}
 
 		void* operator new(size_t _count)
 		{

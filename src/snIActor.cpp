@@ -72,12 +72,12 @@ namespace Supernova
 	}
 
 	//Return the position of the actor.
-	snVector4f snIActor::getPosition() const
+	snVec snIActor::getPosition() const
 	{
 		return m_x;
 	}
 	//Return the orientation represented as a quaternion
-	snVector4f snIActor::getOrientationQuaternion()
+	snVec snIActor::getOrientationQuaternion()
 	{
 		return m_q;
 	}

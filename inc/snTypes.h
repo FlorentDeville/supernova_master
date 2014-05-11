@@ -38,24 +38,19 @@
 #include <vector>
 using std::vector;
 
-#include <DirectXMath.h>
-using namespace DirectX;
+//#include <DirectXMath.h>
+//using namespace DirectX;
 
 #include "snIConstraint.h"
 #include "AlignmentAllocator.h"
 
-#define XMVEC_ID_X 0
-#define XMVEC_ID_Y 1
-#define XMVEC_ID_Z 2
-#define XMVEC_ID_W 3
-
 namespace Supernova
 {
-	//Aligned vector of snVector4f.
-	typedef vector<snVector4f, AlignmentAllocator<snVector4f>> snVector4fVector;
+	//Aligned vector of snVec.
+	typedef vector<snVec, AlignmentAllocator<snVec>> snVecVector;
 
-	//Constant iterator for a snVector4fVector.
-	typedef snVector4fVector::const_iterator snVector4fVectorConstIterator;
+	//Constant iterator for a snVecVector.
+	typedef snVecVector::const_iterator snVecVectorConstIterator;
 }
 
 #endif //SN_TYPES_H

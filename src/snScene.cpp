@@ -62,16 +62,20 @@
 #include <algorithm>    
 using std::max;
 
+#include <assert.h>
+
+using namespace Supernova::Vector;
 
 namespace Supernova
 {
 
 	snCollision snScene::m_collisionService;
 
-	snScene::snScene() : m_gravity(0, -9.81f, 0, 0), m_linearSquaredSpeedThreshold(0.005f),
+	snScene::snScene() :m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
 		m_collisionMode(snECollisionModeSweepAndPrune), m_contactConstraintBeta(0.25f), m_sweepAndPrune()
 	{
+		m_gravity = snVec4Set(0, -9.81f, 0, 0),
 		m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
 	}
 
@@ -88,7 +92,7 @@ namespace Supernova
 		_actorId = attachActor(*_newActor);
 	}
 
-	void snScene::createActorStatic(snActorStatic** _newActor, int& _actorId, const snVector4f& _position, const snVector4f& _orientation)
+	void snScene::createActorStatic(snActorStatic** _newActor, int& _actorId, const snVec& _position, const snVec& _orientation)
 	{
 		//create the actor
 		*_newActor = new snActorStatic(_position, _orientation);
@@ -156,15 +160,15 @@ namespace Supernova
 		return m_constraints[_constraintId];
 	}
 
-	snPointToPointConstraint* snScene::createPointToPointConstraint(snIActor* const _body1, const snVector4f& _offset1, snIActor* const _body2, 
-		const snVector4f& _offset2)
+	snPointToPointConstraint* snScene::createPointToPointConstraint(snIActor* const _body1, const snVec& _offset1, snIActor* const _body2, 
+		const snVec& _offset2)
 	{
 		snPointToPointConstraint* constraint = new snPointToPointConstraint(_body1, _offset1, _body2, _offset2);
 		m_constraints.push_back(constraint);
 		return constraint;
 	}
 
-	snFixedConstraint* snScene::createFixedConstraint(snIActor* const _actor, const snVector4f& _fixedPoint, float _distance)
+	snFixedConstraint* snScene::createFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance)
 	{
 		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, _distance);
 		m_constraints.push_back(constraint);
@@ -217,30 +221,30 @@ namespace Supernova
 		DEBUGGER->setWatchExpression(L"Collision Detection (ms)", std::to_wstring(durationMS));
 #endif //ifdef SN_DEBUGGER
 
-		//The constraints must be prepared before applying forces.
-		//applyForces updates the velocities with candidates velocities and we can't prepare constraints with candidate velocities.
-		prepareConstraints(_deltaTime);
-
 #ifdef SN_DEBUGGER
 		startTimer = snTimer::getCurrentTick();
 #endif //ifdef SN_DEBUGGER
 
+		//The constraints must be prepared before applying forces.
+		//applyForces updates the velocities with candidates velocities and we can't prepare constraints with candidate velocities.
+		prepareConstraints(_deltaTime);
+
 		//apply forces and compute candidate velocities for actors.
 		applyForces(_deltaTime);
+
+		//apply impulses
+		resolveAllConstraints();
 
 #ifdef SN_DEBUGGER
 		durationMS = snTimer::convertElapsedTickCountInMilliSeconds(snTimer::getElapsedTickCount(startTimer));
 		DEBUGGER->setWatchExpression(L"Constraint Solver (ms)", std::to_wstring(durationMS));
 #endif //ifdef SN_DEBUGGER
 
-		//apply impulses
-		resolveAllConstraints();
-
 		//update positions
 		updatePosition(_deltaTime);	
 	}
 
-	const snVector4fVector& snScene::getCollisionPoints() const
+	const snVecVector& snScene::getCollisionPoints() const
 	{
 		return m_collisionPoints;
 	}
@@ -255,7 +259,7 @@ namespace Supernova
 		return m_contactConstraintBeta;
 	}
 
-	void snScene::setGravity(const snVector4f& _gravity)
+	void snScene::setGravity(const snVec& _gravity)
 	{
 		m_gravity = _gravity;
 	}
@@ -444,7 +448,7 @@ namespace Supernova
 
 		//make the collision constraints from the collision results
 		vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
-		for (snVector4fVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
+		for (snVecVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
 		{
 			m_collisionPoints.push_back(*point);
 

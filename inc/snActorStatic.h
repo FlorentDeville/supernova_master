@@ -44,9 +44,9 @@ namespace Supernova
 	public:
 		snActorStatic();
 
-		snActorStatic(const snVector4f& _position);
+		snActorStatic(const snVec& _position);
 
-		snActorStatic(const snVector4f& _position, const snVector4f& _orientation);
+		snActorStatic(const snVec& _position, const snVec& _orientation);
 
 		~snActorStatic();
 
@@ -62,20 +62,20 @@ namespace Supernova
 		const snMatrix44f& getInvWorldInertia() const;
 
 		//Return the linear velocity
-		snVector4f getLinearVelocity() const;
+		snVec getLinearVelocity() const;
 
 		//Return the angular velocity
-		snVector4f getAngularVelocity() const;
+		snVec getAngularVelocity() const;
 
 #pragma endregion
 
 #pragma region Virtual Setter
 
 		//Set the linear velocity
-		void setLinearVelocity(const snVector4f& _linearVelocity);
+		void setLinearVelocity(const snVec& _linearVelocity);
 
 		//Set the angular velocity
-		void setAngularVelocity(const snVector4f& _angularVelocity);
+		void setAngularVelocity(const snVec& _angularVelocity);
 
 #pragma endregion
 
@@ -90,7 +90,7 @@ namespace Supernova
 
 		//Initialize the actor with default values.
 		//This function must be called in the constructor.
-		void init(const snVector4f& _position, const snVector4f& _orientation);
+		void init(const snVec& _position, const snVec& _orientation);
 	};
 }
 #endif //ifndef SN_ACTOR_STATIC_H

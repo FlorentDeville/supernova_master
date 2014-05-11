@@ -85,13 +85,13 @@ namespace Supernova
 		snIActor* m_actors[2];
 
 		//Offset to the center of mass of the bodies. They must be expressed in local coordinates of the bodies.
-		snVector4f m_pivot[2];
+		snVec m_pivot[2];
 
 		//Offset to the center of mass expressed in world coordinates.
-		snVector4f m_worldPivot[2];
+		snVec m_worldPivot[2];
 
 		//Vector from the constraint point to the center of mass.
-		snVector4f m_offset[2];
+		snVec m_offset[2];
 
 		//Skew matrix used to compute the cross product r X w
 		snMatrix44f m_R[2];
@@ -103,14 +103,14 @@ namespace Supernova
 		snMatrix44f m_invEffectiveMass;
 
 		//Baumgarte stabilization
-		snVector4f m_bias;
+		snVec m_bias;
 
 	public:
 		//Constructor for a Point To Point Constraint.
 		//_bodyA and _bodyB are const pointers to snActor objects.
 		//_pivotA is the pivot point around which _bodyA can rotate. It is expressed in _bodyA local coordinate.
 		//_pivotB is the pivot point around which _bodyB can rotate. It is expressed in _bodyB local coordinate.
-		snPointToPointConstraint(snIActor* const _actorA, const snVector4f& _pivotA, snIActor* const _actorB, const snVector4f& _pivotB);
+		snPointToPointConstraint(snIActor* const _actorA, const snVec& _pivotA, snIActor* const _actorB, const snVec& _pivotB);
 
 		virtual ~snPointToPointConstraint();
 
@@ -122,10 +122,10 @@ namespace Supernova
 		snIActor const * const * getActors() const;
 
 		//Return an array of vectors containing the pivot points in world coordinate for each actor of the constraint.
-		snVector4f const * getWPivot() const;
+		snVec const * getWPivot() const;
 
 		//Return an array of vectors constaining the offset of the pivot. The vector goes from the actor origin to the pivot.
-		snVector4f const* getOffset() const;
+		snVec const* getOffset() const;
 	};
 }
 

@@ -41,6 +41,8 @@
 #include "snCollision.h"
 #include "snAABB.h"
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 	snColliderBox::snColliderBox() : snICollider(), m_size(), m_box()
@@ -56,37 +58,37 @@ namespace Supernova
 		computeVertices();
 	}
 
-	const snVector4f& snColliderBox::getSize() const
+	const snVec& snColliderBox::getSize() const
 	{
 		return m_size;
 	}
 
-	void snColliderBox::setSize(const snVector4f& _size)
+	void snColliderBox::setSize(const snVec& _size)
 	{
 		m_size = _size;
 		m_extends = m_size * 0.5f;
 	}
 
-	const snVector4f& snColliderBox::getExtends() const
+	const snVec& snColliderBox::getExtends() const
 	{
 		return m_extends;
 	}
 
 	void snColliderBox::computeVertices()
 	{
-		float halfX = m_size.VEC4FX * 0.5f;
-		float halfY = m_size.VEC4FY * 0.5f;
-		float halfZ = m_size.VEC4FZ * 0.5f;
+		float halfX = snVec4GetX(m_size) * 0.5f;
+		float halfY = snVec4GetY(m_size) * 0.5f;
+		float halfZ = snVec4GetZ(m_size) * 0.5f;
 
-		m_box[0] = m_origin + snVector4f(halfX, halfY, -halfZ, 0);
-		m_box[1] = m_origin + snVector4f(halfX, -halfY, -halfZ, 0);
-		m_box[2] = m_origin + snVector4f(-halfX, -halfY, -halfZ, 0);
-		m_box[3] = m_origin + snVector4f(-halfX, halfY, -halfZ, 0);
+		m_box[0] = m_origin + snVec4Set(halfX, halfY, -halfZ, 0);
+		m_box[1] = m_origin + snVec4Set(halfX, -halfY, -halfZ, 0);
+		m_box[2] = m_origin + snVec4Set(-halfX, -halfY, -halfZ, 0);
+		m_box[3] = m_origin + snVec4Set(-halfX, halfY, -halfZ, 0);
 
-		m_box[4] = m_origin + snVector4f(halfX, halfY, halfZ, 0);
-		m_box[5] = m_origin + snVector4f(halfX, -halfY, halfZ, 0);
-		m_box[6] = m_origin + snVector4f(-halfX, -halfY, halfZ, 0);
-		m_box[7] = m_origin + snVector4f(-halfX, halfY, halfZ, 0);
+		m_box[4] = m_origin + snVec4Set(halfX, halfY, halfZ, 0);
+		m_box[5] = m_origin + snVec4Set(halfX, -halfY, halfZ, 0);
+		m_box[6] = m_origin + snVec4Set(-halfX, -halfY, halfZ, 0);
+		m_box[7] = m_origin + snVec4Set(-halfX, halfY, halfZ, 0);
 
 		//front
 		m_idFaces[0] = 3; // { 0, 1, 2, 3,    4, 5, 6, 7,    0, 4, 5, 1,   7, 3, 2, 6,   7, 4, 0, 3,   2, 6, 5, 1 };
@@ -178,16 +180,16 @@ namespace Supernova
 
 	void snColliderBox::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
 	{
-		snVector4f squaredSize = m_size * m_size;
+		snVec squaredSize = m_size * m_size;
 
 		float massOverTwelve = _mass / 12.f;
-		_inertiaTensor.m_r[0] = snVector4f(massOverTwelve * (squaredSize.VEC4FY + squaredSize.VEC4FZ), 0, 0, 0);
-		_inertiaTensor.m_r[1] = snVector4f(0, massOverTwelve * (squaredSize.VEC4FX + squaredSize.VEC4FZ), 0, 0);
-		_inertiaTensor.m_r[2] = snVector4f(0, 0, massOverTwelve * (squaredSize.VEC4FX + squaredSize.VEC4FY), 0);
-		_inertiaTensor.m_r[3] = snVector4f(0, 0, 0, 1);
+		_inertiaTensor.m_r[0] = snVec4Set(massOverTwelve * (snVec4GetY(squaredSize) + snVec4GetZ(squaredSize)), 0, 0, 0);
+		_inertiaTensor.m_r[1] = snVec4Set(0, massOverTwelve * (snVec4GetX(squaredSize) + snVec4GetZ(squaredSize)), 0, 0);
+		_inertiaTensor.m_r[2] = snVec4Set(0, 0, massOverTwelve * (snVec4GetX(squaredSize) + snVec4GetY(squaredSize)), 0);
+		_inertiaTensor.m_r[3] = snVec4Set(0, 0, 0, 1);
 	}
 
-	snVector4f snColliderBox::getFarthestPointInDirection(const snVector4f& _direction) const
+	snVec snColliderBox::getFarthestPointInDirection(const snVec& _direction) const
 	{
 		float maxDotProduct = -SN_FLOAT_MAX;
 		int id = -1;
@@ -195,7 +197,7 @@ namespace Supernova
 		//check every point
 		for (int i = 0; i < VERTEX_COUNT; ++i)
 		{
-			float dot = _direction.dot(m_worldBox[i]);
+			float dot = snVec3Dot(_direction, m_worldBox[i]);
 			if (dot > maxDotProduct)
 			{
 				maxDotProduct = dot;
@@ -207,14 +209,14 @@ namespace Supernova
 		return m_worldBox[id];
 	}
 
-	void snColliderBox::computeProjection(const snVector4f& _direction, float& _min, float& _max) const
+	void snColliderBox::computeProjection(const snVec& _direction, float& _min, float& _max) const
 	{
-		_min = _direction.dot(m_worldBox[0]);
+		_min = snVec3Dot(_direction, m_worldBox[0]);
 		_max = _min;
 
 		for (int i = 1; i < VERTEX_COUNT; ++i)
 		{
-			float dot = _direction.dot(m_worldBox[i]);
+			float dot = snVec3Dot(_direction, m_worldBox[i]);
 			if (dot < _min)
 				_min = dot;
 			else if (dot > _max)
@@ -222,29 +224,29 @@ namespace Supernova
 		}
 	}
 
-	const snVector4f* snColliderBox::getWorldNormal() const
+	const snVec* snColliderBox::getWorldNormal() const
 	{
 		return m_worldNormals;
 	}
 
-	snVector4f snColliderBox::getClosestPoint(const snVector4f& _v) const
+	snVec snColliderBox::getClosestPoint(const snVec& _v) const
 	{
-		snVector4f ret;
+		snVec ret;
 
 		//Vector from the center of the box to the point
-		snVector4f dir = _v - m_worldOrigin;
+		snVec dir = _v - m_worldOrigin;
 
 		//Get box normals
-		const snVector4f* normals;
+		const snVec* normals;
 		normals = getWorldNormal();
 
 		//Loop through each normals
 		for (int i = 0; i < 3; ++i)
 		{
 			//Projection of the point to the normal
-			float dot = dir.dot(normals[i]);
+			float dot = snVec3Dot(dir, normals[i]);
 
-			float halfExtend = m_size.m_vec.m128_f32[i] * 0.5f;
+			float halfExtend = m_size.m128_f32[i] * 0.5f;
 			if (dot > halfExtend) dot = halfExtend;
 			else if (dot < -halfExtend) dot = -halfExtend;
 
@@ -254,14 +256,14 @@ namespace Supernova
 		return ret + m_worldOrigin;
 	}
 
-	void snColliderBox::getClosestPolygonProjected(const snVector4f& _n, snVector4f* const _polygon, int& _faceId) const
+	void snColliderBox::getClosestPolygonProjected(const snVec& _n, snVec* const _polygon, int& _faceId) const
 	{
 		//find the closest point projected onto the normal
 		float min = SN_FLOAT_MAX;
 		int minId = -1;
 		for (int i = 0; i < VERTEX_COUNT; ++i)
 		{
-			float d = _n.dot(m_worldBox[i]);
+			float d = snVec3Dot(_n, m_worldBox[i]);
 			if (d < min)
 			{
 				min = d;
@@ -282,8 +284,8 @@ namespace Supernova
 				continue;
 
 			//make the sum of dot product
-			float sumOfDot = _n.dot(m_worldBox[m_idFaces[polyId]]) + _n.dot(m_worldBox[m_idFaces[polyId + 1]]) +
-				_n.dot(m_worldBox[m_idFaces[polyId + 2]]) + _n.dot(m_worldBox[m_idFaces[polyId + 3]]);
+			float sumOfDot = snVec3Dot(_n, m_worldBox[m_idFaces[polyId]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 1]]) +
+				snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 2]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 3]]);
 
 			if (sumOfDot < minPoly)
 			{
@@ -299,7 +301,7 @@ namespace Supernova
 		_polygon[3] = m_worldBox[m_idFaces[minPolyId + 3]];
 	}
 
-	snVector4f snColliderBox::getWorldNormalOfFace(int _faceId) const
+	snVec snColliderBox::getWorldNormalOfFace(int _faceId) const
 	{
 		switch (_faceId)
 		{
@@ -329,7 +331,7 @@ namespace Supernova
 
 		default:
 			assert(false);
-			return snVector4f();
+			return snVec4Set(0, 0, 0, 0);
 			break;
 
 		}
@@ -340,34 +342,34 @@ namespace Supernova
 		return m_facesAdjacent[_faceId];
 	}
 
-	snVector4f snColliderBox::getWorldVertexOfFace(int _faceId) const
+	snVec snColliderBox::getWorldVertexOfFace(int _faceId) const
 	{
 		return m_worldBox[m_idFaces[_faceId * 4]];
 	}
 
 	void snColliderBox::computeAABB(snAABB * const _boundingVolume) const
 	{
-		_boundingVolume->m_max = m_worldBox[0].m_vec;
-		_boundingVolume->m_min = m_worldBox[0].m_vec;
+		_boundingVolume->m_max = m_worldBox[0];
+		_boundingVolume->m_min = m_worldBox[0];
 
 		const __m128 BITWISE_NEG_FLAG = _mm_castsi128_ps(_mm_set1_epi32(0xffffffff));
 		for (int i = 1; i < 8; ++i)
 		{
 			//get the maximum
-			__m128 compare = _mm_cmpgt_ps(m_worldBox[i].m_vec, _boundingVolume->m_max.m_vec);
+			__m128 compare = _mm_cmpgt_ps(m_worldBox[i], _boundingVolume->m_max);
 			__m128 ncompare = _mm_xor_ps(compare, BITWISE_NEG_FLAG);
 
-			__m128 mask1 = _mm_and_ps(m_worldBox[i].m_vec, compare);
-			__m128 mask2 = _mm_and_ps(_boundingVolume->m_max.m_vec, ncompare);
-			_boundingVolume->m_max.m_vec = _mm_or_ps(mask1, mask2);
+			__m128 mask1 = _mm_and_ps(m_worldBox[i], compare);
+			__m128 mask2 = _mm_and_ps(_boundingVolume->m_max, ncompare);
+			_boundingVolume->m_max = _mm_or_ps(mask1, mask2);
 
 			//get the minimum
-			compare = _mm_cmplt_ps(m_worldBox[i].m_vec, _boundingVolume->m_min.m_vec);
+			compare = _mm_cmplt_ps(m_worldBox[i], _boundingVolume->m_min);
 			ncompare = _mm_xor_ps(compare, BITWISE_NEG_FLAG);
 
-			mask1 = _mm_and_ps(m_worldBox[i].m_vec, compare);
-			mask2 = _mm_and_ps(_boundingVolume->m_min.m_vec, ncompare);
-			_boundingVolume->m_min.m_vec = _mm_or_ps(mask1, mask2);
+			mask1 = _mm_and_ps(m_worldBox[i], compare);
+			mask2 = _mm_and_ps(_boundingVolume->m_min, ncompare);
+			_boundingVolume->m_min = _mm_or_ps(mask1, mask2);
 		}
 	}
 }

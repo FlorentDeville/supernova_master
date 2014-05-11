@@ -8,7 +8,7 @@
 
 #include <DirectXMath.h>
 
-using namespace DirectX;
+using DirectX::XMMATRIX;
 
 namespace Devil
 {

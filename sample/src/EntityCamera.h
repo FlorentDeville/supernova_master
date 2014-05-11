@@ -3,10 +3,6 @@
 
 #include "IWorldEntity.h"
 
-//
-//#include <DirectXMath.h>
-//using namespace DirectX;
-
 namespace Devil
 {
 	class Camera;

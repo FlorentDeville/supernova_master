@@ -44,6 +44,8 @@
 #include "snIActor.h"
 using namespace Supernova;
 
+using namespace DirectX;
+
 namespace Devil
 {
 
@@ -75,19 +77,19 @@ namespace Devil
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
 		//show the fixed point as a sphere
-		XMMATRIX fixedPointTransform = XMMatrixTranslationFromVector(m_constraint->getFixedPosition().m_vec);
+		XMMATRIX fixedPointTransform = XMMatrixTranslationFromVector(m_constraint->getFixedPosition());
 		m_sphere->render(fixedPointTransform, viewMatrix, projectionMatrix);
 
 		//show the link between the fixed point and the actor
-		snVector4f up, left, forward;
+		snVec up, left, forward;
 		up = m_constraint->getActor()->getPosition() - m_constraint->getFixedPosition();
-		up.normalize();
-		up[3] = 0;
+		Supernova::Vector::snVec3Normalize(up);
+		Supernova::Vector::snVec4SetW(up, 0);
 		computeBasis(up, left, forward);
 		XMMATRIX linkRotate;
-		linkRotate.r[0] = left.m_vec;
-		linkRotate.r[1] = up.m_vec;
-		linkRotate.r[2] = -forward.m_vec;
+		linkRotate.r[0] = left;
+		linkRotate.r[1] = up;
+		linkRotate.r[2] = -forward;
 		linkRotate.r[3] = _mm_set_ps(1, 0, 0, 0);
 
 		XMMATRIX offset = XMMatrixTranslation(0, m_constraint->getDistance() * 0.5f, 0);

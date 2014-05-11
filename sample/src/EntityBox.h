@@ -3,6 +3,8 @@
 
 #include "IWorldEntity.h"
 
+using DirectX::XMFLOAT4;
+
 namespace Devil
 {
 	class GfxEntityBox;

@@ -44,7 +44,7 @@
     <ClInclude Include="inc\snSweepManager.h" />
     <ClInclude Include="inc\snTimer.h" />
     <ClInclude Include="inc\snTypes.h" />
-    <ClInclude Include="inc\snVector4f.h" />
+    <ClInclude Include="inc\snVec.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snAABB.cpp" />
@@ -71,13 +71,9 @@
     <ClCompile Include="src\snSimplex.cpp" />
     <ClCompile Include="src\snSweepManager.cpp" />
     <ClCompile Include="src\snTimer.cpp" />
-    <ClCompile Include="src\snVector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="inc\snVector4f-inl.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </ExcludedFromBuild>
-    </None>
+    <None Include="inc\snVec.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7A50E8D4-5550-4F71-8051-ECD68FA776CE}</ProjectGuid>

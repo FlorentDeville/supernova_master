@@ -1,6 +1,6 @@
 #include "Camera.h"
-#include "snVector4f-inl.h"
-using namespace Supernova;
+
+using namespace DirectX;
 
 namespace Devil
 {
@@ -15,7 +15,6 @@ namespace Devil
 		m_rotationZ = 0.0f;
 	}
 
-
 	Camera::~Camera()
 	{
 	}
@@ -27,7 +26,6 @@ namespace Devil
 		m_positionZ = z;
 		return;
 	}
-
 
 	void Camera::SetRotation(float x, float y, float z)
 	{
@@ -42,7 +40,6 @@ namespace Devil
 		return XMFLOAT3(m_positionX, m_positionY, m_positionZ);
 	}
 
-
 	XMFLOAT3 Camera::GetRotation()
 	{
 		return XMFLOAT3(m_rotationX, m_rotationY, m_rotationZ);
@@ -53,7 +50,6 @@ namespace Devil
 		XMVECTOR up, position, lookAt;
 		float yaw, pitch, roll;
 		XMMATRIX rotationMatrix;
-
 
 		// Setup the vector that points upwards.
 		up = XMVectorSet(0, 1.0, 1, 0);
@@ -94,10 +90,10 @@ namespace Devil
 		return;
 	}
 
-	void Camera::Render(const snVector4f& _position, const snVector4f& _lookAt, const snVector4f& _up)
+	void Camera::Render(const snVec& _position, const snVec& _lookAt, const snVec& _up)
 	{
 		// Finally create the view matrix from the three updated vectors.
-		m_viewMatrix = XMMatrixLookAtLH(_position.m_vec, _lookAt.m_vec, _up.m_vec);
+		m_viewMatrix = XMMatrixLookAtLH(_position, _lookAt, _up);
 	}
 
 	void Camera::GetViewMatrix(XMMATRIX& viewMatrix)

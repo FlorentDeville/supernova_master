@@ -58,10 +58,10 @@ namespace Supernova
 		bool m_isKinematic;
 
 		//Linear velocity
-		snVector4f m_v;
+		snVec m_v;
 
 		//angular velocity
-		snVector4f m_w;
+		snVec m_w;
 
 		//Linear damping coefficient
 		float m_linearDamping;
@@ -86,10 +86,10 @@ namespace Supernova
 		const snMatrix44f& getInvWorldInertia() const;
 
 		//Return the linear velocity
-		snVector4f getLinearVelocity() const;
+		snVec getLinearVelocity() const;
 
 		//Return the angular velocity
-		snVector4f getAngularVelocity() const;
+		snVec getAngularVelocity() const;
 
 #pragma endregion
 
@@ -106,10 +106,10 @@ namespace Supernova
 #pragma region Virtual Setter
 
 		//Set the linear velocity
-		void setLinearVelocity(const snVector4f& _linearVelocity);
+		void setLinearVelocity(const snVec& _linearVelocity);
 
 		//Set the angular velocity
-		void setAngularVelocity(const snVector4f& _angularVelocity);
+		void setAngularVelocity(const snVec& _angularVelocity);
 
 #pragma endregion
 
@@ -122,16 +122,16 @@ namespace Supernova
 		void setAngularDampingCoeff(float _angularDamping);
 
 		//Set the position of the actor
-		void setPosition(const snVector4f& _position);
+		void setPosition(const snVec& _position);
 
 		//Set the orientation of the actor
-		void setOrientation(const snVector4f& _orientation);
+		void setOrientation(const snVec& _orientation);
 
 		//Set if the actor is kinematic
 		void setIsKinematic(bool _isKinematic);
 
 		//Set the position of a kinematic actor
-		void setKinematicPosition(const snVector4f& _position);
+		void setKinematicPosition(const snVec& _position);
 
 #pragma endregion
 

@@ -17,6 +17,14 @@ namespace DirectX
 	class SpriteFont;
 }
 
+using DirectX::XMVECTORF32;
+using DirectX::SpriteBatch;
+using DirectX::SpriteFont;
+using DirectX::XMFLOAT2;
+using DirectX::XMFLOAT3;
+using DirectX::XMFLOAT4;
+using DirectX::XMVECTOR;
+
 namespace Devil
 {
 	class D3D;
@@ -92,7 +100,7 @@ namespace Devil
 		// <param name="_scale">Uniform scaling to apply to the text.</param>
 		void writeText(const wstring& _text, const XMFLOAT2& _p, float _scale);
 
-		GfxEntitySphere* createSphere(float, const XMVECTOR& _color = Colors::White);
+		GfxEntitySphere* createSphere(float, const XMVECTOR& _color = DirectX::Colors::White);
 		GfxEntityBox* createBox(const XMFLOAT3&, const XMFLOAT4&);
 		GfxEntityPlan* createPlan(const XMFLOAT2&, const XMFLOAT4&);
 

@@ -4,7 +4,8 @@
 #include <memory>
 #include <Effects.h>
 #include <d3d11.h>
-using namespace DirectX;
+
+using DirectX::BasicEffect;
 
 namespace Devil
 {

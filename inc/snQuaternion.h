@@ -35,18 +35,18 @@
 #ifndef SN_QUATERNION_H
 #define SN_QUATERNION_H
 
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 
 namespace Supernova
 {
 	//Compute the hamiltonian multiplication of two quaternions : _q1 * _q2
-	void snQuaternionMultiply(const snVector4f& _q1, const snVector4f& _q2, snVector4f& _result);
+	void snQuaternionMultiply(const snVec& _q1, const snVec& _q2, snVec& _result);
 
 	//Compute a quaternion representing a rotation from euler angles in radians.
-	snVector4f snQuaternionFromEuler(float _x, float _y, float _z);
+	snVec snQuaternionFromEuler(float _x, float _y, float _z);
 
 	//Normalize a quaternion. 
-	void snQuaternionNormalize(const snVector4f& _q, snVector4f& _n);
+	void snQuaternionNormalize(const snVec& _q, snVec& _n);
 }
 
 #endif //SN_QUATERNION_H

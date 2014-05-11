@@ -1,15 +1,18 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <DirectXMath.h>
-
-using namespace DirectX;
-
-namespace Supernova
+//Forward declarations
+namespace DirectX
 {
-	class snVector4f;
+	struct XMFLOAT3;
 }
-using namespace Supernova;
+using DirectX::XMFLOAT3;
+
+#include <DirectXMath.h>
+using DirectX::XMMATRIX;
+
+#include "snVec.inl"
+using Supernova::snVec;
 
 namespace Devil
 {
@@ -31,7 +34,7 @@ namespace Devil
 		XMFLOAT3 GetRotation();
 
 		void Render();
-		void Render(const snVector4f& _position, const snVector4f& _lookAt, const snVector4f& _up);
+		void Render(const snVec& _position, const snVec& _lookAt, const snVec& _up);
 		void GetViewMatrix(XMMATRIX&);
 
 		void* operator new(size_t _count)

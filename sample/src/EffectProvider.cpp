@@ -49,8 +49,8 @@ namespace Devil
 
 		ID3D11InputLayout* inputLayout = 0;
 
-		HRESULT res = GRAPHICS->getDirectXWrapper()->getDevice()->CreateInputLayout(VertexPositionNormalColor::InputElements,
-			VertexPositionNormalColor::InputElementCount, shaderByteCode, byteCodeLength, &inputLayout);
+		HRESULT res = GRAPHICS->getDirectXWrapper()->getDevice()->CreateInputLayout(DirectX::VertexPositionNormalColor::InputElements,
+			DirectX::VertexPositionNormalColor::InputElementCount, shaderByteCode, byteCodeLength, &inputLayout);
 		UNREFERENCED_PARAMETER(res);
 		assert(!FAILED(res));
 

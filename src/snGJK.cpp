@@ -33,12 +33,16 @@
 /****************************************************************************/
 
 #include "snGJK.h"
-#include "snVector4f-inl.h"
+#include "snVec.inl"
 #include "snICollider.h"
 #include "snTypes.h"
 #include "snMath.h"
 #include "snCollisionResult.h"
 #include "snSimplex.h"
+
+using namespace Supernova::Vector;
+
+#define SN_SAME_DIRECTION(_v1, _v2) snVec3Dot(_v1, _v2) > 0
 
 namespace Supernova
 {
@@ -51,13 +55,13 @@ namespace Supernova
 		snCollisionResult res;
 		res.m_collision = false;
 
-		snVector4f simplex[4];
+		snVec simplex[4];
 
 		//vector of point making the resulting simplex.
 		int simplexCount = 0;
 
 		//compute first direction from collider 1 to collider 2
-		snVector4f direction = _c2.getWorldOrigin() - _c1.getWorldOrigin();
+		snVec direction = _c2.getWorldOrigin() - _c1.getWorldOrigin();
 
 		//compute first point of the simplex
 		simplex[simplexCount] = support(_c1, _c2, direction);
@@ -71,10 +75,10 @@ namespace Supernova
 		while (!over)
 		{
 			//compute another point
-			snVector4f newPoint = support(_c1, _c2, direction);
+			snVec newPoint = support(_c1, _c2, direction);
 
 			//check if we passed the origin
-			if (newPoint.dot(direction) <= 0)
+			if (snVec3Dot(newPoint, direction) <= 0)
 				return res;
 
 			//add the new point to the simplex
@@ -109,14 +113,14 @@ namespace Supernova
 		//epaSimplex2.addTriangle(0, 3, 1);
 		//epaSimplex2.addTriangle(1, 3, 2);
 		//epaSimplex2.addTriangle(0, 2, 3);
-		//snVector4f tempNormal;
+		//snVec tempNormal;
 		//res.m_collision = expandPolytopeV2(epaSimplex2, _c1, _c2, tempNormal);
 		///*if (!(res.m_normal == tempNormal))
 		//	int a = 0;*/
 
 		//res.m_normal = tempNormal;
 		
-		res.m_normal.normalize();
+		snVec3Normalize(res.m_normal);
 
 		//compute the collision patch
 		res.m_collision = m_clipping.findContactPatch(_c1, _c2, res.m_normal, res.m_contacts, res.m_penetrations);
@@ -124,15 +128,15 @@ namespace Supernova
 		return res;
 	}
 
-	snVector4f snGJK::support(const snICollider& _c1, const snICollider& _c2, const snVector4f& _direction) const
+	snVec snGJK::support(const snICollider& _c1, const snICollider& _c2, const snVec& _direction) const
 	{
-		snVector4f p1 = _c1.getFarthestPointInDirection(_direction);
-		snVector4f p2 = _c2.getFarthestPointInDirection(_direction * -1);
+		snVec p1 = _c1.getFarthestPointInDirection(_direction);
+		snVec p2 = _c2.getFarthestPointInDirection(_direction * -1);
 
 		return p1 - p2;
 	}
 
-	bool snGJK::doSimplex(snVector4f* const _simplex, int& _simplexCount, snVector4f& _direction) const
+	bool snGJK::doSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const
 	{
 		switch (_simplexCount)
 		{
@@ -150,15 +154,15 @@ namespace Supernova
 		}
 	}
 
-	bool snGJK::checkOneSimplex(snVector4f* const _simplex, int& _simplexCount, snVector4f& _direction) const
+	bool snGJK::checkOneSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const
 	{
 		//_simplex[1] is A. It is the last point added.
 		//_simplex[0] is B. It is the first point entered in the simplex.
-		snVector4f AB = _simplex[0] - _simplex[1];
-		snVector4f AO = snVector4f(0, 0, 0, 1) - _simplex[1];
+		snVec AB = _simplex[0] - _simplex[1];
+		snVec AO = snVec4Set(0, 0, 0, 1) - _simplex[1];
 
 		if (SN_SAME_DIRECTION(AB, AO))
-			_direction = (AB.cross(AO)).cross(AB);
+			_direction = snVec3Cross(snVec3Cross(AB, AO), AB);
 		else
 		{
 			_direction = AO;
@@ -168,19 +172,19 @@ namespace Supernova
 		return false;
 	}
 
-	bool snGJK::checkTwoSimplex(snVector4f* const _simplex, int& _simplexCount, snVector4f& _direction) const
+	bool snGJK::checkTwoSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const
 	{
 		//A = _simplex[2]. The last point entered in the simplex.
 		//B = _simplex[1].
 		//C = _simplex[0].
-		snVector4f AO = snVector4f(0, 0, 0, 1) - _simplex[2];
+		snVec AO = snVec4Set(0, 0, 0, 1) - _simplex[2];
 
-		snVector4f AB = _simplex[1] - _simplex[2];
-		snVector4f AC = _simplex[0] - _simplex[2];
+		snVec AB = _simplex[1] - _simplex[2];
+		snVec AC = _simplex[0] - _simplex[2];
 
-		snVector4f ABC = AB.cross(AC);
+		snVec ABC = snVec3Cross(AB, AC);
 
-		snVector4f E2 = ABC.cross(AC);
+		snVec E2 = snVec3Cross(ABC, AC);
 
 		if (SN_SAME_DIRECTION(E2, AO))
 		{
@@ -189,7 +193,7 @@ namespace Supernova
 				//keep [C, A]
 				_simplex[1] = _simplex[2];
 				--_simplexCount;
-				_direction = (AC.cross(AO)).cross(AC);
+				_direction = snVec3Cross(snVec3Cross(AC, AO), AC);
 			}
 			else
 			{
@@ -199,7 +203,7 @@ namespace Supernova
 					_simplex[0] = _simplex[1];
 					_simplex[1] = _simplex[2];
 					--_simplexCount;
-					_direction = (AB.cross(AO)).cross(AB);
+					_direction = snVec3Cross(snVec3Cross(AB, AO), AB);
 				}
 				else
 				{
@@ -212,7 +216,7 @@ namespace Supernova
 		}
 		else
 		{
-			snVector4f E1 = AB.cross(ABC);
+			snVec E1 = snVec3Cross(AB, ABC);
 			if (SN_SAME_DIRECTION(E1, AO))
 			{
 				if (SN_SAME_DIRECTION(AB, AO))
@@ -221,7 +225,7 @@ namespace Supernova
 					_simplex[0] = _simplex[1];
 					_simplex[1] = _simplex[2];
 					--_simplexCount;
-					_direction = (AB.cross(AO)).cross(AB);
+					_direction = snVec3Cross(snVec3Cross(AB, AO), AB);
 				}
 				else
 				{
@@ -239,7 +243,7 @@ namespace Supernova
 				}
 				else
 				{
-					/*snVector4f temp = _simplex[0];
+					/*snVec temp = _simplex[0];
 					_simplex[0] = _simplex[1];
 					_simplex[1] = temp;*/
 					_direction = ABC * -1;
@@ -250,27 +254,27 @@ namespace Supernova
 		return false;
 	}
 
-	bool snGJK::checkThreeSimplex(snVector4f* const _simplex, int& _simplexCount, snVector4f& _direction) const
+	bool snGJK::checkThreeSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const
 	{
 		//A = _simplex[3]. The last point inserted. B = _simplex[2], C = _simplex[1], D = _simplex[0]
-		snVector4f AO = snVector4f(0, 0, 0, 1) - _simplex[3];
-		snVector4f AD = _simplex[0] - _simplex[3];
-		snVector4f AC = _simplex[1] - _simplex[3];
-		snVector4f AB = _simplex[2] - _simplex[3];
+		snVec AO = snVec4Set(0, 0, 0, 1) - _simplex[3];
+		snVec AD = _simplex[0] - _simplex[3];
+		snVec AC = _simplex[1] - _simplex[3];
+		snVec AB = _simplex[2] - _simplex[3];
 
-		snVector4f ABC = AB.cross(AC);
-		snVector4f ACD = AC.cross(AD);
-		snVector4f ADB = AD.cross(AB);
+		snVec ABC = snVec3Cross(AB, AC);
+		snVec ACD = snVec3Cross(AC, AD);
+		snVec ADB = snVec3Cross(AD, AB);
 
 		//check on what side of the triangle the opposite point is
-		int BSideOnACD = sign(ACD.dot(AB));
-		int CSideOnADB = sign(ADB.dot(AC));
-		int DSideOnABC = sign(ABC.dot(AD));
+		int BSideOnACD = sign(snVec3Dot(ACD, AB));
+		int CSideOnADB = sign(snVec3Dot(ADB, AC));
+		int DSideOnABC = sign(snVec3Dot(ABC, AD));
 
 		//check if the origin is on the same side as a point relative to a triangle
-		bool ABSameAsOrigin = sign(ACD.dot(AO)) == BSideOnACD;
-		bool ACSameAsOrigin = sign(ADB.dot(AO)) == CSideOnADB;
-		bool ADSameAsOrigin = sign(ABC.dot(AO)) == DSideOnABC;
+		bool ABSameAsOrigin = sign(snVec3Dot(ACD, AO)) == BSideOnACD;
+		bool ACSameAsOrigin = sign(snVec3Dot(ADB, AO)) == CSideOnADB;
+		bool ADSameAsOrigin = sign(snVec3Dot(ABC, AO)) == DSideOnABC;
 
 		if (ABSameAsOrigin && ACSameAsOrigin && ADSameAsOrigin) // the origin is inside the tetrahedron
 			return true;
@@ -303,23 +307,23 @@ namespace Supernova
 		return checkTwoSimplex(_simplex, _simplexCount, _direction);
 	}
 
-	snVector4f snGJK::expandPolytope(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2) const
+	snVec snGJK::expandPolytope(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2) const
 	{
 		bool loopOver = false;
 		while (!loopOver)
 		{
 			//find the closest triangle to the origin
 			int closestTriangleId = -1;
-			snVector4f normal;
+			snVec normal;
 			float distance = 0;
 			_simplex.computeTriangleClosestToOrigin(closestTriangleId, normal, distance);
 
 			//expand the polytope
-			snVector4f revNormal = normal *-1;
-			snVector4f newVertex = support(_c1, _c2, revNormal);
+			snVec revNormal = normal *-1;
+			snVec newVertex = support(_c1, _c2, revNormal);
 
 			//check if we are closer to the origin
-			float newPointDistance = revNormal.dot(newVertex);
+			float newPointDistance = snVec3Dot(revNormal, newVertex);
 
 			const float EPA_TOLERANCE = 0.01f;
 			if ((newPointDistance - distance) < EPA_TOLERANCE)
@@ -328,22 +332,22 @@ namespace Supernova
 			_simplex.expand(newVertex, closestTriangleId);
 		}
 
-		return snVector4f();
+		return snVec();
 	}
 
-	bool snGJK::expandPolytopeV2(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVector4f& _normal) const
+	bool snGJK::expandPolytopeV2(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal) const
 	{
 		bool loopOver = false;
 		while (!loopOver)
 		{
 			//find the closest triangle to the origin
 			int closestTriangleId = -1;
-			snVector4f triangleNormal;
+			snVec triangleNormal;
 			float distance = 0;
 			_simplex.computeTriangleClosestToOrigin(closestTriangleId, triangleNormal, distance);
 
 			////find the closest point to the origin
-			//snVector4f revNormal;
+			//snVec revNormal;
 			//_simplex.computeClosestPointToOriginInTriangle(closestTriangleId, revNormal);
 			//distance = revNormal.norme();
 			//const float MIN_PENETRATION = 0.0001f;
@@ -353,14 +357,14 @@ namespace Supernova
 			//	/*_normal = triangleNormal;
 			//	return true;*/
 			//}
-			snVector4f revNormal = triangleNormal * -1;
+			snVec revNormal = triangleNormal * -1;
 			//find a new point for the simplex.
-			snVector4f newVertex = support(_c1, _c2, revNormal);
+			snVec newVertex = support(_c1, _c2, revNormal);
 
 			//check if we are closer to the origin
-			float newPointDistance = revNormal.dot(newVertex);
+			float newPointDistance = snVec3Dot(revNormal, newVertex);
 
-			snVector4f triangle[3];
+			snVec triangle[3];
 			_simplex.getTriangle(closestTriangleId, triangle[0], triangle[1], triangle[2]);
 			const float EPA_TOLERANCE = 0.01f;
 			if ((newPointDistance - distance) < EPA_TOLERANCE ||
@@ -368,7 +372,7 @@ namespace Supernova
 				newVertex == triangle[1] ||
 				newVertex == triangle[2])
 			{
-				revNormal.normalize();
+				snVec3Normalize(revNormal);
 				_normal = revNormal * -1;
 				return true;
 			}			
@@ -380,9 +384,9 @@ namespace Supernova
 
 			//split the first edge
 			{
-				snVector4f ve1 = _simplex.computeClosestPointForSegment(triangle[0], triangle[1], snVector4f(0, 0, 0, 1));
-				snVector4f we1 = support(_c1, _c2, ve1);
-				if (ve1.dot(we1) != ve1.dot(ve1))
+				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[0], triangle[1], snVec4Set(0, 0, 0, 1));
+				snVec we1 = support(_c1, _c2, ve1);
+				if (snVec3Dot(ve1, we1) != snVec3Dot(ve1, ve1))
 				{
 					int edgeVertexId = _simplex.addVertex(we1);
 					_simplex.addTriangle(id0, edgeVertexId, newVertexId);
@@ -395,9 +399,9 @@ namespace Supernova
 			}
 			//split the second edge
 			{
-				snVector4f ve1 = _simplex.computeClosestPointForSegment(triangle[1], triangle[2], snVector4f(0, 0, 0, 1));
-				snVector4f we1 = support(_c1, _c2, ve1);
-				if (ve1.dot(we1) != ve1.dot(ve1))
+				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[1], triangle[2], snVec4Set(0, 0, 0, 1));
+				snVec we1 = support(_c1, _c2, ve1);
+				if (snVec3Dot(ve1, we1) != snVec3Dot(ve1, ve1))
 				{
 					int edgeVertexId = _simplex.addVertex(we1);
 					_simplex.addTriangle(id1, edgeVertexId, newVertexId);
@@ -410,9 +414,9 @@ namespace Supernova
 			}
 			//split the third edge
 			{
-				snVector4f ve1 = _simplex.computeClosestPointForSegment(triangle[2], triangle[0], snVector4f(0, 0, 0, 1));
-				snVector4f we1 = support(_c1, _c2, ve1);
-				if (ve1.dot(we1) != ve1.dot(ve1))
+				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[2], triangle[0], snVec4Set(0, 0, 0, 1));
+				snVec we1 = support(_c1, _c2, ve1);
+				if (snVec3Dot(ve1, we1) != snVec3Dot(ve1, ve1))
 				{
 					int edgeVertexId = _simplex.addVertex(we1);
 					_simplex.addTriangle(id2, edgeVertexId, newVertexId);

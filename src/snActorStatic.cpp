@@ -35,20 +35,22 @@
 #include "snActorStatic.h"
 #include "snICollider.h"
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 
 	snActorStatic::snActorStatic()
 	{
-		init(snVector4f(), snVector4f(0, 0, 0, 1));
+		init(snVec4Set(0, 0, 0, 1), snVec4Set(0, 0, 0, 1));
 	}
 
-	snActorStatic::snActorStatic(const snVector4f& _position)
+	snActorStatic::snActorStatic(const snVec& _position)
 	{
-		init(_position, snVector4f(0, 0, 0, 1));
+		init(_position, snVec4Set(0, 0, 0, 1));
 	}
 
-	snActorStatic::snActorStatic(const snVector4f& _position, const snVector4f& _orientation)
+	snActorStatic::snActorStatic(const snVec& _position, const snVec& _orientation)
 	{
 		init(_position, _orientation);
 	}
@@ -76,25 +78,25 @@ namespace Supernova
 	}
 
 	//Return the linear velocity
-	snVector4f snActorStatic::getLinearVelocity() const
+	snVec snActorStatic::getLinearVelocity() const
 	{
-		return snVector4f::m_zero;
+		return VEC_ZERO;
 	}
 
 	//Return the angular velocity
-	snVector4f snActorStatic::getAngularVelocity() const
+	snVec snActorStatic::getAngularVelocity() const
 	{
-		return snVector4f::m_zero;
+		return VEC_ZERO;
 	}
 
 	//Set the linear velocity
-	void snActorStatic::setLinearVelocity(const snVector4f& /*_linearVelocity*/)
+	void snActorStatic::setLinearVelocity(const snVec& /*_linearVelocity*/)
 	{
 		return;
 	}
 
 	//Set the angular velocity
-	void snActorStatic::setAngularVelocity(const snVector4f& /*_angularVelocity*/)
+	void snActorStatic::setAngularVelocity(const snVec& /*_angularVelocity*/)
 	{
 		return;
 	}
@@ -126,7 +128,7 @@ namespace Supernova
 		computeBoundingVolume();
 	}
 
-	void snActorStatic::init(const snVector4f& _position, const snVector4f& _orientation)
+	void snActorStatic::init(const snVec& _position, const snVec& _orientation)
 	{
 		m_name = "default";
 

@@ -44,7 +44,7 @@ namespace Supernova
 	{
 	private:
 		//List of vertices making the simplex
-		snVector4fVector m_vertexBuffer;
+		snVecVector m_vertexBuffer;
 
 		//List of index making the triangles of the simplex.
 		vector<int> m_indexBuffer;
@@ -64,29 +64,29 @@ namespace Supernova
 		virtual ~snSimplex();
 
 		//Add a vertex to the simplex and return its id.
-		int addVertex(const snVector4f& _v);
+		int addVertex(const snVec& _v);
 
 		//Add a triangle to the simplex and return its id
 		int addTriangle(int _vertexId1, int _vertexId2, int _vertexId3);
 
 		//Expand a triangle identify with it's id with a new point. 
-		void expand(const snVector4f& _v, int _triangleId);
+		void expand(const snVec& _v, int _triangleId);
 
 		//Get the number of triangle in the simplex
 		int getTriangleCount() const;
 
 		//Get the vertices making a triangle identify by its id.
-		void getTriangle(int _triangleId, snVector4f& _v1, snVector4f& _v2, snVector4f& _v3) const;
+		void getTriangle(int _triangleId, snVec& _v1, snVec& _v2, snVec& _v3) const;
 
 		void getTriangle(int _triangleId, int& _id1, int& _id2, int& _id3) const;
 
 		//Compute what triangle is the closest to the origin and return its id and normal. The normal points to the origin.
-		void computeTriangleClosestToOrigin(int& _triangleId, snVector4f& _normal, float& _distance) const;
+		void computeTriangleClosestToOrigin(int& _triangleId, snVec& _normal, float& _distance) const;
 
 		//Compute the closest point to the origin of a given triangle.
-		void computeClosestPointToOriginInTriangle(int _triangleId, snVector4f& _closestPoint) const;
+		void computeClosestPointToOriginInTriangle(int _triangleId, snVec& _closestPoint) const;
 
-		snVector4f computeClosestPointForSegment(const snVector4f& _e1, const snVector4f& e2, const snVector4f& _p) const;
+		snVec computeClosestPointForSegment(const snVec& _e1, const snVec& e2, const snVec& _p) const;
 
 		void setTriangleValidity(int _triangleId, bool _isValid);
 
@@ -96,8 +96,5 @@ namespace Supernova
 		//Overridden delete operator to delete using the correct alignement.
 		void operator delete(void* _p);
 	};
-
-#include "snVector4f-inl.h"
-
 }
 #endif

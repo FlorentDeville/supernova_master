@@ -43,11 +43,11 @@ namespace Supernova
 		//else 
 		//	return false
 
-		__m128 compare = _mm_cmpge_ps(_a->m_max.m_vec, _b->m_min.m_vec);
+		__m128 compare = _mm_cmpge_ps(_a->m_max, _b->m_min);
 		__m128i iCompare = _mm_castps_si128(compare);
 		int resCompare1 = _mm_movemask_epi8(iCompare);
 
-		compare = _mm_cmple_ps(_a->m_min.m_vec, _b->m_max.m_vec);
+		compare = _mm_cmple_ps(_a->m_min, _b->m_max);
 		iCompare = _mm_castps_si128(compare);
 		int resCompare2 = _mm_movemask_epi8(iCompare);
 

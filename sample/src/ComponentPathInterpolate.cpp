@@ -34,9 +34,12 @@
 
 #include "ComponentPathInterpolate.h"
 #include "snActorDynamic.h"
-
+#include "snMath.h"
 #include "snTimer.h"
-using Supernova::snTimer;
+
+using namespace Supernova;
+//using Supernova::snTimer;
+using namespace Supernova::Vector;
 
 namespace Devil
 {
@@ -97,7 +100,7 @@ namespace Devil
 		}
 
 		//compute the next position
-		snVector4f nextPosition = snVector4f::cosInterpolation(m_path[m_previousWaypoint]->m_position,
+		snVec nextPosition = cosInterpolation(m_path[m_previousWaypoint]->m_position,
 			m_path[m_nextWaypoint]->m_position, _param);
 
 		//set the position
@@ -109,7 +112,7 @@ namespace Devil
 	{}
 
 	//Add a waypoint to the path in the last position
-	void ComponentPathInterpolate::addWaypoint(const snVector4f& _position, float _time)
+	void ComponentPathInterpolate::addWaypoint(const snVec& _position, float _time)
 	{
 		WaypointTime* newWaypoint = new WaypointTime();
 		newWaypoint->m_position = _position;

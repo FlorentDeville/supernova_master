@@ -32,13 +32,67 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snVector4f.h"
+#ifndef SN_VEC_H
+#define SN_VEC_H
+
+union __m128;
 
 namespace Supernova
 {
-	//Mask where the only bit is 1 is the most significant bit. It's the sign bit in a 32 bit float.
-	const __m128 snVector4f::SIGNMASK = _mm_castsi128_ps(_mm_set1_epi32(0x80000000));
+	typedef __m128 snVec;
 
-	//Vector set to 0
-	const snVector4f snVector4f::m_zero;
+	namespace Vector
+	{
+		inline snVec snVec4Set(float _x, float _y, float _z, float _w);
+
+		inline snVec operator*(const snVec& _a, const snVec& _b);
+
+		inline snVec operator*(const snVec& _a, float _f);
+
+		inline snVec operator*(float _f, const snVec& _a);
+
+		inline snVec operator+(const snVec& _a, const snVec& _b);
+
+		inline snVec operator-(const snVec& _a, const snVec& _b);
+
+		inline snVec operator-(const snVec& _a);
+
+		inline bool operator == (const snVec& _a, const snVec& _b);
+
+		inline float snVec3Dot(const snVec& _a, const snVec& _b);
+
+		inline float snVec4Dot(const snVec& _a, const snVec& _b);
+
+		/*Cross product between _v1 and _v2. The W coordinate will be 0.*/
+		inline snVec snVec3Cross(const snVec& _v1, const snVec& _v2);
+
+		/*Return the squared length of the vector.*/
+		inline float snVec3SquaredNorme(const snVec& _a);
+
+		/*Calculate the length of the vector.*/
+		inline float snVec3Norme(const snVec& _a);
+
+		/*Normalize the vector. Its direction remain the same but its length is set to 1.*/
+		inline void snVec3Normalize(snVec& _a);
+
+		inline snVec snVec4GetAbsolute(const snVec& _a);
+
+		inline void snVec4Absolute(snVec& _a);
+
+		inline float snVec4GetById(const snVec& _a, unsigned int _id);
+
+		inline float snVec4GetX(const snVec& _v);
+
+		inline float snVec4GetY(const snVec& _v);
+
+		inline float snVec4GetZ(const snVec& _v);
+
+		inline float snVec4GetW(const snVec& _v);
+
+		inline void snVec4SetY(snVec& _v, float _y);
+
+		inline void snVec4SetW(snVec& _v, float _w);
+	}
 }
+
+#endif //ifndef SN_VEC_H

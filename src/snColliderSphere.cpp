@@ -11,7 +11,7 @@ namespace Supernova
 	{
 	}
 
-	snColliderSphere::snColliderSphere(float _radius, const snVector4f& _origin) : snICollider(_origin), m_radius(_radius)
+	snColliderSphere::snColliderSphere(float _radius, const snVec& _origin) : snICollider(_origin), m_radius(_radius)
 	{
 	}
 
@@ -20,7 +20,7 @@ namespace Supernova
 		return m_radius;
 	}
 
-	snVector4f snColliderSphere::getWorldOrigin()const
+	snVec snColliderSphere::getWorldOrigin()const
 	{
 		return m_worldOrigin;
 	}
@@ -30,11 +30,11 @@ namespace Supernova
 		m_worldOrigin = _transform[3];
 	}
 
-	snVector4f snColliderSphere::getLocalCenterOfMass() const
+	snVec snColliderSphere::getLocalCenterOfMass() const
 	{
 		return m_origin;
 	}
 
-	void snColliderSphere::computeProjection(const snVector4f& /*_direction*/, float& /*_min*/, float& /*_max*/) const
+	void snColliderSphere::computeProjection(const snVec& /*_direction*/, float& /*_min*/, float& /*_max*/) const
 	{}
 }

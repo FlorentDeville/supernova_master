@@ -35,7 +35,8 @@
 #define I_WORLD_ENTITY_H
 
 #include <DirectXMath.h>
-using namespace DirectX;
+using DirectX::XMVECTOR;
+using DirectX::XMFLOAT3;
 
 //#include "snActor.h"
 namespace Supernova
@@ -76,7 +77,7 @@ namespace Devil
 	public:
 		IWorldEntity() : m_isActive(true), m_postUpdateComponents(), m_preUpdateComponents(), m_wireframe(false)
 		{
-			m_position = XMVectorSet(0, 0, 0, 1);
+			m_position = DirectX::XMVectorSet(0, 0, 0, 1);
 			m_orientation = XMFLOAT3(0, 0, 0);
 			m_scale = XMFLOAT3(1, 1, 1);
 		};

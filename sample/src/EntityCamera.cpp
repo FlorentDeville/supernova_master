@@ -5,7 +5,10 @@
 #include "World.h"
 #include "Input.h"
 
-#include "snVector4f-inl.h"
+#include "snVec.inl"
+
+using namespace DirectX;
+
 namespace Devil
 {
 
@@ -103,7 +106,15 @@ namespace Devil
 
 	void EntityCamera::render()
 	{
-		m_gfxCamera->Render(snVector4f(m_position), snVector4f(m_lookAt), snVector4f(m_up));
+		snVec pos;
+		pos = m_position;
+
+		snVec lookAt;
+		lookAt = m_lookAt;
+
+		snVec up;
+		up = m_up;
+		m_gfxCamera->Render(pos, lookAt, up);
 	}
 
 	void EntityCamera::setLookAt(const XMVECTOR& _lookAt)

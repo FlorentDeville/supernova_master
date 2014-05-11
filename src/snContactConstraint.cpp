@@ -40,6 +40,8 @@
 #include <algorithm>    
 using std::max;
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 	snContactConstraint::snContactConstraint() : snIConstraint(), m_effectiveMass(0)
@@ -49,7 +51,7 @@ namespace Supernova
 	snContactConstraint::~snContactConstraint()
 	{}
 
-	void snContactConstraint::initialize(snIActor* const _body1, snIActor* const _body2, const snVector4f& _normal, const snVector4f& _collisionPoint, float _penetrationDepth,
+	void snContactConstraint::initialize(snIActor* const _body1, snIActor* const _body2, const snVec& _normal, const snVec& _collisionPoint, float _penetrationDepth,
 		snScene const * _scene)
 	{
 		m_bodies[0] = _body1;
@@ -69,8 +71,8 @@ namespace Supernova
 		m_radius[1] = m_collisionPoint - m_bodies[1]->getPosition();
 
 		//compute r cross n
-		m_rCrossN[0] = m_radius[0].cross(m_normal);
-		m_rCrossN[1] = m_radius[1].cross(m_normal);
+		m_rCrossN[0] = snVec3Cross(m_radius[0], m_normal);
+		m_rCrossN[1] = snVec3Cross(m_radius[1], m_normal);
 
 		//Compute the effective mass for the non penetration constraint
 		// (r X N) I-1
@@ -78,18 +80,18 @@ namespace Supernova
 		m_rCrossNInvI[1] = snMatrixTransform3(m_rCrossN[1], m_bodies[1]->getInvWorldInertia());
 
 		// [(r X N)I-1] X r
-		snVector4f tempA = m_rCrossNInvI[0].cross(m_radius[0]);
-		snVector4f tempB = m_rCrossNInvI[1].cross(m_radius[1]);
+		snVec tempA = snVec3Cross(m_rCrossNInvI[0], m_radius[0]);
+		snVec tempB = snVec3Cross(m_rCrossNInvI[1], m_radius[1]);
 
 		float sumInvMass = m_bodies[0]->getInvMass() + m_bodies[1]->getInvMass();
 
 		// 1/ ( 1/ma + 1/mb + ( [(ra X n)Ia-1] X ra + [(rb X n)Ib-1] X rb) . N)
-		m_effectiveMass = 1.f / (sumInvMass + (tempA + tempB).dot(m_normal));
+		m_effectiveMass = 1.f / (sumInvMass + snVec3Dot(tempA + tempB, m_normal));
 
 		//compute relative velocity
-		snVector4f v0 = m_bodies[0]->getLinearVelocity() + m_bodies[0]->getAngularVelocity().cross(m_radius[0]);
-		snVector4f v1 = m_bodies[1]->getLinearVelocity() + m_bodies[1]->getAngularVelocity().cross(m_radius[1]);
-		float relVel = m_normal.dot(v1 - v0);
+		snVec v0 = m_bodies[0]->getLinearVelocity() + snVec3Cross(m_bodies[0]->getAngularVelocity(), m_radius[0]);
+		snVec v1 = m_bodies[1]->getLinearVelocity() + snVec3Cross(m_bodies[1]->getAngularVelocity(), m_radius[1]);
+		float relVel = snVec3Dot(m_normal, v1 - v0);
 
 		//compute the resitution coefficient as the average of the coeff of the actors
 		float restitution = (m_bodies[0]->getPhysicMaterial().m_restitution + m_bodies[1]->getPhysicMaterial().m_restitution) * 0.5f;
@@ -103,9 +105,9 @@ namespace Supernova
 	void snContactConstraint::resolve()
 	{
 		//compute relative velocity between the two colliding bodies
-		snVector4f deltaLinVel = m_bodies[1]->getLinearVelocity() - m_bodies[0]->getLinearVelocity();
-		float dv = m_normal.dot(deltaLinVel) +
-			m_rCrossN[1].dot(m_bodies[1]->getAngularVelocity()) - m_rCrossN[0].dot(m_bodies[0]->getAngularVelocity());
+		snVec deltaLinVel = m_bodies[1]->getLinearVelocity() - m_bodies[0]->getLinearVelocity();
+		float dv = snVec3Dot(m_normal, deltaLinVel) +
+			snVec3Dot(m_rCrossN[1], m_bodies[1]->getAngularVelocity()) - snVec3Dot(m_rCrossN[0], m_bodies[0]->getAngularVelocity());
 
 		//compute lagrange multiplier
 		float lagrangian = (m_velocityBias - dv) * m_effectiveMass;
@@ -116,7 +118,7 @@ namespace Supernova
 		lagrangian = m_accumulatedImpulseMagnitude - oldAccLambda;
 
 		//compute the impulse
-		snVector4f impulse = m_normal * lagrangian;
+		snVec impulse = m_normal * lagrangian;
 
 		//compute the new linear velocity
 		m_bodies[0]->setLinearVelocity(m_bodies[0]->getLinearVelocity() - (impulse * m_bodies[0]->getInvMass()));
@@ -127,12 +129,12 @@ namespace Supernova
 		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossNInvI[1] * lagrangian);
 	}
 
-	snVector4f const & snContactConstraint::getNormal() const
+	snVec const & snContactConstraint::getNormal() const
 	{
 		return m_normal;
 	}
 
-	snVector4f const * snContactConstraint::getRadius() const
+	snVec const * snContactConstraint::getRadius() const
 	{
 		return m_radius;
 	}

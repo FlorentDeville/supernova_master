@@ -5,7 +5,9 @@
 #include <memory>
 #include <GeometricPrimitive.h>
 
-using namespace DirectX;
+using DirectX::XMVECTOR;
+using DirectX::XMMATRIX;
+using DirectX::GeometricPrimitive;
 
 namespace Devil
 {
@@ -19,7 +21,7 @@ namespace Devil
 		GfxEntitySphere();
 		virtual ~GfxEntitySphere();
 
-		bool initialize(ID3D11DeviceContext*, WCHAR*, float, const XMVECTOR& _color = Colors::White);
+		bool initialize(ID3D11DeviceContext*, WCHAR*, float, const XMVECTOR& _color = DirectX::Colors::White);
 		void shutdown();
 		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection);
 

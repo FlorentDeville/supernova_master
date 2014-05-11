@@ -41,10 +41,11 @@
 
 namespace Supernova
 {
-	class snVector4f;
 	class snScene;
 }
-using Supernova::snVector4f;
+
+#include "snVec.inl"
+using Supernova::snVec;
 using Supernova::snScene;
 using Supernova::snCollisionMode;
 
@@ -111,7 +112,7 @@ namespace Devil
 
 		void clearScene() const;
 
-		snVector4f createTowerLevel(snScene* const _scene, const snVector4f& _origin) const;
+		snVec createTowerLevel(snScene* const _scene, const snVec& _origin) const;
 
 		//Create the bisic actor of the world.
 		void createSandbox(const std::wstring& _sceneName);

@@ -4,7 +4,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 
-using namespace DirectX;
+using DirectX::XMMATRIX;
 
 namespace Devil
 {

@@ -5,6 +5,10 @@
 #include <memory>
 #include <Effects.h>
 
+using DirectX::XMFLOAT3;
+using DirectX::XMFLOAT4;
+using DirectX::XMMATRIX;
+
 namespace Devil
 {
 	class GfxEntityBox : public IGfxEntity

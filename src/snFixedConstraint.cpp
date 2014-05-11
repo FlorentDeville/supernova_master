@@ -36,9 +36,11 @@
 #include "snIActor.h"
 #include "snMath.h"
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
-	snFixedConstraint::snFixedConstraint(snIActor* const _actor, const snVector4f& _fixedPoint, float _distance)
+	snFixedConstraint::snFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance)
 		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_distance(_distance)
 	{
 		
@@ -54,10 +56,10 @@ namespace Supernova
 		m_offset = m_fixedPoint - m_actor->getPosition();
 
 		//Compute the r skew matrix
-		m_R[0] = snVector4f(0, m_offset.getZ(), -m_offset.getY(), 0);
-		m_R[1] = snVector4f(-m_offset.getZ(), 0, m_offset.getX(), 0);
-		m_R[2] = snVector4f(m_offset.getY(), -m_offset.getX(), 0, 0);
-		m_R[3] = snVector4f(0, 0, 0, 1);
+		m_R[0] = snVec4Set(0, snVec4GetZ(m_offset), -snVec4GetY(m_offset), 0);
+		m_R[1] = snVec4Set(-snVec4GetZ(m_offset), 0, snVec4GetX(m_offset), 0);
+		m_R[2] = snVec4Set(snVec4GetY(m_offset), -snVec4GetX(m_offset), 0, 0);
+		m_R[3] = snVec4Set(0, 0, 0, 1);
 		snMatrix44f RT;
 		m_R.transpose(RT);
 
@@ -69,10 +71,10 @@ namespace Supernova
 		snMatrixMultiply3(RI, RT, RIR);
 
 		snMatrix44f invM;
-		invM[0] = snVector4f(m_actor->getInvMass(), 0, 0, 0);
-		invM[1] = snVector4f(0, m_actor->getInvMass(), 0, 0);
-		invM[2] = snVector4f(0, 0, m_actor->getInvMass(), 0);
-		invM[3] = snVector4f(0, 0, 0, 0);
+		invM[0] = snVec4Set(m_actor->getInvMass(), 0, 0, 0);
+		invM[1] = snVec4Set(0, m_actor->getInvMass(), 0, 0);
+		invM[2] = snVec4Set(0, 0, m_actor->getInvMass(), 0);
+		invM[3] = snVec4Set(0, 0, 0, 0);
 		m_effectiveMass = invM + RIR;
 		m_effectiveMass = m_effectiveMass.inverse();
 
@@ -81,30 +83,30 @@ namespace Supernova
 
 		//compute velocity bias (baumgarte stabilization)
 		m_normalizedOffset = m_offset;
-		m_normalizedOffset.normalize();
+		snVec3Normalize(m_normalizedOffset);
 		float beta = 0.1f;
 
-		snVector4f deltaOffset = (m_normalizedOffset * m_distance) - m_offset;
+		snVec deltaOffset = (m_normalizedOffset * m_distance) - m_offset;
 		m_bias = deltaOffset * (beta / _dt);
 	}
 
 	void snFixedConstraint::resolve()
 	{
 		//compute JV
-		snVector4f Rw = m_actor->getAngularVelocity().cross(m_offset);
-		snVector4f JV = m_actor->getLinearVelocity() + Rw;
+		snVec Rw = snVec3Cross(m_actor->getAngularVelocity(), m_offset);
+		snVec JV = m_actor->getLinearVelocity() + Rw;
 
 		//compute lagrangian
-		snVector4f lagrangian = snMatrixTransform3(-JV - m_bias, m_effectiveMass);
+		snVec lagrangian = snMatrixTransform3(-JV - m_bias, m_effectiveMass);
 
 		//compute the corrective velocity
-		snVector4f dv = lagrangian * m_actor->getInvMass();
-		snVector4f dw = snMatrixTransform3(m_invIRT, lagrangian);
+		snVec dv = lagrangian * m_actor->getInvMass();
+		snVec dw = snMatrixTransform3(m_invIRT, lagrangian);
 		m_actor->setLinearVelocity(m_actor->getLinearVelocity() + dv);
 		m_actor->setAngularVelocity(m_actor->getAngularVelocity() + dw);
 	}
 
-	snVector4f snFixedConstraint::getFixedPosition() const
+	snVec snFixedConstraint::getFixedPosition() const
 	{
 		return m_fixedPoint;
 	}

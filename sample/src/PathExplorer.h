@@ -38,8 +38,10 @@
 #include <vector>
 using std::vector;
 
-#include "snVector4f-inl.h"
-using Supernova::snVector4f;
+#include "snVec.inl"
+using Supernova::snVec;
+
+#include "snGlobals.h"
 
 namespace Supernova
 {
@@ -55,7 +57,7 @@ namespace Devil
 	class PathExplorerWaypoint
 	{
 	public:
-		snVector4f m_controlPoint;
+		snVec m_controlPoint;
 		float m_distance;
 
 	public:
@@ -92,13 +94,13 @@ namespace Devil
 		PathExplorer(bool _loop);
 		~PathExplorer();
 
-		void addWaypoint(const snVector4f& _controlPoint, float _distance);
+		void addWaypoint(const snVec& _controlPoint, float _distance);
 		void setCallback(OnPathCallback _callback);
 
 		void run();
 
 	private:
-		bool nextPoint(const snVector4f& _previousPoint, float& _t, snMatrix44f& _frenet);
+		bool nextPoint(const snVec& _previousPoint, float& _t, snMatrix44f& _frenet);
 
 	};
 }

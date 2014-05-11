@@ -3,6 +3,9 @@
 
 #include "IWorldEntity.h"
 
+using DirectX::XMFLOAT2;
+using DirectX::XMFLOAT4;
+
 namespace Devil
 {
 	class GfxEntityPlan;

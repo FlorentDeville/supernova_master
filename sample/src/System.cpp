@@ -26,6 +26,7 @@
 #include "snQuaternion.h"
 #include "snFixedConstraint.h"
 #include "snDebugger.h"
+#include "snTimer.h"
 
 #include <string>
 #include <Windowsx.h>
@@ -163,8 +164,17 @@ namespace Devil
 					//update the world
 					WORLD->update(dt);
 
+#ifdef SN_DEBUGGER
+					long long startTimer = snTimer::getCurrentTick();
+#endif //ifdef SN_DEBUGGER
 					//update all the scenes (there is just one anyway)
 					SUPERNOVA->updateAllScenes(dt);
+
+#ifdef SN_DEBUGGER
+					float durationMS = snTimer::convertElapsedTickCountInMilliSeconds(snTimer::getElapsedTickCount(startTimer));
+					DEBUGGER->setWatchExpression(L"Physics step (ms)", std::to_wstring(durationMS));
+#endif //ifdef SN_DEBUGGER
+
 					fpsCounterPhysics++;
 
 					//Update the scene manager to check if a new scene as to be loaded.

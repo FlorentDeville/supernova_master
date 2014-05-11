@@ -67,9 +67,6 @@
     <ClInclude Include="inc\snTypes.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snVector4f.h">
-      <Filter>Tools</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snPhysicMaterial.h">
       <Filter>Simulation</Filter>
     </ClInclude>
@@ -123,6 +120,9 @@
     </ClInclude>
     <ClInclude Include="inc\snSweepManager.h">
       <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snVec.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -193,15 +193,12 @@
     <ClCompile Include="src\snActorDynamic.cpp">
       <Filter>Simulation\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="src\snVector4f.cpp">
-      <Filter>Tools</Filter>
-    </ClCompile>
     <ClCompile Include="src\snSweepManager.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="inc\snVector4f-inl.h">
+    <None Include="inc\snVec.inl">
       <Filter>Tools</Filter>
     </None>
   </ItemGroup>

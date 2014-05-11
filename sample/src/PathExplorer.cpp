@@ -36,6 +36,7 @@
 #include "snMath.h"
 #include "snMatrix44f.h"
 using namespace Supernova;
+using namespace Supernova::Vector;
 
 namespace Devil
 {
@@ -50,7 +51,7 @@ namespace Devil
 		m_path.clear();
 	}
 
-	void PathExplorer::addWaypoint(const snVector4f& _controlPoint, float _distance)
+	void PathExplorer::addWaypoint(const snVec& _controlPoint, float _distance)
 	{
 		PathExplorerWaypoint* newWaypoint = new PathExplorerWaypoint();
 		newWaypoint->m_controlPoint = _controlPoint;
@@ -75,7 +76,7 @@ namespace Devil
 		m_indices[2] = 1;
 		m_indices[3] = 2;
 
-		snVector4f previousPoint;
+		snVec previousPoint;
 
 		//loop through waypoint
 		for (unsigned int waypointId = 0; waypointId < m_path.size(); ++waypointId)
@@ -131,7 +132,7 @@ namespace Devil
 		}
 	}
 
-	bool PathExplorer::nextPoint(const snVector4f& _previousPoint, float& _t, snMatrix44f& _frenet)
+	bool PathExplorer::nextPoint(const snVec& _previousPoint, float& _t, snMatrix44f& _frenet)
 	{
 		//check if the next point is in the next waypoint
 		computeFrenetFromCatmullRom(m_path[m_indices[0]]->m_controlPoint,
@@ -141,7 +142,7 @@ namespace Devil
 			1,
 			_frenet);
 
-		float distance = (_frenet[3] - _previousPoint).norme() - m_path[m_indices[2]]->m_distance;
+		float distance = snVec3Norme(_frenet[3] - _previousPoint) - m_path[m_indices[2]]->m_distance;
 		if (distance < 0)//two close, we need to go to the next waypoint
 			return true;
 
@@ -165,7 +166,7 @@ namespace Devil
 				currentT,
 				_frenet);
 
-			distance = (_frenet[3] - _previousPoint).norme() - m_path[m_indices[2]]->m_distance;
+			distance = snVec3Norme(_frenet[3] - _previousPoint) - m_path[m_indices[2]]->m_distance;
 			if (fabsf(distance) <= EPSILON)//the point is close enough
 			{
 				found = true;

@@ -37,8 +37,8 @@
 
 #include "IComponent.h"
 
-#include "snVector4f-inl.h"
-using Supernova::snVector4f;
+#include "snVec.inl"
+using Supernova::snVec;
 
 namespace Supernova
 {
@@ -49,13 +49,15 @@ using Supernova::snActorDynamic;
 #include <vector>
 using std::vector;
 
+#include "snGlobals.h"
+
 namespace Devil
 {
 	class WaypointTime
 	{
 	public:
 		//Position of the waypoint
-		snVector4f m_position;
+		snVec m_position;
 
 		//Speed of the actor to reach this waypoint
 		float m_time;
@@ -108,7 +110,7 @@ namespace Devil
 		void render();
 
 		//Add a waypoint to the path in the last position
-		void addWaypoint(const snVector4f& _position, float _time);
+		void addWaypoint(const snVec& _position, float _time);
 	};
 }
 

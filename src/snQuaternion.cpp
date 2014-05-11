@@ -34,38 +34,40 @@
 
 #include "snQuaternion.h"
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
-	void snQuaternionMultiply(const snVector4f& _q1, const snVector4f& _q2, snVector4f& _result)
+	void snQuaternionMultiply(const snVec& _q1, const snVec& _q2, snVec& _result)
 	{
-		snVector4f q1Crossq2 = _q1.cross(_q2);
-		float q1Dotq2 = _q1.dot(_q2);
-		float resultW = _q1.getW() * _q2.getW() - q1Dotq2;
+		snVec q1Crossq2 = snVec3Cross(_q1, _q2);
+		float q1Dotq2 = snVec3Dot(_q1, _q2);
+		float resultW = snVec4GetW(_q1) * snVec4GetW(_q2) - q1Dotq2;
 
-		_result = (_q2 * _q1.getW()) + (_q1 * _q2.getW()) + q1Crossq2;
-		_result.setW(resultW);
+		_result = (_q2 * snVec4GetW(_q1)) + (_q1 * snVec4GetW(_q2)) + q1Crossq2;
+		snVec4SetW(_result, resultW);
 	}
 
-	snVector4f snQuaternionFromEuler(float _x, float _y, float _z)
+	snVec snQuaternionFromEuler(float _x, float _y, float _z)
 	{
 		float halfX = _x * 0.5f;
 		float halfY = _y * 0.5f;
 		float halfZ = _z * 0.5f;
 
-		snVector4f rotationX = snVector4f(sinf(halfX), 0, 0, cosf(halfX));
-		snVector4f rotationY = snVector4f(0, sinf(halfY), 0, cosf(halfY));
-		snVector4f rotationZ = snVector4f(0, 0, sinf(halfZ), cosf(halfZ));
+		snVec rotationX = snVec4Set(sinf(halfX), 0, 0, cosf(halfX));
+		snVec rotationY = snVec4Set(0, sinf(halfY), 0, cosf(halfY));
+		snVec rotationZ = snVec4Set(0, 0, sinf(halfZ), cosf(halfZ));
 
-		snVector4f res;
+		snVec res;
 		snQuaternionMultiply(rotationX, rotationY, res);
 		snQuaternionMultiply(res, rotationZ, res);
 
 		return res;
 	}
 
-	void snQuaternionNormalize(const snVector4f& _q, snVector4f& _n)
+	void snQuaternionNormalize(const snVec& _q, snVec& _n)
 	{
-		float oneOverNorme = 1.f / sqrt(_q.dot4(_q));
+		float oneOverNorme = 1.f / sqrt(snVec4Dot(_q, _q));
 		_n = _q * oneOverNorme;
 	}
 }

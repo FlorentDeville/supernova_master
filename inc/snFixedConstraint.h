@@ -86,7 +86,7 @@ namespace Supernova
 		snIActor* m_actor;
 
 		//Point in space. The actor has to stay at the same distance to this point.
-		snVector4f m_fixedPoint;
+		snVec m_fixedPoint;
 
 		//Skew matrix used to compute the cross product r X w
 		snMatrix44f m_R;
@@ -98,19 +98,19 @@ namespace Supernova
 		float m_distance;
 
 		//Velocity bias computed using baumgarte stabilization.
-		snVector4f m_bias;
+		snVec m_bias;
 
 		//I-1 * RT
 		snMatrix44f m_invIRT;
 
 		//Vector from the actor origin to the fixed point.
-		snVector4f m_offset;
+		snVec m_offset;
 
 		//Normalized vector going from the actor's center of mass to the constraint's fixed point.
-		snVector4f m_normalizedOffset;
+		snVec m_normalizedOffset;
 
 	public:
-		snFixedConstraint(snIActor* const _actor, const snVector4f& _fixedPoint, float _distance);
+		snFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance);
 		~snFixedConstraint();
 
 		void prepare(float _dt);
@@ -118,7 +118,7 @@ namespace Supernova
 		void resolve();
 
 		//Return the world coordinate of the fixed point.
-		snVector4f getFixedPosition() const;
+		snVec getFixedPosition() const;
 
 		//Return the distance between the fixed point and the actor.
 		float getDistance() const;

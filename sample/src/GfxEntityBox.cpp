@@ -4,6 +4,8 @@
 #include "EffectProvider.h"
 
 #include <VertexTypes.h>
+using namespace DirectX;
+
 namespace Devil
 {
 	GfxEntityBox::GfxEntityBox()

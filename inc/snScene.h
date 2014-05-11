@@ -85,7 +85,7 @@ namespace Supernova
 		snContactConstraintManager m_contactConstraintManager;
 
 		//The list of collision points gathered during the previous update of the scene.
-		snVector4fVector m_collisionPoints;
+		snVecVector m_collisionPoints;
 
 		//Provide access to the collision query functions.
 		static snCollision m_collisionService;
@@ -93,7 +93,7 @@ namespace Supernova
 		snGJK m_GJK;
 
 		//Vector representing the gravity in the scene.
-		snVector4f m_gravity;
+		snVec m_gravity;
 
 		//Threshold under wich the linear speed is ignored and becomes 0.
 		float m_linearSquaredSpeedThreshold;
@@ -125,7 +125,7 @@ namespace Supernova
 		void createActorDynamic(snActorDynamic** _newActor, int& _actorId);
 
 		//Create a new static actor.
-		void createActorStatic(snActorStatic** _newActor, int& _actorId, const snVector4f& _position, const snVector4f& _orientation);
+		void createActorStatic(snActorStatic** _newActor, int& _actorId, const snVec& _position, const snVec& _orientation);
 
 		//Delete an actor
 		void deleteActor(unsigned int _actorId);
@@ -143,9 +143,9 @@ namespace Supernova
 		snIConstraint* getConstraint(unsigned int _constraintId);
 
 		//Create a distance constraint between two actors and return the id of the constraint
-		snPointToPointConstraint* createPointToPointConstraint(snIActor* const _body1, const snVector4f& _offset1, snIActor* const _body2, const snVector4f& _offset2);
+		snPointToPointConstraint* createPointToPointConstraint(snIActor* const _body1, const snVec& _offset1, snIActor* const _body2, const snVec& _offset2);
 
-		snFixedConstraint* createFixedConstraint(snIActor* const _actor, const snVector4f& _fixedPoint, float _distance);
+		snFixedConstraint* createFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance);
 
 		//Delete all actors from the physics scene.
 		void clearScene();
@@ -154,7 +154,7 @@ namespace Supernova
 		void update(float _dt);
 
 		//Return the list of collision results for the last iteration of the engine.
-		const snVector4fVector& getCollisionPoints() const;
+		const snVecVector& getCollisionPoints() const;
 
 		//Get the type of collision used.
 		snCollisionMode getCollisionMode() const;
@@ -163,7 +163,7 @@ namespace Supernova
 		float getContactConstraintBeta() const;
 
 		//Set the gravity to apply in the scene.
-		void setGravity(const snVector4f& _gravity);
+		void setGravity(const snVec& _gravity);
 
 		//Set the threshold under wich the linear velocity is set to 0
 		void setLinearSquaredSpeedThreshold(float _linearSquaredSpeedThreshold);
