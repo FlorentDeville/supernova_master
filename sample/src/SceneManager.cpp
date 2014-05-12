@@ -980,6 +980,7 @@ namespace Devil
 		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
 		scene->setContactConstraintBeta(0);
 		scene->setSolverIterationCount(20);
+		scene->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
 
 		WORLD->getCamera()->setPosition(snVec4Set(0, 100, -240, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 20, 1));
@@ -1201,7 +1202,7 @@ namespace Devil
 		m_collisionMode = _collisionMode;
 	}
 
-	SceneManager::SceneManager() : m_collisionMode(snCollisionMode::snECollisionModeSweepAndPrune)
+	SceneManager::SceneManager() : m_collisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune)
 	{
 		m_colors[0] = XMFLOAT4(0.8f, 1, 1, 1);
 		m_colors[1] = XMFLOAT4(0.93f, 0.68f, 1, 1);

@@ -32,17 +32,58 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_MODE_H
-#define SN_COLLISION_MODE_H
+#include "snActorPairManager.h"
+#include "snActorPair.h"
 
 namespace Supernova
 {
-	enum snCollisionMode
-	{
-		snECollisionModeBruteForce,
-		snECollisionMode_ST_SweepAndPrune,
-		snECollisionMode_MT_SweepAndPrune
-	};
-}
+	//Constructor
+	snActorPairManager::snActorPairManager() : m_pairs(), m_currentPairId(0)
+	{}
 
-#endif //ifndef SN_COLLISION_MODE_H
+	//Destructor
+	snActorPairManager::~snActorPairManager()
+	{
+		for (vector<snActorPair*>::iterator i = m_pairs.begin(); i != m_pairs.end(); ++i)
+		{
+			delete *i;
+		}
+		m_pairs.clear();
+	}
+
+	//Prepare the manager for the broad phase
+	void snActorPairManager::preBroadPhase()
+	{
+		m_currentPairId = 0;
+	}
+
+	//Clean up after the broad phase
+	void snActorPairManager::postBroadPhase()
+	{
+
+	}
+
+	//Return a pointer to an available snActorPair.
+	snActorPair* snActorPairManager::getAvailablePair()
+	{
+		if (m_currentPairId >= m_pairs.size())
+		{
+			snActorPair* currentPair = new snActorPair();
+			m_pairs.push_back(currentPair);
+		}
+
+		return m_pairs[m_currentPairId++];
+	}
+
+	//Return the vector of pairs
+	const vector<snActorPair*>& snActorPairManager::getPairs() const
+	{
+		return m_pairs;
+	}
+
+	//Return the number of active pairs.
+	unsigned int snActorPairManager::getActivePairsCount() const
+	{
+		return m_currentPairId;
+	}
+}

@@ -124,6 +124,15 @@
     <ClInclude Include="inc\snVec.h">
       <Filter>Tools</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snActorPair.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snActorPairManager.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snCollisionDispatcher.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -194,6 +203,12 @@
       <Filter>Simulation\Actors</Filter>
     </ClCompile>
     <ClCompile Include="src\snSweepManager.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snActorPairManager.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snCollisionDispatcher.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
   </ItemGroup>

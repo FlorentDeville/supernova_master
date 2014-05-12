@@ -36,6 +36,7 @@
 
 #include "snActorDynamic.h"
 #include "snActorStatic.h"
+#include "snActorPair.h"
 #include "snICollider.h"
 #include "snCollision.h"
 #include "snCollisionResult.h"
@@ -73,7 +74,7 @@ namespace Supernova
 
 	snScene::snScene() :m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
-		m_collisionMode(snECollisionModeSweepAndPrune), m_contactConstraintBeta(0.25f), m_sweepAndPrune()
+		m_collisionMode(snECollisionMode_ST_SweepAndPrune), m_contactConstraintBeta(0.25f), m_sweepAndPrune()
 	{
 		m_gravity = snVec4Set(0, -9.81f, 0, 0),
 		m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
@@ -211,8 +212,13 @@ namespace Supernova
 			computeNaiveCollisions();
 			break;
 
-		case snCollisionMode::snECollisionModeSweepAndPrune:
-			computeBroadPhaseCollisions();
+		case snCollisionMode::snECollisionMode_ST_SweepAndPrune:
+			singleThreadedBroadPhase();
+			break;
+
+		case snCollisionMode::snECollisionMode_MT_SweepAndPrune:
+			multiThreadedBroadPhase();
+			multiThreadedNarrowPhase();
 			break;
 		}
 
@@ -288,18 +294,21 @@ namespace Supernova
 	{
 		m_collisionMode = _collisionMode;
 
-#ifdef SN_DEBUGGER
 		switch (m_collisionMode)
 		{
 		case snCollisionMode::snECollisionModeBruteForce:
-			DEBUGGER->setWatchExpression(L"Collision Mode", L"Brute Force");
 			break;
 
-		case snCollisionMode::snECollisionModeSweepAndPrune:
-			DEBUGGER->setWatchExpression(L"Collision Mode", L"Sweep And Prune");
+		case snCollisionMode::snECollisionMode_ST_SweepAndPrune:
+			m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
+			break;
+
+		case snCollisionMode::snECollisionMode_MT_SweepAndPrune:
+			m_sweepAndPrune.setCallback(this, &snScene::storeActorPair);
+			m_dispatcher.initialize(this, &snScene::computeCollisionDetection, 4);
 			break;
 		}
-#endif //ifdef SN_DEBUGGER
+
 	}
 
 	void snScene::setContactConstraintBeta(float _beta)
@@ -389,7 +398,7 @@ namespace Supernova
 					continue;
 
 				//check if the collision detection is enabled between the two actors
-				if (!isCollisionDetectionEnabled(*i, *j))
+				if (!snIActor::isCollisionDetectionEnabled(*i, *j))
 					continue;
 
 #ifdef SN_DEBUGGER
@@ -407,7 +416,7 @@ namespace Supernova
 #endif //ifdef SN_DEBUGGER
 	}
 
-	void snScene::computeBroadPhaseCollisions()
+	void snScene::singleThreadedBroadPhase()
 	{
 		//Clear the list of collision points
 		m_collisionPoints.clear();
@@ -422,7 +431,32 @@ namespace Supernova
 		//Post broad phase for the constraints manager and the sweep and prune manager.
 		m_contactConstraintManager.postBroadPhase();
 		m_sweepAndPrune.postBroadPhase();
+	}
 
+	void snScene::multiThreadedBroadPhase()
+	{
+		//Clear the list of collision points
+		m_collisionPoints.clear();
+
+		//Prepare for the broad phase.
+		m_contactConstraintManager.preBroadPhase();
+		m_pcs.preBroadPhase();
+		m_sweepAndPrune.preBroadPhase();
+
+		//Apply the broad phase
+		m_sweepAndPrune.broadPhase();
+
+		//Post broad phase
+		m_contactConstraintManager.postBroadPhase();
+		m_pcs.postBroadPhase();
+		m_sweepAndPrune.postBroadPhase();
+	}
+
+	//Narrow phase for the multithreaded collision detection model.
+	void snScene::multiThreadedNarrowPhase()
+	{
+		//dispatch to threads which will run the collision detection.
+		m_dispatcher.dispatch(&m_pcs);
 	}
 
 	void snScene::computeCollisionDetection(snIActor* _a, snIActor* _b)
@@ -465,15 +499,10 @@ namespace Supernova
 		}
 	}
 
-	//Check if the collision detection is enabled between the two actors
-	bool snScene::isCollisionDetectionEnabled(const snIActor* const _a, const snIActor* const _b)
+	void snScene::storeActorPair(snIActor* _a, snIActor* _b)
 	{
-		//No colision detection between two statics or a kinematic and a static.
-		if ((_a->getActorType() == snActorType::snActorTypeStatic && _b->getActorType() == snActorType::snActorTypeStatic) ||
-			(_a->getActorType() == snActorType::snActorTypeStatic && _b->getActorType() == snActorType::snActorTypeKinematic) ||
-			(_a->getActorType() == snActorType::snActorTypeKinematic && _b->getActorType() == snActorType::snActorTypeStatic))
-			return false;
-
-		return true;
+		snActorPair* pair = m_pcs.getAvailablePair();
+		pair->m_first = _a;
+		pair->m_second = _b;
 	}
 }

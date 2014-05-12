@@ -32,17 +32,37 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_MODE_H
-#define SN_COLLISION_MODE_H
+#ifndef SN_COLLISION_DISPATCHER_H
+#define SN_COLLISION_DISPATCHER_H
+
 
 namespace Supernova
 {
-	enum snCollisionMode
+	class snActorPairManager;
+	class snScene;
+	class snIActor;
+
+	typedef void (snScene::*snCollisionCallback)(snIActor*, snIActor*);
+
+	class snCollisionDispatcher
 	{
-		snECollisionModeBruteForce,
-		snECollisionMode_ST_SweepAndPrune,
-		snECollisionMode_MT_SweepAndPrune
+	private:
+		unsigned int m_threadCount;
+
+		snScene* m_scene;
+
+		snCollisionCallback m_callback;	
+
+	public:
+		snCollisionDispatcher();
+		~snCollisionDispatcher();
+
+		void initialize(snScene* _scene, snCollisionCallback _callback, unsigned int _threadCount);
+
+		void dispatch(const snActorPairManager* _pcs) const;
+
+		void run(const snActorPairManager* _pcs, unsigned int _startId, unsigned int _endId) const;
 	};
 }
 
-#endif //ifndef SN_COLLISION_MODE_H
+#endif //ifndef SN_COLLISION_DISPATCHER_H

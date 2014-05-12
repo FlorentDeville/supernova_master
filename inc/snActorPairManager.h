@@ -32,17 +32,47 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_MODE_H
-#define SN_COLLISION_MODE_H
+#ifndef SN_ACTOR_PAIR_MANAGER_H
+#define SN_ACTOR_PAIR_MANAGER_H
+
+#include <vector>
+using std::vector;
 
 namespace Supernova
 {
-	enum snCollisionMode
+	struct snActorPair;
+
+	class snActorPairManager
 	{
-		snECollisionModeBruteForce,
-		snECollisionMode_ST_SweepAndPrune,
-		snECollisionMode_MT_SweepAndPrune
+	private:
+		//List of actors pair
+		vector<snActorPair*> m_pairs;
+
+		//Next available pair in the list.
+		unsigned int m_currentPairId;
+
+	public:
+		//Constructor
+		snActorPairManager();
+
+		//Destructor
+		~snActorPairManager();
+
+		//Prepare the manager for the broad phase
+		void preBroadPhase();
+
+		//Clean up after the broad phase
+		void postBroadPhase();
+
+		//Return a pointer to an available snActorPair.
+		snActorPair* getAvailablePair();
+
+		//Return the vector of pairs
+		const vector<snActorPair*>& getPairs() const;
+
+		//Return the number of active pairs.
+		unsigned int getActivePairsCount() const;
 	};
 }
 
-#endif //ifndef SN_COLLISION_MODE_H
+#endif //ifndef SN_ACTOR_PAIR_MANAGER_H

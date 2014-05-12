@@ -253,8 +253,13 @@ namespace Devil
 				}
 				else if (key == '2')
 				{
-					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionModeSweepAndPrune);
-					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionModeSweepAndPrune);
+					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
+					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
+				}
+				else if (key == '3')
+				{
+					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
+					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
 				}
 				return 0;
 			}

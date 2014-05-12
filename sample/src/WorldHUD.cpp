@@ -81,6 +81,21 @@ namespace Devil
 			GRAPHICS->writeText(i->first + L" : " + i->second, XMFLOAT2(1, height), SCALE);
 			height += LINE_HEIGHT;
 		}
+
+		switch (SUPERNOVA->getScene(0)->getCollisionMode())
+		{
+		case snCollisionMode::snECollisionModeBruteForce:
+			GRAPHICS->writeText(L"Collision Mode : Brute Force", XMFLOAT2(1, height), SCALE);
+			break;
+
+		case snCollisionMode::snECollisionMode_ST_SweepAndPrune:
+			GRAPHICS->writeText(L"Collision Mode : Single Threaded Broad Phase", XMFLOAT2(1, height), SCALE);
+			break;
+
+		case snCollisionMode::snECollisionMode_MT_SweepAndPrune:
+			GRAPHICS->writeText(L"Collision Mode : Multi Threaded Broad Phase", XMFLOAT2(1, height), SCALE);
+			break;
+		}
 #endif //ifdef SN_DEBUGGER
 
 		//display controls

@@ -49,6 +49,8 @@ using std::list;
 #include "snContactConstraintManager.h"
 #include "snCollisionMode.h"
 #include "snSweepManager.h"
+#include "snActorPairManager.h"
+#include "snCollisionDispatcher.h"
 
 #ifdef _DEBUG
 namespace Devil
@@ -106,6 +108,12 @@ namespace Supernova
 
 		//Manager handling the sweep and prune broad phase algorithm
 		snSweepManager m_sweepAndPrune;
+
+		//Manager storing pairs of actors representing the possibly coliding set (pcs).
+		snActorPairManager m_pcs;
+
+		//Collision dispatcher for multithreaded collision detection
+		snCollisionDispatcher m_dispatcher;
 
 		//The type of collision to use
 		snCollisionMode m_collisionMode;
@@ -204,13 +212,19 @@ namespace Supernova
 		void computeNaiveCollisions();
 
 		//Check collisions using sweep and prune broad phase and create collision constraints.
-		void computeBroadPhaseCollisions();
+		void singleThreadedBroadPhase();
+
+		//Broad phase for the multithreaded collision detection model.
+		void multiThreadedBroadPhase();
+
+		//Narrow phase for the multithreaded collision detection model.
+		void multiThreadedNarrowPhase();
 
 		//Compute tcollision detection between two actors and create the corresponding collision constraints.
 		void computeCollisionDetection(snIActor* _a, snIActor* _b);
 
-		//Check if the collision detection is enabled between the two actors
-		bool isCollisionDetectionEnabled(const snIActor* const _a, const snIActor* const _b);
+		//Store a pair of actor into the PCS.
+		void storeActorPair(snIActor* _a, snIActor* _b);
 	};
 }
 

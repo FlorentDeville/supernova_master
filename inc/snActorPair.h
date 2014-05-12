@@ -32,17 +32,18 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_MODE_H
-#define SN_COLLISION_MODE_H
+#ifndef SN_ACTOR_PAIR_H
+#define SN_ACTOR_PAIR_H
 
 namespace Supernova
 {
-	enum snCollisionMode
+	class snIActor;
+
+	struct snActorPair
 	{
-		snECollisionModeBruteForce,
-		snECollisionMode_ST_SweepAndPrune,
-		snECollisionMode_MT_SweepAndPrune
+		snIActor* m_first;
+		snIActor* m_second;
 	};
 }
 
-#endif //ifndef SN_COLLISION_MODE_H
+#endif //ifndef SN_ACTOR_PAIR_H

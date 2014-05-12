@@ -32,17 +32,78 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_MODE_H
-#define SN_COLLISION_MODE_H
+#include "snCollisionDispatcher.h"
+#include "snActorPairManager.h"
+#include "snActorPair.h"
+
+#include <thread>
+using std::thread;
+
+#include <Windows.h>
 
 namespace Supernova
 {
-	enum snCollisionMode
-	{
-		snECollisionModeBruteForce,
-		snECollisionMode_ST_SweepAndPrune,
-		snECollisionMode_MT_SweepAndPrune
-	};
-}
+	snCollisionDispatcher::snCollisionDispatcher()
+	{}
+	
+	snCollisionDispatcher::~snCollisionDispatcher()
+	{}
 
-#endif //ifndef SN_COLLISION_MODE_H
+	void snCollisionDispatcher::initialize(snScene* _scene, snCollisionCallback _callback, unsigned int _threadCount)
+	{
+		m_scene = _scene;
+		m_callback = _callback;
+		m_threadCount = _threadCount;
+	}
+
+	void snCollisionDispatcher::dispatch(const snActorPairManager* _pcs) const
+	{
+		unsigned int pairCount = _pcs->getActivePairsCount();
+
+		//make the pairCount a multiple of threadCount
+		int modulo = pairCount % m_threadCount;
+
+		//compute the number of pair to comute per threads
+		int pairPerThread = (pairCount + modulo) / m_threadCount;
+
+		//create threads
+		thread** runningThread = new thread*[m_threadCount - 1];
+
+		for (unsigned int threadId = 0; threadId < m_threadCount-1; ++threadId)
+		{
+			unsigned int startId = (threadId + 1) * pairPerThread;
+			unsigned int endId = (threadId + 2) * pairPerThread;
+			if (endId > pairCount)
+				endId = pairCount;
+			runningThread[threadId] = new thread(&snCollisionDispatcher::run, this, _pcs, startId, endId);
+			SetThreadAffinityMask(runningThread[threadId]->native_handle(), 1 << (threadId + 1));
+			
+		}
+
+		//run in the current thread
+		unsigned int endId = pairPerThread;
+		if (endId > pairCount)
+			endId = pairCount;
+		run(_pcs, 0, endId);
+
+		//wait for all the thread to finish
+		for (unsigned int threadId = 1; threadId < m_threadCount; ++threadId)
+			runningThread[threadId - 1]->join();
+
+		//delet the threads
+		for (unsigned int threadId = 1; threadId < m_threadCount; ++threadId)
+		{
+			delete runningThread[threadId - 1];
+		}
+		delete runningThread;
+	}
+
+	void snCollisionDispatcher::run(const snActorPairManager* _pcs, unsigned int _startId, unsigned int _endId) const
+	{
+		const vector<snActorPair*>& pairs = _pcs->getPairs();
+		for (unsigned int i = _startId; i != _endId; ++i)
+		{
+			(m_scene->*m_callback)(pairs[i]->m_first, pairs[i]->m_second);
+		}
+	}
+}
