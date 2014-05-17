@@ -33,8 +33,8 @@ namespace Devil
 	void EntityCamera::update()
 	{
 		//return;
-		const float linearCameraSpeed = 0.5f;
-		const float angularCameraSpeed = 2.5f;
+		const float linearCameraSpeed = 0.75f;
+		const float angularCameraSpeed = 0.025f;
 
 		//forward vector
 		XMVECTOR forward = m_lookAt - m_position;
@@ -94,27 +94,40 @@ namespace Devil
 		//mouse movement since last update
 		XMFLOAT2 mouseOffset = INPUT->getMouseDelta();
 
+		
 		if (mouseOffset.x < 0)
-			m_lookAt = m_lookAt + left * angularCameraSpeed;
+		{
+			XMMATRIX rotation = XMMatrixRotationAxis(up, -angularCameraSpeed);
+			forward = XMVector3Transform(forward, rotation);
+			m_lookAt = m_position + forward;
+		}		
 		else if (mouseOffset.x > 0)
-			m_lookAt = m_lookAt - left * angularCameraSpeed;
+		{
+			XMMATRIX rotation = XMMatrixRotationAxis(up, angularCameraSpeed);
+			forward = XMVector3Transform(forward, rotation);
+			m_lookAt = m_position + forward;
+		}
+		//left vector
+		left = XMVector3Cross(forward, m_up);
+
 		if (mouseOffset.y < 0)
-			m_lookAt = m_lookAt + up * angularCameraSpeed;
+		{
+			XMMATRIX rotation = XMMatrixRotationAxis(left, angularCameraSpeed);
+			forward = XMVector3Transform(forward, rotation);
+			m_lookAt = m_position + forward;
+		}
 		else if (mouseOffset.y > 0)
-			m_lookAt = m_lookAt - up * angularCameraSpeed;
+		{
+			XMMATRIX rotation = XMMatrixRotationAxis(left, -angularCameraSpeed);
+			forward = XMVector3Transform(forward, rotation);
+			m_lookAt = m_position + forward;
+		}
+		XMVectorSetW(m_lookAt, 1);
 	}
 
 	void EntityCamera::render()
 	{
-		snVec pos;
-		pos = m_position;
-
-		snVec lookAt;
-		lookAt = m_lookAt;
-
-		snVec up;
-		up = m_up;
-		m_gfxCamera->Render(pos, lookAt, up);
+		m_gfxCamera->Render(m_position, m_lookAt, m_up);
 	}
 
 	void EntityCamera::setLookAt(const XMVECTOR& _lookAt)
