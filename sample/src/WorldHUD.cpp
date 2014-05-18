@@ -36,6 +36,7 @@
 #include "Graphics.h"
 #include "snFactory.h"
 #include "snScene.h"
+#include "Input.h"
 
 #ifdef SN_DEBUGGER
 #include "snDebugger.h"
@@ -43,7 +44,7 @@
 
 namespace Devil
 {
-	WorldHUD::WorldHUD()
+	WorldHUD::WorldHUD() : m_showWatcher(true)
 	{
 
 	}
@@ -73,28 +74,39 @@ namespace Devil
 
 		//display debugging information
 #ifdef SN_DEBUGGER
-		GRAPHICS->writeText(L"======WATCH======", XMFLOAT2(1, height), SCALE);
-		height += LINE_HEIGHT;
-		const map<wstring, wstring>& watch = DEBUGGER->getWatch();
-		for (map<wstring, wstring>::const_iterator i = watch.cbegin(); i != watch.cend(); ++i)
+
+		if (INPUT->isKeyDown('W'))
 		{
-			GRAPHICS->writeText(i->first + L" : " + i->second, XMFLOAT2(1, height), SCALE);
-			height += LINE_HEIGHT;
+			m_showWatcher = !m_showWatcher;
+			INPUT->keyUp('W');
 		}
-
-		switch (SUPERNOVA->getScene(0)->getCollisionMode())
+		
+		if (m_showWatcher)
 		{
-		case snCollisionMode::snECollisionModeBruteForce:
-			GRAPHICS->writeText(L"Collision Mode : Brute Force", XMFLOAT2(1, height), SCALE);
-			break;
 
-		case snCollisionMode::snECollisionMode_ST_SweepAndPrune:
-			GRAPHICS->writeText(L"Collision Mode : Single Threaded Broad Phase", XMFLOAT2(1, height), SCALE);
-			break;
+			GRAPHICS->writeText(L"======WATCH======", XMFLOAT2(1, height), SCALE);
+			height += LINE_HEIGHT;
+			const map<wstring, wstring>& watch = DEBUGGER->getWatch();
+			for (map<wstring, wstring>::const_iterator i = watch.cbegin(); i != watch.cend(); ++i)
+			{
+				GRAPHICS->writeText(i->first + L" : " + i->second, XMFLOAT2(1, height), SCALE);
+				height += LINE_HEIGHT;
+			}
 
-		case snCollisionMode::snECollisionMode_MT_SweepAndPrune:
-			GRAPHICS->writeText(L"Collision Mode : Multi Threaded Broad Phase", XMFLOAT2(1, height), SCALE);
-			break;
+			switch (SUPERNOVA->getScene(0)->getCollisionMode())
+			{
+			case snCollisionMode::snECollisionModeBruteForce:
+				GRAPHICS->writeText(L"Collision Mode : Brute Force", XMFLOAT2(1, height), SCALE);
+				break;
+
+			case snCollisionMode::snECollisionMode_ST_SweepAndPrune:
+				GRAPHICS->writeText(L"Collision Mode : Single Threaded Broad Phase", XMFLOAT2(1, height), SCALE);
+				break;
+
+			case snCollisionMode::snECollisionMode_MT_SweepAndPrune:
+				GRAPHICS->writeText(L"Collision Mode : Multi Threaded Broad Phase", XMFLOAT2(1, height), SCALE);
+				break;
+			}
 		}
 #endif //ifdef SN_DEBUGGER
 
@@ -114,6 +126,8 @@ namespace Devil
 		GRAPHICS->writeText(L"C, V to show/hide collision points", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
 		GRAPHICS->writeText(L"1, 2 to switch collision mode", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
+		height += LINE_HEIGHT;
+		GRAPHICS->writeText(L"W to show/hide watcher", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 	}
 
 	void WorldHUD::setSceneName(const wstring _sceneName)

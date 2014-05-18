@@ -979,7 +979,7 @@ namespace Devil
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
 		scene->setContactConstraintBeta(0.01f);
-		scene->setSolverIterationCount(15);
+		scene->setSolverIterationCount(30);
 		scene->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
 
 		WORLD->getCamera()->setPosition(snVec4Set(0, 100, -240, 1));

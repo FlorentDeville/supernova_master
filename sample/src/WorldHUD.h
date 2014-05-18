@@ -54,6 +54,9 @@ namespace Devil
 		//Frame per seconds for the physics engine
 		wstring m_physicsFPS;
 
+		//Flag to indicate if the watcher must be displayed or not.
+		bool m_showWatcher;
+
 	public:
 
 		WorldHUD();
