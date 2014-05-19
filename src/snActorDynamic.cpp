@@ -52,6 +52,7 @@ namespace Supernova
 		m_invR.identity();
 
 		m_w = snVec4Set(0, 0, 0, 0);
+		m_v = snVec4Set(0, 0, 0, 0);
 		m_isKinematic = false;
 		m_typeOfActor = snActorType::snActorTypeDynamic;
 
