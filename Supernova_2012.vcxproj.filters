@@ -64,9 +64,6 @@
     <ClInclude Include="inc\snTypes.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snVector4f.h">
-      <Filter>Tools</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snPhysicMaterial.h">
       <Filter>Simulation</Filter>
     </ClInclude>
@@ -114,6 +111,21 @@
     </ClInclude>
     <ClInclude Include="inc\snCollisionFlag.h">
       <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snVec.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snCollisionDispatcher.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snActorPair.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snActorPairManager.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snSweepManager.h">
+      <Filter>Simulation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -166,9 +178,6 @@
     <ClCompile Include="src\snPointToPointConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
-    <ClCompile Include="src\snVector4f.cpp">
-      <Filter>Tools</Filter>
-    </ClCompile>
     <ClCompile Include="src\snDebugger.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
@@ -187,5 +196,19 @@
     <ClCompile Include="src\snIActor.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
+    <ClCompile Include="src\snCollisionDispatcher.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snActorPairManager.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snSweepManager.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\snVec.inl">
+      <Filter>Tools</Filter>
+    </None>
   </ItemGroup>
 </Project>

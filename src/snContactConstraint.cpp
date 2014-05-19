@@ -44,13 +44,29 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="snContactConstraint"/> class.
+	/// </summary>
 	snContactConstraint::snContactConstraint() : snIConstraint(), m_effectiveMass(0)
 	{
 	}
 
+	/// <summary>
+	/// Finalizes an instance of the <see cref="snContactConstraint"/> class.
+	/// </summary>
 	snContactConstraint::~snContactConstraint()
 	{}
 
+	/// <summary>
+	/// Initializes the specified _body1.
+	/// </summary>
+	/// <param name="_body1">The _body1.</param>
+	/// <param name="_body2">The _body2.</param>
+	/// <param name="_normal">The _normal.</param>
+	/// <param name="_collisionPoint">The _collision point.</param>
+	/// <param name="_penetrationDepth">The _penetration depth.</param>
+	/// <param name="_scene">The _scene.</param>
 	void snContactConstraint::initialize(snIActor* const _body1, snIActor* const _body2, const snVec& _normal, const snVec& _collisionPoint, float _penetrationDepth,
 		snScene const * _scene)
 	{
@@ -63,6 +79,10 @@ namespace Supernova
 		m_scene = _scene;
 	}
 
+	/// <summary>
+	/// Prepares the specified _DT.
+	/// </summary>
+	/// <param name="_dt">The _DT.</param>
 	void snContactConstraint::prepare(float _dt)
 	{
 		m_accumulatedImpulseMagnitude = 0;
@@ -102,6 +122,9 @@ namespace Supernova
 
 	}
 
+	/// <summary>
+	/// Resolves this instance.
+	/// </summary>
 	void snContactConstraint::resolve()
 	{
 		//compute relative velocity between the two colliding bodies
@@ -129,11 +152,20 @@ namespace Supernova
 		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossNInvI[1] * lagrangian);
 	}
 
+	/// <summary>
+	/// Gets the normal.
+	/// </summary>
+	/// <returns></returns>
+
 	snVec const & snContactConstraint::getNormal() const
 	{
 		return m_normal;
 	}
 
+	/// <summary>
+	/// Gets the radius.
+	/// </summary>
+	/// <returns></returns>
 	snVec const * snContactConstraint::getRadius() const
 	{
 		return m_radius;
