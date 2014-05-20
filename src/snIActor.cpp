@@ -37,6 +37,8 @@
 
 #include <assert.h>
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 
@@ -206,6 +208,16 @@ namespace Supernova
 	{
 		assert(m_colliders.size() == 1);
 
-		m_colliders[0]->computeAABB(&m_boundingVolume);
+		m_boundingVolume.m_max = snVec4Set(0, 0, 0, 0);
+		m_boundingVolume.m_min = snVec4Set(0, 0, 0, 0);
+
+		//loop through all the colliders and make the AABB for the entire actor
+		for(vector<snICollider*>::const_iterator collider = m_colliders.cbegin(); collider != m_colliders.cend(); ++collider)
+		{
+			snAABB aabb;
+			(*collider)->computeAABB(&aabb);
+
+			mergeAABB(m_boundingVolume, aabb, m_boundingVolume);
+		}
 	}
 }

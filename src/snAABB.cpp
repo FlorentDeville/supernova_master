@@ -55,4 +55,29 @@ namespace Supernova
 
 		return (resCompare & 0xffff) != 0;
 	}
+
+	/// <summary>
+	/// Merges two AABBs into one.
+	/// </summary>
+	/// <param name="_first">The first AABB to merge.</param>
+	/// <param name="_second">The second AABB to merge.</param>
+	/// <param name="_merge">The result AABB.</param>
+	void mergeAABB(const snAABB& _first, const snAABB& _second, snAABB& _merge)
+	{
+		//compare the maximum
+		__m128 compare = _mm_cmpge_ps(_first.m_max, _second.m_max);
+
+		//compare contains 0x0000 where first is the smallest and 0xFFFF where first is the biggest. So the merge.max = (first & compare) | (second & ~compare)
+		__m128 firstHalf = _mm_and_ps(_first.m_max, compare);
+		__m128 secondHalf = _mm_andnot_ps(compare, _second.m_max);
+		_merge.m_max = _mm_or_ps(firstHalf, secondHalf);
+
+		//compare the minimum
+		compare = _mm_cmple_ps(_first.m_min, _second.m_min);
+
+		//compare contains 0x0000 where first is the biggest and 0xFFFF where first is the smallest. So the merge.min = (first & compare) | (second & ~compare)
+		firstHalf = _mm_and_ps(_first.m_min, compare);
+		secondHalf = _mm_andnot_ps(compare, _second.m_min);
+		_merge.m_min = _mm_or_ps(firstHalf, secondHalf);
+	}
 }

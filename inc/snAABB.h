@@ -45,4 +45,6 @@ namespace Supernova
 
 	//Return true if the two axis aligned bounding boxes are overlaping. return false otherwise.
 	bool AABBOverlap(snAABB const * const _a, snAABB const * const _b);
+
+	void mergeAABB(const snAABB& _first, const snAABB& _second, snAABB& _merge);
 }
