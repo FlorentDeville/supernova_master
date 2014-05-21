@@ -61,12 +61,31 @@ namespace Supernova
 
 	snCollision::~snCollision(){}
 
-	snCollisionResult snCollision::queryTestCollision(snIActor* _a1, snIActor* _a2) const
+	void snCollision::queryTestCollision(snIActor* _a1, snIActor* _a2, vector<snCollisionResult*>& _results) const
 	{
-		std::vector<snICollider*>& c1 = _a1->getColliders();
-		std::vector<snICollider*>& c2 = _a2->getColliders();
+		std::vector<snICollider*>& listColliders1 = _a1->getColliders();
+		std::vector<snICollider*>& listColliders2 = _a2->getColliders();
 
-		return invokeQueryTestCollision(c1[0], _a1->getPosition(), _a1->getInverseOrientationMatrix(), c2[0], _a2->getPosition(), _a2->getInverseOrientationMatrix());
+		snCollisionResult globalResult;
+		globalResult.m_collision = false;
+
+		for(vector<snICollider*>::const_iterator c1 = listColliders1.cbegin(); c1 != listColliders1.cend(); ++c1)
+		{
+			for(vector<snICollider*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
+			{
+				//pouahhhh it's ugly!!!! let's check first the AABBs
+				snCollisionResult localResult = invokeQueryTestCollision(c1[0], _a1->getPosition(), _a1->getInverseOrientationMatrix(), c2[0], _a2->getPosition(), _a2->getInverseOrientationMatrix());
+				if(localResult.m_collision)
+				{
+					snCollisionResult* dynamicRes = new snCollisionResult();
+					dynamicRes->m_collision = true;
+					dynamicRes->m_contacts = localResult.m_contacts;
+					dynamicRes->m_normal = localResult.m_normal;
+					dynamicRes->m_penetrations = localResult.m_penetrations;
+					_results.push_back(dynamicRes);
+				}
+			}
+		}
 	}
 
 	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snVec& _p1, const snMatrix44f& _invR1,

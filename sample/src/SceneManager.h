@@ -100,6 +100,8 @@ namespace Devil
 
 		void createSceneDomino();
 
+		void createSceneComposite();
+
 		void setCollisionMode(snCollisionMode _collisionMode);
 		
 		void createGround(snScene* const _scene, float _restitution, float _friction);

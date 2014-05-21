@@ -138,6 +138,12 @@ namespace Devil
 			createTower();
 			INPUT->keyUp(119);
 		}
+		else if (INPUT->isKeyDown(120))//F9
+		{
+			clearScene();
+			createSceneComposite();
+			INPUT->keyUp(119);
+		}
 	}
 
 	void SceneManager::createBasicTest()
@@ -980,7 +986,7 @@ namespace Devil
 		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
 		scene->setContactConstraintBeta(0.01f);
 		scene->setSolverIterationCount(30);
-		scene->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
+		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
 
 		WORLD->getCamera()->setPosition(snVec4Set(0, 100, -240, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 20, 1));
@@ -1161,6 +1167,57 @@ namespace Devil
 			text->setAnchor(box);
 			text->addItem(L"SHOOT ME!!!!", 0, 0);
 			box->addPostUpdateComponent(text);
+		}
+	}
+
+	void SceneManager::createSceneComposite()
+	{
+		createSandbox(L"Domino");
+
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
+		scene->setContactConstraintBeta(0.01f);
+		scene->setSolverIterationCount(30);
+		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
+
+		WORLD->getCamera()->setPosition(snVec4Set(0, 100, -240, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 20, 1));
+
+
+		const int ACTOR_COUNT = 10;
+
+		snVec initialPosition = snVec4Set(-20, 20, 0, 1);
+		snVec space = snVec4Set(10, 0, 0, 1);
+
+		float boxSize = 5;
+		for(int i = 0; i < ACTOR_COUNT; ++i)
+		{
+			snActorDynamic* act = 0;
+			int actorId = -1;
+
+			scene->createActorDynamic(&act, actorId);
+
+			act->setPosition(initialPosition + i * space);
+
+			//create 3 colliders
+			snColliderBox* xBox = new snColliderBox();
+			xBox->setSize(snVec4Set(boxSize, 0, 0, 0));
+			xBox->setOrigin(snVec4Set(0, 0, 0, 1));
+
+			snColliderBox* yBox = new snColliderBox();
+			yBox->setSize(snVec4Set(0, boxSize, 0, 0));
+			yBox->setOrigin(snVec4Set(0, 0, 0, 1));
+
+			snColliderBox* zBox = new snColliderBox();
+			zBox->setSize(snVec4Set(0, 0, boxSize, 0));
+			zBox->setOrigin(snVec4Set(0, 0, 0, 1));
+
+			act->addCollider(xBox);
+			act->addCollider(yBox);
+			act->addCollider(zBox);
+
+			act->updateMassAndInertia(10);
+			act->initialize();
 		}
 	}
 
