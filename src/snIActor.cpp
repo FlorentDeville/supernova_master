@@ -208,15 +208,15 @@ namespace Supernova
 	{
 		assert(m_colliders.size() == 1);
 
-		m_boundingVolume.m_max = snVec4Set(0, 0, 0, 0);
-		m_boundingVolume.m_min = snVec4Set(0, 0, 0, 0);
+		vector<snICollider*>::const_iterator collider = m_colliders.cbegin();
+		(*collider)->computeAABB(&m_boundingVolume);
+		++collider;
 
 		//loop through all the colliders and make the AABB for the entire actor
-		for(vector<snICollider*>::const_iterator collider = m_colliders.cbegin(); collider != m_colliders.cend(); ++collider)
+		for(;collider != m_colliders.cend(); ++collider)
 		{
 			snAABB aabb;
 			(*collider)->computeAABB(&aabb);
-
 			mergeAABB(m_boundingVolume, aabb, m_boundingVolume);
 		}
 	}
