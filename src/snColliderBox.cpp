@@ -170,7 +170,7 @@ namespace Supernova
 			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform);
 
 		//world origin is the last row.
-		m_worldOrigin = _transform[4];
+		m_worldOrigin = _transform[4] + m_origin;
 
 		//world normals are just the rows of the transform matrix
 		m_worldNormals[0] = _transform[0];

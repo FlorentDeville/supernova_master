@@ -73,6 +73,11 @@ namespace Supernova
 		return m_colliders;
 	}
 
+	snVec snIActor::getCenterOfMass() const
+	{
+		return m_centerOfMass;
+	}
+
 	//Return the position of the actor.
 	snVec snIActor::getPosition() const
 	{

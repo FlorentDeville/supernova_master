@@ -89,6 +89,7 @@ namespace Devil
 		//SCENEMGR->createStacking();
 		//SCENEMGR->createSceneActorsType();
 		//SCENEMGR->createSceneDomino();
+		//SCENEMGR->createConstraints();
 		SCENEMGR->createSceneComposite();
 
 		return true;

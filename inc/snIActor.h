@@ -78,6 +78,9 @@ namespace Supernova
 		//list of collider defining collision geometry
 		vector<snICollider*> m_colliders;
 
+		//Position of the center of mass expressed in local coordinate system.
+		snVec m_centerOfMass;
+
 		//position of the actor
 		snVec m_x;
 
@@ -137,6 +140,9 @@ namespace Supernova
 
 		//Return the inverse of the inertia expressed in world coordinate
 		virtual const snMatrix44f& getInvWorldInertia()const = 0;
+
+		//Return the center of mass expressed in local coordinate system.
+		snVec getCenterOfMass() const;
 
 		//Return the position of the actor.
 		snVec getPosition() const;

@@ -65,11 +65,11 @@ namespace Supernova
 		{
 			//compute the offset in world coordinates.
 			snMatrix44f transform = m_actors[i]->getOrientationMatrix();
-			transform[3] = m_actors[i]->getPosition();
+			transform[3] = m_actors[i]->getPosition() + m_actors[i]->getCenterOfMass();
 			m_worldPivot[i] = snMatrixTransform4(m_pivot[i], transform);
 
 			//compute the offset
-			m_offset[i] = m_worldPivot[i] - m_actors[i]->getPosition();
+			m_offset[i] = m_worldPivot[i] - m_actors[i]->getPosition() - m_actors[i]->getCenterOfMass();
 
 			//compte the skew matrix
 			m_R[i][0] = snVec4Set(0, snVec4GetZ(m_offset[i]), -snVec4GetY(m_offset[i]), 0);

@@ -143,5 +143,6 @@ namespace Supernova
 		m_collisionFlag = snCollisionFlag::CF_NO_FLAG;
 		m_collisionCallback = 0;
 		m_isActive = true;
+		m_centerOfMass = snVec4Set(0, 0, 0, 1);
 	}
 }

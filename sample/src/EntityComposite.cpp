@@ -102,7 +102,7 @@ namespace Devil
 		for (vector<IGfxEntity*>::const_iterator i = m_gfx.cbegin(); i != m_gfx.cend(); ++i)
 		{
 			XMMATRIX offset = XMMatrixTranslationFromVector((*currentCollider)->getOrigin());
-			transform = offset * transform;
+			transform = offset * orientation * translation;
 
 			(*i)->render(transform, viewMatrix, projectionMatrix);
 

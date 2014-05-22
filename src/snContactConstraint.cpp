@@ -87,8 +87,10 @@ namespace Supernova
 	{
 		m_accumulatedImpulseMagnitude = 0;
 
-		m_radius[0] = m_collisionPoint - m_bodies[0]->getPosition();
-		m_radius[1] = m_collisionPoint - m_bodies[1]->getPosition();
+		//world center of mass = position + center of mass
+		//so radius = point - world center of mass = point - position - center of mass
+		m_radius[0] = m_collisionPoint - m_bodies[0]->getPosition() - m_bodies[0]->getCenterOfMass();
+		m_radius[1] = m_collisionPoint - m_bodies[1]->getPosition() - m_bodies[1]->getCenterOfMass();
 
 		//compute r cross n
 		m_rCrossN[0] = snVec3Cross(m_radius[0], m_normal);

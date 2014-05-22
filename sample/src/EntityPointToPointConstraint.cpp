@@ -88,6 +88,8 @@ namespace Devil
 			//show the link between the fixed point and the actor
 			snVec up, left, forward;
 			up = actors[i]->getPosition() - m_constraint->getWPivot()[i];
+			up = XMVectorSetW(up, 0);
+
 			Supernova::Vector::snVec3Normalize(up);
 			computeBasis(up, left, forward);
 			XMMATRIX linkRotate;

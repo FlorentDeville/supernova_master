@@ -53,7 +53,7 @@ namespace Supernova
 		m_accumulatedImpulseMagnitude = 0;
 
 		//compute the offset between the object position and the fixed point
-		m_offset = m_fixedPoint - m_actor->getPosition();
+		m_offset = m_fixedPoint - m_actor->getPosition() - m_actor->getCenterOfMass();
 
 		//Compute the r skew matrix
 		m_R[0] = snVec4Set(0, snVec4GetZ(m_offset), -snVec4GetY(m_offset), 0);

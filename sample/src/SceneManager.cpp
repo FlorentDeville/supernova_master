@@ -1181,14 +1181,16 @@ namespace Devil
 		scene->setSolverIterationCount(30);
 		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
 
-		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -40, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -60, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 0, 1));
 		WORLD->activateCollisionPoint();
 
-		const int ACTOR_COUNT = 1;
+		const int ACTOR_COUNT = 25;
+		const int ROW_COUNT = 10;
 
 		snVec initialPosition = snVec4Set(-20, 20, 0, 1);
 		snVec space = snVec4Set(10, 0, 0, 1);
+		snVec height = snVec4Set(0, 5, 0, 1);
 
 		float boxSize = 5;
 		for(int i = 0; i < ACTOR_COUNT; ++i)
@@ -1198,34 +1200,30 @@ namespace Devil
 
 			scene->createActorDynamic(&act, actorId);
 
-			act->setPosition(initialPosition + i * space);
+			act->setPosition(initialPosition + (i % ROW_COUNT) * space + (i / ROW_COUNT) * height);
 
 			//create 3 colliders
 			snColliderBox* xBox = new snColliderBox();
 			xBox->setSize(snVec4Set(boxSize, 1, 1, 0));
-			xBox->setOrigin(snVec4Set(-10, 0, 0, 1));
+			xBox->setOrigin(snVec4Set(-1, 0, 0, 1));
 
-			/*snColliderBox* yBox = new snColliderBox();
+			snColliderBox* yBox = new snColliderBox();
 			yBox->setSize(snVec4Set(1, boxSize, 1, 0));
-			yBox->setOrigin(snVec4Set(0, 0, 0, 1));
+			yBox->setOrigin(snVec4Set(0, -1, 0, 1));
 
 			snColliderBox* zBox = new snColliderBox();
 			zBox->setSize(snVec4Set(1, 1, boxSize, 0));
-			zBox->setOrigin(snVec4Set(0, 0, 0, 1));*/
+			zBox->setOrigin(snVec4Set(0, 0, -1, 1));
 
 			act->addCollider(xBox);
-			/*act->addCollider(yBox);
-			act->addCollider(zBox);*/
+			act->addCollider(yBox);
+			act->addCollider(zBox);
 
+			act->setOrientation(snQuaternionFromEuler(0, 0, SN_PI * 0.25f * i));
 			act->updateMassAndInertia(10);
 			act->initialize();
 
-			EntityComposite* entity = WORLD->createComposite(act, m_colors[i]);
-
-		/*	ComponentFloatingText<EntityComposite, float>* text = new ComponentFloatingText<EntityComposite, float>();
-			text->setAnchor(entity);
-			text->addItem(L"ENTITY", 0, 0);
-			entity->addPostUpdateComponent(text);*/
+			EntityComposite* entity = WORLD->createComposite(act, m_colors[i % 5]);
 		}
 	}
 
