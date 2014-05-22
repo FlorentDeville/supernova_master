@@ -104,6 +104,7 @@
     <ClCompile Include="..\src\EntityBoxLauncher.cpp" />
     <ClCompile Include="..\src\EntityCamera.cpp" />
     <ClCompile Include="..\src\EntityCollisionPoint.cpp" />
+    <ClCompile Include="..\src\EntityComposite.cpp" />
     <ClCompile Include="..\src\EntityFixedConstraint.cpp" />
     <ClCompile Include="..\src\EntityPlan.cpp" />
     <ClCompile Include="..\src\EntityPointToPointConstraint.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="..\src\EntityBoxLauncher.h" />
     <ClInclude Include="..\src\EntityCamera.h" />
     <ClInclude Include="..\src\EntityCollisionPoint.h" />
+    <ClInclude Include="..\src\EntityComposite.h" />
     <ClInclude Include="..\src\EntityFixedConstraint.h" />
     <ClInclude Include="..\src\EntityPlan.h" />
     <ClInclude Include="..\src\EntityPointToPointConstraint.h" />

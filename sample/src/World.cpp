@@ -41,6 +41,7 @@
 #include "EntityFixedConstraint.h"
 #include "EntityPointToPointConstraint.h"
 #include "EntityBoxLauncher.h"
+#include "EntityComposite.h"
 #include "WorldHUD.h"
 #include "Input.h"
 #include "Graphics.h"
@@ -123,6 +124,13 @@ namespace Devil
 	{
 		EntityPlan* newEntity = new EntityPlan();
 		newEntity->initialize(_size, _color);
+		m_EntityList.push_back(newEntity);
+		return newEntity;
+	}
+
+	EntityComposite* World::createComposite(snIActor* _actor, const XMFLOAT4& _color)
+	{
+		EntityComposite* newEntity = new EntityComposite(_actor, _color);
 		m_EntityList.push_back(newEntity);
 		return newEntity;
 	}

@@ -206,8 +206,6 @@ namespace Supernova
 	//Compute the bounding volume based on the colliders
 	void snIActor::computeBoundingVolume()
 	{
-		assert(m_colliders.size() == 1);
-
 		vector<snICollider*>::const_iterator collider = m_colliders.cbegin();
 		(*collider)->computeAABB(&m_boundingVolume);
 		++collider;

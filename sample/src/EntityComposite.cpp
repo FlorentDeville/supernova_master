@@ -41,6 +41,9 @@
 using namespace Supernova::Vector;
 
 #include "Graphics.h"
+#include "Camera.h"
+#include "D3D.h"
+using namespace DirectX;
 
 namespace Devil
 {
@@ -77,6 +80,33 @@ namespace Devil
 
 	void EntityComposite::render()
 	{
+		//get view and projection matrices
+		XMMATRIX viewMatrix, projectionMatrix;
+		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
+		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
+		//compute position and orientation of the actor
+		vector<snICollider*> colliders = m_actor->getColliders();
+		vector<snICollider*>::const_iterator currentCollider = colliders.cbegin();
+
+		XMMATRIX translation = XMMatrixTranslationFromVector(m_actor->getPosition());
+		XMMATRIX orientation;
+		orientation.r[0] = m_actor->getOrientationMatrix().m_r[0];
+		orientation.r[1] = m_actor->getOrientationMatrix().m_r[1];
+		orientation.r[2] = m_actor->getOrientationMatrix().m_r[2];
+		orientation.r[3] = m_actor->getOrientationMatrix().m_r[3];
+
+		XMMATRIX transform = orientation * translation;
+
+		//loop through each collider to display them using their offsets.
+		for (vector<IGfxEntity*>::const_iterator i = m_gfx.cbegin(); i != m_gfx.cend(); ++i)
+		{
+			XMMATRIX offset = XMMatrixTranslationFromVector((*currentCollider)->getOrigin());
+			transform = offset * transform;
+
+			(*i)->render(transform, viewMatrix, projectionMatrix);
+
+			++currentCollider;
+		}
 	}
 }

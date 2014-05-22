@@ -61,6 +61,7 @@ namespace Devil
 	class EntityPointToPointConstraint;
 	class WorldHUD;
 	class EntityBoxLauncher;
+	class EntityComposite;
 
 	class IComponent;
 
@@ -89,6 +90,7 @@ namespace Devil
 		EntityBox* createBox(const XMFLOAT3&);
 		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
 		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);
+		EntityComposite* createComposite(snIActor* _actor, const XMFLOAT4& _color);
 		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
 		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
 		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);

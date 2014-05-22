@@ -51,6 +51,7 @@
 
 #include "EntityBox.h"
 #include "EntityCamera.h"
+#include "EntityComposite.h"
 
 #include "ComponentFollowPath.h"
 #include "ComponentPathInterpolate.h"
@@ -1172,7 +1173,7 @@ namespace Devil
 
 	void SceneManager::createSceneComposite()
 	{
-		createSandbox(L"Domino");
+		createSandbox(L"Composite");
 
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
@@ -1180,11 +1181,11 @@ namespace Devil
 		scene->setSolverIterationCount(30);
 		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
 
-		WORLD->getCamera()->setPosition(snVec4Set(0, 100, -240, 1));
-		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 20, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -40, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 0, 1));
+		WORLD->activateCollisionPoint();
 
-
-		const int ACTOR_COUNT = 10;
+		const int ACTOR_COUNT = 1;
 
 		snVec initialPosition = snVec4Set(-20, 20, 0, 1);
 		snVec space = snVec4Set(10, 0, 0, 1);
@@ -1201,23 +1202,30 @@ namespace Devil
 
 			//create 3 colliders
 			snColliderBox* xBox = new snColliderBox();
-			xBox->setSize(snVec4Set(boxSize, 0, 0, 0));
-			xBox->setOrigin(snVec4Set(0, 0, 0, 1));
+			xBox->setSize(snVec4Set(boxSize, 1, 1, 0));
+			xBox->setOrigin(snVec4Set(-10, 0, 0, 1));
 
-			snColliderBox* yBox = new snColliderBox();
-			yBox->setSize(snVec4Set(0, boxSize, 0, 0));
+			/*snColliderBox* yBox = new snColliderBox();
+			yBox->setSize(snVec4Set(1, boxSize, 1, 0));
 			yBox->setOrigin(snVec4Set(0, 0, 0, 1));
 
 			snColliderBox* zBox = new snColliderBox();
-			zBox->setSize(snVec4Set(0, 0, boxSize, 0));
-			zBox->setOrigin(snVec4Set(0, 0, 0, 1));
+			zBox->setSize(snVec4Set(1, 1, boxSize, 0));
+			zBox->setOrigin(snVec4Set(0, 0, 0, 1));*/
 
 			act->addCollider(xBox);
-			act->addCollider(yBox);
-			act->addCollider(zBox);
+			/*act->addCollider(yBox);
+			act->addCollider(zBox);*/
 
 			act->updateMassAndInertia(10);
 			act->initialize();
+
+			EntityComposite* entity = WORLD->createComposite(act, m_colors[i]);
+
+		/*	ComponentFloatingText<EntityComposite, float>* text = new ComponentFloatingText<EntityComposite, float>();
+			text->setAnchor(entity);
+			text->addItem(L"ENTITY", 0, 0);
+			entity->addPostUpdateComponent(text);*/
 		}
 	}
 
