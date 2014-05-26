@@ -153,6 +153,9 @@ namespace Supernova
 		//Compute the inverse of the inertia tensor expressed in world coordinates
 		void computeInvWorldInertia();
 
+		//Compute the center of mass expressed in world coordinate.
+		void computeWorldCenterOfMass();
+
 		//Update the colliders based on the current position and orientation
 		void updateCollidersAndAABB();
 

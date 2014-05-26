@@ -46,6 +46,7 @@ namespace Supernova
 	{
 		m_name = "default";
 		m_centerOfMass = snVec4Set(0, 0, 0, 1);
+		m_worldCenterOfMass = snVec4Set(0, 0, 0, 1);
 		m_x = snVec4Set(0, 0, 0, 1);
 		m_q = snVec4Set(0, 0, 0, 1);
 		m_skinDepth = 0.025f;
@@ -199,14 +200,13 @@ namespace Supernova
 	void snActorDynamic::initialize()
 	{
 		//initialize colliders
-		snVec offsetSum = snVec4Set(0, 0, 0, 1);
 		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
 			(*i)->initialize();
-			offsetSum = offsetSum + (*i)->getOrigin();
+			m_centerOfMass = m_centerOfMass + (*i)->getOrigin();
 		}
 
-		m_centerOfMass = offsetSum * (1.f / m_colliders.size());
+		snVec4SetW(m_centerOfMass, 1);
 
 		//compute colliders in world coordinate
 		updateCollidersAndAABB();
@@ -233,6 +233,15 @@ namespace Supernova
 		snMatrix44f WInvJ;
 		snMatrixMultiply3(m_R, m_invInertia, WInvJ);
 		snMatrixMultiply3(WInvJ, RT, m_invWorldInertia);
+	}
+
+	void snActorDynamic::computeWorldCenterOfMass()
+	{
+		//create the transform matrix for the actor
+		snMatrix44f transform = m_R;
+		transform.m_r[3] = m_x;
+
+		m_worldCenterOfMass = snMatrixTransform4(m_centerOfMass, transform);
 	}
 
 	//Update the colliders based on the current position and orientation
@@ -285,6 +294,7 @@ namespace Supernova
 
 		//set new state
 		computeInvWorldInertia();
+		computeWorldCenterOfMass();
 
 		//compute colliders in world coordinate
 		updateCollidersAndAABB();

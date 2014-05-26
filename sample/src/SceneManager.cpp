@@ -1177,20 +1177,20 @@ namespace Devil
 
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
-		scene->setContactConstraintBeta(0.01f);
+		scene->setContactConstraintBeta(0.1f);
 		scene->setSolverIterationCount(30);
 		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
 
-		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -60, 1));
-		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 0, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -80, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 10, 0, 1));
 		WORLD->activateCollisionPoint();
 
-		const int ACTOR_COUNT = 25;
-		const int ROW_COUNT = 10;
+		const int ACTOR_COUNT = 23;
+		const int ROW_COUNT = 5;
 
 		snVec initialPosition = snVec4Set(-20, 20, 0, 1);
-		snVec space = snVec4Set(10, 0, 0, 1);
-		snVec height = snVec4Set(0, 5, 0, 1);
+		snVec space = snVec4Set(10, 0, 0, 0);
+		snVec height = snVec4Set(0, 5, 0, 0);
 
 		float boxSize = 5;
 		for(int i = 0; i < ACTOR_COUNT; ++i)
@@ -1201,6 +1201,7 @@ namespace Devil
 			scene->createActorDynamic(&act, actorId);
 
 			act->setPosition(initialPosition + (i % ROW_COUNT) * space + (i / ROW_COUNT) * height);
+			act->getPhysicMaterial().m_restitution = 0;
 
 			//create 3 colliders
 			snColliderBox* xBox = new snColliderBox();

@@ -43,6 +43,7 @@ using namespace Supernova::Vector;
 #include "Graphics.h"
 #include "Camera.h"
 #include "D3D.h"
+#include "GfxEntitySphere.h"
 using namespace DirectX;
 
 namespace Devil
@@ -65,6 +66,10 @@ namespace Devil
 				break;
 			}
 		}
+
+		//create a sphere for the center of mass
+		m_gfxCenterOfMass = GRAPHICS->createSphere(1.f, DirectX::Colors::Pink);
+
 		
 	}
 
@@ -108,5 +113,10 @@ namespace Devil
 
 			++currentCollider;
 		}
+
+		//render the center of mass
+		XMMATRIX centerOfMassPosition = XMMatrixIdentity();
+		centerOfMassPosition.r[3] = m_actor->getWorldCenterOfMass();
+		m_gfxCenterOfMass->render(centerOfMassPosition, viewMatrix, projectionMatrix);
 	}
 }

@@ -81,6 +81,9 @@ namespace Supernova
 		//Position of the center of mass expressed in local coordinate system.
 		snVec m_centerOfMass;
 
+		//Position of the center of mass expressed in world coordinate system.
+		snVec m_worldCenterOfMass;
+
 		//position of the actor
 		snVec m_x;
 
@@ -143,6 +146,9 @@ namespace Supernova
 
 		//Return the center of mass expressed in local coordinate system.
 		snVec getCenterOfMass() const;
+
+		//Return the center of mass expressed in world coordinate system.
+		snVec getWorldCenterOfMass() const;
 
 		//Return the position of the actor.
 		snVec getPosition() const;

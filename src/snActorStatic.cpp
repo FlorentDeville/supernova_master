@@ -144,5 +144,6 @@ namespace Supernova
 		m_collisionCallback = 0;
 		m_isActive = true;
 		m_centerOfMass = snVec4Set(0, 0, 0, 1);
+		m_worldCenterOfMass = snVec4Set(0, 0, 0, 1);
 	}
 }
