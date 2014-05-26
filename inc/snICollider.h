@@ -59,8 +59,6 @@ namespace Supernova
 	{
 
 	protected:
-		/*Origin of the shape in local coordinates.*/
-		snVec m_origin;
 
 		/*Origin of the shape in world coordinate.*/
 		snVec m_worldOrigin;
@@ -69,14 +67,7 @@ namespace Supernova
 		snEColliderType m_typeOfCollider;
 
 	public:
-		snICollider()
-		{
-			m_origin = Supernova::Vector::snVec4Set(0, 0, 0, 1);
-		}
-
-		snICollider(const snVec& _Origin) : m_origin(_Origin)
-		{
-		}
+		snICollider(){}
 
 		virtual ~snICollider(){}
 
@@ -106,12 +97,7 @@ namespace Supernova
 
 		virtual snVec getWorldVertexOfFace(int /*_faceId*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
 
-		const snVec& getOrigin() const { return m_origin; }
-
 		snEColliderType getTypeOfCollider() const { return m_typeOfCollider; }
-
-		//Set the origin of the collider.
-		void setOrigin(const snVec& _origin){ m_origin = _origin; }
 
 		const snVec& getWorldOrigin() const { return m_worldOrigin; }
 

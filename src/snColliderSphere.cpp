@@ -11,10 +11,6 @@ namespace Supernova
 	{
 	}
 
-	snColliderSphere::snColliderSphere(float _radius, const snVec& _origin) : snICollider(_origin), m_radius(_radius)
-	{
-	}
-
 	float snColliderSphere::getRadius()const
 	{
 		return m_radius;
@@ -28,11 +24,6 @@ namespace Supernova
 	void snColliderSphere::setWorldTransform(const snMatrix44f& _transform)
 	{
 		m_worldOrigin = _transform[3];
-	}
-
-	snVec snColliderSphere::getLocalCenterOfMass() const
-	{
-		return m_origin;
 	}
 
 	void snColliderSphere::computeProjection(const snVec& /*_direction*/, float& /*_min*/, float& /*_max*/) const

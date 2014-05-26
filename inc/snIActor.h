@@ -54,6 +54,7 @@ namespace Supernova
 
 	//Forward declarations
 	class snICollider;
+	struct snColliderContainer;
 
 	enum snActorType : unsigned char
 	{
@@ -76,7 +77,7 @@ namespace Supernova
 		bool m_isActive;
 
 		//list of collider defining collision geometry
-		vector<snICollider*> m_colliders;
+		vector<snColliderContainer*> m_colliders;
 
 		//Position of the center of mass expressed in local coordinate system.
 		snVec m_centerOfMass;
@@ -124,6 +125,8 @@ namespace Supernova
 		//Add a collider to the actor
 		void addCollider(snICollider* _collider);
 
+		void addCollider(snICollider* _collider, const snMatrix44f& _localTransform);
+
 #pragma region Getter
 
 		//Get the name of the actor
@@ -133,7 +136,7 @@ namespace Supernova
 		bool getIsActive() const;
 
 		//return the list of colliders
-		vector<snICollider*>& getColliders();
+		vector<snColliderContainer*>& getColliders();
 
 		//Return the mass. It returns 0 in case of a static or kinematic body
 		virtual float getMass() const = 0;

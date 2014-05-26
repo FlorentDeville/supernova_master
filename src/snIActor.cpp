@@ -34,7 +34,7 @@
 
 #include "snIActor.h"
 #include "snICollider.h"
-
+#include "snColliderContainer.h"
 #include <assert.h>
 
 using namespace Supernova::Vector;
@@ -44,7 +44,7 @@ namespace Supernova
 
 	snIActor:: ~snIActor()
 	{
-		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 			delete *i;
 
 		m_colliders.clear();
@@ -53,7 +53,16 @@ namespace Supernova
 	//Add a collider to the actor
 	void snIActor::addCollider(snICollider* _collider)
 	{
-		m_colliders.push_back(_collider);
+		snMatrix44f identity;
+		identity.identity();
+
+		addCollider(_collider, identity);
+	}
+
+	void snIActor::addCollider(snICollider* _collider, const snMatrix44f& _localTransform)
+	{
+		snColliderContainer* newContainer = new snColliderContainer(_collider, _localTransform);
+		m_colliders.push_back(newContainer);
 	}
 
 	//Get the name of the actor
@@ -68,7 +77,7 @@ namespace Supernova
 	}
 
 	//return the list of colliders
-	vector<snICollider*>& snIActor::getColliders()
+	vector<snColliderContainer*>& snIActor::getColliders()
 	{
 		return m_colliders;
 	}
@@ -216,15 +225,15 @@ namespace Supernova
 	//Compute the bounding volume based on the colliders
 	void snIActor::computeBoundingVolume()
 	{
-		vector<snICollider*>::const_iterator collider = m_colliders.cbegin();
-		(*collider)->computeAABB(&m_boundingVolume);
+		vector<snColliderContainer*>::const_iterator collider = m_colliders.cbegin();
+		(*collider)->m_collider->computeAABB(&m_boundingVolume);
 		++collider;
 
 		//loop through all the colliders and make the AABB for the entire actor
 		for(;collider != m_colliders.cend(); ++collider)
 		{
 			snAABB aabb;
-			(*collider)->computeAABB(&aabb);
+			(*collider)->m_collider->computeAABB(&aabb);
 			mergeAABB(m_boundingVolume, aabb, m_boundingVolume);
 		}
 	}

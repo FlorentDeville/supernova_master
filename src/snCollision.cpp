@@ -38,7 +38,7 @@
 #include "snColliderPlan.h"
 
 #include "snCollisionResult.h"
-
+#include "snColliderContainer.h"
 #include "snICollider.h"
 #include "snIActor.h"
 #include "snMath.h"
@@ -63,18 +63,19 @@ namespace Supernova
 
 	void snCollision::queryTestCollision(snIActor* _a1, snIActor* _a2, vector<snCollisionResult*>& _results) const
 	{
-		std::vector<snICollider*>& listColliders1 = _a1->getColliders();
-		std::vector<snICollider*>& listColliders2 = _a2->getColliders();
+		std::vector<snColliderContainer*>& listColliders1 = _a1->getColliders();
+		std::vector<snColliderContainer*>& listColliders2 = _a2->getColliders();
 
 		snCollisionResult globalResult;
 		globalResult.m_collision = false;
 
-		for(vector<snICollider*>::const_iterator c1 = listColliders1.cbegin(); c1 != listColliders1.cend(); ++c1)
+		for (vector<snColliderContainer*>::const_iterator c1 = listColliders1.cbegin(); c1 != listColliders1.cend(); ++c1)
 		{
-			for(vector<snICollider*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
+			for (vector<snColliderContainer*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
 			{
 				//pouahhhh it's ugly!!!! let's check first the AABBs
-				snCollisionResult localResult = invokeQueryTestCollision(c1[0], _a1->getPosition(), _a1->getInverseOrientationMatrix(), c2[0], _a2->getPosition(), _a2->getInverseOrientationMatrix());
+				snCollisionResult localResult = invokeQueryTestCollision((*c1)->m_collider, _a1->getPosition(), 
+					_a1->getInverseOrientationMatrix(), (*c2)->m_collider, _a2->getPosition(), _a2->getInverseOrientationMatrix());
 				if(localResult.m_collision)
 				{
 					snCollisionResult* dynamicRes = new snCollisionResult();

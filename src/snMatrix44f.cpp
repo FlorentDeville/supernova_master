@@ -505,4 +505,17 @@ namespace Supernova
 		_res[2] = snMatrixTransform4(_m1[2], _m2);
 		_res[3] = snVec4Set(0, 0, 0, 1);
 	}
+
+	snVec snMatrixGetTranslation(const snMatrix44f& _transform)
+	{
+		return _transform.m_r[3];
+	}
+
+	void snMatrixCreateTransform(const snMatrix44f& _rotation, const snVec& _translation, snMatrix44f& _transform)
+	{
+		_transform.m_r[0] = _rotation.m_r[0];
+		_transform.m_r[1] = _rotation.m_r[1];
+		_transform.m_r[2] = _rotation.m_r[2];
+		_transform.m_r[3] = _translation;
+	}
 }

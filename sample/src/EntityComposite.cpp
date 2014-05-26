@@ -36,6 +36,7 @@
 
 #include "snIActor.h"
 #include "snICollider.h"
+#include "snColliderContainer.h"
 #include "snColliderBox.h"
 #include "snVec.h"
 using namespace Supernova::Vector;
@@ -51,14 +52,14 @@ namespace Devil
 	EntityComposite::EntityComposite(snIActor* _actor, const XMFLOAT4& _color)
 	{
 		m_actor = _actor;
-		vector<snICollider*> colliders = m_actor->getColliders();
+		vector<snColliderContainer*> colliders = m_actor->getColliders();
 
-		for (vector<snICollider*>::const_iterator i = colliders.cbegin(); i != colliders.cend(); ++i)
+		for (vector<snColliderContainer*>::const_iterator i = colliders.cbegin(); i != colliders.cend(); ++i)
 		{
-			switch ((*i)->getTypeOfCollider())
+			switch ((*i)->m_collider->getTypeOfCollider())
 			{
 			case snEColliderType::snEColliderBox:
-				snColliderBox* box = static_cast<snColliderBox*>(*i);
+				snColliderBox* box = static_cast<snColliderBox*>((*i)->m_collider);
 				snVec size = box->getSize();
 				GfxEntityBox* gfxBox = GRAPHICS->createBox(XMFLOAT3(snVec4GetX(size), snVec4GetY(size), snVec4GetZ(size)), _color);
 				m_gfx.push_back((IGfxEntity*)gfxBox);
@@ -91,25 +92,23 @@ namespace Devil
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
 		//compute position and orientation of the actor
-		vector<snICollider*> colliders = m_actor->getColliders();
-		vector<snICollider*>::const_iterator currentCollider = colliders.cbegin();
+		vector<snColliderContainer*> colliders = m_actor->getColliders();
+		vector<snColliderContainer*>::const_iterator currentCollider = colliders.cbegin();
 
-		XMMATRIX translation = XMMatrixTranslationFromVector(m_actor->getPosition());
-		XMMATRIX orientation;
-		orientation.r[0] = m_actor->getOrientationMatrix().m_r[0];
-		orientation.r[1] = m_actor->getOrientationMatrix().m_r[1];
-		orientation.r[2] = m_actor->getOrientationMatrix().m_r[2];
-		orientation.r[3] = m_actor->getOrientationMatrix().m_r[3];
-
-		XMMATRIX transform = orientation * translation;
+		snMatrix44f globalTransform;
+		snMatrixCreateTransform(m_actor->getOrientationMatrix(), m_actor->getPosition(), globalTransform);
 
 		//loop through each collider to display them using their offsets.
 		for (vector<IGfxEntity*>::const_iterator i = m_gfx.cbegin(); i != m_gfx.cend(); ++i)
 		{
-			XMMATRIX offset = XMMatrixTranslationFromVector((*currentCollider)->getOrigin());
-			transform = offset * orientation * translation;
-
-			(*i)->render(transform, viewMatrix, projectionMatrix);
+			snMatrix44f worldTransform;
+			snMatrixMultiply4((*currentCollider)->m_localTransform, globalTransform, worldTransform);
+			XMMATRIX dxWorldMatrix;
+			dxWorldMatrix.r[0] = worldTransform.m_r[0];
+			dxWorldMatrix.r[1] = worldTransform.m_r[1];
+			dxWorldMatrix.r[2] = worldTransform.m_r[2];
+			dxWorldMatrix.r[3] = worldTransform.m_r[3];
+			(*i)->render(dxWorldMatrix, viewMatrix, projectionMatrix);
 
 			++currentCollider;
 		}

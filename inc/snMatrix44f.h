@@ -158,6 +158,12 @@ namespace Supernova
 
 	//Multiply two matrices _m1 and _m2 and set the result in _res. The matrices are considered to be 3x3 so the last row and column are ignored.
 	void snMatrixMultiply3(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res);
+
+	//Return the tranlsation part of the matrix.
+	snVec snMatrixGetTranslation(const snMatrix44f& _transform);
+
+	//Create a transform matric from a rotation matric and a translation vector.
+	void snMatrixCreateTransform(const snMatrix44f& _rotation, const snVec& _translation, snMatrix44f& _transform);
 }
 
 #endif // ifndef SN_MATRIX44F_H

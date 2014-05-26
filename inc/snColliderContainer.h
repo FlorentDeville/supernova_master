@@ -32,100 +32,30 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SCENE_MANAGER_H
-#define SCENE_MANAGER_H
+#ifndef SN_COLLIDER_CONTAINER_H
+#define SN_COLLIDER_CONTAINER_H
 
-#include <malloc.h>
-
-#include "snCollisionMode.h"
+#include "snMatrix44f.h"
 
 namespace Supernova
 {
-	class snScene;
-}
+	class snICollider;
 
-#include "snVec.inl"
-using Supernova::snVec;
-using Supernova::snScene;
-using Supernova::snCollisionMode;
-
-#include <DirectXMath.h>
-using DirectX::XMFLOAT4;
-
-#include <string>
-using std::wstring;
-
-namespace Devil
-{
-	class IComponent;
-	class EntityComposite;
-
-	class SceneManager
+	//Structure containing a collider and its transform matrix.
+	struct SN_ALIGN snColliderContainer
 	{
-	private:
-		static SceneManager* m_instance;
+		snICollider* m_collider;
 
-		//The collision mode to use when creating a scene.
-		snCollisionMode m_collisionMode;
+		//Transform matrix to express the position and orientation of the colider in the actor's coordinate system.
+		snMatrix44f m_localTransform;
 
-		//Array of colors
-		XMFLOAT4 m_colors[5];
+		snColliderContainer(snICollider* _collider, const snMatrix44f& _localTransform);
 
-		IComponent* m_dominoHammerBlockerPath;
+		~snColliderContainer();
 
-	public:
-		static SceneManager* getInstance();
+		void* operator new(size_t _count);
 
-		bool initialize();
-		void shutdown();
-
-		void update();
-
-		//Scene with simple boxes interactions.
-		void createBasicTest();
-
-		//Box Stacking
-		void createStacking();
-
-		//Constraints (rope)
-		void createConstraints();
-
-		//Stack
-		void createTower();
-
-		void createSceneFriction();
-
-		void createSceneDamping();
-
-		//Show difference between static, dynamic and kinematic
-		void createSceneActorsType();
-
-		void createSceneDomino();
-
-		void createSceneComposite();
-
-		void setCollisionMode(snCollisionMode _collisionMode);
-		
-		void createGround(snScene* const _scene, float _restitution, float _friction);
-
-		void activateDominoSceneHammerBlocker();
-
-	private:
-		SceneManager();
-		virtual ~SceneManager();
-
-		void clearScene() const;
-
-		snVec createTowerLevel(snScene* const _scene, const snVec& _origin) const;
-
-		//Create the bisic actor of the world.
-		void createSandbox(const std::wstring& _sceneName);
-
-		EntityComposite* createWheel(const snVec& _position, const snVec& _orientation, const XMFLOAT4& _color, float _length);
+		void operator delete(void* _p);
 	};
-
-#define SCENEMGR SceneManager::getInstance()
-
 }
-
-#endif //ifndef SCENE_MANAGER_H
+#endif //ifndef SN_COLLIDER_CONTAINER_H

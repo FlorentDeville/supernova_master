@@ -80,15 +80,15 @@ namespace Supernova
 		float halfY = snVec4GetY(m_size) * 0.5f;
 		float halfZ = snVec4GetZ(m_size) * 0.5f;
 
-		m_box[0] = m_origin + snVec4Set(halfX, halfY, -halfZ, 0);
-		m_box[1] = m_origin + snVec4Set(halfX, -halfY, -halfZ, 0);
-		m_box[2] = m_origin + snVec4Set(-halfX, -halfY, -halfZ, 0);
-		m_box[3] = m_origin + snVec4Set(-halfX, halfY, -halfZ, 0);
+		m_box[0] = snVec4Set(halfX, halfY, -halfZ, 1);
+		m_box[1] = snVec4Set(halfX, -halfY, -halfZ, 1);
+		m_box[2] = snVec4Set(-halfX, -halfY, -halfZ, 1);
+		m_box[3] = snVec4Set(-halfX, halfY, -halfZ, 1);
 
-		m_box[4] = m_origin + snVec4Set(halfX, halfY, halfZ, 0);
-		m_box[5] = m_origin + snVec4Set(halfX, -halfY, halfZ, 0);
-		m_box[6] = m_origin + snVec4Set(-halfX, -halfY, halfZ, 0);
-		m_box[7] = m_origin + snVec4Set(-halfX, halfY, halfZ, 0);
+		m_box[4] = snVec4Set(halfX, halfY, halfZ, 1);
+		m_box[5] = snVec4Set(halfX, -halfY, halfZ, 1);
+		m_box[6] = snVec4Set(-halfX, -halfY, halfZ, 1);
+		m_box[7] = snVec4Set(-halfX, halfY, halfZ, 1);
 
 		//front
 		m_idFaces[0] = 3; // { 0, 1, 2, 3,    4, 5, 6, 7,    0, 4, 5, 1,   7, 3, 2, 6,   7, 4, 0, 3,   2, 6, 5, 1 };
@@ -170,7 +170,7 @@ namespace Supernova
 			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform);
 
 		//world origin is the last row.
-		m_worldOrigin = _transform[4] + m_origin;
+		m_worldOrigin = snMatrixGetTranslation(_transform);
 
 		//world normals are just the rows of the transform matrix
 		m_worldNormals[0] = _transform[0];

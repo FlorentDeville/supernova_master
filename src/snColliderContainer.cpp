@@ -32,119 +32,31 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snActorStatic.h"
-#include "snICollider.h"
 #include "snColliderContainer.h"
-
-using namespace Supernova::Vector;
+#include "snICollider.h"
 
 namespace Supernova
 {
 
-	snActorStatic::snActorStatic()
+	snColliderContainer::snColliderContainer(snICollider* _collider, const snMatrix44f& _localTransform) : 
+		m_collider(_collider), m_localTransform(_localTransform){}
+
+	snColliderContainer::~snColliderContainer()
 	{
-		init(snVec4Set(0, 0, 0, 1), snVec4Set(0, 0, 0, 1));
-	}
-
-	snActorStatic::snActorStatic(const snVec& _position)
-	{
-		init(_position, snVec4Set(0, 0, 0, 1));
-	}
-
-	snActorStatic::snActorStatic(const snVec& _position, const snVec& _orientation)
-	{
-		init(_position, _orientation);
-	}
-
-	snActorStatic::~snActorStatic()
-	{
-
-	}
-
-	float snActorStatic::getMass() const
-	{
-		return 0;
-	}
-
-	//Return the inverse of the mass
-	float snActorStatic::getInvMass() const
-	{
-		return 0;
-	}
-
-	//Return the inverse of the inertia expressed in world coordinate
-	const snMatrix44f& snActorStatic::getInvWorldInertia() const
-	{
-		return snMatrix44f::m_zero;
-	}
-
-	//Return the linear velocity
-	snVec snActorStatic::getLinearVelocity() const
-	{
-		return VEC_ZERO;
-	}
-
-	//Return the angular velocity
-	snVec snActorStatic::getAngularVelocity() const
-	{
-		return VEC_ZERO;
-	}
-
-	//Set the linear velocity
-	void snActorStatic::setLinearVelocity(const snVec& /*_linearVelocity*/)
-	{
-		return;
-	}
-
-	//Set the angular velocity
-	void snActorStatic::setAngularVelocity(const snVec& /*_angularVelocity*/)
-	{
-		return;
-	}
-
-	//Move the actor forward in time using _dt as a time step.
-	//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
-	//A static actor cannot move so this function doesn't do anyhthing.
-	void snActorStatic::integrate(float /*_dt*/, float /*_linearSpeed2Limit*/, float /*_angularSpeed2Limit*/)
-	{
-		return;
-	}
-
-	void snActorStatic::initialize()
-	{
-		//create the transform matrix
-		snMatrix44f translation;
-		translation.createTranslation(m_x);
-		snMatrix44f transform;
-		snMatrixMultiply4(m_R, translation, transform);
-
-		//loop through each colliders to initialize them
-		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		if (m_collider != 0)
 		{
-			(*i)->m_collider->initialize();
-			(*i)->m_collider->setWorldTransform(transform);				
+			delete m_collider;
+			m_collider = 0;
 		}
-
-		//compute the AABB
-		computeBoundingVolume();
 	}
 
-	void snActorStatic::init(const snVec& _position, const snVec& _orientation)
+	void* snColliderContainer::operator new(size_t _count)
 	{
-		m_name = "default";
+		return _aligned_malloc(_count, SN_ALIGN_SIZE);
+	}
 
-		m_x = _position;
-
-		m_q = _orientation;
-		m_R.createRotationFromQuaternion(m_q);
-		m_invR = m_R.inverse();
-
-		m_skinDepth = 0.025f;
-		m_typeOfActor = snActorType::snActorTypeStatic;
-		m_collisionFlag = snCollisionFlag::CF_NO_FLAG;
-		m_collisionCallback = 0;
-		m_isActive = true;
-		m_centerOfMass = snVec4Set(0, 0, 0, 1);
-		m_worldCenterOfMass = snVec4Set(0, 0, 0, 1);
+	void snColliderContainer::operator delete(void* _p)
+	{
+		_aligned_free(_p);
 	}
 }

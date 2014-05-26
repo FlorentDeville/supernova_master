@@ -16,6 +16,7 @@
     <ClInclude Include="inc\snActorPair.h" />
     <ClInclude Include="inc\snActorPairManager.h" />
     <ClInclude Include="inc\snActorStatic.h" />
+    <ClInclude Include="inc\snColliderContainer.h" />
     <ClInclude Include="inc\snCollisionDispatcher.h" />
     <ClInclude Include="inc\snCollisionFlag.h" />
     <ClInclude Include="inc\snDebugger.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
+    <ClCompile Include="src\snColliderContainer.cpp" />
     <ClCompile Include="src\snCollisionDispatcher.cpp" />
     <ClCompile Include="src\snContactConstraintManager.cpp" />
     <ClCompile Include="src\snDebugger.cpp" />

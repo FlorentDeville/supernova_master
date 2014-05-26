@@ -35,6 +35,7 @@
 #include "snActorDynamic.h"
 #include "snICollider.h"
 #include "snQuaternion.h"
+#include "snColliderContainer.h"
 
 #include <assert.h>
 
@@ -180,10 +181,10 @@ namespace Supernova
 
 		//compute inertia of the collider
 		snMatrix44f globalIntertia;
-		for (vector<snICollider*>::const_iterator i = m_colliders.cbegin(); i != m_colliders.cend(); ++i)
+		for (vector<snColliderContainer*>::const_iterator i = m_colliders.cbegin(); i != m_colliders.cend(); ++i)
 		{
 			snMatrix44f inertia;
-			(*i)->computeLocalInertiaTensor(m_mass, inertia);
+			(*i)->m_collider->computeLocalInertiaTensor(m_mass, inertia);
 
 			//add the inertia of the collider to the global collider
 			globalIntertia = globalIntertia + inertia;
@@ -200,10 +201,10 @@ namespace Supernova
 	void snActorDynamic::initialize()
 	{
 		//initialize colliders
-		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
-			(*i)->initialize();
-			m_centerOfMass = m_centerOfMass + (*i)->getOrigin();
+			(*i)->m_collider->initialize();
+			m_centerOfMass = m_centerOfMass + snMatrixGetTranslation((*i)->m_localTransform);
 		}
 
 		snVec4SetW(m_centerOfMass, 1);
@@ -249,14 +250,15 @@ namespace Supernova
 	//Update the colliders based on the current position and orientation
 	void snActorDynamic::updateCollidersAndAABB()
 	{
-		snMatrix44f translation;
-		translation.createTranslation(m_x);
+		snMatrix44f globalTransform;
+		snMatrixCreateTransform(m_R, m_x, globalTransform);
 
-		snMatrix44f transform;
-		snMatrixMultiply4(m_R, translation, transform);
-
-		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
-			(*i)->setWorldTransform(transform);
+		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		{
+			snMatrix44f worldTransform;
+			snMatrixMultiply4((*i)->m_localTransform, globalTransform, worldTransform);
+			(*i)->m_collider->setWorldTransform(worldTransform);
+		}
 
 		computeBoundingVolume();
 	}
