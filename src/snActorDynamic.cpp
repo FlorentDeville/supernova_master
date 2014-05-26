@@ -208,6 +208,8 @@ namespace Supernova
 
 		snVec4SetW(m_centerOfMass, 1);
 
+		computeWorldCenterOfMass();
+
 		//compute colliders in world coordinate
 		updateCollidersAndAABB();
 	}
