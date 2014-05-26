@@ -478,8 +478,14 @@ namespace Supernova
 		//check if a collision response is needed
 		if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE) ||
 			_b->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE))
+		{
+			for (vector<snCollisionResult*>::iterator i = res.begin(); i != res.end(); ++i)
+			{
+				delete *i;
+			}
 			return;
-
+		}
+		
 		//make the collision constraints from the collision results
 		for(vector<snCollisionResult*>::const_iterator singleRes = res.cbegin(); singleRes != res.cend(); ++singleRes)
 		{
