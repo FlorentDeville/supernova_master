@@ -68,6 +68,7 @@ namespace Supernova
 	class snIConstraint;
 	class snPointToPointConstraint;
 	class snFixedConstraint;
+	class snHingeConstraint;
 
 	//The physic scene to simulate. HUGE WIP.
 	class SN_ALIGN snScene
@@ -154,6 +155,8 @@ namespace Supernova
 		snPointToPointConstraint* createPointToPointConstraint(snIActor* const _body1, const snVec& _offset1, snIActor* const _body2, const snVec& _offset2);
 
 		snFixedConstraint* createFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance);
+
+		snHingeConstraint* createHingeConstraint(snIActor* _actor, const snVec& _axis, const snVec& _anchor);
 
 		//Delete all actors from the physics scene.
 		void clearScene();

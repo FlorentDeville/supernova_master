@@ -48,6 +48,7 @@
 #include "snPointToPointConstraint.h"
 #include "snContactConstraint.h"
 #include "snFrictionConstraint.h"
+#include "snHingeConstraint.h"
 
 #include "snTimer.h"
 
@@ -172,6 +173,13 @@ namespace Supernova
 	snFixedConstraint* snScene::createFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance)
 	{
 		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, _distance);
+		m_constraints.push_back(constraint);
+		return constraint;
+	}
+
+	snHingeConstraint* snScene::createHingeConstraint(snIActor* _actor, const snVec& _axis, const snVec& _anchor)
+	{
+		snHingeConstraint* constraint = new snHingeConstraint(_actor, _axis, _anchor);
 		m_constraints.push_back(constraint);
 		return constraint;
 	}

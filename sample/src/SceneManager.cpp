@@ -1188,17 +1188,26 @@ namespace Devil
 		const int ACTOR_COUNT = 25;
 		const int ROW_COUNT = 5;
 
-		float length = 5;
+		float length = 7;
 		snVec initialPosition = snVec4Set(0, length, 0, 1);
 		snVec space = snVec4Set(length, 0, 0, 0);
 		snVec height = snVec4Set(0, length, 0, 0);
 
-		for(int i = 0; i < ACTOR_COUNT; ++i)
+		/*for(int i = 0; i < ACTOR_COUNT; ++i)
 		{
 			snVec position = initialPosition + (float)(i % ROW_COUNT) * space + (float)(i / ROW_COUNT) * height;
 			snVec orientation = snQuaternionFromEuler(0, 0, SN_PI * 0.25f * i);
 			createWheel(position, orientation, m_colors[i % 5], length);
-		}
+		}*/
+
+		snVec position = snVec4Set(0, 10, 0, 1);
+		snVec orientation = snVec4Set(0, 0, 0, 1);
+		EntityComposite* entity = createWheel(position, orientation, m_colors[1], length);	
+		scene->createHingeConstraint(entity->getActor(), snVec4Set(0, 0, 1, 0), position);
+
+		position = snVec4Set(length * 0.9f, 11, 0, 1);
+		entity = createWheel(position, orientation, m_colors[2], length);
+		scene->createHingeConstraint(entity->getActor(), snVec4Set(0, 0, 1, 0), position);
 	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)
@@ -1529,6 +1538,7 @@ namespace Devil
 		act->setPosition(_position);
 		act->setOrientation(_orientation);
 		act->getPhysicMaterial().m_restitution = 0;
+		act->setAngularDampingCoeff(0.5f);
 
 		snMatrix44f localTranslation;
 		localTranslation.createTranslation(snVec4Set(0, 0, 0, 1));

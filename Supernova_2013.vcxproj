@@ -28,6 +28,7 @@
     <ClInclude Include="inc\snCollisionMode.h" />
     <ClInclude Include="inc\snCollisionResult.h" />
     <ClInclude Include="inc\snContactConstraintManager.h" />
+    <ClInclude Include="inc\snHingeConstraint.h" />
     <ClInclude Include="inc\snIActor.h" />
     <ClInclude Include="inc\snPointToPointConstraint.h" />
     <ClInclude Include="inc\snFactory.h" />
@@ -63,6 +64,7 @@
     <ClCompile Include="src\snCollisionDispatcher.cpp" />
     <ClCompile Include="src\snContactConstraintManager.cpp" />
     <ClCompile Include="src\snDebugger.cpp" />
+    <ClCompile Include="src\snHingeConstraint.cpp" />
     <ClCompile Include="src\snIActor.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snFactory.cpp" />
