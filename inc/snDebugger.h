@@ -41,6 +41,8 @@ using std::map;
 #include <string>
 using std::wstring;
 
+#include "snVec.inl"
+
 namespace Supernova
 {
 	//Singleton storing debugging information accessible from the outside of the engine.
@@ -65,6 +67,9 @@ namespace Supernova
 
 		//Set a value in the watch.
 		void setWatchExpression(wstring _name, wstring _value);
+
+		//Set a snVec object into the watcher.
+		void setWatchExpression(wstring _name, const snVec& _value);
 
 		//Returns the map containing all the watched values.
 		const map<wstring, wstring>& getWatch() const;

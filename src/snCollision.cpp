@@ -105,7 +105,9 @@ namespace Supernova
 			key = SN_COLLISION_KEY(_c2->getTypeOfCollider(), _c1->getTypeOfCollider());
 			i = m_collisionQueryMap.find(key);
 			snQueryTestCollisionFunction func = i->second;
-			return func(_c1, _p1, _invR1, _c2, _p2, _invR2);
+			snCollisionResult res = func(_c2, _p2, _invR2, _c1, _p1, _invR1);
+			res.m_normal = -res.m_normal;
+			return res;
 		}
 			
 	}
@@ -486,19 +488,21 @@ namespace Supernova
 		snVec closestPoint = _box->getClosestPoint(_sphere->getWorldOrigin());
 
 		//Get the distance (squared) between the closest point and the sphere center.
-		float squaredDistanceClosestPoint = snVec3SquaredNorme(_sphere->getWorldOrigin() - closestPoint);
+		snVec closestPointToSphere = closestPoint - _sphere->getWorldOrigin();
+		float squaredDistanceClosestPoint = snVec3SquaredNorme(closestPointToSphere);
 		float squaredRadius = _sphere->getRadius() * _sphere->getRadius();
 
 		//If the closest point distance is bigger than the radius then no collision (all distances are squared).
-		if (squaredDistanceClosestPoint > squaredRadius)
+		if (squaredDistanceClosestPoint >= squaredRadius)
 			return res;
 
 		res.m_collision = true;
-		res.m_normal = (_sphere->getWorldOrigin() - closestPoint);
+		res.m_normal = closestPointToSphere;
 		snVec3Normalize(res.m_normal);
 		snVec4SetW(res.m_normal, 0);
-		res.m_penetrations.push_back(-sqrtf(squaredDistanceClosestPoint) + sqrtf(squaredRadius));
-		res.m_contacts.push_back(_sphere->getWorldOrigin() - res.m_normal * _sphere->getRadius());
+		snVec contactPoint = _sphere->getWorldOrigin() + res.m_normal * _sphere->getRadius();
+		res.m_contacts.push_back(contactPoint);
+		res.m_penetrations.push_back(snVec3Norme(contactPoint - closestPoint));
 		return res;
 	}
 

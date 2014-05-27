@@ -231,7 +231,7 @@ namespace Supernova
 
 	snVec snColliderBox::getClosestPoint(const snVec& _v) const
 	{
-		snVec ret;
+		snVec ret = snVec4Set(0, 0, 0, 0);
 
 		//Vector from the center of the box to the point
 		snVec dir = _v - m_worldOrigin;

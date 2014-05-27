@@ -33,6 +33,7 @@
 /****************************************************************************/
 
 #include "snDebugger.h"
+using namespace Supernova::Vector;
 
 namespace Supernova
 {
@@ -59,6 +60,18 @@ namespace Supernova
 	void snDebugger::setWatchExpression(wstring _name, wstring _value)
 	{
 		m_watch[_name] = _value;
+	}
+
+	void snDebugger::setWatchExpression(wstring _name, const snVec& _value)
+	{
+		wstring x = std::to_wstring(snVec4GetX(_value));
+		wstring y = std::to_wstring(snVec4GetY(_value));
+		wstring z = std::to_wstring(snVec4GetZ(_value));
+		wstring w = std::to_wstring(snVec4GetW(_value));
+
+		wstring stringValue = L"(" + x + L"," + y + L"," + z + L"," + w + L")";
+
+		setWatchExpression(_name, stringValue);
 	}
 
 	//Returns the map containing all the watched values.
