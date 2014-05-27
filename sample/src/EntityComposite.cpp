@@ -38,6 +38,7 @@
 #include "snICollider.h"
 #include "snColliderContainer.h"
 #include "snColliderBox.h"
+#include "snColliderSphere.h"
 #include "snVec.h"
 using namespace Supernova::Vector;
 
@@ -58,13 +59,20 @@ namespace Devil
 		{
 			switch ((*i)->m_collider->getTypeOfCollider())
 			{
-			case snEColliderType::snEColliderBox:
-				snColliderBox* box = static_cast<snColliderBox*>((*i)->m_collider);
-				snVec size = box->getSize();
-				GfxEntityBox* gfxBox = GRAPHICS->createBox(XMFLOAT3(snVec4GetX(size), snVec4GetY(size), snVec4GetZ(size)), _color);
-				m_gfx.push_back((IGfxEntity*)gfxBox);
-
+				case snEColliderType::snEColliderBox:
+				{
+					snColliderBox* box = static_cast<snColliderBox*>((*i)->m_collider);
+					snVec size = box->getSize();
+					GfxEntityBox* gfxBox = GRAPHICS->createBox(XMFLOAT3(snVec4GetX(size), snVec4GetY(size), snVec4GetZ(size)), _color);
+					m_gfx.push_back((IGfxEntity*)gfxBox);
+				}
 				break;
+
+				case snEColliderType::snEColliderSphere:
+					snColliderSphere* sphere = static_cast<snColliderSphere*>((*i)->m_collider);
+					GfxEntitySphere* gfxSphere = GRAPHICS->createSphere(sphere->getRadius() * 2, XMVectorSet(_color.x, _color.y, _color.z, _color.w));
+					m_gfx.push_back((IGfxEntity*)gfxSphere);
+					break;
 			}
 		}
 

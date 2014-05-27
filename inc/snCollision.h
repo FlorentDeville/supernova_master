@@ -110,7 +110,7 @@ namespace Supernova
 		static snCollisionResult queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snVec& _p1, const snMatrix44f& _invR1,
 			const snICollider* const _c2, const snVec& _p2, const snMatrix44f& _invR2);
 
-		static bool computeOverlap(const snICollider& _c1, const snICollider& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap);
+		static bool computeBoxesOverlap(const snColliderBox& _c1, const snColliderBox& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap);
 	};
 }
 

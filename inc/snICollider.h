@@ -83,9 +83,6 @@ namespace Supernova
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
 		virtual snVec getFarthestPointInDirection(const snVec& /*_direction*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
 
-		//Project the collider along an axis and return the min and max value. The direction has to be expressed in world coordinate.
-		virtual void computeProjection(const snVec& _direction, float& _min, float& _max) const = 0;
-
 		//Get the closest polygon projected onto the normal.
 		virtual void getClosestPolygonProjected(const snVec& /*_n*/, snVec* const /*_polygon*/, int& /*_count*/) const{};
 
@@ -102,7 +99,7 @@ namespace Supernova
 		const snVec& getWorldOrigin() const { return m_worldOrigin; }
 
 		//Compute the bounding volume for this collider
-		virtual void computeAABB(snAABB * const /*_boundingVolume*/) const {};
+		virtual void computeAABB(snAABB * const /*_boundingVolume*/) const = 0;
 
 		void* operator new(size_t _count)
 		{

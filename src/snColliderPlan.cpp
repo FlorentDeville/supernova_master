@@ -124,7 +124,4 @@ namespace Supernova
 				m_aabb[1].VEC4FZ = m_corners[i].VEC4FZ;
 		}*/
 	}
-
-	void snColliderPlan::computeProjection(const snVec& /*_direction*/, float& /*_min*/, float& /*_max*/) const
-	{}
 }

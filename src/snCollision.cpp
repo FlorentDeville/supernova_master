@@ -132,9 +132,9 @@ namespace Supernova
 		for (int i = 0; i < NORMAL_COUNT; ++i)
 		{
 			bool overlapRes = true;		
-			overlapRes = computeOverlap(*_b1, *_b2, s1Normals[i], smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeBoxesOverlap(*_b1, *_b2, s1Normals[i], smallestOverlapNormal, smallestOverlap);
 			if (!overlapRes) return res;		
-			overlapRes = computeOverlap(*_b1, *_b2, s2Normals[i], smallestOverlapNormal, smallestOverlap);
+			overlapRes = computeBoxesOverlap(*_b1, *_b2, s2Normals[i], smallestOverlapNormal, smallestOverlap);
 			if (!overlapRes) return res;		
 		}	
 
@@ -145,7 +145,7 @@ namespace Supernova
 			{
 				snVec cross = snVec3Cross(s1Normals[i], s2Normals[j]);
 				if (snVec3SquaredNorme(cross) != 1.f) continue;
-				bool overlapRes = computeOverlap(*_b1, *_b2, cross, smallestOverlapNormal, smallestOverlap);
+				bool overlapRes = computeBoxesOverlap(*_b1, *_b2, cross, smallestOverlapNormal, smallestOverlap);
 				if (!overlapRes) return res;
 			}
 		}
@@ -560,7 +560,7 @@ namespace Supernova
 		}
 	}
 
-	bool snCollision::computeOverlap(const snICollider& _c1, const snICollider& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap)
+	bool snCollision::computeBoxesOverlap(const snColliderBox& _c1, const snColliderBox& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap)
 	{
 		float minS1, minS2, maxS1, maxS2;
 
