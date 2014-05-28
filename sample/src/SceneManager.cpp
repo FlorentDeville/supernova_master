@@ -46,6 +46,7 @@
 #include "snActorDynamic.h"
 #include "snActorStatic.h"
 #include "snColliderBox.h"
+#include "snColliderSphere.h"
 #include "snQuaternion.h"
 #include "snDebugger.h"
 
@@ -143,7 +144,13 @@ namespace Devil
 		{
 			clearScene();
 			createSceneComposite();
-			INPUT->keyUp(119);
+			INPUT->keyUp(120);
+		}
+		else if (INPUT->isKeyDown(121))//F10
+		{
+			clearScene();
+			createSceneMonkeyBall();
+			INPUT->keyUp(121);
 		}
 	}
 
@@ -1173,7 +1180,7 @@ namespace Devil
 
 	void SceneManager::createSceneComposite()
 	{
-		createSandbox(L"Composite");
+		createSandbox(L"Gears");
 
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
@@ -1181,33 +1188,176 @@ namespace Devil
 		scene->setSolverIterationCount(30);
 		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
 
-		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -80, 1));
-		WORLD->getCamera()->setLookAt(snVec4Set(0, 10, 0, 1));
-		WORLD->deactivateCollisionPoint();
+		WORLD->getCamera()->setPosition(snVec4Set(10, 30, -120, 1));
+		//WORLD->getCamera()->setPosition(snVec4Set(0, 10, -580, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(10, 30, 0, 1));
+		WORLD->activateCollisionPoint();
 
-		const int ACTOR_COUNT = 25;
-		const int ROW_COUNT = 5;
+	
+		float length = 30;
+		float thickness = 2.8f;
+		float depth = 5;
+		float distance = length * 0.85f;
 
-		float length = 7;
-		snVec initialPosition = snVec4Set(0, length, 0, 1);
-		snVec space = snVec4Set(length, 0, 0, 0);
-		snVec height = snVec4Set(0, length, 0, 0);
-
-		/*for(int i = 0; i < ACTOR_COUNT; ++i)
-		{
-			snVec position = initialPosition + (float)(i % ROW_COUNT) * space + (float)(i / ROW_COUNT) * height;
-			snVec orientation = snQuaternionFromEuler(0, 0, SN_PI * 0.25f * i);
-			createWheel(position, orientation, m_colors[i % 5], length);
-		}*/
-
-		snVec position = snVec4Set(0, 10, 0, 1);
+		snVec position = snVec4Set(0, 19, 0, 1);
 		snVec orientation = snVec4Set(0, 0, 0, 1);
 		EntityComposite* entity = createWheel(position, orientation, m_colors[1], length);	
 		scene->createHingeConstraint(entity->getActor(), snVec4Set(0, 0, 1, 0), position);
 
-		position = snVec4Set(length * 0.9f, 11, 0, 1);
+		position = snVec4Set(-distance, 16, 0, 1);
+		entity = createWheel(position, orientation, m_colors[4], length);
+		scene->createHingeConstraint(entity->getActor(), snVec4Set(0, 0, 1, 0), position);
+
+		position = snVec4Set(distance, 16, 0, 1);
 		entity = createWheel(position, orientation, m_colors[2], length);
 		scene->createHingeConstraint(entity->getActor(), snVec4Set(0, 0, 1, 0), position);
+
+		position = position + snVec4Set(distance, 2, 0, 0);
+		entity = createWheel(position, orientation, m_colors[0], length);
+		scene->createHingeConstraint(entity->getActor(), snVec4Set(0, 0, 1, 0), position);
+
+		position = position + snVec4Set(0, distance, 0, 0);
+
+		snActorDynamic* act = 0;
+		int actorId = -1;
+
+		scene->createActorDynamic(&act, actorId);
+
+		act->setName("composite");
+		//act->setPosition(snVec4Set(0, 20, 0, 1));
+		act->setPosition(position);
+		act->setOrientation(snVec4Set(0, 0, 0.2f, 1));
+		act->getPhysicMaterial().m_restitution = 0;
+		act->setAngularDampingCoeff(0.f);
+		act->setIsKinematic(true);
+		act->setAngularVelocity(snVec4Set(0, 0, 1.f, 0));
+
+		snMatrix44f localTranslation;
+		localTranslation.createTranslation(snVec4Set(0, 0, 0, 1));
+
+		const int PIN_COUNT = 6;
+		float angle = SN_PI / PIN_COUNT;
+		for (int pinId = 0; pinId < PIN_COUNT; ++pinId)
+		{
+			//create the pin
+			snColliderBox* xBox = new snColliderBox();
+			xBox->setSize(snVec4Set(length, thickness, depth, 0));
+
+			snMatrix44f localRotation;
+			localRotation.createRotationZ(angle * pinId);
+
+			snMatrix44f localTransform;
+			snMatrixMultiply4(localTranslation, localRotation, localTransform);
+			act->addCollider(xBox, localTransform);
+
+			//fill in the space between the pins
+			snColliderBox* fill = new snColliderBox();
+			fill->setSize(snVec4Set(length * 0.7f, 4, depth, 0));
+
+			localRotation.createRotationZ(angle * (pinId + 0.5f));
+			snMatrixMultiply4(localTranslation, localRotation, localTransform);
+			act->addCollider(fill, localTransform);
+		}
+
+		act->initialize();
+
+		WORLD->createComposite(act, m_colors[3]);
+
+		////Create a sphere
+		//int actSphereId = -1;
+		//snActorDynamic* actSphere = 0;
+		//scene->createActorDynamic(&actSphere, actSphereId);
+		//actSphere->setPosition(snVec4Set(0, 35, 0, 1));
+		//actSphere->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+		//actSphere->getPhysicMaterial().m_restitution = 0;
+		//snColliderSphere* collider = new snColliderSphere(2);
+
+		//actSphere->addCollider(collider);
+		//actSphere->updateMassAndInertia(10);
+		//actSphere->initialize();
+
+		//actSphere->setOnCollisionCallback([](snIActor* _a1, snIActor* _a2)
+		//{
+		//	DEBUGGER->setWatchExpression(L"COLLISION", L"SPHERE");
+		//});
+
+		//WORLD->createComposite(actSphere, m_colors[2]);
+	}
+
+	void SceneManager::createSceneMonkeyBall()
+	{
+		createSandbox(L"Monkey Ball");
+
+		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
+		scene->setContactConstraintBeta(0.05f);
+		scene->setSolverIterationCount(30);
+		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
+
+		WORLD->getCamera()->setPosition(snVec4Set(10, 30, -120, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(10, 30, 0, 1));
+		WORLD->activateCollisionPoint();
+
+		
+		snActorDynamic* actEnvironment = 0;
+		int actEnvironmentId = -1;
+		scene->createActorDynamic(&actEnvironment, actEnvironmentId);
+
+		//level one
+		snColliderBox* levelOne = new snColliderBox();
+		levelOne->setSize(snVec4Set(10, 2, 10, 0));
+		snMatrix44f translate, rotate, transform;
+		transform.createTranslation(snVec4Set(0, 30, 0, 1));
+		actEnvironment->addCollider(levelOne, transform);
+
+		//ramp one
+		snColliderBox* collider = new snColliderBox();
+		collider->setSize(snVec4Set(50, 2, 10, 0));
+		translate.createTranslation(snVec4Set(21.98f, 12.62f, 0, 1));
+		rotate.createRotationZ(-SN_PI * 0.25f);
+		snMatrixMultiply4(rotate, translate, transform);
+		actEnvironment->addCollider(collider, transform);
+
+		//level two
+		collider = new snColliderBox();
+		collider->setSize(snVec4Set(10, 2, 10, 0));
+		translate.createTranslation(snVec4Set(45, -5, 0, 1));
+		actEnvironment->addCollider(collider, translate);
+
+		//ramp two
+		collider = new snColliderBox();
+		collider->setSize(snVec4Set(50, 2, 10, 0));
+		translate.createTranslation(snVec4Set(67, 12.62f, 0, 1));
+		rotate.createRotationZ(SN_PI * 0.25f);
+		snMatrixMultiply4(rotate, translate, transform);
+		actEnvironment->addCollider(collider, transform);
+
+		//ramp three
+		collider = new snColliderBox();
+		collider->setSize(snVec4Set(10, 2, 50, 0));
+		translate.createTranslation(snVec4Set(81.2, 26.7, 30, 1));
+		rotate.createRotationZ(SN_PI * 0.25f);
+		snMatrixMultiply4(rotate, translate, transform);
+		actEnvironment->addCollider(collider, transform);
+
+		actEnvironment->setPosition(snVec4Set(0, 30, 0, 1));
+		actEnvironment->setIsKinematic(true);
+		actEnvironment->initialize();
+
+		WORLD->createComposite(actEnvironment, m_colors[2]);
+
+		//Create ball
+		snActorDynamic* ball = 0;
+		int actorBallId = -1;
+		scene->createActorDynamic(&ball, actorBallId);
+		snColliderSphere* sphere = new snColliderSphere(2);
+		ball->addCollider(sphere);
+		ball->updateMassAndInertia(100);
+		ball->setPosition(snVec4Set(0, 63, 0, 1));
+		ball->initialize();
+
+		WORLD->createComposite(ball, m_colors[3]);
+
 	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)
@@ -1528,6 +1678,9 @@ namespace Devil
 
 	EntityComposite* SceneManager::createWheel(const snVec& _position, const snVec& _orientation, const XMFLOAT4& _color, float _length)
 	{
+		const float DEPTH = 5;
+		const float THICKNESS = 2.8f;
+
 		snActorDynamic* act = 0;
 		int actorId = -1;
 
@@ -1540,22 +1693,29 @@ namespace Devil
 		act->getPhysicMaterial().m_restitution = 0;
 		act->setAngularDampingCoeff(0.5f);
 
-		snMatrix44f localTranslation;
-		localTranslation.createTranslation(snVec4Set(0, 0, 0, 1));
+		//snMatrix44f localTranslation;
+		//localTranslation.createTranslation(snVec4Set(0, 0, 0, 1));
 
 		const int PIN_COUNT = 6;
-		float angle = SN_PI * 2.f / PIN_COUNT;
+		float angle = SN_PI / PIN_COUNT;
 		for (int pinId = 0; pinId < PIN_COUNT; ++pinId)
 		{
 			snColliderBox* xBox = new snColliderBox();
-			xBox->setSize(snVec4Set(_length, 1, 3, 0));
+			xBox->setSize(snVec4Set(_length, THICKNESS, DEPTH, 0));
 
 			snMatrix44f localRotation;
 			localRotation.createRotationZ(angle * pinId);
 
 			snMatrix44f localTransform;
-			snMatrixMultiply4(localTranslation, localRotation, localTransform);
-			act->addCollider(xBox, localTransform);
+			//snMatrixMultiply4(localTranslation, localRotation, localTransform);
+			act->addCollider(xBox, localRotation);
+
+			//fill in the space between the pins
+			snColliderBox* fill = new snColliderBox();
+			fill->setSize(snVec4Set(_length * 0.7f, 4, DEPTH, 0));
+
+			localRotation.createRotationZ(angle * (pinId + 0.5f));
+			act->addCollider(fill, localRotation);
 		}
 
 		act->updateMassAndInertia(10);
