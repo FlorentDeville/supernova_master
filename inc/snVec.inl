@@ -192,6 +192,11 @@ namespace Supernova
 			_v.m128_f32[VEC_ID_Y] = _y;
 		}
 
+		void snVec4SetZ(snVec& _v, float _z)
+		{
+			_v.m128_f32[VEC_ID_Z] = _z;
+		}
+
 		void snVec4SetW(snVec& _v, float _w)
 		{
 			_v.m128_f32[VEC_ID_W] = _w;

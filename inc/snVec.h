@@ -91,6 +91,8 @@ namespace Supernova
 
 		inline void snVec4SetY(snVec& _v, float _y);
 
+		inline void snVec4SetZ(snVec& _v, float _z);
+
 		inline void snVec4SetW(snVec& _v, float _w);
 	}
 }
