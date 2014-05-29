@@ -39,6 +39,8 @@
 
 namespace Supernova
 {
+	class snMatrix44f;
+
 	//Compute the hamiltonian multiplication of two quaternions : _q1 * _q2
 	void snQuaternionMultiply(const snVec& _q1, const snVec& _q2, snVec& _result);
 
@@ -47,6 +49,9 @@ namespace Supernova
 
 	//Normalize a quaternion. 
 	void snQuaternionNormalize(const snVec& _q, snVec& _n);
+
+	//Convert a rotation matrix into a quaternion
+	snVec snQuaternionFromMatrix(const snMatrix44f& _m);
 }
 
 #endif //SN_QUATERNION_H

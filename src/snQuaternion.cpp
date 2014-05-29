@@ -33,6 +33,7 @@
 /****************************************************************************/
 
 #include "snQuaternion.h"
+#include "snMatrix44f.h"
 
 using namespace Supernova::Vector;
 
@@ -69,5 +70,58 @@ namespace Supernova
 	{
 		float oneOverNorme = 1.f / sqrt(snVec4Dot(_q, _q));
 		_n = _q * oneOverNorme;
+	}
+
+	snVec snQuaternionFromMatrix(const snMatrix44f& _m)
+	{
+		
+		float qw, qx, qy, qz;
+
+		float m12 = snVec4GetZ(_m.m_r[1]);
+		float m21 = snVec4GetY(_m.m_r[2]);
+		float m20 = snVec4GetX(_m.m_r[2]);
+		float m02 = snVec4GetZ(_m.m_r[0]);
+		float m01 = snVec4GetY(_m.m_r[0]);
+		float m10 = snVec4GetX(_m.m_r[1]);
+
+		float m00 = snVec4GetX(_m.m_r[0]);
+		float m11 = snVec4GetY(_m.m_r[1]);
+		float m22 = snVec4GetZ(_m.m_r[2]);
+
+		float tr = m00 + m11 + m22;
+		if (tr > 0) 
+		{
+			float S = sqrt(tr + 1.0) * 2; // S=4*qw 
+			qw = 0.25 * S;
+			qx = (m12 - m21) / S;
+			qy = (m20 - m02) / S;
+			qz = (m01 - m10) / S;
+		}
+		else if ((m00 > m11)&(m00 > m22)) 
+		{
+			float S = sqrt(1.0 + m00 - m11 - m22) * 2; // S=4*qx 
+			qw = (m12 - m21) / S;
+			qx = 0.25 * S;
+			qy = (m10 + m01) / S;
+			qz = (m20 + m02) / S;
+		}
+		else if (m11 > m22) 
+		{
+			float S = sqrt(1.0 + m11 - m00 - m22) * 2; // S=4*qy
+			qw = (m20 - m02) / S;
+			qx = (m10 + m01) / S;
+			qy = 0.25 * S;
+			qz = (m21 + m12) / S;
+		}
+		else 
+		{
+			float S = sqrt(1.0 + m22 - m00 - m11) * 2; // S=4*qz
+			qw = (m10 - m01) / S;
+			qx = (m02 + m20) / S;
+			qy = (m12 + m21) / S;
+			qz = 0.25 * S;
+		}
+
+		return snVec4Set(qx, qy, qz, qw);
 	}
 }
