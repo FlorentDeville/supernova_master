@@ -32,71 +32,80 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_VEC_H
-#define SN_VEC_H
+#include "ComponentBackground.h"
+#include "snActorDynamic.h"
+#include "snQuaternion.h"
 
-union __m128;
+#include "Input.h"
 
-namespace Supernova
+using namespace Supernova::Vector;
+
+namespace Devil
 {
-	typedef __m128 snVec;
+	ComponentBackground::ComponentBackground(snActorDynamic* _background, snActorDynamic* _origin, const snVec& _initialTranslation,
+		const snVec& _initialOrientation) : 
+		m_background(_background), m_origin(_origin), m_orientation(_initialOrientation), m_translation(_initialTranslation)
+	{}
 
-	namespace Vector
+	ComponentBackground::~ComponentBackground(){}
+
+	void ComponentBackground::update(float _dt)
 	{
-		inline snVec snVec4Set(float _x, float _y, float _z, float _w);
+		const float ROTATION_SPEED = 0.01f;
+		if (INPUT->isKeyDown('M'))
+		{
+			snVec4SetZ(m_orientation, snVec4GetZ(m_orientation) + ROTATION_SPEED);
+		}
+		else if (INPUT->isKeyDown('L'))
+		{
+			snVec4SetZ(m_orientation, snVec4GetZ(m_orientation) - ROTATION_SPEED);
+		}
 
-		inline snVec operator*(const snVec& _a, const snVec& _b);
+		if (INPUT->isKeyDown('P'))
+		{
+			snVec4SetX(m_orientation, snVec4GetX(m_orientation) + ROTATION_SPEED);
+		}
+		else if (INPUT->isKeyDown('O'))
+		{
+			snVec4SetX(m_orientation, snVec4GetX(m_orientation) - ROTATION_SPEED);
+		}
 
-		inline snVec operator*(const snVec& _a, float _f);
+		//move the entity to its initial position
+		snMatrix44f initialTranslation;
+		initialTranslation.createTranslation(m_translation);
 
-		inline snVec operator*(float _f, const snVec& _a);
+		//move the rotation axis into the position of the origin of the entity
+		snMatrix44f backgroundTransform;
+		snMatrixCreateTransform(m_background->getOrientationMatrix(), m_background->getPosition(), backgroundTransform);
+		snMatrix44f backgroundInvTransform = backgroundTransform.inverse();
 
-		inline snVec operator+(const snVec& _a, const snVec& _b);
+		snVec originInBackgroundFrame = snMatrixTransform4(m_origin->getPosition(), backgroundInvTransform);
+		snMatrix44f originTransform, invOriginTransform;
+		originTransform.createTranslation(originInBackgroundFrame);
+		invOriginTransform.createTranslation(originInBackgroundFrame * snVec4Set(-1, -1, -1, 1));
 
-		inline snVec operator-(const snVec& _a, const snVec& _b);
+		//compute the rotation
+		snVec q = snQuaternionFromEuler(snVec4GetX(m_orientation), snVec4GetY(m_orientation), snVec4GetZ(m_orientation));
+		snMatrix44f backgroundRotation;
+		backgroundRotation.createRotationFromQuaternion(q);
 
-		inline snVec operator-(const snVec& _a);
+		//to move to the final position : initialTranslation -> rotation -> backgroundInvTransform
+		snMatrix44f temp, temp2, transform;
+		snMatrixMultiply4(originTransform, initialTranslation, temp);
+		snMatrixMultiply4(backgroundRotation, temp, temp2);
+		snMatrixMultiply4(invOriginTransform, temp2, transform);
 
-		inline bool operator == (const snVec& _a, const snVec& _b);
+		//extract rotation and quaternion
+		snVec trans = snMatrixGetTranslation(transform);
+		snVec rot = snQuaternionFromMatrix(transform);
 
-		inline float snVec3Dot(const snVec& _a, const snVec& _b);
+		m_background->setKinematicTransform(trans, rot);
+		
 
-		inline float snVec4Dot(const snVec& _a, const snVec& _b);
+	}
 
-		/*Cross product between _v1 and _v2. The W coordinate will be 0.*/
-		inline snVec snVec3Cross(const snVec& _v1, const snVec& _v2);
+	void ComponentBackground::render()
+	{
 
-		/*Return the squared length of the vector.*/
-		inline float snVec3SquaredNorme(const snVec& _a);
-
-		/*Calculate the length of the vector.*/
-		inline float snVec3Norme(const snVec& _a);
-
-		/*Normalize the vector. Its direction remain the same but its length is set to 1.*/
-		inline void snVec3Normalize(snVec& _a);
-
-		inline snVec snVec4GetAbsolute(const snVec& _a);
-
-		inline void snVec4Absolute(snVec& _a);
-
-		inline float snVec4GetById(const snVec& _a, unsigned int _id);
-
-		inline float snVec4GetX(const snVec& _v);
-
-		inline float snVec4GetY(const snVec& _v);
-
-		inline float snVec4GetZ(const snVec& _v);
-
-		inline float snVec4GetW(const snVec& _v);
-
-		inline void snVec4SetX(snVec& _v, float _x);
-
-		inline void snVec4SetY(snVec& _v, float _y);
-
-		inline void snVec4SetZ(snVec& _v, float _z);
-
-		inline void snVec4SetW(snVec& _v, float _w);
 	}
 }
-
-#endif //ifndef SN_VEC_H

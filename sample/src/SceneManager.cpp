@@ -57,6 +57,7 @@
 #include "ComponentFollowPath.h"
 #include "ComponentPathInterpolate.h"
 #include "ComponentFloatingText.h"
+#include "ComponentBackground.h"
 
 #include "PathExplorer.h"
 #include "snMath.h"
@@ -1293,6 +1294,7 @@ namespace Devil
 		scene->setContactConstraintBeta(0.05f);
 		scene->setSolverIterationCount(30);
 		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
+		scene->setContactConstraintBeta(0.3f);
 
 		WORLD->getCamera()->setPosition(snVec4Set(10, 30, -120, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(10, 30, 0, 1));
@@ -1340,11 +1342,14 @@ namespace Devil
 		snMatrixMultiply4(rotate, translate, transform);
 		actEnvironment->addCollider(collider, transform);
 
-		actEnvironment->setPosition(snVec4Set(0, 30, 0, 1));
+		snVec initialPosition = snVec4Set(0, 30, 0, 1);
+		snVec initialOrientation = snVec4Set(0, 0, 0, 1);
+		actEnvironment->setPosition(initialPosition);
 		actEnvironment->setIsKinematic(true);
 		actEnvironment->initialize();
 
-		WORLD->createComposite(actEnvironment, m_colors[2]);
+		EntityComposite* entity = WORLD->createComposite(actEnvironment, m_colors[2]);
+		
 
 		//Create ball
 		snActorDynamic* ball = 0;
@@ -1358,6 +1363,8 @@ namespace Devil
 
 		WORLD->createComposite(ball, m_colors[3]);
 
+		ComponentBackground* cBack = new ComponentBackground(actEnvironment, ball, initialPosition, initialOrientation);
+		entity->addPreUpdateComponent(cBack);
 	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)

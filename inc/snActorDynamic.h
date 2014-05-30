@@ -133,6 +133,9 @@ namespace Supernova
 		//Set the position of a kinematic actor
 		void setKinematicPosition(const snVec& _position);
 
+		//Set the position and orientation of a kinematic actor.
+		void setKinematicTransform(const snVec& _position, const snVec& _orientation);
+
 #pragma endregion
 
 		//Set the mass to the actor and update its inertia

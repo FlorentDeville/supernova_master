@@ -95,7 +95,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp" />
+    <ClCompile Include="..\src\CameraState_FreeCamera.cpp" />
     <ClCompile Include="..\src\ColorShader.cpp" />
+    <ClCompile Include="..\src\ComponentBackground.cpp" />
     <ClCompile Include="..\src\ComponentFollowPath.cpp" />
     <ClCompile Include="..\src\ComponentPathInterpolate.cpp" />
     <ClCompile Include="..\src\D3D.cpp" />
@@ -109,11 +111,13 @@
     <ClCompile Include="..\src\EntityPlan.cpp" />
     <ClCompile Include="..\src\EntityPointToPointConstraint.cpp" />
     <ClCompile Include="..\src\EntitySphere.cpp" />
+    <ClCompile Include="..\src\FSMRunner.cpp" />
     <ClCompile Include="..\src\GfxEntityBox.cpp" />
     <ClCompile Include="..\src\GfxEntityPlan.cpp" />
     <ClCompile Include="..\src\GfxEntitySphere.cpp" />
     <ClCompile Include="..\src\Graphics.cpp" />
     <ClCompile Include="..\src\Input.cpp" />
+    <ClCompile Include="..\src\IState.cpp" />
     <ClCompile Include="..\src\Light.cpp" />
     <ClCompile Include="..\src\LightShader.cpp" />
     <ClCompile Include="..\src\main.cpp" />
@@ -128,7 +132,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
+    <ClInclude Include="..\src\CameraState.h" />
+    <ClInclude Include="..\src\CameraState_FreeCamera.h" />
     <ClInclude Include="..\src\ColorShader.h" />
+    <ClInclude Include="..\src\ComponentBackground.h" />
     <ClInclude Include="..\src\ComponentFloatingText.h" />
     <ClInclude Include="..\src\ComponentFollowPath.h" />
     <ClInclude Include="..\src\ComponentPathInterpolate.h" />
@@ -143,6 +150,7 @@
     <ClInclude Include="..\src\EntityPlan.h" />
     <ClInclude Include="..\src\EntityPointToPointConstraint.h" />
     <ClInclude Include="..\src\EntitySphere.h" />
+    <ClInclude Include="..\src\FSMRunner.h" />
     <ClInclude Include="..\src\GfxEntityBox.h" />
     <ClInclude Include="..\src\GfxEntityPlan.h" />
     <ClInclude Include="..\src\GfxEntitySphere.h" />
@@ -150,6 +158,7 @@
     <ClInclude Include="..\src\IComponent.h" />
     <ClInclude Include="..\src\IGfxEntity.h" />
     <ClInclude Include="..\src\Input.h" />
+    <ClInclude Include="..\src\IState.h" />
     <ClInclude Include="..\src\IWorldEntity.h" />
     <ClInclude Include="..\src\Light.h" />
     <ClInclude Include="..\src\LightShader.h" />

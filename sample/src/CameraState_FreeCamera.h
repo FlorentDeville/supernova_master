@@ -32,71 +32,31 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_VEC_H
-#define SN_VEC_H
+#ifndef CAMERA_STATE_FREE_CAMERA_H
+#define CAMERA_STATE_FREE_CAMERA_H
 
-union __m128;
+#include "IState.h"
+using namespace Devil::FSM;
 
-namespace Supernova
+namespace Devil
 {
-	typedef __m128 snVec;
+	class EntityCamera;
 
-	namespace Vector
+	class CameraState_FreeCamera : public IState
 	{
-		inline snVec snVec4Set(float _x, float _y, float _z, float _w);
+	private:
+		EntityCamera* m_camera;
 
-		inline snVec operator*(const snVec& _a, const snVec& _b);
+	public:
+		CameraState_FreeCamera(EntityCamera* _camera);
 
-		inline snVec operator*(const snVec& _a, float _f);
+		~CameraState_FreeCamera();
 
-		inline snVec operator*(float _f, const snVec& _a);
+		void enter();
 
-		inline snVec operator+(const snVec& _a, const snVec& _b);
+		void execute();
 
-		inline snVec operator-(const snVec& _a, const snVec& _b);
-
-		inline snVec operator-(const snVec& _a);
-
-		inline bool operator == (const snVec& _a, const snVec& _b);
-
-		inline float snVec3Dot(const snVec& _a, const snVec& _b);
-
-		inline float snVec4Dot(const snVec& _a, const snVec& _b);
-
-		/*Cross product between _v1 and _v2. The W coordinate will be 0.*/
-		inline snVec snVec3Cross(const snVec& _v1, const snVec& _v2);
-
-		/*Return the squared length of the vector.*/
-		inline float snVec3SquaredNorme(const snVec& _a);
-
-		/*Calculate the length of the vector.*/
-		inline float snVec3Norme(const snVec& _a);
-
-		/*Normalize the vector. Its direction remain the same but its length is set to 1.*/
-		inline void snVec3Normalize(snVec& _a);
-
-		inline snVec snVec4GetAbsolute(const snVec& _a);
-
-		inline void snVec4Absolute(snVec& _a);
-
-		inline float snVec4GetById(const snVec& _a, unsigned int _id);
-
-		inline float snVec4GetX(const snVec& _v);
-
-		inline float snVec4GetY(const snVec& _v);
-
-		inline float snVec4GetZ(const snVec& _v);
-
-		inline float snVec4GetW(const snVec& _v);
-
-		inline void snVec4SetX(snVec& _v, float _x);
-
-		inline void snVec4SetY(snVec& _v, float _y);
-
-		inline void snVec4SetZ(snVec& _v, float _z);
-
-		inline void snVec4SetW(snVec& _v, float _w);
-	}
+		void exit();
+	};
 }
-
-#endif //ifndef SN_VEC_H
+#endif //ifndef CAMERA_STATE_FREE_CAMERA_H

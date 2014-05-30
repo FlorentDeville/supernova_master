@@ -170,6 +170,16 @@ namespace Supernova
 		updateCollidersAndAABB();
 	}
 
+	void snActorDynamic::setKinematicTransform(const snVec& _position, const snVec& _orientation)
+	{
+		assert(m_isKinematic);
+
+		setPosition(_position);
+		setOrientation(_orientation);
+
+		updateCollidersAndAABB();
+	}
+
 	//Set the mass to the actor and update its inertia
 	void snActorDynamic::updateMassAndInertia(float _mass)
 	{

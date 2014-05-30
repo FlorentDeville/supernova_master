@@ -3,6 +3,9 @@
 
 #include "IWorldEntity.h"
 
+#include "FSMRunner.h"
+using namespace Devil::FSM;
+
 namespace Devil
 {
 	class Camera;
@@ -15,6 +18,8 @@ namespace Devil
 		XMVECTOR m_up;
 
 		Camera* m_gfxCamera;
+		
+		FSMRunner m_fsmRunner;
 
 	public:
 		EntityCamera();
@@ -30,6 +35,7 @@ namespace Devil
 
 		//Get the camera look at vector
 		const XMVECTOR& getLookAt() const;
+		const XMVECTOR& getUp() const;
 
 		void* operator new(size_t _count)
 		{

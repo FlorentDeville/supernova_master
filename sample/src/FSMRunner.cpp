@@ -32,71 +32,70 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_VEC_H
-#define SN_VEC_H
+#include "FSMRunner.h"
+#include "IState.h"
 
-union __m128;
-
-namespace Supernova
+namespace Devil
 {
-	typedef __m128 snVec;
-
-	namespace Vector
+	namespace FSM
 	{
-		inline snVec snVec4Set(float _x, float _y, float _z, float _w);
+		FSMRunner::FSMRunner() : m_currentState(0), m_states(), m_hasToExitState(false), m_hasToEnterState(false), m_deferredState(0){}
 
-		inline snVec operator*(const snVec& _a, const snVec& _b);
+		FSMRunner::~FSMRunner()
+		{
+			for (map<unsigned int, IState*>::iterator i = m_states.begin(); i != m_states.end(); ++i)
+			{
+				if (i->second != 0)
+				{
+					delete i->second;
+					i->second = 0;
+				}
+			}
+		}
 
-		inline snVec operator*(const snVec& _a, float _f);
+		//Add a state to the fsm.
+		void FSMRunner::addState(unsigned int _id, IState* _state)
+		{
+			m_states[_id] = _state;
+			_state->setFSM(this);
+		}
 
-		inline snVec operator*(float _f, const snVec& _a);
+		//Change the current state immediately.
+		void FSMRunner::setImmediateState(unsigned int _id)
+		{
+			m_deferredState = _id;
+			m_currentState = _id;
+			m_hasToExitState = true;
+		}
 
-		inline snVec operator+(const snVec& _a, const snVec& _b);
+		//Change the current state to the value given as parameter when the next update will be called.
+		void FSMRunner::setDeferredState(unsigned int _id)
+		{
+			m_deferredState = _id;
+			m_hasToExitState = true;
+		}
 
-		inline snVec operator-(const snVec& _a, const snVec& _b);
+		void FSMRunner::update()
+		{
+			if (m_hasToEnterState)
+			{
+				m_states[m_currentState]->enter();
+				m_states[m_currentState]->execute();
 
-		inline snVec operator-(const snVec& _a);
+				m_hasToEnterState = false;
+			}
+			else
+			{
+				m_states[m_currentState]->execute();
+			}
 
-		inline bool operator == (const snVec& _a, const snVec& _b);
-
-		inline float snVec3Dot(const snVec& _a, const snVec& _b);
-
-		inline float snVec4Dot(const snVec& _a, const snVec& _b);
-
-		/*Cross product between _v1 and _v2. The W coordinate will be 0.*/
-		inline snVec snVec3Cross(const snVec& _v1, const snVec& _v2);
-
-		/*Return the squared length of the vector.*/
-		inline float snVec3SquaredNorme(const snVec& _a);
-
-		/*Calculate the length of the vector.*/
-		inline float snVec3Norme(const snVec& _a);
-
-		/*Normalize the vector. Its direction remain the same but its length is set to 1.*/
-		inline void snVec3Normalize(snVec& _a);
-
-		inline snVec snVec4GetAbsolute(const snVec& _a);
-
-		inline void snVec4Absolute(snVec& _a);
-
-		inline float snVec4GetById(const snVec& _a, unsigned int _id);
-
-		inline float snVec4GetX(const snVec& _v);
-
-		inline float snVec4GetY(const snVec& _v);
-
-		inline float snVec4GetZ(const snVec& _v);
-
-		inline float snVec4GetW(const snVec& _v);
-
-		inline void snVec4SetX(snVec& _v, float _x);
-
-		inline void snVec4SetY(snVec& _v, float _y);
-
-		inline void snVec4SetZ(snVec& _v, float _z);
-
-		inline void snVec4SetW(snVec& _v, float _w);
+			if (m_hasToExitState)
+			{
+				m_states[m_currentState]->exit();
+				m_currentState = m_deferredState;
+				m_hasToExitState = false;
+				m_hasToEnterState = true;
+			}
+		}
 	}
 }
-
-#endif //ifndef SN_VEC_H
