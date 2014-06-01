@@ -31,55 +31,43 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef ENTITY_CAMERA_H
-#define ENTITY_CAMERA_H
 
+#include "CameraState_FollowTarget.h"
+#include "World.h"
 #include "IWorldEntity.h"
+#include "EntityCamera.h"
 
-#include "FSMRunner.h"
-using namespace Devil::FSM;
+#include <DirectXMath.h>
+using namespace DirectX;
+
+#include "snIActor.h"
+using Supernova::snIActor;
 
 namespace Devil
 {
-	class Camera;
+	CameraState_FollowTarget::CameraState_FollowTarget(EntityCamera* _camera, IWorldEntity* _target, float _distance, float _height)
+		:m_camera(_camera), m_target(_target), m_distance(_distance), m_height(_height){}
 
-	class EntityCamera : public IWorldEntity
+	CameraState_FollowTarget::~CameraState_FollowTarget(){}
+
+	void CameraState_FollowTarget::enter()
 	{
-	private:
-		//XMVECTOR m_position;
-		XMVECTOR m_lookAt;
-		XMVECTOR m_up;
+		m_target = (IWorldEntity*)WORLD->getMonkeyBall();
+	}
 
-		Camera* m_gfxCamera;
-		
-		FSMRunner m_fsmRunner;
+	void CameraState_FollowTarget::execute()
+	{
+		XMVECTOR targetPosition = m_target->getActor()->getPosition();
+		XMVECTOR forward = XMVectorSet(1, 0, 0, 0);
+		//forward = m_target->getActor()->getLinearVelocity();
+		//forward = XMVector3Normalize(forward);
+		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 
-	public:
-		EntityCamera();
-		~EntityCamera();
+		XMVECTOR cameraPosition = targetPosition - (forward * m_distance) + (up * m_height);
+		m_camera->setPosition(cameraPosition);
+		m_camera->setLookAt(targetPosition);
+		m_camera->setUp(up);
+	}
 
-		bool initialize(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
-
-		void update();
-		void render();
-
-		void setLookAt(const XMVECTOR& _lookAt);
-		void setUp(const XMVECTOR& _up);
-
-		//Get the camera look at vector
-		const XMVECTOR& getLookAt() const;
-		const XMVECTOR& getUp() const;
-
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, 16);
-		}
-
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
-	};
-
+	void CameraState_FollowTarget::exit(){}
 }
-#endif

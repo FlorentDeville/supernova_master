@@ -78,6 +78,8 @@ namespace Devil
 
 		WorldHUD* m_hud;
 
+		EntityComposite* m_monkeyBall;
+
 	public:
 		virtual ~World();
 
@@ -96,6 +98,7 @@ namespace Devil
 		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
 		WorldHUD* createHUD();
 		EntityBoxLauncher* createEntityBoxLauncher(unsigned int _count);
+		EntityComposite* createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color);
 
 		//Delete all entities from the world.
 		void clearWorld();
@@ -104,6 +107,7 @@ namespace Devil
 		void render();
 
 		EntityCamera* getCamera() const;
+		EntityComposite* getMonkeyBall() const;
 
 		//Return the entity owner of the actor
 		IWorldEntity* getEntityFromActor(snIActor* const _actor) const;

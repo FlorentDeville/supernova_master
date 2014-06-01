@@ -120,7 +120,8 @@ namespace Devil
 		else if (INPUT->isKeyDown(116))//F5
 		{
 			clearScene();
-			createSceneFriction();
+			//createSceneFriction();
+			createSceneMonkeyBall();
 			INPUT->keyUp(116);
 		}
 		else if (INPUT->isKeyDown(117))//F6
@@ -1346,6 +1347,8 @@ namespace Devil
 		snVec initialOrientation = snVec4Set(0, 0, 0, 1);
 		actEnvironment->setPosition(initialPosition);
 		actEnvironment->setIsKinematic(true);
+		actEnvironment->getPhysicMaterial().m_restitution = 0;
+		actEnvironment->getPhysicMaterial().m_friction = 1;
 		actEnvironment->initialize();
 
 		EntityComposite* entity = WORLD->createComposite(actEnvironment, m_colors[2]);
@@ -1359,9 +1362,14 @@ namespace Devil
 		ball->addCollider(sphere);
 		ball->updateMassAndInertia(100);
 		ball->setPosition(snVec4Set(0, 63, 0, 1));
+		ball->getPhysicMaterial().m_restitution = 0;
+		ball->getPhysicMaterial().m_friction = 1;
 		ball->initialize();
 
-		WORLD->createComposite(ball, m_colors[3]);
+		//WORLD->createComposite(ball, m_colors[3]);
+		WORLD->createMonkeyBall(ball, m_colors[4]);
+
+		//WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
 
 		ComponentBackground* cBack = new ComponentBackground(actEnvironment, ball, initialPosition, initialOrientation);
 		entity->addPreUpdateComponent(cBack);

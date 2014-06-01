@@ -39,7 +39,7 @@ namespace Devil
 {
 	namespace FSM
 	{
-		FSMRunner::FSMRunner() : m_currentState(0), m_states(), m_hasToExitState(false), m_hasToEnterState(false), m_deferredState(0){}
+		FSMRunner::FSMRunner() : m_currentState(0), m_states(), m_hasToExitState(false), m_hasToEnterState(true), m_deferredState(0){}
 
 		FSMRunner::~FSMRunner()
 		{

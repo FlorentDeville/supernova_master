@@ -54,7 +54,7 @@ namespace Devil
 {
 	World* World::m_Instance = 0;
 
-	World::World()
+	World::World() :m_camera(0), m_monkeyBall(0), m_hud(0), m_collisionPoint(0), m_EntityList()
 	{
 	}
 
@@ -183,6 +183,13 @@ namespace Devil
 		return launcher;
 	}
 
+	EntityComposite* World::createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color)
+	{
+		m_monkeyBall = new EntityComposite(_actor, _color);
+		m_EntityList.push_back(m_monkeyBall);
+		return m_monkeyBall;
+	}
+
 	void World::clearWorld()
 	{
 		for (vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
@@ -238,6 +245,11 @@ namespace Devil
 	EntityCamera* World::getCamera() const
 	{
 		return m_camera;
+	}
+
+	EntityComposite* World::getMonkeyBall() const
+	{
+		return m_monkeyBall;
 	}
 
 	IWorldEntity* World::getEntityFromActor(snIActor* const _actor) const

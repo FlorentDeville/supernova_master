@@ -42,7 +42,35 @@ namespace Supernova
 	class snIActor;
 	class snScene;
 
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
 	//Constraint to prevent two actors from penetrating each others.
+	//
+	//Position Constraint: C = (pa - pb).n = (xa + ra - xb - rb).n with:
+	//						xa, xb respectively the position of the first and second body.
+	//						ra, rb respectively the vector from the center of mass to the collision point of the first and second body.
+	//						n the collision contact of the first body.
+	//This constraint means the collision points of the two rigid-bodies has to be the same.
+	//
+	//Velocity Constraint : dC/dt = va.n + (ra x n).wa - vb.n - (rb x n).wb with :
+	//		- va, vb as the linear velocities of body a and b
+	//		- wa, wb as the angular velocities of body a and b.
+	//
+	//Jacobian : J = [ n (ra x n) -n -(rb x n)]
+	//
+	//K Matrix : K = J * M-1 * JT = ma-1 + mb-1 + ((ra x n)Ia-1 x ra + (rb x n)Ib-1 x rb).n with : 
+	//		- ma-1, mb-1 as the inverse mass matrices for body a and b.
+	//		- Ia-1, Ib-1 as the inverse world inertia tensor for body a and b.
+	//
+	//Linear Velocity : 
+	//			Va = Va + ma-1 * n * l and Vb = Vb - mb-1 * n * l with :
+	//				- l as the lagrangian.
+	//
+	//Angular Velocity :
+	//			wa = wa + Ia-1 * (ra x n) * l and wb = wb - Ib-1 * (rb x n) * l with : 
+	//				- l as the lagrangian.
+	//
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	class SN_ALIGN snContactConstraint : public snIConstraint
 	{
 	protected:

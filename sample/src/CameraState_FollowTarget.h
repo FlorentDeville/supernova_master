@@ -31,55 +31,42 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef ENTITY_CAMERA_H
-#define ENTITY_CAMERA_H
 
-#include "IWorldEntity.h"
+#ifndef CAMERA_STATE_FOLLOW_TARGET_H
+#define CAMERA_STATE_FOLLOW_TARGET_H
 
-#include "FSMRunner.h"
+#include "IState.h"
 using namespace Devil::FSM;
 
 namespace Devil
 {
-	class Camera;
+	class IWorldEntity;
+	class EntityCamera;
 
-	class EntityCamera : public IWorldEntity
+	class CameraState_FollowTarget : public IState
 	{
 	private:
-		//XMVECTOR m_position;
-		XMVECTOR m_lookAt;
-		XMVECTOR m_up;
+		EntityCamera* m_camera;
 
-		Camera* m_gfxCamera;
-		
-		FSMRunner m_fsmRunner;
+		//The target to follow
+		IWorldEntity* m_target;
+
+		//Distance from the target to the camera.
+		float m_distance;
+
+		//Height of the camera above the target.
+		float m_height;
 
 	public:
-		EntityCamera();
-		~EntityCamera();
+		CameraState_FollowTarget(EntityCamera* _camera, IWorldEntity* _target, float _distance, float _height);
+		~CameraState_FollowTarget();
 
-		bool initialize(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
+		void enter();
 
-		void update();
-		void render();
+		void execute();
 
-		void setLookAt(const XMVECTOR& _lookAt);
-		void setUp(const XMVECTOR& _up);
-
-		//Get the camera look at vector
-		const XMVECTOR& getLookAt() const;
-		const XMVECTOR& getUp() const;
-
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, 16);
-		}
-
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
+		void exit();
 	};
-
 }
 #endif
+//ifndef CAMERA_STATE_FOLLOW_TARGET_H

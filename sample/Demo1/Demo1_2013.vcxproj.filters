@@ -142,6 +142,9 @@
     <ClCompile Include="..\src\FSMRunner.cpp">
       <Filter>World\FSM</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\CameraState_FollowTarget.cpp">
+      <Filter>World\Entities\Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -260,6 +263,9 @@
     </ClInclude>
     <ClInclude Include="..\src\FSMRunner.h">
       <Filter>World\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CameraState_FollowTarget.h">
+      <Filter>World\Entities\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
