@@ -18,6 +18,7 @@
     <ClInclude Include="inc\snActorPairManager.h" />
     <ClInclude Include="inc\snActorStatic.h" />
     <ClInclude Include="inc\snColliderBox.h" />
+    <ClInclude Include="inc\snColliderContainer.h" />
     <ClInclude Include="inc\snColliderPlan.h" />
     <ClInclude Include="inc\snColliderSphere.h" />
     <ClInclude Include="inc\snCollision.h" />
@@ -33,6 +34,7 @@
     <ClInclude Include="inc\snFrictionConstraint.h" />
     <ClInclude Include="inc\snGJK.h" />
     <ClInclude Include="inc\snGlobals.h" />
+    <ClInclude Include="inc\snHingeConstraint.h" />
     <ClInclude Include="inc\snIActor.h" />
     <ClInclude Include="inc\snICollider.h" />
     <ClInclude Include="inc\snIConstraint.h" />
@@ -54,6 +56,7 @@
     <ClCompile Include="src\snActorPairManager.cpp" />
     <ClCompile Include="src\snActorStatic.cpp" />
     <ClCompile Include="src\snColliderBox.cpp" />
+    <ClCompile Include="src\snColliderContainer.cpp" />
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
@@ -66,6 +69,7 @@
     <ClCompile Include="src\snFixedConstraint.cpp" />
     <ClCompile Include="src\snFrictionConstraint.cpp" />
     <ClCompile Include="src\snGJK.cpp" />
+    <ClCompile Include="src\snHingeConstraint.cpp" />
     <ClCompile Include="src\snIActor.cpp" />
     <ClCompile Include="src\snMath.cpp" />
     <ClCompile Include="src\snMatrix44f.cpp" />
