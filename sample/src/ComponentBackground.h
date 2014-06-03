@@ -67,6 +67,10 @@ namespace Devil
 		void update(float _dt);
 
 		void render();
+
+		void* operator new(size_t _count);
+
+		void operator delete(void* _p);
 	};
 }
 #endif //ifndef COMPONENT_BACKGROUND_H

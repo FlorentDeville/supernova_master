@@ -108,4 +108,14 @@ namespace Devil
 	{
 
 	}
+
+	void* ComponentBackground::operator new(size_t _count)
+	{
+		return _aligned_malloc(_count, SN_ALIGN_SIZE);
+	}
+
+	void ComponentBackground::operator delete(void* _p)
+	{
+		_aligned_free(_p);
+	}
 }
