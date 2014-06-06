@@ -46,7 +46,8 @@ namespace Supernova
 	//
 	//Constraint to prevent two actors from penetrating each others.
 	//
-	//Position Constraint: C = (pa - pb).n = (xa + ra - xb - rb).n with:
+	//Position Constraint: C = (pa - pb).n = with pa = x1 + r1 and pb = x2 + r2:
+	//						pa, pb respectively the collision point of the first and second body.
 	//						xa, xb respectively the position of the first and second body.
 	//						ra, rb respectively the vector from the center of mass to the collision point of the first and second body.
 	//						n the collision contact of the first body.
