@@ -62,6 +62,7 @@ namespace Devil
 	class WorldHUD;
 	class EntityBoxLauncher;
 	class EntityComposite;
+	class EntitySkybox;
 
 	class IComponent;
 
@@ -99,6 +100,7 @@ namespace Devil
 		WorldHUD* createHUD();
 		EntityBoxLauncher* createEntityBoxLauncher(unsigned int _count);
 		EntityComposite* createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color);
+		EntitySkybox* createSkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);
 
 		//Delete all entities from the world.
 		void clearWorld();

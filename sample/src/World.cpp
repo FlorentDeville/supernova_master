@@ -42,6 +42,8 @@
 #include "EntityPointToPointConstraint.h"
 #include "EntityBoxLauncher.h"
 #include "EntityComposite.h"
+#include "EntitySkybox.h"
+
 #include "WorldHUD.h"
 #include "Input.h"
 #include "Graphics.h"
@@ -188,6 +190,13 @@ namespace Devil
 		m_monkeyBall = new EntityComposite(_actor, _color);
 		m_EntityList.push_back(m_monkeyBall);
 		return m_monkeyBall;
+	}
+
+	EntitySkybox* World::createSkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color)
+	{
+		EntitySkybox* skybox = new EntitySkybox(_target, _size, _color);
+		m_EntityList.push_back(skybox);
+		return skybox;
 	}
 
 	void World::clearWorld()

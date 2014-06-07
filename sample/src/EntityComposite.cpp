@@ -89,7 +89,7 @@ namespace Devil
 
 	void EntityComposite::update()
 	{
-
+		m_position = m_actor->getPosition();
 	}
 
 	void EntityComposite::render()

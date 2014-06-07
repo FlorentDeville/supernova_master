@@ -39,7 +39,7 @@ namespace Devil
 	class GfxEntityBox;
 	class GfxEntityPlan;
 
-	const float SCREEN_DEPTH = 1000.0f;
+	const float SCREEN_DEPTH = 10000.0f;
 	const float SCREEN_NEAR = 0.1f;
 
 	class Graphics

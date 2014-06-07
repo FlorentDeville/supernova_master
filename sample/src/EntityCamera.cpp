@@ -69,7 +69,7 @@ namespace Devil
 		CameraState_FreeCamera* stateFreeCamera = new CameraState_FreeCamera(this);
 		m_fsmRunner.addState(CAMERA_STATE_FREE_CAMERA, stateFreeCamera);
 		
-		CameraState_FollowTarget* stateFollowTarget = new CameraState_FollowTarget(this, (IWorldEntity*)WORLD->getMonkeyBall(), 30, 15);
+		CameraState_FollowTarget* stateFollowTarget = new CameraState_FollowTarget(this, (IWorldEntity*)WORLD->getMonkeyBall(), 180, 80);
 		m_fsmRunner.addState(CAMERA_STATE_FOLLOW_TARGET, stateFollowTarget);
 
 		m_fsmRunner.setImmediateState(CAMERA_STATE_FREE_CAMERA);

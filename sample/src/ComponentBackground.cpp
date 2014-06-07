@@ -44,60 +44,56 @@ namespace Devil
 {
 	ComponentBackground::ComponentBackground(snActorDynamic* _background, snActorDynamic* _origin, const snVec& _initialTranslation,
 		const snVec& _initialOrientation) : 
-		m_background(_background), m_origin(_origin), m_orientation(_initialOrientation), m_translation(_initialTranslation)
-	{}
+		m_background(_background), m_origin(_origin)
+	{
+		m_transform.createRotationFromQuaternion(snQuaternionFromEuler(snVec4GetX(_initialOrientation), snVec4GetY(_initialOrientation), snVec4GetZ(_initialOrientation)));
+		m_transform.m_r[3] = _initialTranslation;
+	}
 
 	ComponentBackground::~ComponentBackground(){}
 
 	void ComponentBackground::update(float _dt)
 	{
-		const float ROTATION_SPEED = 0.01f;
-		if (INPUT->isKeyDown('M'))
+		const float ROTATION_SPEED = 0.02f;
+		snMatrix44f backgroundNewRotation;
+		if (INPUT->isKeyDown('I'))
 		{
-			snVec4SetZ(m_orientation, snVec4GetZ(m_orientation) + ROTATION_SPEED);
+			backgroundNewRotation.createRotationZ(-ROTATION_SPEED);
 		}
-		else if (INPUT->isKeyDown('L'))
+		else if (INPUT->isKeyDown('K'))
 		{
-			snVec4SetZ(m_orientation, snVec4GetZ(m_orientation) - ROTATION_SPEED);
+			backgroundNewRotation.createRotationZ(ROTATION_SPEED);
 		}
 
-		if (INPUT->isKeyDown('P'))
+		else if (INPUT->isKeyDown('P'))
 		{
-			snVec4SetX(m_orientation, snVec4GetX(m_orientation) + ROTATION_SPEED);
+			backgroundNewRotation.createRotationX(-ROTATION_SPEED);
 		}
 		else if (INPUT->isKeyDown('O'))
 		{
-			snVec4SetX(m_orientation, snVec4GetX(m_orientation) - ROTATION_SPEED);
+			backgroundNewRotation.createRotationX(ROTATION_SPEED);
 		}
+		else
+			return;
 
-		//move the entity to its initial position
-		snMatrix44f initialTranslation;
-		initialTranslation.createTranslation(m_translation);
+		//Compute the transform matrix of the monkey ball and its inverse
+		snMatrix44f monkeyBallTransform;
+		monkeyBallTransform.createTranslation(m_origin->getPosition());
+		snMatrix44f invMonkeyBallTransform = monkeyBallTransform.inverse();
 
-		//move the rotation axis into the position of the origin of the entity
-		snMatrix44f backgroundTransform;
-		snMatrixCreateTransform(m_background->getOrientationMatrix(), m_background->getPosition(), backgroundTransform);
-		snMatrix44f backgroundInvTransform = backgroundTransform.inverse();
+		//Compute a transformation matrix to go from the monkey ball to the background original position
+		snMatrix44f originToBackground;
+		snMatrixMultiply4(m_transform, invMonkeyBallTransform, originToBackground);
 
-		snVec originInBackgroundFrame = snMatrixTransform4(m_origin->getPosition(), backgroundInvTransform);
-		snMatrix44f originTransform, invOriginTransform;
-		originTransform.createTranslation(originInBackgroundFrame);
-		invOriginTransform.createTranslation(originInBackgroundFrame * snVec4Set(-1, -1, -1, 1));
-
-		//compute the rotation
-		snVec q = snQuaternionFromEuler(snVec4GetX(m_orientation), snVec4GetY(m_orientation), snVec4GetZ(m_orientation));
-		snMatrix44f backgroundRotation;
-		backgroundRotation.createRotationFromQuaternion(q);
-
-		//to move to the final position : initialTranslation -> rotation -> backgroundInvTransform
-		snMatrix44f temp, temp2, transform;
-		snMatrixMultiply4(originTransform, initialTranslation, temp);
-		snMatrixMultiply4(backgroundRotation, temp, temp2);
-		snMatrixMultiply4(invOriginTransform, temp2, transform);
+		//Compute the new transform of the background
+		// monkeyBallTransform x backgroundNewRotation x originToBackground
+		snMatrix44f temp;
+		snMatrixMultiply4(backgroundNewRotation, monkeyBallTransform, temp);
+		snMatrixMultiply4(originToBackground, temp, m_transform);
 
 		//extract rotation and quaternion
-		snVec trans = snMatrixGetTranslation(transform);
-		snVec rot = snQuaternionFromMatrix(transform);
+		snVec trans = snMatrixGetTranslation(m_transform);
+		snVec rot = snQuaternionFromMatrix(m_transform);
 
 		m_background->setKinematicTransform(trans, rot);
 		

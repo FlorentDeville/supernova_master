@@ -111,6 +111,7 @@
     <ClCompile Include="..\src\EntityFixedConstraint.cpp" />
     <ClCompile Include="..\src\EntityPlan.cpp" />
     <ClCompile Include="..\src\EntityPointToPointConstraint.cpp" />
+    <ClCompile Include="..\src\EntitySkybox.cpp" />
     <ClCompile Include="..\src\EntitySphere.cpp" />
     <ClCompile Include="..\src\FSMRunner.cpp" />
     <ClCompile Include="..\src\GfxEntityBox.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="..\src\EntityFixedConstraint.h" />
     <ClInclude Include="..\src\EntityPlan.h" />
     <ClInclude Include="..\src\EntityPointToPointConstraint.h" />
+    <ClInclude Include="..\src\EntitySkybox.h" />
     <ClInclude Include="..\src\EntitySphere.h" />
     <ClInclude Include="..\src\FSMRunner.h" />
     <ClInclude Include="..\src\GfxEntityBox.h" />

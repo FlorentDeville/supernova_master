@@ -32,46 +32,40 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef COMPONENT_BACKGROUND_H
-#define COMPONENT_BACKGROUND_H
+#ifndef ENTITY_SKYBOX_H
+#define ENTITY_SKYBOX_H
 
-#include "IComponent.h"
-#include "snVec.inl"
-#include "snMatrix44f.h"
+#include "IWorldEntity.h"
 
-namespace Supernova
+namespace DirectX
 {
-	class snActorDynamic;
+	struct XMFLOAT4;
 }
-using namespace Supernova;
+using DirectX::XMFLOAT4;
 
 namespace Devil
 {
-	class ComponentBackground : public IComponent
+	//class GfxEntityPlan;
+	class IGfxEntity;
+	
+
+	class EntitySkybox : public IWorldEntity
 	{
 	private:
-		//Actor representing the background
-		snActorDynamic* m_background;
+		IGfxEntity* m_gfxPlans[6];
 
-		//Actor representing the point which all rotation axis go through
-		snActorDynamic* m_origin;
+		//The entity that must always be at the center of the skybox.
+		IWorldEntity* m_target;
 
-		//Background transform
-		snMatrix44f m_transform;
+		float m_size;
 
 	public:
+		EntitySkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);
+		~EntitySkybox();
 
-		ComponentBackground(snActorDynamic* _background, snActorDynamic* _origin, const snVec& _initialTranslation, const snVec& _initialOrientation);
-
-		~ComponentBackground();
-
-		void update(float _dt);
-
+		void update();
 		void render();
-
-		void* operator new(size_t _count);
-
-		void operator delete(void* _p);
 	};
 }
-#endif //ifndef COMPONENT_BACKGROUND_H
+
+#endif //ifndef ENTITY_SKYBOX_H

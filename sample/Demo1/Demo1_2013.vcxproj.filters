@@ -37,6 +37,9 @@
     <Filter Include="World\Entities\Camera">
       <UniqueIdentifier>{60b394cc-5790-4e2f-962d-668977bd2272}</UniqueIdentifier>
     </Filter>
+    <Filter Include="World\Entities\Skybox">
+      <UniqueIdentifier>{9585763d-d430-479d-a1d2-fbff416c8c0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -144,6 +147,9 @@
     </ClCompile>
     <ClCompile Include="..\src\CameraState_FollowTarget.cpp">
       <Filter>World\Entities\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntitySkybox.cpp">
+      <Filter>World\Entities\Skybox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +272,9 @@
     </ClInclude>
     <ClInclude Include="..\src\CameraState_FollowTarget.h">
       <Filter>World\Entities\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntitySkybox.h">
+      <Filter>World\Entities\Skybox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

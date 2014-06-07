@@ -1288,62 +1288,82 @@ namespace Devil
 
 	void SceneManager::createSceneMonkeyBall()
 	{
-		createSandbox(L"Monkey Ball");
+		//createSandbox(L"Monkey Ball");
+		//initialize the world
+		WORLD->initialize();
 
-		snScene* scene = SUPERNOVA->getScene(0);
-		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene : Monkey Ball");
+
+		GRAPHICS->setClearScreenColor(DirectX::Colors::DarkGray);
+
+		//create the physics scene
+		int sceneId = -1;
+		snScene* scene = 0;
+		SUPERNOVA->createScene(&scene, sceneId);
+		scene->setCollisionMode(m_collisionMode);
+
+		//scene->setLinearSquaredSpeedThreshold(0.000001f);
+		//scene->setAngularSquaredSpeedThreshold(0.000001f);
+		scene->setLinearSquaredSpeedThreshold(0.00001f);
+		scene->setAngularSquaredSpeedThreshold(0.00001f);
+
+		//create the camera.
+		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
+
+		WORLD->deactivateCollisionPoint();
+
+		scene->setGravity(snVec4Set(0, -9.81f * 10, 0, 0));
 		scene->setContactConstraintBeta(0.05f);
 		scene->setSolverIterationCount(30);
 		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
 		scene->setContactConstraintBeta(0.3f);
 
-		WORLD->getCamera()->setPosition(snVec4Set(10, 30, -120, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(10, 120, -180, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(10, 30, 0, 1));
-		WORLD->activateCollisionPoint();
 
-		
 		snActorDynamic* actEnvironment = 0;
 		int actEnvironmentId = -1;
 		scene->createActorDynamic(&actEnvironment, actEnvironmentId);
 
-		//level one
+		const float THICKNESS = 20;
 		snColliderBox* levelOne = new snColliderBox();
-		levelOne->setSize(snVec4Set(10, 2, 10, 0));
-		snMatrix44f translate, rotate, transform;
-		transform.createTranslation(snVec4Set(0, 30, 0, 1));
+		levelOne->setSize(snVec4Set(200, THICKNESS, 200, 0));
+		actEnvironment->addCollider(levelOne);
+
+		levelOne = new snColliderBox();
+		levelOne->setSize(snVec4Set(200, THICKNESS, 50, 0));
+		snMatrix44f transform;
+		transform.createTranslation(snVec4Set(200, 0, 0, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
-		//ramp one
-		snColliderBox* collider = new snColliderBox();
-		collider->setSize(snVec4Set(50, 2, 10, 0));
-		translate.createTranslation(snVec4Set(21.98f, 12.62f, 0, 1));
-		rotate.createRotationZ(-SN_PI * 0.25f);
-		snMatrixMultiply4(rotate, translate, transform);
-		actEnvironment->addCollider(collider, transform);
+		levelOne = new snColliderBox();
+		levelOne->setSize(snVec4Set(50, THICKNESS, 200, 0));
+		transform.createTranslation(snVec4Set(325, 0, 75, 1));
+		actEnvironment->addCollider(levelOne, transform);
 
-		//level two
-		collider = new snColliderBox();
-		collider->setSize(snVec4Set(10, 2, 10, 0));
-		translate.createTranslation(snVec4Set(45, -5, 0, 1));
-		actEnvironment->addCollider(collider, translate);
+		levelOne = new snColliderBox();
+		levelOne->setSize(snVec4Set(200, THICKNESS, 50, 0));
+		transform.createTranslation(snVec4Set(450, 0, 150, 1));
+		actEnvironment->addCollider(levelOne, transform);
 
-		//ramp two
-		collider = new snColliderBox();
-		collider->setSize(snVec4Set(50, 2, 10, 0));
-		translate.createTranslation(snVec4Set(67, 12.62f, 0, 1));
-		rotate.createRotationZ(SN_PI * 0.25f);
-		snMatrixMultiply4(rotate, translate, transform);
-		actEnvironment->addCollider(collider, transform);
+		levelOne = new snColliderBox();
+		levelOne->setSize(snVec4Set(50, THICKNESS, 200, 0));
+		transform.createTranslation(snVec4Set(575, 0, 75, 1));
+		actEnvironment->addCollider(levelOne, transform);
 
-		//ramp three
-		collider = new snColliderBox();
-		collider->setSize(snVec4Set(10, 2, 50, 0));
-		translate.createTranslation(snVec4Set(81.2, 26.7, 30, 1));
-		rotate.createRotationZ(SN_PI * 0.25f);
-		snMatrixMultiply4(rotate, translate, transform);
-		actEnvironment->addCollider(collider, transform);
+		levelOne = new snColliderBox();
+		levelOne->setSize(snVec4Set(200, THICKNESS, 50, 0));
+		transform.createTranslation(snVec4Set(700, 0, 0, 1));
+		actEnvironment->addCollider(levelOne, transform);
 
-		snVec initialPosition = snVec4Set(0, 30, 0, 1);
+		levelOne = new snColliderBox();
+		levelOne->setSize(snVec4Set(200, THICKNESS, 200, 0));
+		transform.createTranslation(snVec4Set(900, 0, 0, 1));
+		actEnvironment->addCollider(levelOne, transform);
+
+		
+		snVec initialPosition = snVec4Set(0, 50, 0, 1);
 		snVec initialOrientation = snVec4Set(0, 0, 0, 1);
 		actEnvironment->setPosition(initialPosition);
 		actEnvironment->setIsKinematic(true);
@@ -1358,21 +1378,35 @@ namespace Devil
 		snActorDynamic* ball = 0;
 		int actorBallId = -1;
 		scene->createActorDynamic(&ball, actorBallId);
-		snColliderSphere* sphere = new snColliderSphere(2);
+		snColliderSphere* sphere = new snColliderSphere(5);
 		ball->addCollider(sphere);
 		ball->updateMassAndInertia(100);
-		ball->setPosition(snVec4Set(0, 63, 0, 1));
+		ball->setPosition(snVec4Set(-50, 65, 0, 1));
 		ball->getPhysicMaterial().m_restitution = 0;
 		ball->getPhysicMaterial().m_friction = 1;
 		ball->initialize();
 
 		//WORLD->createComposite(ball, m_colors[3]);
-		WORLD->createMonkeyBall(ball, m_colors[4]);
+		EntityComposite* monkeyBall = WORLD->createMonkeyBall(ball, m_colors[4]);
+		WORLD->createSkybox(monkeyBall, 1000, m_colors[4]);
 
 		//WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
 
 		ComponentBackground* cBack = new ComponentBackground(actEnvironment, ball, initialPosition, initialOrientation);
 		entity->addPreUpdateComponent(cBack);
+
+		////static background
+		//snActorStatic* staticBackground = 0;
+		//int idStaticBackground = 0;
+		//scene->createActorStatic(&staticBackground, idStaticBackground, snVec4Set(0, -1000, 0, 1), snVec4Set(0, 0, 0, 1));
+
+		//levelOne = new snColliderBox();
+		//levelOne->setSize(snVec4Set(5000, 5, 5000, 0));
+		//staticBackground->addCollider(levelOne);
+
+		//staticBackground->initialize();
+		//WORLD->createComposite(staticBackground, m_colors[3]);
+
 	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)

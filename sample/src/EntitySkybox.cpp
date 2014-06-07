@@ -32,46 +32,77 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef COMPONENT_BACKGROUND_H
-#define COMPONENT_BACKGROUND_H
+#include "EntitySkybox.h"
 
-#include "IComponent.h"
-#include "snVec.inl"
-#include "snMatrix44f.h"
+#include "Graphics.h"
+#include "Camera.h"
+#include "D3D.h"
 
-namespace Supernova
-{
-	class snActorDynamic;
-}
-using namespace Supernova;
+#include "GfxEntityPlan.h"
+
+#include <DirectXMath.h>
+using namespace DirectX;
 
 namespace Devil
 {
-	class ComponentBackground : public IComponent
+	EntitySkybox::EntitySkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color) : m_target(_target), m_size(_size)
 	{
-	private:
-		//Actor representing the background
-		snActorDynamic* m_background;
+		for (int i = 0; i < 6; ++i)
+		{
+			m_gfxPlans[i] = (IGfxEntity*)GRAPHICS->createBox(XMFLOAT3(_size, 2, _size), _color);
+			//m_gfxPlans[i] = (IGfxEntity*)GRAPHICS->createPlan(XMFLOAT2(_size, _size), _color);
+		}
+		
+	}
 
-		//Actor representing the point which all rotation axis go through
-		snActorDynamic* m_origin;
+	EntitySkybox::~EntitySkybox(){}
 
-		//Background transform
-		snMatrix44f m_transform;
+	void EntitySkybox::update()
+	{
 
-	public:
+	}
+	
+	void EntitySkybox::render()
+	{
+		//get view and projection matrices
+		XMMATRIX viewMatrix, projectionMatrix, world;
+		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
+		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
-		ComponentBackground(snActorDynamic* _background, snActorDynamic* _origin, const snVec& _initialTranslation, const snVec& _initialOrientation);
+		XMVECTOR center = m_target->getPosition();
+		XMMATRIX offset = XMMatrixTranslationFromVector(center);
 
-		~ComponentBackground();
+		float halfSize = m_size * 0.5f;
 
-		void update(float _dt);
+		XMMATRIX translate = XMMatrixTranslation(0, -halfSize, 0);
+		XMMATRIX rotation;
 
-		void render();
+		//bottom
+		world = translate * offset;
+		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
 
-		void* operator new(size_t _count);
+		//top
+		world = XMMatrixTranslation(0, halfSize, 0) * offset;
+		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
 
-		void operator delete(void* _p);
-	};
+		//right
+		rotation = XMMatrixRotationRollPitchYaw(0, 0, 3.14f * 0.5f);
+		world = translate * (rotation * offset);
+		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+
+		//left
+		rotation = XMMatrixRotationRollPitchYaw(0, 0, -3.14f * 0.5f);
+		world = translate * (rotation * offset);
+		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+
+		//front
+		rotation = XMMatrixRotationRollPitchYaw(3.14f * 0.5f, 0, 0);
+		world = translate * (rotation * offset);
+		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+
+		//back
+		rotation = XMMatrixRotationRollPitchYaw(-3.14f * 0.5f, 0, 0);
+		world = translate * (rotation * offset);
+		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+	}
 }
-#endif //ifndef COMPONENT_BACKGROUND_H
