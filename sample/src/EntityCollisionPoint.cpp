@@ -42,7 +42,7 @@ namespace Devil
 		for (snVecVectorConstIterator i = contacts.cbegin(); i != contacts.cend(); ++i)
 		{
 			XMMATRIX transform = XMMatrixScaling(m_diameter, m_diameter, m_diameter) *  XMMatrixTranslationFromVector(*i);
-			m_gfx->render(transform, viewMatrix, projectionMatrix, Colors::Red, m_wireframe);
+			m_gfx->render(transform, viewMatrix, projectionMatrix, Colors::Red, m_texture, m_wireframe);
 		}
 	}
 

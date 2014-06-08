@@ -1371,8 +1371,8 @@ namespace Devil
 		actEnvironment->getPhysicMaterial().m_friction = 1;
 		actEnvironment->initialize();
 
-		EntityComposite* entity = WORLD->createComposite(actEnvironment, m_colors[2]);
-		
+		EntityComposite* entity = WORLD->createComposite(actEnvironment, XMFLOAT4(1, 1, 1, 1));
+		entity->setTexture(GRAPHICS->getTexChecker());
 
 		//Create ball
 		snActorDynamic* ball = 0;

@@ -59,8 +59,6 @@ namespace Devil
 	{
 		XMVECTOR targetPosition = m_target->getActor()->getPosition();
 		XMVECTOR forward = XMVectorSet(1, 0, 0, 0);
-		//forward = m_target->getActor()->getLinearVelocity();
-		//forward = XMVector3Normalize(forward);
 		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 
 		XMVECTOR cameraPosition = targetPosition - (forward * m_distance) + (up * m_height);

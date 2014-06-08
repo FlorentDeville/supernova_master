@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "ColorShader.h"
+#include "Texture.h"
 #include "TextureShader.h"
 #include "Light.h"
 #include "LightShader.h"
@@ -102,16 +103,7 @@ namespace Devil
 			m_spriteBatch = 0;
 		}
 
-		for (std::vector<IGfxEntity*>::iterator i = m_entityList.begin(); i != m_entityList.end(); ++i)
-		{
-			if ((*i) != 0)
-			{
-				(*i)->shutdown();
-				delete (*i);
-				*i = 0;
-			}
-		}
-		m_entityList.clear();
+		clear();
 	}
 
 	D3D* Graphics::getDirectXWrapper()
@@ -159,6 +151,18 @@ namespace Devil
 				*i = 0;
 			}
 		}
+		m_entityList.clear();
+
+		for (std::vector<Texture*>::iterator i = m_textures.begin(); i != m_textures.end(); ++i)
+		{
+			if ((*i) == 0)
+				continue;
+
+			(*i)->shutdown();
+			delete *i;
+			*i = 0;
+		}
+		m_textures.clear();
 	}
 
 	IGfxEntity* Graphics::getBox()
@@ -169,6 +173,16 @@ namespace Devil
 	IGfxEntity* Graphics::getSphere()
 	{
 		return m_entityList[m_IdSphere];
+	}
+
+	Texture* Graphics::getTexture(unsigned int _id)
+	{
+		return m_textures[_id];
+	}
+
+	Texture* Graphics::getTexChecker()
+	{
+		return m_textures[m_IdTexChecker];
 	}
 
 	bool Graphics::initialize(int screenWidth, int screenHeight, HWND hwnd, bool _fullScreen, bool _vsync)
@@ -210,6 +224,15 @@ namespace Devil
 		//load meshes
 		createBox();
 		createSphere();
+
+		Texture* myTexture = new Texture();
+		if (!myTexture->loadWIC(L"check.png"))
+		{
+			MessageBox(hwnd, L"Could not load check.png", L"Error", MB_OK);
+			return false;
+		}
+		m_IdTexChecker = m_textures.size();
+		m_textures.push_back(myTexture);
 
 		return true;
 	}

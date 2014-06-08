@@ -27,7 +27,8 @@ namespace Devil
 
 		bool initialize(const XMFLOAT2& _size, const XMFLOAT4& _color);
 		void shutdown();
-		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color, bool _wireframe);
+		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color,
+			const Texture* const _texture, bool _wireframe);
 	};
 }
 #endif //GFX_ENTITY_PLAN_H

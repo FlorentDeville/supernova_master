@@ -16,7 +16,7 @@ namespace Devil
 	{
 	}
 
-	bool Model::initialize(ID3D11Device* device, WCHAR* textureFilename)
+	bool Model::initialize(ID3D11Device* device, wchar_t* textureFilename)
 	{
 		bool result;
 
@@ -207,7 +207,7 @@ namespace Devil
 		return;
 	}
 
-	bool Model::loadTexture(ID3D11Device* device, WCHAR* filename)
+	bool Model::loadTexture(ID3D11Device* device, wchar_t* filename)
 	{
 		bool result;
 
@@ -220,7 +220,7 @@ namespace Devil
 		}
 
 		// Initialize the texture object.
-		result = m_Texture->initialize(device, filename);
+		result = m_Texture->loadDDS(device, filename);
 		if (!result)
 		{
 			return false;

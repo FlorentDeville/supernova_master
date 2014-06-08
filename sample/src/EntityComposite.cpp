@@ -56,28 +56,8 @@ namespace Devil
 		m_actor = _actor;
 		vector<snColliderContainer*> colliders = m_actor->getColliders();
 
-		/*for (vector<snColliderContainer*>::const_iterator i = colliders.cbegin(); i != colliders.cend(); ++i)
-		{
-			switch ((*i)->m_collider->getTypeOfCollider())
-			{
-				case snEColliderType::snEColliderBox:
-				{
-					snColliderBox* box = static_cast<snColliderBox*>((*i)->m_collider);
-					snVec size = box->getSize();
-					m_gfx.push_back(GRAPHICS->getBox());
-				}
-				break;
-
-				case snEColliderType::snEColliderSphere:
-					snColliderSphere* sphere = static_cast<snColliderSphere*>((*i)->m_collider);
-					GfxEntitySphere* gfxSphere = GRAPHICS->createSphere(sphere->getRadius() * 2, XMVectorSet(_color.x, _color.y, _color.z, _color.w));
-					m_gfx.push_back((IGfxEntity*)gfxSphere);
-					break;
-			}
-		}*/
-
 		//create a sphere for the center of mass
-		m_gfxCenterOfMass = GRAPHICS->getSphere();//GRAPHICS->createSphere(1.f, DirectX::Colors::Pink);
+		m_gfxCenterOfMass = GRAPHICS->getSphere();
 
 		
 	}
@@ -141,12 +121,12 @@ namespace Devil
 			dxWorldMatrix.r[1] = worldTransform.m_r[1];
 			dxWorldMatrix.r[2] = worldTransform.m_r[2];
 			dxWorldMatrix.r[3] = worldTransform.m_r[3];
-			gfx->render(dxWorldMatrix, viewMatrix, projectionMatrix, m_color, m_wireframe);
+			gfx->render(dxWorldMatrix, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 		}
 
 		//render the center of mass
 		XMMATRIX centerOfMassPosition = XMMatrixIdentity();
 		centerOfMassPosition.r[3] = m_actor->getWorldCenterOfMass();
-		m_gfxCenterOfMass->render(centerOfMassPosition, viewMatrix, projectionMatrix, Colors::Green, m_wireframe);
+		m_gfxCenterOfMass->render(centerOfMassPosition, viewMatrix, projectionMatrix, Colors::Green, m_texture, m_wireframe);
 	}
 }

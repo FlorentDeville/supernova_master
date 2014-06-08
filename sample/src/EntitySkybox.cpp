@@ -48,7 +48,8 @@ namespace Devil
 	EntitySkybox::EntitySkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color) : m_target(_target), m_size(_size)
 	{
 		m_gfx = GRAPHICS->getBox();
-		m_color = XMVectorSet(_color.x, _color.y, _color.z, _color.w);
+		m_color = XMVectorSet(1, 1, 1, 1);//XMVectorSet(_color.x, _color.y, _color.z, _color.w);
+		m_texture = GRAPHICS->getTexChecker();
 	}
 
 	EntitySkybox::~EntitySkybox(){}
@@ -76,30 +77,30 @@ namespace Devil
 
 		//bottom
 		world = scale * translate * offset;
-		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 
 		//top
 		world = scale * XMMatrixTranslation(0, halfSize, 0) * offset;
-		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 
 		//right
 		rotation = scale * XMMatrixRotationRollPitchYaw(0, 0, 3.14f * 0.5f);
 		world = translate * (rotation * offset);
-		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 
 		//left
 		rotation = scale * XMMatrixRotationRollPitchYaw(0, 0, -3.14f * 0.5f);
 		world = translate * (rotation * offset);
-		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 
 		//front
 		rotation = scale * XMMatrixRotationRollPitchYaw(3.14f * 0.5f, 0, 0);
 		world = translate * (rotation * offset);
-		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 
 		//back
 		rotation = scale * XMMatrixRotationRollPitchYaw(-3.14f * 0.5f, 0, 0);
 		world = translate * (rotation * offset);
-		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 	}
 }

@@ -19,9 +19,6 @@
     <Filter Include="SceneManager">
       <UniqueIdentifier>{f78f1e43-ae73-47b1-b05d-e1cea095ef60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics\font">
-      <UniqueIdentifier>{806d8ede-57d2-471a-bc72-d016d68e0a2e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="World\Entities">
       <UniqueIdentifier>{98f4eaaf-b68a-473d-ab5b-f5c84d788eab}</UniqueIdentifier>
     </Filter>
@@ -40,6 +37,18 @@
     <Filter Include="World\Entities\Skybox">
       <UniqueIdentifier>{9585763d-d430-479d-a1d2-fbff416c8c0d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\Asset">
+      <UniqueIdentifier>{aa275b59-a8a2-4481-ba1c-1cc17de5d9eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Asset\Font">
+      <UniqueIdentifier>{806d8ede-57d2-471a-bc72-d016d68e0a2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Asset\Texture">
+      <UniqueIdentifier>{6fb41325-0a26-43b1-adcd-ec19e30c5dbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\GfxEntities">
+      <UniqueIdentifier>{4330beef-a19c-4a66-ab50-5dffff5756bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -52,15 +61,6 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\src\EffectProvider.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\GfxEntityBox.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\GfxEntityPlan.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\GfxEntitySphere.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Graphics.cpp">
@@ -151,6 +151,15 @@
     <ClCompile Include="..\src\EntitySkybox.cpp">
       <Filter>World\Entities\Skybox</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\GfxEntityBox.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GfxEntityPlan.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GfxEntitySphere.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -165,19 +174,7 @@
     <ClInclude Include="..\src\EffectProvider.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\GfxEntityBox.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\GfxEntityPlan.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\GfxEntitySphere.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Graphics.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\IGfxEntity.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Light.h">
@@ -276,10 +273,27 @@
     <ClInclude Include="..\src\EntitySkybox.h">
       <Filter>World\Entities\Skybox</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\GfxEntityBox.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GfxEntityPlan.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GfxEntitySphere.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\IGfxEntity.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont">
-      <Filter>Graphics\font</Filter>
+      <Filter>Graphics\Asset\Font</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\src\check.png">
+      <Filter>Graphics\Asset\Texture</Filter>
+    </Image>
   </ItemGroup>
 </Project>

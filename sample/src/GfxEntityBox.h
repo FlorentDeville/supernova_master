@@ -26,7 +26,8 @@ namespace Devil
 
 		bool initialize(ID3D11DeviceContext* _context);
 		void shutdown();
-		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color, bool _wireframe);
+		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color, 
+			const Texture* const _texture, bool _wireframe);
 
 	};
 

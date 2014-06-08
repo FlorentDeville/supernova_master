@@ -46,6 +46,6 @@ namespace Devil
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
-		m_gfx->render(transform, viewMatrix, projectionMatrix, Colors::Green, m_wireframe);
+		m_gfx->render(transform, viewMatrix, projectionMatrix, Colors::Green, m_texture, m_wireframe);
 	}
 }

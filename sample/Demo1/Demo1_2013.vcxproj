@@ -65,7 +65,8 @@
       <AdditionalDependencies>Supernova_2013.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y</Command>
+      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
+xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -177,6 +178,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\src\check.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

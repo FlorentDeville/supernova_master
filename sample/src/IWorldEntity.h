@@ -52,6 +52,8 @@ using std::vector;
 
 namespace Devil
 {
+	class Texture;
+
 	class IWorldEntity
 	{
 	protected:
@@ -74,8 +76,11 @@ namespace Devil
 		//Indicates if this entity has to be rendered in wireframe
 		bool m_wireframe;
 
+		//Texture object to use to render the entity.
+		Texture* m_texture;
+
 	public:
-		IWorldEntity() : m_isActive(true), m_postUpdateComponents(), m_preUpdateComponents(), m_wireframe(false)
+		IWorldEntity() : m_isActive(true), m_postUpdateComponents(), m_preUpdateComponents(), m_wireframe(false), m_texture(0)
 		{
 			m_position = DirectX::XMVectorSet(0, 0, 0, 1);
 			m_orientation = XMFLOAT3(0, 0, 0);
@@ -112,6 +117,8 @@ namespace Devil
 		void setIsActive(bool _isActive){ m_isActive = _isActive; }
 
 		void setWireframe(bool _isWireframe){ m_wireframe = _isWireframe; }
+
+		void setTexture(Texture* const _texture){ m_texture = _texture; }
 
 		bool getIsActive() const { return m_isActive; }
 

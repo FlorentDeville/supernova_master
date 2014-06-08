@@ -2,13 +2,19 @@
 #define MODEL_H
 
 #include <DirectXMath.h>
-#include "Texture.h"
 
 using DirectX::XMFLOAT3;
 using DirectX::XMFLOAT2;
 
+struct ID3D11DeviceContext;
+struct ID3D11Device;
+struct ID3D11ShaderResourceView;
+struct ID3D11Buffer;
+
 namespace Devil
 {	
+	class Texture;
+
 	class Model
 	{
 	private:
@@ -28,7 +34,7 @@ namespace Devil
 		Model();
 		~Model();
 
-		bool initialize(ID3D11Device*, WCHAR*);
+		bool initialize(ID3D11Device*, wchar_t*);
 		void shutdown();
 		void render(ID3D11DeviceContext*);
 
@@ -41,7 +47,7 @@ namespace Devil
 		void shutdownBuffers();
 		void renderBuffers(ID3D11DeviceContext*);
 
-		bool loadTexture(ID3D11Device*, WCHAR*);
+		bool loadTexture(ID3D11Device*, wchar_t*);
 		void releaseTexture();
 
 	};

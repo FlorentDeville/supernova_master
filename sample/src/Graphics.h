@@ -38,6 +38,7 @@ namespace Devil
 	class GfxEntitySphere;
 	class GfxEntityBox;
 	class GfxEntityPlan;
+	class Texture;
 
 	const float SCREEN_DEPTH = 10000.0f;
 	const float SCREEN_NEAR = 0.1f;
@@ -58,7 +59,11 @@ namespace Devil
 		LightShader* m_LightShader;
 		Light* m_Light;
 
+		//List of graphics entities
 		std::vector<IGfxEntity*> m_entityList;
+
+		//List of textures
+		std::vector<Texture*> m_textures;
 
 		//Width of the screen in pixels
 		int m_screenWidth;
@@ -75,9 +80,14 @@ namespace Devil
 		//font consolas used to write text on screen
 		SpriteFont* m_spriteFontConsolas;
 
+		//Id of the box graphic entity
 		unsigned int m_IdBox;
 
+		//Id of the sphere graphic entity
 		unsigned int m_IdSphere;
+
+		//Id of the checker texture
+		unsigned int m_IdTexChecker;
 
 	public:
 		static Graphics* getInstance();
@@ -129,6 +139,10 @@ namespace Devil
 		IGfxEntity* getBox();
 
 		IGfxEntity* getSphere();
+
+		Texture* getTexture(unsigned int _id);
+
+		Texture* getTexChecker();
 
 	private:
 		Graphics();

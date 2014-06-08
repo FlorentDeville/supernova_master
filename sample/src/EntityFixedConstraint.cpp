@@ -78,7 +78,7 @@ namespace Devil
 
 		//show the fixed point as a sphere
 		XMMATRIX fixedPointTransform = XMMatrixTranslationFromVector(m_constraint->getFixedPosition());
-		m_sphere->render(fixedPointTransform, viewMatrix, projectionMatrix, Colors::Green, m_wireframe);
+		m_sphere->render(fixedPointTransform, viewMatrix, projectionMatrix, Colors::Green, m_texture, m_wireframe);
 
 		//show the link between the fixed point and the actor
 		snVec up, left, forward;
@@ -95,6 +95,6 @@ namespace Devil
 		XMMATRIX offset = XMMatrixTranslation(0, m_constraint->getDistance() * 0.5f, 0);
 
 		XMMATRIX linkTransform = XMMatrixScaling(1.f, m_constraint->getDistance(), 1.f) * offset * linkRotate * fixedPointTransform;
-		m_box->render(linkTransform, viewMatrix, projectionMatrix, Colors::Green, m_wireframe);
+		m_box->render(linkTransform, viewMatrix, projectionMatrix, Colors::Green, m_texture, m_wireframe);
 	}
 }
