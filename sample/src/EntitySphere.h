@@ -5,19 +5,20 @@
 
 namespace Devil
 {
-	class GfxEntitySphere;
+	class IGfxEntity;
 	
 	_declspec(align(16)) class EntitySphere : public IWorldEntity
 	{
 	private:
 		float m_diameter;
-		GfxEntitySphere* m_gfx;
-	
+		IGfxEntity* m_gfx;
+		XMVECTOR m_color;
+
 	public:
 		EntitySphere();
 		virtual ~EntitySphere();
 
-		bool initialize(float _diameter);
+		bool initialize(float _diameter, const XMVECTOR& _color);
 
 		void update();
 		void render();

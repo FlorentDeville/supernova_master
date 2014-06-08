@@ -74,6 +74,11 @@ namespace Devil
 
 		//font consolas used to write text on screen
 		SpriteFont* m_spriteFontConsolas;
+
+		unsigned int m_IdBox;
+
+		unsigned int m_IdSphere;
+
 	public:
 		static Graphics* getInstance();
 
@@ -81,6 +86,7 @@ namespace Devil
 		~Graphics();
 
 		bool initialize(int _screenWidth, int _screenHeight, HWND _hwnd, bool _fullScreen, bool _vsync);
+		
 		void shutdown();
 		
 		void BeginRender();
@@ -100,8 +106,6 @@ namespace Devil
 		// <param name="_scale">Uniform scaling to apply to the text.</param>
 		void writeText(const wstring& _text, const XMFLOAT2& _p, float _scale);
 
-		GfxEntitySphere* createSphere(float _diameter, const XMVECTOR& _color = DirectX::Colors::White);
-		GfxEntityBox* createBox(const XMFLOAT3&, const XMFLOAT4&);
 		GfxEntityPlan* createPlan(const XMFLOAT2&, const XMFLOAT4&);
 
 		D3D* getDirectXWrapper();
@@ -122,8 +126,17 @@ namespace Devil
 		//Delete all the graphics entity created
 		void clear();
 
+		IGfxEntity* getBox();
+
+		IGfxEntity* getSphere();
+
 	private:
 		Graphics();
+
+		//Create a box. 
+		GfxEntityBox* createBox();
+
+		GfxEntitySphere* createSphere();
 	};
 
 #define GRAPHICS Graphics::getInstance()

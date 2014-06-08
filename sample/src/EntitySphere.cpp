@@ -25,9 +25,10 @@ namespace Devil
 	{
 	}
 
-	bool EntitySphere::initialize(float _diameter)
+	bool EntitySphere::initialize(float _diameter, const XMVECTOR& _color)
 	{
-		m_gfx = GRAPHICS->createSphere(_diameter);
+		m_color = _color;
+		m_gfx = GRAPHICS->getSphere();
 		return true;
 	}
 
@@ -40,7 +41,7 @@ namespace Devil
 	{
 		XMMATRIX translation = XMMatrixTranslationFromVector(m_position);
 		XMMATRIX orientation = XMMatrixRotationRollPitchYaw(m_orientation.x, m_orientation.y, m_orientation.z);
-		XMMATRIX scaling = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
+		XMMATRIX scaling = XMMatrixScaling(m_diameter, m_diameter, m_diameter);
 
 		XMMATRIX viewMatrix, projectionMatrix, transform;
 		transform = scaling * orientation * translation;
@@ -48,6 +49,6 @@ namespace Devil
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 	
-		m_gfx->render(transform, viewMatrix, projectionMatrix);
+		m_gfx->render(transform, viewMatrix, projectionMatrix, m_color, m_wireframe);
 	}
 }

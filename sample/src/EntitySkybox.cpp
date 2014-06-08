@@ -47,12 +47,8 @@ namespace Devil
 {
 	EntitySkybox::EntitySkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color) : m_target(_target), m_size(_size)
 	{
-		for (int i = 0; i < 6; ++i)
-		{
-			m_gfxPlans[i] = (IGfxEntity*)GRAPHICS->createBox(XMFLOAT3(_size, 2, _size), _color);
-			//m_gfxPlans[i] = (IGfxEntity*)GRAPHICS->createPlan(XMFLOAT2(_size, _size), _color);
-		}
-		
+		m_gfx = GRAPHICS->getBox();
+		m_color = XMVectorSet(_color.x, _color.y, _color.z, _color.w);
 	}
 
 	EntitySkybox::~EntitySkybox(){}
@@ -76,33 +72,34 @@ namespace Devil
 
 		XMMATRIX translate = XMMatrixTranslation(0, -halfSize, 0);
 		XMMATRIX rotation;
+		XMMATRIX scale = XMMatrixScaling(m_size, 1, m_size);
 
 		//bottom
-		world = translate * offset;
-		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+		world = scale * translate * offset;
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
 
 		//top
-		world = XMMatrixTranslation(0, halfSize, 0) * offset;
-		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+		world = scale * XMMatrixTranslation(0, halfSize, 0) * offset;
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
 
 		//right
-		rotation = XMMatrixRotationRollPitchYaw(0, 0, 3.14f * 0.5f);
+		rotation = scale * XMMatrixRotationRollPitchYaw(0, 0, 3.14f * 0.5f);
 		world = translate * (rotation * offset);
-		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
 
 		//left
-		rotation = XMMatrixRotationRollPitchYaw(0, 0, -3.14f * 0.5f);
+		rotation = scale * XMMatrixRotationRollPitchYaw(0, 0, -3.14f * 0.5f);
 		world = translate * (rotation * offset);
-		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
 
 		//front
-		rotation = XMMatrixRotationRollPitchYaw(3.14f * 0.5f, 0, 0);
+		rotation = scale * XMMatrixRotationRollPitchYaw(3.14f * 0.5f, 0, 0);
 		world = translate * (rotation * offset);
-		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
 
 		//back
-		rotation = XMMatrixRotationRollPitchYaw(-3.14f * 0.5f, 0, 0);
+		rotation = scale * XMMatrixRotationRollPitchYaw(-3.14f * 0.5f, 0, 0);
 		world = translate * (rotation * offset);
-		m_gfxPlans[0]->render(world, viewMatrix, projectionMatrix);
+		m_gfx->render(world, viewMatrix, projectionMatrix, m_color, m_wireframe);
 	}
 }

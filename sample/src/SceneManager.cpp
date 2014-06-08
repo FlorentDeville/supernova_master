@@ -1462,7 +1462,6 @@ namespace Devil
 	void SceneManager::clearScene() const
 	{
 		SUPERNOVA->deleteAllScenes();
-		GRAPHICS->clear();
 		WORLD->clearWorld();
 	}
 

@@ -55,7 +55,6 @@ using DirectX::XMFLOAT4;
 namespace Devil
 {
 	class IGfxEntity;
-	class GfxEntitySphere;
 
 	class EntityComposite : public IWorldEntity
 	{
@@ -64,7 +63,9 @@ namespace Devil
 		vector<IGfxEntity*> m_gfx;
 
 		//Graphic entity to show the center of mass.
-		GfxEntitySphere* m_gfxCenterOfMass;
+		IGfxEntity* m_gfxCenterOfMass;
+
+		XMVECTOR m_color;
 
 	public:
 		EntityComposite(snIActor* _actor, const XMFLOAT4& _color);

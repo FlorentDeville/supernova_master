@@ -161,6 +161,16 @@ namespace Devil
 		}
 	}
 
+	IGfxEntity* Graphics::getBox()
+	{
+		return m_entityList[m_IdBox];
+	}
+
+	IGfxEntity* Graphics::getSphere()
+	{
+		return m_entityList[m_IdSphere];
+	}
+
 	bool Graphics::initialize(int screenWidth, int screenHeight, HWND hwnd, bool _fullScreen, bool _vsync)
 	{
 		bool result;
@@ -196,6 +206,10 @@ namespace Devil
 
 		// Set the initial position of the camera.
 		m_Camera->SetPosition(0.0f, 5.0f, -50.0f);
+
+		//load meshes
+		createBox();
+		createSphere();
 
 		return true;
 	}
@@ -240,20 +254,20 @@ namespace Devil
 		//m_spriteBatch->End();
 	}
 
-	GfxEntitySphere* Graphics::createSphere(float _diameter, const XMVECTOR& _color)
+	GfxEntitySphere* Graphics::createSphere()
 	{
 		GfxEntitySphere* NewSphere = new GfxEntitySphere();
-		NewSphere->initialize(m_D3D->getDeviceContext(), NULL, _diameter, _color);
-
+		NewSphere->initialize(m_D3D->getDeviceContext());
+		m_IdSphere = m_entityList.size();
 		m_entityList.push_back(dynamic_cast<IGfxEntity*>(NewSphere));
 		return NewSphere;
 	}
 
-	GfxEntityBox* Graphics::createBox(const XMFLOAT3& _size, const XMFLOAT4& _color)
+	GfxEntityBox* Graphics::createBox()
 	{
 		GfxEntityBox* NewBox = new GfxEntityBox();
-		NewBox->initialize(_size, _color);
-
+		NewBox->initialize(m_D3D->getDeviceContext());
+		m_IdBox = m_entityList.size();
 		m_entityList.push_back(dynamic_cast<IGfxEntity*>(NewBox));
 		return NewBox;
 	}

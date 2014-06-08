@@ -89,7 +89,7 @@ namespace Devil
 
 		bool initialize();
 
-		EntitySphere* createSphere(float);
+		EntitySphere* createSphere(float _diameter, const XMVECTOR& _color);
 		EntityBox* createBox(const XMFLOAT3&);
 		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
 		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);

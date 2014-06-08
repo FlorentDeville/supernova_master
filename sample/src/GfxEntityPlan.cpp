@@ -140,8 +140,10 @@ namespace Devil
 		}
 	}
 
-	void GfxEntityPlan::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection)
+	void GfxEntityPlan::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color, bool _wireframe)
 	{
+		UNREFERENCED_PARAMETER(_color);
+		UNREFERENCED_PARAMETER(_wireframe);
 		unsigned int stride;
 		unsigned int offset;
 

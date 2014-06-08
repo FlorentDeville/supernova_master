@@ -14,14 +14,14 @@ namespace Supernova
 
 namespace Devil
 {
-	class GfxEntitySphere;
+	class IGfxEntity;
 
 	class EntityCollisionPoint : public IWorldEntity
 	{
 	private:
-		GfxEntitySphere* m_gfx;
+		IGfxEntity* m_gfx;
 		vector<snVec> m_locations;
-
+		float m_diameter;
 	public:
 		EntityCollisionPoint();
 		virtual ~EntityCollisionPoint();

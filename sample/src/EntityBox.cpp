@@ -1,3 +1,36 @@
+/****************************************************************************/
+/*Copyright (c) 2014, Florent DEVILLE.                                      */
+/*All rights reserved.                                                      */
+/*                                                                          */
+/*Redistribution and use in source and binary forms, with or without        */
+/*modification, are permitted provided that the following conditions        */
+/*are met:                                                                  */
+/*                                                                          */
+/* - Redistributions of source code must retain the above copyright         */
+/*notice, this list of conditions and the following disclaimer.             */
+/* - Redistributions in binary form must reproduce the above                */
+/*copyright notice, this list of conditions and the following               */
+/*disclaimer in the documentation and/or other materials provided           */
+/*with the distribution.                                                    */
+/* - The names of its contributors cannot be used to endorse or promote     */
+/*products derived from this software without specific prior written        */
+/*permission.                                                               */
+/* - The source code cannot be used for commercial purposes without         */
+/*its contributors' permission.                                             */
+/*                                                                          */
+/*THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       */
+/*"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         */
+/*LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS         */
+/*FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE            */
+/*COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,       */
+/*INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,      */
+/*BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;          */
+/*LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER          */
+/*CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT        */
+/*LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN         */
+/*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
+/*POSSIBILITY OF SUCH DAMAGE.                                               */
+/****************************************************************************/
 #include "EntityBox.h"
 
 #include "Graphics.h"
@@ -24,15 +57,14 @@ namespace Devil
 
 	bool EntityBox::initialize(const XMFLOAT3& _size, const XMFLOAT4& _color)
 	{
+		m_color = XMVectorSet(_color.x, _color.y, _color.z, _color.w);
 		m_size = _size;
-		m_gfx = GRAPHICS->createBox(m_size, _color);
+		m_gfx = GRAPHICS->getBox();
 		return true;
 	}
 
 	void EntityBox::update()
 	{
-		/*snVector4f newPosition = m_actor->getPosition();
-		m_position = XMVectorSet(newPosition.VEC4FX, newPosition.VEC4FY, newPosition.VEC4FZ, 1);*/
 	}
 
 	void EntityBox::render()
@@ -47,20 +79,14 @@ namespace Devil
 		orientation.r[2] = m_actor->getOrientationMatrix().m_r[2];
 		orientation.r[3] = m_actor->getOrientationMatrix().m_r[3];
 
-		XMMATRIX scaling = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
+		XMMATRIX scaling = XMMatrixScaling(m_size.x, m_size.y, m_size.z);
 
 		XMMATRIX viewMatrix, projectionMatrix, transform;
-		transform = scaling * orientation * translation;
+		transform = scaling * (orientation * translation);
 
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
-		if(m_wireframe)
-			GRAPHICS->getDirectXWrapper()->turnOnWireframeMode();
-
-		m_gfx->render(transform, viewMatrix, projectionMatrix);
-		
-		if(m_wireframe)
-			GRAPHICS->getDirectXWrapper()->turnOnFillMode();
+		m_gfx->render(transform, viewMatrix, projectionMatrix, m_color, m_wireframe);
 	}
 }

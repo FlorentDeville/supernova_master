@@ -23,7 +23,8 @@ namespace Devil
 
 	bool EntityCollisionPoint::initialize(float _diameter)
 	{
-		m_gfx = GRAPHICS->createSphere(_diameter, Colors::Red);
+		m_gfx = GRAPHICS->getSphere();
+		m_diameter = _diameter;
 		return true;
 	}
 
@@ -40,8 +41,8 @@ namespace Devil
 		const snVecVector& contacts = SUPERNOVA->getScene(0)->getCollisionPoints();
 		for (snVecVectorConstIterator i = contacts.cbegin(); i != contacts.cend(); ++i)
 		{
-			XMMATRIX transform = XMMatrixTranslationFromVector(*i);
-			m_gfx->render(transform, viewMatrix, projectionMatrix);
+			XMMATRIX transform = XMMatrixScaling(m_diameter, m_diameter, m_diameter) *  XMMatrixTranslationFromVector(*i);
+			m_gfx->render(transform, viewMatrix, projectionMatrix, Colors::Red, m_wireframe);
 		}
 	}
 

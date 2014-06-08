@@ -62,8 +62,8 @@ namespace Devil
 		m_constraint = _constraint;
 
 		//create the geometry for actor a and b of the constraint.
-		m_sphere = GRAPHICS->createSphere(1, Colors::Green);
-		m_box = GRAPHICS->createBox(XMFLOAT3(1.f, 1.f, 1.f), XMFLOAT4(0, 0.5f, 0, 1.f));
+		m_sphere = GRAPHICS->getSphere();
+		m_box = (GfxEntityBox*)GRAPHICS->getBox();
 
 		return true;
 	}
@@ -83,7 +83,7 @@ namespace Devil
 		{
 			//show the fixed point as a sphere
 			XMMATRIX fixedPointTransform = XMMatrixTranslationFromVector(m_constraint->getWPivot()[i]);
-			m_sphere->render(fixedPointTransform, viewMatrix, projectionMatrix);
+			m_sphere->render(fixedPointTransform, viewMatrix, projectionMatrix, Colors::Green, m_wireframe);
 
 			//show the link between the fixed point and the actor
 			snVec up, left, forward;
@@ -103,7 +103,7 @@ namespace Devil
 
 			XMMATRIX scale = XMMatrixScaling(1, length, 1);
 			XMMATRIX linkTransform = scale * offset * linkRotate * fixedPointTransform;
-			m_box->render(linkTransform, viewMatrix, projectionMatrix);
+			m_box->render(linkTransform, viewMatrix, projectionMatrix, Colors::Green, m_wireframe);
 		}
 	}
 }

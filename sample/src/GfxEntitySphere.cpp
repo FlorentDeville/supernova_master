@@ -11,10 +11,9 @@ namespace Devil
 	{
 	}
 
-	bool GfxEntitySphere::initialize(ID3D11DeviceContext* _device, WCHAR* /*_texturePath*/, float _diameter, const XMVECTOR& _color)
+	bool GfxEntitySphere::initialize(ID3D11DeviceContext* _device)
 	{
-		m_primitive = GeometricPrimitive::CreateGeoSphere(_device, _diameter, 3U, false);
-		m_color = _color;
+		m_primitive = GeometricPrimitive::CreateGeoSphere(_device, 1, 3U, false);
 		return true;
 	}
 
@@ -22,8 +21,8 @@ namespace Devil
 	{
 	}
 
-	void GfxEntitySphere::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection)
+	void GfxEntitySphere::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color, bool _wireframe)
 	{
-		m_primitive->Draw(_world, _view, _projection, m_color, nullptr, false);
+		m_primitive->Draw(_world, _view, _projection, _color, nullptr, _wireframe);
 	}
 }

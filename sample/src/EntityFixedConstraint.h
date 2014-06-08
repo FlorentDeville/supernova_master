@@ -45,7 +45,7 @@ namespace Supernova
 namespace Devil
 {
 	
-	class GfxEntitySphere;
+	class IGfxEntity;
 	class GfxEntityBox;
 
 	class EntityFixedConstraint : public IWorldEntity
@@ -55,7 +55,7 @@ namespace Devil
 		const snFixedConstraint* m_constraint;
 
 		//The sphere to represent the fixe world space of the constraint.
-		GfxEntitySphere* m_sphere;
+		IGfxEntity* m_sphere;
 
 		//Show the link between the fixed world location and the physics actor.
 		GfxEntityBox* m_box;

@@ -98,10 +98,10 @@ namespace Devil
 		return true;
 	}
 
-	EntitySphere* World::createSphere(float _diameter)
+	EntitySphere* World::createSphere(float _diameter, const XMVECTOR& _color)
 	{
 		EntitySphere* NewEntity = new EntitySphere();
-		NewEntity->initialize(_diameter);
+		NewEntity->initialize(_diameter, _color);
 		m_EntityList.push_back(NewEntity);
 		return NewEntity;
 	}

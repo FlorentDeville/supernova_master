@@ -21,9 +21,9 @@ namespace Devil
 		GfxEntitySphere();
 		virtual ~GfxEntitySphere();
 
-		bool initialize(ID3D11DeviceContext*, WCHAR*, float, const XMVECTOR& _color = DirectX::Colors::White);
+		bool initialize(ID3D11DeviceContext* _device);
 		void shutdown();
-		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection);
+		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color, bool _wireframe);
 
 		void* operator new(size_t _count)
 		{
