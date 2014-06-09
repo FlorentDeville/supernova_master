@@ -65,7 +65,8 @@
       <AdditionalDependencies>Supernova_2012.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y</Command>
+      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
+xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -90,7 +91,8 @@
       <AdditionalDependencies>Supernova_2012.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y</Command>
+      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
+xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -111,6 +113,7 @@
     <ClCompile Include="..\src\EntityFixedConstraint.cpp" />
     <ClCompile Include="..\src\EntityPlan.cpp" />
     <ClCompile Include="..\src\EntityPointToPointConstraint.cpp" />
+    <ClCompile Include="..\src\EntitySkybox.cpp" />
     <ClCompile Include="..\src\EntitySphere.cpp" />
     <ClCompile Include="..\src\FSMRunner.cpp" />
     <ClCompile Include="..\src\GfxEntityBox.cpp" />
@@ -151,6 +154,7 @@
     <ClInclude Include="..\src\EntityFixedConstraint.h" />
     <ClInclude Include="..\src\EntityPlan.h" />
     <ClInclude Include="..\src\EntityPointToPointConstraint.h" />
+    <ClInclude Include="..\src\EntitySkybox.h" />
     <ClInclude Include="..\src\EntitySphere.h" />
     <ClInclude Include="..\src\FSMRunner.h" />
     <ClInclude Include="..\src\GfxEntityBox.h" />
