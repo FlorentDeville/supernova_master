@@ -49,6 +49,8 @@ namespace Devil
 			FSMRunner* m_fsm;
 
 		public:
+			virtual ~IState();
+
 			//Called the first time the fsm is in the current state.
 			virtual void enter() = 0;
 

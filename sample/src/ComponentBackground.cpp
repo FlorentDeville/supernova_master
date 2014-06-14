@@ -48,30 +48,38 @@ namespace Devil
 	{
 		m_transform.createRotationFromQuaternion(snQuaternionFromEuler(snVec4GetX(_initialOrientation), snVec4GetY(_initialOrientation), snVec4GetZ(_initialOrientation)));
 		m_transform.m_r[3] = _initialTranslation;
+
+		m_forward = snVec4Set(1, 0, 0, 0);
+		m_left = snVec4Set(0, 0, 1, 0);
 	}
 
 	ComponentBackground::~ComponentBackground(){}
 
 	void ComponentBackground::update(float _dt)
 	{
+		UNREFERENCED_PARAMETER(_dt);
 		const float ROTATION_SPEED = 0.02f;
 		snMatrix44f backgroundNewRotation;
-		if (INPUT->isKeyDown('I'))
+		
+		if (INPUT->isKeyDown('Z'))
 		{
-			backgroundNewRotation.createRotationZ(-ROTATION_SPEED);
+			computeOriginFrame(m_origin, m_forward, m_left);
+			backgroundNewRotation.createRotation(m_left, ROTATION_SPEED);
 		}
-		else if (INPUT->isKeyDown('K'))
+		else if (INPUT->isKeyDown('S'))
 		{
-			backgroundNewRotation.createRotationZ(ROTATION_SPEED);
+			computeOriginFrame(m_origin, m_forward, m_left);
+			backgroundNewRotation.createRotation(m_left, -ROTATION_SPEED);
 		}
-
-		else if (INPUT->isKeyDown('P'))
+		else if (INPUT->isKeyDown('D'))
 		{
-			backgroundNewRotation.createRotationX(-ROTATION_SPEED);
+			computeOriginFrame(m_origin, m_forward, m_left);
+			backgroundNewRotation.createRotation(m_forward, ROTATION_SPEED);
 		}
-		else if (INPUT->isKeyDown('O'))
+		else if (INPUT->isKeyDown('Q'))
 		{
-			backgroundNewRotation.createRotationX(ROTATION_SPEED);
+			computeOriginFrame(m_origin, m_forward, m_left);
+			backgroundNewRotation.createRotation(m_forward, -ROTATION_SPEED);
 		}
 		else
 			return;
@@ -113,5 +121,18 @@ namespace Devil
 	void ComponentBackground::operator delete(void* _p)
 	{
 		_aligned_free(_p);
+	}
+
+	void ComponentBackground::computeOriginFrame(const snActorDynamic* _origin, snVec& _forward, snVec& _left)
+	{
+		snVec up = snVec4Set(0, 1, 0, 0);
+
+		float speed = Supernova::Vector::snVec3Norme(_origin->getLinearVelocity());
+		if (speed > 0.1f)
+		{
+			_forward = _origin->getLinearVelocity();
+			Supernova::Vector::snVec3Normalize(_forward);
+			_left = snVec3Cross(_forward, up);
+		}
 	}
 }

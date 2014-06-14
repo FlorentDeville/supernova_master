@@ -75,6 +75,9 @@ namespace Devil
 			//Change the current state to the value given as parameter when the next update will be called.
 			void setDeferredState(unsigned int _id);
 
+			//Set the current state  to the state _id without exiting from any previous state.
+			void setInitialState(unsigned int _id);
+
 			void update();
 		};
 	}

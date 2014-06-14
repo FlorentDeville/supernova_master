@@ -38,6 +38,11 @@ namespace Devil
 {
 	namespace FSM
 	{
+		IState::~IState()
+		{
+
+		}
+
 		void IState::setFSM(FSMRunner* _fsm)
 		{
 			m_fsm = _fsm;

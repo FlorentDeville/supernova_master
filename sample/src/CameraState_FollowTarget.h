@@ -38,12 +38,17 @@
 #include "IState.h"
 using namespace Devil::FSM;
 
+#include "snVec.inl"
+
+using Supernova::snVec;
+#include "snGlobals.h"
+
 namespace Devil
 {
 	class IWorldEntity;
 	class EntityCamera;
 
-	class CameraState_FollowTarget : public IState
+	SN_ALIGN class CameraState_FollowTarget : public IState
 	{
 	private:
 		EntityCamera* m_camera;
@@ -57,6 +62,8 @@ namespace Devil
 		//Height of the camera above the target.
 		float m_height;
 
+		//The forward vector of the camera.
+		snVec m_forward;
 	public:
 		CameraState_FollowTarget(EntityCamera* _camera, IWorldEntity* _target, float _distance, float _height);
 		~CameraState_FollowTarget();
@@ -66,6 +73,10 @@ namespace Devil
 		void execute();
 
 		void exit();
+
+		void* operator new(size_t _count);
+
+		void operator delete(void* _p);
 	};
 }
 #endif

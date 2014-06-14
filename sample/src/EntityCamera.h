@@ -70,15 +70,11 @@ namespace Devil
 		const XMVECTOR& getLookAt() const;
 		const XMVECTOR& getUp() const;
 
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, 16);
-		}
+		void* operator new(size_t _count);
 
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
+		void operator delete(void* _p);
+
+		void setCameraModeFollowTarget();
 	};
 
 }

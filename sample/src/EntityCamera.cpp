@@ -69,11 +69,10 @@ namespace Devil
 		CameraState_FreeCamera* stateFreeCamera = new CameraState_FreeCamera(this);
 		m_fsmRunner.addState(CAMERA_STATE_FREE_CAMERA, stateFreeCamera);
 		
-		CameraState_FollowTarget* stateFollowTarget = new CameraState_FollowTarget(this, (IWorldEntity*)WORLD->getMonkeyBall(), 80, 40);
+		CameraState_FollowTarget* stateFollowTarget = new CameraState_FollowTarget(this, (IWorldEntity*)WORLD->getMonkeyBall(), 140, 50);
 		m_fsmRunner.addState(CAMERA_STATE_FOLLOW_TARGET, stateFollowTarget);
 
-		//m_fsmRunner.setImmediateState(CAMERA_STATE_FREE_CAMERA);
-		m_fsmRunner.setImmediateState(CAMERA_STATE_FOLLOW_TARGET);
+		m_fsmRunner.setInitialState(CAMERA_STATE_FREE_CAMERA);
 		return true;
 	}
 
@@ -105,5 +104,20 @@ namespace Devil
 	const XMVECTOR& EntityCamera::getUp() const
 	{
 		return m_up;
+	}
+
+	void* EntityCamera::operator new(size_t _count)
+	{
+		return _aligned_malloc(_count, 16);
+	}
+
+	void EntityCamera::operator delete(void* _p)
+	{
+		_aligned_free(_p);
+	}
+
+	void EntityCamera::setCameraModeFollowTarget()
+	{
+		m_fsmRunner.setInitialState(CAMERA_STATE_FOLLOW_TARGET);
 	}
 }

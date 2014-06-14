@@ -75,6 +75,12 @@ namespace Devil
 			m_hasToExitState = true;
 		}
 
+		void FSMRunner::setInitialState(unsigned int _id)
+		{
+			m_deferredState = _id;
+			m_currentState = _id;
+		}
+
 		void FSMRunner::update()
 		{
 			if (m_hasToEnterState)

@@ -59,6 +59,9 @@ namespace Devil
 		//Background transform
 		snMatrix44f m_transform;
 
+		snVec m_forward;
+
+		snVec m_left;
 	public:
 
 		ComponentBackground(snActorDynamic* _background, snActorDynamic* _origin, const snVec& _initialTranslation, const snVec& _initialOrientation);
@@ -72,6 +75,10 @@ namespace Devil
 		void* operator new(size_t _count);
 
 		void operator delete(void* _p);
+
+	private:
+
+		void computeOriginFrame(const snActorDynamic* _origin, snVec& _forward, snVec& _left);
 	};
 }
 #endif //ifndef COMPONENT_BACKGROUND_H

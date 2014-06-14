@@ -120,7 +120,6 @@ namespace Devil
 		else if (INPUT->isKeyDown(116))//F5
 		{
 			clearScene();
-			//createSceneFriction();
 			createSceneMonkeyBall();
 			INPUT->keyUp(116);
 		}
@@ -1309,7 +1308,8 @@ namespace Devil
 		scene->setAngularSquaredSpeedThreshold(0.00001f);
 
 		//create the camera.
-		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
+		EntityCamera* camera = WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
+		camera->setCameraModeFollowTarget();
 
 		WORLD->deactivateCollisionPoint();
 
@@ -1378,10 +1378,11 @@ namespace Devil
 		snActorDynamic* ball = 0;
 		int actorBallId = -1;
 		scene->createActorDynamic(&ball, actorBallId);
-		snColliderSphere* sphere = new snColliderSphere(5);
+		float sphereRadius = 10;
+		snColliderSphere* sphere = new snColliderSphere(sphereRadius);
 		ball->addCollider(sphere);
-		ball->updateMassAndInertia(100);
-		ball->setPosition(snVec4Set(-50, 65, 0, 1));
+		ball->updateMassAndInertia(1);
+		ball->setPosition(snVec4Set(-50, 60 + sphereRadius, 0, 1));
 		ball->getPhysicMaterial().m_restitution = 0;
 		ball->getPhysicMaterial().m_friction = 1;
 		ball->initialize();
@@ -1390,22 +1391,8 @@ namespace Devil
 		EntityComposite* monkeyBall = WORLD->createMonkeyBall(ball, m_colors[4]);
 		WORLD->createSkybox(monkeyBall, 1000, m_colors[4]);
 
-		//WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
-
 		ComponentBackground* cBack = new ComponentBackground(actEnvironment, ball, initialPosition, initialOrientation);
 		entity->addPreUpdateComponent(cBack);
-
-		////static background
-		//snActorStatic* staticBackground = 0;
-		//int idStaticBackground = 0;
-		//scene->createActorStatic(&staticBackground, idStaticBackground, snVec4Set(0, -1000, 0, 1), snVec4Set(0, 0, 0, 1));
-
-		//levelOne = new snColliderBox();
-		//levelOne->setSize(snVec4Set(5000, 5, 5000, 0));
-		//staticBackground->addCollider(levelOne);
-
-		//staticBackground->initialize();
-		//WORLD->createComposite(staticBackground, m_colors[3]);
 
 	}
 
