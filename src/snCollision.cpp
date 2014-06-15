@@ -74,8 +74,7 @@ namespace Supernova
 			for (vector<snColliderContainer*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
 			{
 				//pouahhhh it's ugly!!!! let's check first the AABBs
-				snCollisionResult localResult = invokeQueryTestCollision((*c1)->m_collider, _a1->getPosition(), 
-					_a1->getInverseOrientationMatrix(), (*c2)->m_collider, _a2->getPosition(), _a2->getInverseOrientationMatrix());
+				snCollisionResult localResult = invokeQueryTestCollision((*c1)->m_collider, (*c2)->m_collider);
 				if(localResult.m_collision)
 				{
 					snCollisionResult* dynamicRes = new snCollisionResult();
@@ -89,8 +88,7 @@ namespace Supernova
 		}
 	}
 
-	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snVec& _p1, const snMatrix44f& _invR1,
-		const snICollider* const _c2, const snVec& _p2, const snMatrix44f& _invR2) const
+	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const
 	{
 		unsigned short key = SN_COLLISION_KEY(_c1->getTypeOfCollider(), _c2->getTypeOfCollider());
 		snCollisionQueryMap::const_iterator i = m_collisionQueryMap.find(key);
@@ -98,22 +96,21 @@ namespace Supernova
 		if (i != m_collisionQueryMap.cend())
 		{
 			snQueryTestCollisionFunction func = i->second;
-			return func(_c1, _p1, _invR1, _c2, _p2, _invR2);
+			return func(_c1, _c2);
 		}
 		else
 		{
 			key = SN_COLLISION_KEY(_c2->getTypeOfCollider(), _c1->getTypeOfCollider());
 			i = m_collisionQueryMap.find(key);
 			snQueryTestCollisionFunction func = i->second;
-			snCollisionResult res = func(_c2, _p2, _invR2, _c1, _p1, _invR1);
+			snCollisionResult res = func(_c2, _c1);
 			res.m_normal = -res.m_normal;
 			return res;
 		}
 			
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const _c2, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
 		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
@@ -165,289 +162,7 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusBox_V2(const snICollider* const _c1, const snVec& _p1, const snMatrix44f& /*_invR1*/,
-		const snICollider* const _c2, const snVec& _p2, const snMatrix44f& /*_invR2*/)
-	{
-		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
-		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
-		const snVec* s1Normals = _b1->getWorldNormal();
-		const snVec* s2Normals = _b2->getWorldNormal();
-		snVec smallestOverlapNormal;
-		float smallestOverlap = SN_FLOAT_MAX;
-
-		snCollisionResult res;
-
-		snVec ea = _b1->getExtends();
-		snVec eb = _b2->getExtends();
-
-		//compute rotation matrix expressing b in a's coordinate frame.
-		snMatrix44f orientationA;
-		orientationA[0] = s1Normals[0];
-		orientationA[1] = s1Normals[1];
-		orientationA[2] = s1Normals[2];
-		orientationA[3] = snVec4Set(0, 0, 0, 0);
-		snMatrix44f orientationB;
-		orientationB[0] = s2Normals[0];
-		orientationB[1] = s2Normals[1];
-		orientationB[2] = s2Normals[2];
-		orientationB[3] = snVec4Set(0, 0, 0, 0);
-		snMatrix44f transOrientationB;
-		orientationB.transpose(transOrientationB);
-		
-		snMatrix44f R;
-		snMatrixMultiply3(orientationA, transOrientationB, R);
-
-		//compute translation vector t
-		snVec ds = _p2 - _p1;
-		//Bring translation into a's coordinate frame
-		snVec t = snVec4Set(snVec3Dot(ds, s1Normals[0]), snVec3Dot(ds, s1Normals[1]), snVec3Dot(ds, s1Normals[2]), 0);
-
-		//compute common subexpressions
-		snMatrix44f absR;
-		snVec perturbation = snVec4Set(0.0001f, 0.0001f, 0.0001f, 0);
-		for (int i = 0; i < 3; ++i)
-		{
-			absR[i] = snVec4GetAbsolute(R[i]) + perturbation;
-		}
-
-		for (int i = 0; i < 3; ++i)
-		{
-			//test axis A0, A1, A2
-			float ra = snVec4GetById(ea, i);
-			float rb = snVec3Dot(eb, absR[i]);
-
-			//compute overlap
-			float overlap = ra + rb - fabs(snVec4GetById(t, i));
-
-			//no overlap, it means the current tested axis is a separate axis so there is no collision.
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(s1Normals[i], ds));
-				smallestOverlapNormal = s1Normals[i] * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//test axis B0, B1, B2
-		for (int i = 0; i < 3; ++i)
-		{
-			snVec absRColI = snVec4Set(snVec4GetById(absR[0], i), snVec4GetById(absR[1], i), snVec4GetById(absR[2], i), 0);
-			float ra = snVec3Dot(ea, absRColI);
-			float rb = snVec4GetById(eb, i);
-
-			snVec RColI = snVec4Set(snVec4GetById(R[0], i), snVec4GetById(R[1], i), snVec4GetById(R[2], i), 0);
-			float at = snVec3Dot(t, RColI);
-
-			float overlap = ra + rb - fabs(at);
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(s2Normals[i], ds));
-				smallestOverlapNormal = s2Normals[i] * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A0 x B0
-		snVec cross = snVec3Cross(s1Normals[0], s2Normals[0]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 2) * snVec4GetById(R[1], 0) - snVec4GetById(t, 1) * snVec4GetById(R[2], 0));
-			float ra = snVec4GetById(ea, 1) * snVec4GetById(absR[2], 0) + snVec4GetById(ea, 2) * snVec4GetById(absR[1], 0);
-			float rb = snVec4GetById(eb, 1) * snVec4GetById(absR[0], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[0], 1);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A0 x B1
-		cross = snVec3Cross(s1Normals[0], s2Normals[1]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 2) * snVec4GetById(R[1], 1) - snVec4GetById(t, 1) * snVec4GetById(R[2], 1));
-			float ra = snVec4GetById(ea, 1) * snVec4GetById(absR[2], 1) + snVec4GetById(ea, 2) * snVec4GetById(absR[1], 1);
-			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[0], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[0], 0);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A0 x B2
-		cross = snVec3Cross(s1Normals[0], s2Normals[2]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 2) * snVec4GetById(R[1], 2) - snVec4GetById(t, 1) * snVec4GetById(R[2], 2));
-			float ra = snVec4GetById(ea, 1) * snVec4GetById(absR[2], 2) + snVec4GetById(ea, 2) * snVec4GetById(absR[1], 2);
-			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[0], 1) + snVec4GetById(eb, 1) * snVec4GetById(absR[0], 0);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A1 x B0
-		cross = snVec3Cross(s1Normals[1], s2Normals[0]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 0) * snVec4GetById(R[2], 0) - snVec4GetById(t, 2) * snVec4GetById(R[0], 0));
-			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[2], 0) + snVec4GetById(ea, 2) * snVec4GetById(absR[0], 0);
-			float rb = snVec4GetById(eb, 1) * snVec4GetById(absR[1], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[1], 1);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A1 x B1
-		cross = snVec3Cross(s1Normals[1], s2Normals[1]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 0) * snVec4GetById(R[2], 1) - snVec4GetById(t, 2) * snVec4GetById(R[0], 1));
-			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[2], 1) + snVec4GetById(ea, 2) * snVec4GetById(absR[0], 1);
-			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[1], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[1], 1);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A1 x B2
-		cross = snVec3Cross(s1Normals[1], s2Normals[2]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 0) * snVec4GetById(R[2], 2) - snVec4GetById(t, 2) * snVec4GetById(R[0], 2));
-			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[2], 2) + snVec4GetById(ea, 2) * snVec4GetById(absR[0], 2);
-			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[1], 1) + snVec4GetById(eb, 1) * snVec4GetById(absR[1], 0);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A2 x B0
-		cross = snVec3Cross(s1Normals[2], s2Normals[0]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 1) * snVec4GetById(R[0], 0) - snVec4GetById(t, 0) * snVec4GetById(R[1], 0));
-			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[1], 0) + snVec4GetById(ea, 1) * snVec4GetById(absR[0], 0);
-			float rb = snVec4GetById(eb, 1) * snVec4GetById(absR[2], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[2], 1);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A2 x B1
-		cross = snVec3Cross(s1Normals[2], s2Normals[1]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 1) * snVec4GetById(R[0], 1) - snVec4GetById(t, 0) * snVec4GetById(R[1], 1));
-			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[1], 1) + snVec4GetById(ea, 1) * snVec4GetById(absR[0], 1);
-			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[2], 2) + snVec4GetById(eb, 2) * snVec4GetById(absR[2], 0);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//A2 x B2
-		cross = snVec3Cross(s1Normals[2], s2Normals[2]);
-		if (snVec3SquaredNorme(cross) == 1.f)
-		{
-			float tDotL = fabsf(snVec4GetById(t, 1) * snVec4GetById(R[0], 2) - snVec4GetById(t, 0) * snVec4GetById(R[1], 2));
-			float ra = snVec4GetById(ea, 0) * snVec4GetById(absR[1], 2) + snVec4GetById(ea, 1) * snVec4GetById(absR[0], 2);
-			float rb = snVec4GetById(eb, 0) * snVec4GetById(absR[2], 1) + snVec4GetById(eb, 1) * snVec4GetById(absR[2], 0);
-
-			float overlap = ra + rb - tDotL;
-			if (overlap <= 0.f)
-				return res;
-
-			if (smallestOverlap > overlap)
-			{
-				int s = sign(snVec3Dot(cross, ds));
-				smallestOverlapNormal = cross * -s;
-				smallestOverlap = overlap;
-			}
-		}
-
-		//there is a collision so find the collision patch
-		res.m_collision = true;
-		res.m_normal = smallestOverlapNormal;
-
-		assert(smallestOverlap > 0.f);
-
-		//find collision patch using clipping algorithm.
-		snFeatureClipping clipping;
-		bool clippingResult = clipping.findContactPatch(*_b1, *_b2, smallestOverlapNormal, res.m_contacts, res.m_penetrations);
-		res.m_collision = clippingResult;
-		return res;
-	}
-
-	snCollisionResult snCollision::queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const _c2, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		const snColliderSphere* _s1 = static_cast<const snColliderSphere*>(_c1);
 		const snColliderSphere* _s2 = static_cast<const snColliderSphere*>(_c2);
@@ -476,8 +191,7 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const _c2, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
 		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c2);
@@ -506,8 +220,7 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const /*_c2*/, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snICollider* const /*_c2*/)
 	{
 		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
@@ -542,8 +255,7 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snVec& /*_p1*/, const snMatrix44f& /*_invR1*/,
-		const snICollider* const /*_c2*/, const snVec& /*_p2*/, const snMatrix44f& /*_invR2*/)
+	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snICollider* const /*_c2*/)
 	{
 		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c1);
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
