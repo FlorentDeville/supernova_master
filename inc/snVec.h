@@ -96,6 +96,18 @@ namespace Supernova
 		inline void snVec4SetZ(snVec& _v, float _z);
 
 		inline void snVec4SetW(snVec& _v, float _w);
+
+		//Return a vector containing the maximum value of _v1 and _v2
+		inline snVec snVec4GetMax(const snVec& _v1, const snVec& _v2);
+
+		//Reurn a vector where all four values are equal to the maximum float of _v
+		inline snVec snVec4GetMax(const snVec& _v);
+
+		//Return a vector containing the minimum value of _v1 and _v2
+		inline snVec snVec4GetMin(const snVec& _v1, const snVec& _v2);
+
+		//Reurn a vector where all four values are equal to the minimum float of _v
+		inline snVec snVec4GetMin(const snVec& _v);
 	}
 }
 

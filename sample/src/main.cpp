@@ -3,7 +3,8 @@
 #include "System.h"
 
 #ifdef _DEBUG
-
+#include <xmmintrin.h>
+#include <emmintrin.h>
 //needed for memory leak detection. Do not change the order.
 #include <stdlib.h>
 #include <crtdbg.h>

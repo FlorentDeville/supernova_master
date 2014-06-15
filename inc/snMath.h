@@ -72,5 +72,8 @@ namespace Supernova
 
 	snVec cosInterpolation(const snVec& _start, const snVec& _end, float _t);
 
+	//Transform an array of struct of 4 vector into a structure of array of 4 elements
+	void arrayOfStructToStructOfArray(const snVec* const _arrayOfStruct, snVec* const _structOfArray);
+
 }
 #endif //SN_MATH_H

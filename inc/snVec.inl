@@ -206,6 +206,57 @@ namespace Supernova
 		{
 			_v.m128_f32[VEC_ID_W] = _w;
 		}
+
+		snVec snVec4GetMax(const snVec& _v1, const snVec& _v2)
+		{
+			//compare the maximum
+			__m128 compare = _mm_cmpge_ps(_v1, _v2);
+
+			//compare contains 0x0000 where _v1 is the smallest and 0xFFFF where _v1 is the biggest. 
+			//So max = (_v1 & compare) | (_v2 & ~compare)
+			__m128 firstHalf = _mm_and_ps(_v1, compare);
+			__m128 secondHalf = _mm_andnot_ps(compare, _v2);
+			return _mm_or_ps(firstHalf, secondHalf);
+		}
+
+		snVec snVec4GetMax(const snVec& _v)
+		{
+			//transform _v from [a b c d] into [b a d c]
+			__m128 swap = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(2, 3, 0, 1));
+
+			//max = MAX[ _v, swap]
+			__m128 max = Supernova::Vector::snVec4GetMax(_v, swap);
+
+			//transform max from [a b c d] to [d c b a]
+			swap = _mm_shuffle_ps(max, max, _MM_SHUFFLE(0, 1, 2, 3));
+			return Supernova::Vector::snVec4GetMax(max, swap);
+		}
+
+		//Return a vector containing the minimum value of _v1 and _v2
+		snVec snVec4GetMin(const snVec& _v1, const snVec& _v2)
+		{
+			//compare the minimum
+			snVec compare = _mm_cmple_ps(_v1, _v2);
+
+			//compare contains 0x0000 where first is the biggest and 0xFFFF where first is the smallest. So the merge.min = (first & compare) | (second & ~compare)
+			snVec firstHalf = _mm_and_ps(_v1, compare);
+			snVec secondHalf = _mm_andnot_ps(compare, _v2);
+			return _mm_or_ps(firstHalf, secondHalf);
+		}
+
+		//Reurn a vector where all four values are equal to the minimum float of _v
+		snVec snVec4GetMin(const snVec& _v)
+		{
+			//transform _v from [a b c d] into [b a d c]
+			__m128 swap = _mm_shuffle_ps(_v, _v, _MM_SHUFFLE(2, 3, 0, 1));
+
+			//max = MAX[ _v, swap]
+			__m128 max = Supernova::Vector::snVec4GetMin(_v, swap);
+
+			//transform max from [a b c d] to [d c b a]
+			swap = _mm_shuffle_ps(max, max, _MM_SHUFFLE(0, 1, 2, 3));
+			return Supernova::Vector::snVec4GetMin(max, swap);
+		}
 	}
 }
 

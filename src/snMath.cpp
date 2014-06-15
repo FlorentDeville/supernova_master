@@ -79,4 +79,40 @@ namespace Supernova
 		float cosineT = (1.f - cosf(_t * SN_PI)) * 0.5f;
 		return (_start * (1.f - cosineT) + _end * cosineT);
 	}
+
+	void arrayOfStructToStructOfArray(const snVec* const _arrayOfStruct, snVec* const _structOfArray)
+	{
+		// Let's say we start with this matrix:
+		// r0 = 00 01 02 03
+		// r1 = 10 11 12 13
+		// r2 = 20 21 22 23
+		// r3 = 30 31 32 33
+		//
+		// Then we compute shuffle 1 and 2 like this:
+		// s1 = 00 01 10 11 //shuffle(r0, r1, shuffle(1, 0, 1, 0))
+		// s2 = 20 21 30 31 //shuffle(r2, r3, shuffle(1, 0, 1, 0))
+		//
+		// From this we can compute the first two rows of the transpose:
+		// transpose row 1 = 00 10 20 30 //shuffle(s1, s2, shuffle(2, 0, 2, 0))
+		// transpose row 2 = 01 11 21 31 //shuffle(s1, s2, shuffle(3, 1, 3, 1))
+		//
+		// We repeat the process to get transpose row 2 and 3:
+		// s1 = 02 03 12 13 //shuffle(r0, r1, shuffle(3, 2, 3, 2))
+		// s2 = 22 23 32 33 //shuffle(r2, r3, shuffle(3, 2, 3, 2))
+		// transpose row 2 = 02 12 22 32 //shuffle(s1, s2, shuffle(2, 0, 2, 0))
+		// transpose row 3 = 03 13 23 33 //shuffle(s1, s2, shuffle(3, 1, 3, 1))
+
+		__m128 s1 = _mm_shuffle_ps(_arrayOfStruct[0], _arrayOfStruct[1], _MM_SHUFFLE(1, 0, 1, 0));
+		__m128 s2 = _mm_shuffle_ps(_arrayOfStruct[2], _arrayOfStruct[3], _MM_SHUFFLE(1, 0, 1, 0));
+
+		_structOfArray[0] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(2, 0, 2, 0));
+		_structOfArray[1] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(3, 1, 3, 1));
+
+		s1 = _mm_shuffle_ps(_arrayOfStruct[0], _arrayOfStruct[1], _MM_SHUFFLE(3, 2, 3, 2));
+		s2 = _mm_shuffle_ps(_arrayOfStruct[2], _arrayOfStruct[3], _MM_SHUFFLE(3, 2, 3, 2));
+
+		_structOfArray[2] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(2, 0, 2, 0));
+		_structOfArray[3] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(3, 1, 3, 1));
+	}
+
 }

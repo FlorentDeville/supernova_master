@@ -211,17 +211,58 @@ namespace Supernova
 
 	void snColliderBox::computeProjection(const snVec& _direction, float& _min, float& _max) const
 	{
-		_min = snVec3Dot(_direction, m_worldBox[0]);
-		_max = _min;
+		//////////////////////////////////////////////////////////////////////
+		// The basic idea would be to compute the dot product of every point. Instead, convert the array of vector into 
+		// a vector of array (or array of struct to struct of array).
+		// So instead of having points this way:
+		// P1x P1y P1z P1w (vector1)
+		// P2x P2y P2z P2w (vector2)
+		// P3x P3y P3z P3w (vector3)
+		// P4x P4y P4z P4w (vector4)
+		//
+		// I turn them this way :
+		// P1x P2x P3x P4x (vector1)
+		// P1y P2y P3y P4y (vector2)
+		// P1z P2z P3z P4z (vector3)
+		// P1w P2w P3w P4w (vector4)
+		// 
+		// and direction:
+		// dx dx dx dx (d1)
+		// dy dy dy dy (d2)
+		// dz dz dz dz (d3)
+		// dw dw dw dw (d4)
+		//
+		// the dot products become
+		// dot = vector1 * d1 + vector2 * d2 + vector3 * d3
+		///////////////////////////////////////////////////////////////////////////
 
-		for (int i = 1; i < VERTEX_COUNT; ++i)
-		{
-			float dot = snVec3Dot(_direction, m_worldBox[i]);
-			if (dot < _min)
-				_min = dot;
-			else if (dot > _max)
-				_max = dot;
-		}
+		snVec temp[4] = { _direction, _direction, _direction, _direction };
+		snVec dir[4];
+		arrayOfStructToStructOfArray(temp, dir);
+
+		snVec structOfArray1[4];
+		snVec structOfArray2[4];
+		arrayOfStructToStructOfArray(m_worldBox, structOfArray1);
+		arrayOfStructToStructOfArray(m_worldBox + 4, structOfArray2);
+
+		snVec dot1 = (structOfArray1[0] * dir[0]) +
+			(structOfArray1[1] * dir[1]) +
+			(structOfArray1[2] * dir[2]);
+
+		snVec dot2 = (structOfArray2[0] * dir[0]) +
+			(structOfArray2[1] * dir[1]) +
+			(structOfArray2[2] * dir[2]);
+
+		//Dot1 and Dot2 contains the results of the dot products between the points and the direction.
+		//Find the maximum
+		snVec compare = snVec4GetMax(dot1, dot2);
+		compare = snVec4GetMax(compare);
+		_max = snVec4GetX(compare);
+
+		//Find the minimum
+		compare = snVec4GetMin(dot1, dot2);
+		compare = snVec4GetMin(compare);
+		_min = snVec4GetX(compare);
 	}
 
 	const snVec* snColliderBox::getWorldNormal() const
