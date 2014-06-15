@@ -61,31 +61,29 @@ namespace Supernova
 
 	snCollision::~snCollision(){}
 
-	void snCollision::queryTestCollision(snIActor* _a1, snIActor* _a2, vector<snCollisionResult*>& _results) const
+	void snCollision::queryTestCollision(snIActor* _a1, snIActor* _a2, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const
 	{
 		std::vector<snColliderContainer*>& listColliders1 = _a1->getColliders();
 		std::vector<snColliderContainer*>& listColliders2 = _a2->getColliders();
 
-		snCollisionResult globalResult;
-		globalResult.m_collision = false;
-
+		*_resultsCount = 0;
 		for (vector<snColliderContainer*>::const_iterator c1 = listColliders1.cbegin(); c1 != listColliders1.cend(); ++c1)
 		{
 			for (vector<snColliderContainer*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
 			{
 				//pouahhhh it's ugly!!!! let's check first the AABBs
-				snCollisionResult localResult = invokeQueryTestCollision((*c1)->m_collider, (*c2)->m_collider);
-				if(localResult.m_collision)
+				_results[*_resultsCount] = invokeQueryTestCollision((*c1)->m_collider, (*c2)->m_collider);
+				if (_results[*_resultsCount].m_collision)
 				{
-					snCollisionResult* dynamicRes = new snCollisionResult();
-					dynamicRes->m_collision = true;
-					dynamicRes->m_contacts = localResult.m_contacts;
-					dynamicRes->m_normal = localResult.m_normal;
-					dynamicRes->m_penetrations = localResult.m_penetrations;
-					_results.push_back(dynamicRes);
+					++(*_resultsCount);
+
+					//If we already found _resultsCount collision, then we can't store the next collision anymore so return.
+					if (*_resultsCount >= _maxResultCount)
+						return;
 				}
 			}
 		}
+
 	}
 
 	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const

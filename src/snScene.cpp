@@ -470,11 +470,13 @@ namespace Supernova
 	void snScene::computeCollisionDetection(snIActor* _a, snIActor* _b)
 	{
 		//query collision between actor _a and _b.
-		vector<snCollisionResult*> res;
-		m_collisionService.queryTestCollision(_a, _b, res);
+		const unsigned int MAX_COL_RES = 10;
+		snCollisionResult colRes[MAX_COL_RES];
+		unsigned int colResCount = 0;
+		m_collisionService.queryTestCollision(_a, _b, colRes, MAX_COL_RES, &colResCount);
 
 		//no collision, leave
-		if (res.size() == 0)
+		if (colResCount == 0)
 			return;
 
 		//check for collision callbacks
@@ -487,18 +489,16 @@ namespace Supernova
 		if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE) ||
 			_b->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE))
 		{
-			for (vector<snCollisionResult*>::iterator i = res.begin(); i != res.end(); ++i)
-			{
-				delete *i;
-			}
 			return;
 		}
 		
 		//make the collision constraints from the collision results
-		for(vector<snCollisionResult*>::const_iterator singleRes = res.cbegin(); singleRes != res.cend(); ++singleRes)
+		for (unsigned int colResId = 0; colResId < colResCount; ++colResId)
 		{
-			vector<float>::const_iterator penetrationIterator = (*singleRes)->m_penetrations.cbegin();
-			for (snVecVectorConstIterator point = (*singleRes)->m_contacts.cbegin(); point != (*singleRes)->m_contacts.cend(); ++point, ++penetrationIterator)
+			snCollisionResult* singleRes = colRes + colResId;
+
+			vector<float>::const_iterator penetrationIterator = singleRes->m_penetrations.cbegin();
+			for (snVecVectorConstIterator point = singleRes->m_contacts.cbegin(); point != singleRes->m_contacts.cend(); ++point, ++penetrationIterator)
 			{
 				m_collisionPoints.push_back(*point);
 
@@ -508,16 +508,11 @@ namespace Supernova
 				m_contactConstraintManager.getAvailableConstraints(&npConstraint, &fConstraint);
 
 				//initialize and activate the constraints
-				npConstraint->initialize(_a, _b, (*singleRes)->m_normal, *point, *penetrationIterator, this);
+				npConstraint->initialize(_a, _b, singleRes->m_normal, *point, *penetrationIterator, this);
 				fConstraint->initialize(_a, _b, npConstraint);
 				npConstraint->setIsActive(true);
 				fConstraint->setIsActive(true);
 			}
-		}
-
-		for(vector<snCollisionResult*>::iterator i = res.begin(); i != res.end(); ++i)
-		{
-			delete *i;
 		}
 	}
 

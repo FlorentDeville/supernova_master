@@ -73,7 +73,7 @@ namespace Supernova
 		snCollision();
 		virtual ~snCollision();
 
-		void queryTestCollision(snIActor*, snIActor*, vector<snCollisionResult*>& _results) const;
+		void queryTestCollision(snIActor*, snIActor*, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const;
 
 		void* operator new(size_t _count)
 		{
