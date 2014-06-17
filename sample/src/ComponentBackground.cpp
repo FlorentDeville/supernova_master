@@ -51,6 +51,7 @@ namespace Devil
 
 		m_forward = snVec4Set(1, 0, 0, 0);
 		m_left = snVec4Set(0, 0, 1, 0);
+		m_isActive = true;
 	}
 
 	ComponentBackground::~ComponentBackground(){}
