@@ -96,14 +96,12 @@ namespace Supernova
 		m_rCrossN[0] = snVec3Cross(m_radius[0], m_normal);
 		m_rCrossN[1] = snVec3Cross(m_radius[1], m_normal);
 
-		//Compute the effective mass for the non penetration constraint
-		// (r X N) I-1
-		m_rCrossNInvI[0] = snMatrixTransform3(m_rCrossN[0], m_bodies[0]->getInvWorldInertia());
-		m_rCrossNInvI[1] = snMatrixTransform3(m_rCrossN[1], m_bodies[1]->getInvWorldInertia());
+		//Compute the effective mass for the non penetration constraint	
+		snVec rCrossNInvI = snMatrixTransform3(m_rCrossN[0], m_bodies[0]->getInvWorldInertia()); // (r X N) I-1
+		snVec tempA = snVec3Cross(rCrossNInvI, m_radius[0]); // [(r X N)I-1] X r
 
-		// [(r X N)I-1] X r
-		snVec tempA = snVec3Cross(m_rCrossNInvI[0], m_radius[0]);
-		snVec tempB = snVec3Cross(m_rCrossNInvI[1], m_radius[1]);
+		rCrossNInvI = snMatrixTransform3(m_rCrossN[1], m_bodies[1]->getInvWorldInertia());
+		snVec tempB = snVec3Cross(rCrossNInvI, m_radius[1]);
 
 		float sumInvMass = m_bodies[0]->getInvMass() + m_bodies[1]->getInvMass();
 
@@ -121,6 +119,10 @@ namespace Supernova
 		//compute the velocity correction
 		float error = m_scene->getContactConstraintBeta() / _dt * max<float>(0, m_penetrationDepth - m_bodies[0]->getSkinDepth() - m_bodies[1]->getSkinDepth());
 		m_velocityBias = -restitution * relVel - error;
+
+		//compute invI * (r x N)T
+		m_invI_rCrossN[0] = snMatrixTransform3(m_bodies[0]->getInvWorldInertia(), m_rCrossN[0]);
+		m_invI_rCrossN[1] = snMatrixTransform3(m_bodies[1]->getInvWorldInertia(), m_rCrossN[1]);
 
 	}
 
@@ -150,8 +152,8 @@ namespace Supernova
 		m_bodies[1]->setLinearVelocity(m_bodies[1]->getLinearVelocity() + (impulse * m_bodies[1]->getInvMass()));
 
 		//compute the new angular velocity
-		m_bodies[0]->setAngularVelocity(m_bodies[0]->getAngularVelocity() - m_rCrossNInvI[0] * lagrangian);
-		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossNInvI[1] * lagrangian);
+		m_bodies[0]->setAngularVelocity(m_bodies[0]->getAngularVelocity() - m_invI_rCrossN[0] * lagrangian);
+		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_invI_rCrossN[1] * lagrangian);
 	}
 
 	/// <summary>

@@ -68,7 +68,7 @@ namespace Supernova
 	//				- l as the lagrangian.
 	//
 	//Angular Velocity :
-	//			wa = wa + Ia-1 * (ra x n) * l and wb = wb - Ib-1 * (rb x n) * l with : 
+	//			wa = wa + Ia-1 * (ra x n)T * l and wb = wb - Ib-1 * (rb x n)T * l with : 
 	//				- l as the lagrangian.
 	//
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,8 +94,8 @@ namespace Supernova
 		//r X N
 		snVec m_rCrossN[2];
 
-		//(r X N)I-1
-		snVec m_rCrossNInvI[2];
+		//I-1(r X N)T
+		snVec m_invI_rCrossN[2];
 
 		//Bias velocity
 		float m_velocityBias;
