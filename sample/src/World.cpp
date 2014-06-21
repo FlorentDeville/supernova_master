@@ -212,6 +212,7 @@ namespace Devil
 
 	void World::update(float _dt)
 	{
+		m_dt = _dt;
 		//update world
 		for (std::vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
 		{
@@ -298,4 +299,10 @@ namespace Devil
 		if (m_hud != 0)
 			m_hud->setGraphicsFPS(_graphicsFPS);
 	}
+
+	float World::getDeltaTime() const
+	{
+		return m_dt;
+	}
+
 }

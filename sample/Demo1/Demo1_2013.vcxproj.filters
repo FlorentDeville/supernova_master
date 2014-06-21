@@ -49,6 +49,12 @@
     <Filter Include="Graphics\GfxEntities">
       <UniqueIdentifier>{4330beef-a19c-4a66-ab50-5dffff5756bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Helper">
+      <UniqueIdentifier>{d1bab34b-785f-458d-99f7-686c681ad496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Helper\Damper">
+      <UniqueIdentifier>{101b5dc4-18d0-49c0-b6f3-406ddd5958f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -159,6 +165,12 @@
     </ClCompile>
     <ClCompile Include="..\src\GfxEntitySphere.cpp">
       <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Damper.inl">
+      <Filter>Helper\Damper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\VecLinearDamper.cpp">
+      <Filter>Helper\Damper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -284,6 +296,12 @@
     </ClInclude>
     <ClInclude Include="..\src\IGfxEntity.h">
       <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Damper.h">
+      <Filter>Helper\Damper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\VecLinearDamper.h">
+      <Filter>Helper\Damper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

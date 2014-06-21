@@ -75,5 +75,8 @@ namespace Supernova
 	//Transform an array of struct of 4 vector into a structure of array of 4 elements
 	void arrayOfStructToStructOfArray(const snVec* const _arrayOfStruct, snVec* const _structOfArray);
 
+	//Linear interpolation between two snVec
+	snVec lerp(const snVec& _start, const snVec& _end, float _t);
+
 }
 #endif //SN_MATH_H

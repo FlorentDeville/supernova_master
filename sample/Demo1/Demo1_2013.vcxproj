@@ -104,6 +104,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClCompile Include="..\src\ComponentFollowPath.cpp" />
     <ClCompile Include="..\src\ComponentPathInterpolate.cpp" />
     <ClCompile Include="..\src\D3D.cpp" />
+    <ClCompile Include="..\src\Damper.inl" />
     <ClCompile Include="..\src\EffectProvider.cpp" />
     <ClCompile Include="..\src\EntityBox.cpp" />
     <ClCompile Include="..\src\EntityBoxLauncher.cpp" />
@@ -131,6 +132,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClCompile Include="..\src\System.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />
     <ClCompile Include="..\src\TextureShader.cpp" />
+    <ClCompile Include="..\src\VecLinearDamper.cpp" />
     <ClCompile Include="..\src\World.cpp" />
     <ClCompile Include="..\src\WorldHUD.cpp" />
   </ItemGroup>
@@ -145,6 +147,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClInclude Include="..\src\ComponentFollowPath.h" />
     <ClInclude Include="..\src\ComponentPathInterpolate.h" />
     <ClInclude Include="..\src\D3D.h" />
+    <ClInclude Include="..\src\Damper.h" />
     <ClInclude Include="..\src\EffectProvider.h" />
     <ClInclude Include="..\src\EntityBox.h" />
     <ClInclude Include="..\src\EntityBoxLauncher.h" />
@@ -174,6 +177,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClInclude Include="..\src\System.h" />
     <ClInclude Include="..\src\Texture.h" />
     <ClInclude Include="..\src\TextureShader.h" />
+    <ClInclude Include="..\src\VecLinearDamper.h" />
     <ClInclude Include="..\src\World.h" />
     <ClInclude Include="..\src\WorldHUD.h" />
   </ItemGroup>

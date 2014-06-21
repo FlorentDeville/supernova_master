@@ -43,6 +43,8 @@ using namespace Devil::FSM;
 using Supernova::snVec;
 #include "snGlobals.h"
 
+#include "VecLinearDamper.h"
+
 namespace Devil
 {
 	class IWorldEntity;
@@ -64,6 +66,13 @@ namespace Devil
 
 		//The forward vector of the camera.
 		snVec m_forward;
+
+		//Damper used to smooth the camera position
+		VecLinearDamper m_positionDamper;
+
+		//Damper used to smooth the camera look at.
+		VecLinearDamper m_lookAtDamper;
+
 	public:
 		CameraState_FollowTarget(EntityCamera* _camera, IWorldEntity* _target, float _distance, float _height);
 		~CameraState_FollowTarget();

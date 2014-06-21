@@ -31,109 +31,25 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef WORLD_H
-#define WORLD_H
 
-#include <vector>
+#ifndef VEC_LINEAR_DAMPER_H
+#define VEC_LINEAR_DAMPER_H
 
-#include <DirectXMath.h>
+#include "Damper.inl"
+#include "snVec.inl"
+using Supernova::snVec;
 
-#include "ComponentFloatingText.h"
-
-namespace Supernova
-{
-	class snFixedConstraint;
-	class snPointToPointConstraint;
-	class snActorDynamic;
-	class snIActor;
-}
-
-using namespace Supernova;
 namespace Devil
 {
-	class IWorldEntity;
-	class EntitySphere;
-	class EntityBox;
-	class EntityPlan;
-	class EntityCollisionPoint;
-	class EntityCamera;
-	class EntityFixedConstraint;
-	class EntityPointToPointConstraint;
-	class WorldHUD;
-	class EntityBoxLauncher;
-	class EntityComposite;
-	class EntitySkybox;
-
-	class IComponent;
-
-	class World
+	class VecLinearDamper : public Damper<snVec>
 	{
-	private:
-		static World* m_Instance;
-
-		std::vector<IWorldEntity*> m_EntityList;
-
-		EntityCamera* m_camera;
-
-		EntityCollisionPoint* m_collisionPoint;
-
-		WorldHUD* m_hud;
-
-		EntityComposite* m_monkeyBall;
-
-		//time elapsed since the last update
-		float m_dt;
-
 	public:
-		virtual ~World();
+		VecLinearDamper();
 
-		static World* getInstance();
-		static void shutdown();
+		virtual ~VecLinearDamper();
 
-		bool initialize();
-
-		EntitySphere* createSphere(float _diameter, const XMVECTOR& _color);
-		EntityBox* createBox(const XMFLOAT3&);
-		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);
-		EntityComposite* createComposite(snIActor* _actor, const XMFLOAT4& _color);
-		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
-		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
-		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
-		WorldHUD* createHUD();
-		EntityBoxLauncher* createEntityBoxLauncher(unsigned int _count);
-		EntityComposite* createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color);
-		EntitySkybox* createSkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);
-
-		//Delete all entities from the world.
-		void clearWorld();
-
-		void update(float _dt);
-		void render();
-
-		EntityCamera* getCamera() const;
-		EntityComposite* getMonkeyBall() const;
-
-		//Return the entity owner of the actor
-		IWorldEntity* getEntityFromActor(snIActor* const _actor) const;
-
-		void toggleCollisionPointActivation();
-		void activateCollisionPoint();
-		void deactivateCollisionPoint();
-
-		void setPhysicsFPS(int _physicsFPS) const;
-		void setGraphicsFPS(int _graphicsFPS) const;
-
-		//Return the time elapsed since the last update
-		float getDeltaTime() const;
-
-	private:
-		World();
-
-		EntityCollisionPoint* createCollisionPoint(float _diameter);
+	protected:
+		snVec computeValue_internal(float _dt);
 	};
-
-#define WORLD World::getInstance()
 }
-
-#endif
+#endif //#ifndef VEC_LINEAR_DAMPER_H

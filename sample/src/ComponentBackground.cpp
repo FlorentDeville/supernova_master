@@ -58,29 +58,30 @@ namespace Devil
 
 	void ComponentBackground::update(float _dt)
 	{
-		UNREFERENCED_PARAMETER(_dt);
-		const float ROTATION_SPEED = 0.02f;
+		const float ROTATION_SPEED = 0.7f;
 		snMatrix44f backgroundNewRotation;
 		
+		float realRotation = ROTATION_SPEED * _dt;
+
 		if (INPUT->isKeyDown('Z'))
 		{
 			computeOriginFrame(m_origin, m_forward, m_left);
-			backgroundNewRotation.createRotation(m_left, ROTATION_SPEED);
+			backgroundNewRotation.createRotation(m_left, realRotation);
 		}
 		else if (INPUT->isKeyDown('S'))
 		{
 			computeOriginFrame(m_origin, m_forward, m_left);
-			backgroundNewRotation.createRotation(m_left, -ROTATION_SPEED);
+			backgroundNewRotation.createRotation(m_left, -realRotation);
 		}
 		else if (INPUT->isKeyDown('D'))
 		{
 			computeOriginFrame(m_origin, m_forward, m_left);
-			backgroundNewRotation.createRotation(m_forward, ROTATION_SPEED);
+			backgroundNewRotation.createRotation(m_forward, realRotation);
 		}
 		else if (INPUT->isKeyDown('Q'))
 		{
 			computeOriginFrame(m_origin, m_forward, m_left);
-			backgroundNewRotation.createRotation(m_forward, -ROTATION_SPEED);
+			backgroundNewRotation.createRotation(m_forward, -realRotation);
 		}
 		else
 			return;

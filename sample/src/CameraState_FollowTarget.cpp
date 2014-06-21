@@ -66,6 +66,12 @@ namespace Devil
 		{
 			m_forward = XMVectorSet(1, 0, 0, 0);
 		}
+
+		m_positionDamper.setCurrentValue(m_camera->getPosition());
+		m_positionDamper.setSpeed(100.f);
+
+		m_lookAtDamper.setCurrentValue(m_camera->getLookAt());
+		m_lookAtDamper.setSpeed(100.f);
 	}
 
 	void CameraState_FollowTarget::execute()
@@ -89,8 +95,13 @@ namespace Devil
 		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 
 		XMVECTOR cameraPosition = targetPosition - (m_forward * m_distance) + (up * m_height);
+		m_positionDamper.setIdealValue(cameraPosition);
+		cameraPosition = m_positionDamper.computeValue(WORLD->getDeltaTime());
+
 		m_camera->setPosition(cameraPosition);
-		m_camera->setLookAt(targetPosition);
+
+		m_lookAtDamper.setIdealValue(targetPosition);
+		m_camera->setLookAt(m_lookAtDamper.computeValue(WORLD->getDeltaTime()));
 		m_camera->setUp(up);
 	}
 

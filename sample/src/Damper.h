@@ -31,109 +31,36 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef WORLD_H
-#define WORLD_H
 
-#include <vector>
+#ifndef DAMPER_H
+#define DAMPER_H
 
-#include <DirectXMath.h>
-
-#include "ComponentFloatingText.h"
-
-namespace Supernova
-{
-	class snFixedConstraint;
-	class snPointToPointConstraint;
-	class snActorDynamic;
-	class snIActor;
-}
-
-using namespace Supernova;
 namespace Devil
 {
-	class IWorldEntity;
-	class EntitySphere;
-	class EntityBox;
-	class EntityPlan;
-	class EntityCollisionPoint;
-	class EntityCamera;
-	class EntityFixedConstraint;
-	class EntityPointToPointConstraint;
-	class WorldHUD;
-	class EntityBoxLauncher;
-	class EntityComposite;
-	class EntitySkybox;
-
-	class IComponent;
-
-	class World
+	template<typename T> class Damper
 	{
-	private:
-		static World* m_Instance;
+	protected:
+		T m_currentValue;
 
-		std::vector<IWorldEntity*> m_EntityList;
+		T m_idealValue;
 
-		EntityCamera* m_camera;
-
-		EntityCollisionPoint* m_collisionPoint;
-
-		WorldHUD* m_hud;
-
-		EntityComposite* m_monkeyBall;
-
-		//time elapsed since the last update
-		float m_dt;
+		float m_speed;
 
 	public:
-		virtual ~World();
+		Damper();
 
-		static World* getInstance();
-		static void shutdown();
+		virtual ~Damper();
 
-		bool initialize();
+		void setCurrentValue(T _currentValue);
 
-		EntitySphere* createSphere(float _diameter, const XMVECTOR& _color);
-		EntityBox* createBox(const XMFLOAT3&);
-		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);
-		EntityComposite* createComposite(snIActor* _actor, const XMFLOAT4& _color);
-		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
-		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
-		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
-		WorldHUD* createHUD();
-		EntityBoxLauncher* createEntityBoxLauncher(unsigned int _count);
-		EntityComposite* createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color);
-		EntitySkybox* createSkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);
+		void setIdealValue(T _idealValue);
 
-		//Delete all entities from the world.
-		void clearWorld();
+		void setSpeed(float _speed);
 
-		void update(float _dt);
-		void render();
+		T computeValue(float _dt);
 
-		EntityCamera* getCamera() const;
-		EntityComposite* getMonkeyBall() const;
-
-		//Return the entity owner of the actor
-		IWorldEntity* getEntityFromActor(snIActor* const _actor) const;
-
-		void toggleCollisionPointActivation();
-		void activateCollisionPoint();
-		void deactivateCollisionPoint();
-
-		void setPhysicsFPS(int _physicsFPS) const;
-		void setGraphicsFPS(int _graphicsFPS) const;
-
-		//Return the time elapsed since the last update
-		float getDeltaTime() const;
-
-	private:
-		World();
-
-		EntityCollisionPoint* createCollisionPoint(float _diameter);
+	protected:
+		virtual T computeValue_internal(float _dt) = 0;
 	};
-
-#define WORLD World::getInstance()
 }
-
-#endif
+#endif //#ifndef DAMPER_H

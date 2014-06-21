@@ -115,4 +115,8 @@ namespace Supernova
 		_structOfArray[3] = _mm_shuffle_ps(s1, s2, _MM_SHUFFLE(3, 1, 3, 1));
 	}
 
+	snVec lerp(const snVec& _start, const snVec& _end, float _t)
+	{
+		return _start * (1 - _t) + _end * _t;
+	}
 }
