@@ -75,6 +75,8 @@ namespace Supernova
 
 		void queryTestCollision(snIActor*, snIActor*, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const;
 
+		bool queryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
+
 		void* operator new(size_t _count)
 		{
 			return _aligned_malloc(_count, 16);

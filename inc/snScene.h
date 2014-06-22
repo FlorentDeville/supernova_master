@@ -198,6 +198,9 @@ namespace Supernova
 		//Overridden delete operator to delete using the correct alignement.
 		void operator delete(void* _p);
 
+		//Make a sphere cast test
+		bool sphereCast(const snVec& _center, float _radius, const snVec& _direction, float _length);
+
 	private:
 		//Apply forces and compute linear and angular velocities
 		void applyForces(float _dt);

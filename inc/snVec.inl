@@ -60,6 +60,11 @@ namespace Supernova
 			return _mm_set_ps(_w, _z, _y, _x);
 		}
 
+		snVec snVec4Set(float _value)
+		{
+			return _mm_set1_ps(_value);
+		}
+
 		snVec operator*(const snVec& _a, const snVec& _b)
 		{
 			return _mm_mul_ps(_a, _b);
@@ -108,6 +113,16 @@ namespace Supernova
 			return mul.m128_f32[VEC_ID_X] + mul.m128_f32[VEC_ID_Y] + mul.m128_f32[VEC_ID_Z];
 		}
 
+		/*snVec snVec3Dot(const snVec& _a, const snVec& _b)
+		{
+			snVec mul = _a * _b;
+			snVec4SetW(mul, 0);
+			snVec shuffle = _mm_shuffle_ps(mul, mul, _MM_SHUFFLE(VEC_ID_W, VEC_ID_X, VEC_ID_Z, VEC_ID_Y));
+			snVec sum = mul + shuffle;
+			shuffle = _mm_shuffle_ps(shuffle, shuffle, _MM_SHUFFLE(VEC_ID_W, VEC_ID_X, VEC_ID_Z, VEC_ID_Y));
+			return sum + shuffle;
+		}*/
+
 		float snVec4Dot(const snVec& _a, const snVec& _b)
 		{
 			snVec mul = _a * _b;
@@ -150,6 +165,12 @@ namespace Supernova
 			float invNorme = 1.f / n;
 			snVec div = snVec4Set(invNorme, invNorme, invNorme, 1);
 			_a = _a * div;
+		}
+
+		snVec snVec4GetInverse(const snVec& _v)
+		{
+			snVec one = snVec4Set(1.f);
+			return _mm_div_ps(one, _v);
 		}
 
 		snVec snVec4GetAbsolute(const snVec& _a)
@@ -256,6 +277,12 @@ namespace Supernova
 			//transform max from [a b c d] to [d c b a]
 			swap = _mm_shuffle_ps(max, max, _MM_SHUFFLE(0, 1, 2, 3));
 			return Supernova::Vector::snVec4GetMin(max, swap);
+		}
+
+		snVec snVec4Clamp(const snVec& _v, const snVec& _min, const snVec& _max)
+		{
+			snVec clamped = snVec4GetMin(_v, _max);
+			return snVec4GetMax(clamped, _min);
 		}
 	}
 }

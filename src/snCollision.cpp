@@ -86,6 +86,12 @@ namespace Supernova
 
 	}
 
+	bool snCollision::queryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const
+	{
+		snCollisionResult res = invokeQueryTestCollision(_c1, _c2);
+		return res.m_collision;
+	}
+
 	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const
 	{
 		unsigned short key = SN_COLLISION_KEY(_c1->getTypeOfCollider(), _c2->getTypeOfCollider());

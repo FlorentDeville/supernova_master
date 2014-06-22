@@ -45,6 +45,8 @@ namespace Supernova
 	{
 		inline snVec snVec4Set(float _x, float _y, float _z, float _w);
 
+		inline snVec snVec4Set(float _value);
+
 		inline snVec operator*(const snVec& _a, const snVec& _b);
 
 		inline snVec operator*(const snVec& _a, float _f);
@@ -61,6 +63,8 @@ namespace Supernova
 
 		inline float snVec3Dot(const snVec& _a, const snVec& _b);
 
+		//inline snVec snVec3Dot(const snVec& _a, const snVec& _b);
+
 		inline float snVec4Dot(const snVec& _a, const snVec& _b);
 
 		/*Cross product between _v1 and _v2. The W coordinate will be 0.*/
@@ -74,6 +78,8 @@ namespace Supernova
 
 		/*Normalize the vector. Its direction remain the same but its length is set to 1.*/
 		inline void snVec3Normalize(snVec& _a);
+
+		inline snVec snVec4GetInverse(const snVec& _v);
 
 		inline snVec snVec4GetAbsolute(const snVec& _a);
 
@@ -108,6 +114,9 @@ namespace Supernova
 
 		//Reurn a vector where all four values are equal to the minimum float of _v
 		inline snVec snVec4GetMin(const snVec& _v);
+
+		//Clamp each component of _v using each component of _min as minimum value and each component of _max as maximum value
+		inline snVec snVec4Clamp(const snVec& _v, const snVec& _min, const snVec& _max);
 	}
 }
 

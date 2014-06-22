@@ -40,22 +40,31 @@ using std::list;
 
 #include "snVec.inl"
 
+#include <vector>
+using std::vector;
+
+#include "snGlobals.h"
+
 namespace Supernova
 {
 	class snIActor;
 	class snScene;
+	struct snAABB;
 
 	typedef void(snScene::*snPairFoundCallback)(snIActor* _a, snIActor* _b);
 
 	//Manager to handle and execute the sweep and prune broad phase algorithm.
-	class snSweepManager
+	class SN_ALIGN snSweepManager
 	{
 	private:
 		//List of actor sorted using their aabb
 		list<snIActor*> m_sortedActors;
 
 		//Axis to use to sort the actors
-		unsigned char  m_axis;
+		unsigned char m_axis;
+
+		//Axis to use to sort the actors for the next iteration
+		unsigned char m_deferredAxis;
 
 		//fnuction to call when a pair that might be colliding is found
 		snPairFoundCallback m_callback;
@@ -98,7 +107,8 @@ namespace Supernova
 		//Compute which axis to use to sort the actors.
 		void postBroadPhase();
 
-
+		//For a given aabb, use the seep list to find all the possibly colliding actors
+		void getPossiblyCollidingActor(const snAABB& _aabb, vector<snIActor*>& _pca);
 	};
 }
 #endif //ifndef SN_SWEEP_MANAGER_H

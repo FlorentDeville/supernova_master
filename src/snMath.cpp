@@ -18,7 +18,12 @@ namespace Supernova
 
 	snVec clampComponents(const snVec& _v, float _min, float _max)
 	{
-		return snVec4Set(clamp(snVec4GetX(_v), _min, _max), clamp(snVec4GetY(_v), _min, _max), clamp(snVec4GetZ(_v), _min, _max), clamp(snVec4GetW(_v), _min, _max));
+		snVec vecMax = snVec4Set(_max);
+		snVec vecMin = snVec4Set(_min);
+
+		snVec clamped = snVec4GetMin(_v, vecMax);
+		clamped = snVec4GetMax(clamped, vecMin);
+		return clamped;
 	}
 
 	bool isInRange(float _value, float _min, float _max)

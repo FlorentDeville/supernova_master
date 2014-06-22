@@ -44,7 +44,7 @@ using namespace Supernova::Vector;
 namespace Supernova
 {
 	//Default constructor
-	snSweepManager::snSweepManager() : m_sortedActors(), m_axis(0), m_callback(0), m_sum(), m_squaredSum(), m_scene(0)
+	snSweepManager::snSweepManager() : m_sortedActors(), m_axis(0), m_deferredAxis(0), m_callback(0), m_sum(), m_squaredSum(), m_scene(0)
 	{}
 
 	//Default destructor
@@ -73,6 +73,7 @@ namespace Supernova
 	//Sort the list using actor's aabbs.
 	void snSweepManager::preBroadPhase()
 	{
+		m_axis = m_deferredAxis;
 		//sort the list in ascending order
 		m_sortedActors.sort([this](const snIActor* _a, const snIActor* _b)
 		{
@@ -156,8 +157,37 @@ namespace Supernova
 		snVec4Absolute(v);
 
 		//update the axis to sort to take the axis with the greatest variance.
-		m_axis = 0;
-		if (snVec4GetById(v, 1) > snVec4GetById(v, 0)) m_axis = 1;
-		if (snVec4GetById(v, 2) > snVec4GetById(v, m_axis)) m_axis = 2;
+		m_deferredAxis = 0;
+		if (snVec4GetById(v, 1) > snVec4GetById(v, 0)) m_deferredAxis = 1;
+		if (snVec4GetById(v, 2) > snVec4GetById(v, m_deferredAxis)) m_deferredAxis = 2;
+	}
+
+	//Find all the possibly colliding actors for a given aabb.
+	void snSweepManager::getPossiblyCollidingActor(const snAABB& _aabb, vector<snIActor*>& _pca)
+	{
+		//compute aabb center point
+		snVec center = (_aabb.m_max + _aabb.m_min) * 0.5f;
+
+		//loop through each actor in the scene using the sweep list
+		for (list<snIActor*>::iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
+		{
+			//ignore inactive actors
+			if (!(*i)->getIsActive())
+				continue;
+
+			//check if the aabb is before the actor
+			if (snVec4GetById(_aabb.m_max, m_axis) < snVec4GetById((*i)->getBoundingVolume()->m_min, m_axis))
+				continue;
+
+			//check if theaabb is too far to the current bounding volume (i)
+			if (snVec4GetById(_aabb.m_min, m_axis) > snVec4GetById((*i)->getBoundingVolume()->m_max, m_axis))
+				break;
+
+			//Check if the bounding boxes overlap
+			if (AABBOverlap(&_aabb, (*i)->getBoundingVolume()))
+			{
+				_pca.push_back(*i);
+			}
+		}
 	}
 }
