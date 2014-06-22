@@ -43,7 +43,7 @@ using namespace Supernova::Vector;
 namespace Supernova
 {
 	snFrictionConstraint::snFrictionConstraint()
-		:snIConstraint(), m_effectiveMass(0)
+		:snIConstraint(), m_effectiveMass(snVec4Set(0)), m_accumulatedImpulseMagnitude(snVec4Set(0))
 	{
 	}
 
@@ -58,8 +58,8 @@ namespace Supernova
 
 	void snFrictionConstraint::prepare(float /*_dt*/)
 	{
-		m_accumulatedImpulseMagnitude = 0;
-		m_secondAccumulatedImpulseMagnitude = 0;
+		m_accumulatedImpulseMagnitude = snVec4Set(0);
+		m_secondAccumulatedImpulseMagnitude = snVec4Set(0);
 
 		//Compute the friction coefficient as the average of frictions of the two objects.
 		m_frictionCoefficient = (m_bodies[0]->getPhysicMaterial().m_friction + m_bodies[1]->getPhysicMaterial().m_friction) * 0.5f;
@@ -67,15 +67,16 @@ namespace Supernova
 		//compute tangent vectors
 		computeBasis(m_npConstraint->getNormal(), m_tangent[0], m_tangent[1]);
 
-		float sumInvMass = m_bodies[0]->getInvMass() + m_bodies[1]->getInvMass();
+		snVec sumInvMass = snVec3Set(m_bodies[0]->getInvMass() + m_bodies[1]->getInvMass());
 
 		//compute the effective mass along the first tangent vector
 		snVec tempA = snVec3Cross(m_npConstraint->getRadius()[0], m_tangent[0]);
 		m_rCrossT0InvI[0] = snMatrixTransform3(tempA, m_bodies[0]->getInvWorldInertia());
 		snVec tempB = snVec3Cross(m_npConstraint->getRadius()[1], m_tangent[0]);
 		m_rCrossT0InvI[1] = snMatrixTransform3(tempB, m_bodies[1]->getInvWorldInertia());
-		m_effectiveMass = 1.f / (sumInvMass +
+		m_effectiveMass =(sumInvMass +
 			snVec3Dot(snVec3Cross(m_rCrossT0InvI[0], m_npConstraint->getRadius()[0]) + snVec3Cross(m_rCrossT0InvI[1], m_npConstraint->getRadius()[1]), m_tangent[0]));
+		m_effectiveMass = snVec4GetInverse(m_effectiveMass);
 
 		//compute the effective mass along the second tangent vector
 		tempA = snVec3Cross(m_npConstraint->getRadius()[0], m_tangent[1]);
@@ -83,18 +84,16 @@ namespace Supernova
 		tempB = snVec3Cross(m_npConstraint->getRadius()[1], m_tangent[1]);
 		m_rCrossT1InvI[1] = snMatrixTransform3(tempB, m_bodies[1]->getInvWorldInertia());
 
-		m_secondEffectiveMass = 1.f / (sumInvMass +
+		m_secondEffectiveMass =(sumInvMass +
 			snVec3Dot(snVec3Cross(m_rCrossT1InvI[0], m_npConstraint->getRadius()[0]) + snVec3Cross(m_rCrossT1InvI[1], m_npConstraint->getRadius()[1]), m_tangent[1]));
-
+		m_secondEffectiveMass = snVec4GetInverse(m_secondEffectiveMass);
 	}
 
 	void snFrictionConstraint::resolve()
 	{
-		float clampingValue = m_frictionCoefficient * m_npConstraint->getAccumulatedImpulseMagnitude();
+		snVec clampingValue = m_frictionCoefficient * m_npConstraint->getAccumulatedImpulseMagnitude();
 
 		//compute relative velocity
-		/*snVec dv = m_bodies[1]->getLinearVelocity() + m_bodies[1]->getAngularVelocity().cross(m_npConstraint->getRadius()[1])
-			- m_bodies[0]->getLinearVelocity() - m_bodies[0]->getAngularVelocity().cross(m_npConstraint->getRadius()[0]);*/
 		snVec linVel1 = m_bodies[1]->getLinearVelocity();
 		snVec angVel1 = snVec3Cross(m_bodies[1]->getAngularVelocity(), m_npConstraint->getRadius()[1]);
 		snVec linVel0 = m_bodies[0]->getLinearVelocity();
@@ -103,11 +102,11 @@ namespace Supernova
 		snVec dv = linVel1 + angVel1 - linVel0 - angVel0;
 
 		//compute lagrangian for the fist tangent
-		float lagrangian = -snVec3Dot(dv, m_tangent[0]) * m_effectiveMass;
+		snVec lagrangian = -snVec3Dot(dv, m_tangent[0]) * m_effectiveMass;
 
 		//clamp the lagrangian
-		float tempLambda = m_accumulatedImpulseMagnitude;
-		m_accumulatedImpulseMagnitude = clamp(m_accumulatedImpulseMagnitude + lagrangian, clampingValue, -clampingValue);
+		snVec tempLambda = m_accumulatedImpulseMagnitude;
+		m_accumulatedImpulseMagnitude = snVec4Clamp(m_accumulatedImpulseMagnitude + lagrangian, clampingValue, -clampingValue);
 		lagrangian = m_accumulatedImpulseMagnitude - tempLambda;
 
 
@@ -127,13 +126,11 @@ namespace Supernova
 		snVec vec4 = snVec3Cross(m_bodies[0]->getAngularVelocity(), m_npConstraint->getRadius()[0]);
 
 		dv = vec1 + vec2 - vec3 - vec4;
-		/*dv = m_bodies[1]->getLinearVelocity() + m_bodies[1]->getAngularVelocity().cross(m_npConstraint->getRadius()[1])
-			- m_bodies[0]->getLinearVelocity() - m_bodies[0]->getAngularVelocity().cross(m_npConstraint->getRadius()[0]);*/
 
 		//compute and clamp the impulse along the second tangent
 		lagrangian = -snVec3Dot(dv, m_tangent[1]) * m_secondEffectiveMass;
 		tempLambda = m_secondAccumulatedImpulseMagnitude;
-		m_secondAccumulatedImpulseMagnitude = clamp(m_secondAccumulatedImpulseMagnitude + lagrangian, clampingValue, -clampingValue);
+		m_secondAccumulatedImpulseMagnitude = snVec4Clamp(m_secondAccumulatedImpulseMagnitude + lagrangian, clampingValue, -clampingValue);
 		lagrangian = m_secondAccumulatedImpulseMagnitude - tempLambda;
 
 

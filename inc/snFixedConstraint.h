@@ -109,6 +109,8 @@ namespace Supernova
 		//Normalized vector going from the actor's center of mass to the constraint's fixed point.
 		snVec m_normalizedOffset;
 
+		float m_accumulatedImpulseMagnitude;
+
 	public:
 		snFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance);
 		~snFixedConstraint();

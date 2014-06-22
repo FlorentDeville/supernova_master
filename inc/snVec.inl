@@ -65,6 +65,11 @@ namespace Supernova
 			return _mm_set1_ps(_value);
 		}
 
+		snVec snVec3Set(float _value)
+		{
+			return snVec4Set(_value, _value, _value, 0);
+		}
+
 		snVec operator*(const snVec& _a, const snVec& _b)
 		{
 			return _mm_mul_ps(_a, _b);
@@ -80,6 +85,11 @@ namespace Supernova
 		{
 			snVec f = snVec4Set(_f, _f, _f, _f);
 			return _a * f;
+		}
+
+		snVec operator/(const snVec& _a, const snVec& _b)
+		{
+			return _mm_div_ps(_a, _b);
 		}
 
 		snVec operator+(const snVec& _a, const snVec& _b)
@@ -107,13 +117,7 @@ namespace Supernova
 			return (vmask == 0xffff);
 		}
 
-		float snVec3Dot(const snVec& _a, const snVec& _b)
-		{
-			snVec mul = _a * _b;
-			return mul.m128_f32[VEC_ID_X] + mul.m128_f32[VEC_ID_Y] + mul.m128_f32[VEC_ID_Z];
-		}
-
-		/*snVec snVec3Dot(const snVec& _a, const snVec& _b)
+		snVec snVec3Dot(const snVec& _a, const snVec& _b)
 		{
 			snVec mul = _a * _b;
 			snVec4SetW(mul, 0);
@@ -121,7 +125,7 @@ namespace Supernova
 			snVec sum = mul + shuffle;
 			shuffle = _mm_shuffle_ps(shuffle, shuffle, _MM_SHUFFLE(VEC_ID_W, VEC_ID_X, VEC_ID_Z, VEC_ID_Y));
 			return sum + shuffle;
-		}*/
+		}
 
 		float snVec4Dot(const snVec& _a, const snVec& _b)
 		{
@@ -147,7 +151,7 @@ namespace Supernova
 		/*Return the squared length of the vector.*/
 		float snVec3SquaredNorme(const snVec& _a)
 		{
-			return snVec3Dot(_a, _a);
+			return snVec4GetX(snVec3Dot(_a, _a));
 		}
 
 		/*Calculate the length of the vector.*/
@@ -283,6 +287,34 @@ namespace Supernova
 		{
 			snVec clamped = snVec4GetMin(_v, _max);
 			return snVec4GetMax(clamped, _min);
+		}
+
+		bool snVec3Inferior(const snVec& _a, const snVec& _b)
+		{
+			//make the comparison
+			snVec compare = _mm_cmplt_ps(_a, _b);
+
+			//cast the result into an int
+			__m128i ivcmp = _mm_castps_si128(compare);
+			int vmask = _mm_movemask_epi8(ivcmp);
+
+			//make sure to ignore the w component
+			vmask = vmask | 0xf000;
+
+			return (vmask == 0xffff);
+		}
+
+		bool snVec3SuperiorOrEqual(const snVec& _a, const snVec& _b)
+		{
+			//make the comparison
+			snVec compare = _mm_cmpge_ps(_a, _b);
+
+			//cast the result into an int
+			__m128i ivcmp = _mm_castps_si128(compare);
+			int vmask = _mm_movemask_epi8(ivcmp);
+
+			vmask = vmask | 0xf000;
+			return (vmask == 0xffff);
 		}
 	}
 }

@@ -32,6 +32,9 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
+//Warning because m_box is in the initialization list. From the MSDN, the warning can be disabled.
+#pragma warning( disable : 4351)
+
 #include "snColliderBox.h"
 
 #include <assert.h>
@@ -197,7 +200,7 @@ namespace Supernova
 		//check every point
 		for (int i = 0; i < VERTEX_COUNT; ++i)
 		{
-			float dot = snVec3Dot(_direction, m_worldBox[i]);
+			float dot = snVec4GetX(snVec3Dot(_direction, m_worldBox[i]));
 			if (dot > maxDotProduct)
 			{
 				maxDotProduct = dot;
@@ -282,15 +285,13 @@ namespace Supernova
 		normals = getWorldNormal();
 
 		//Loop through each normals
+		snVec halfSize = m_size * 0.5f;
 		for (int i = 0; i < 3; ++i)
 		{
 			//Projection of the point to the normal
-			float dot = snVec3Dot(dir, normals[i]);
-
-			float halfExtend = m_size.m128_f32[i] * 0.5f;
-			if (dot > halfExtend) dot = halfExtend;
-			else if (dot < -halfExtend) dot = -halfExtend;
-
+			snVec dot = snVec3Dot(dir, normals[i]);
+			float extend = snVec4GetById(halfSize, i);
+			dot = clampComponents(dot, -extend, extend);
 			ret = ret + normals[i] * dot;
 		}
 
@@ -304,7 +305,7 @@ namespace Supernova
 		int minId = -1;
 		for (int i = 0; i < VERTEX_COUNT; ++i)
 		{
-			float d = snVec3Dot(_n, m_worldBox[i]);
+			float d = snVec4GetX(snVec3Dot(_n, m_worldBox[i]));
 			if (d < min)
 			{
 				min = d;
@@ -325,12 +326,12 @@ namespace Supernova
 				continue;
 
 			//make the sum of dot product
-			float sumOfDot = snVec3Dot(_n, m_worldBox[m_idFaces[polyId]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 1]]) +
+			snVec sumOfDot = snVec3Dot(_n, m_worldBox[m_idFaces[polyId]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 1]]) +
 				snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 2]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 3]]);
 
-			if (sumOfDot < minPoly)
+			if (snVec4GetX(sumOfDot) < minPoly)
 			{
-				minPoly = sumOfDot;
+				minPoly = snVec4GetX(sumOfDot);
 				minPolyId = polyId;
 			}
 		}

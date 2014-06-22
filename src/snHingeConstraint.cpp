@@ -112,13 +112,15 @@ namespace Supernova
 		m_actor->setAngularVelocity(m_actor->getAngularVelocity() + snMatrixTransform3(m_invIRT, lagrangian));
 
 		//solve first rotation constraint
-		float JRot1 = snVec3Dot(m_bCrossA, m_actor->getAngularVelocity());
-		float lagrangianRot1 = -JRot1 / m_KRot1;
+		snVec JRot1 = snVec3Dot(m_bCrossA, m_actor->getAngularVelocity());
+		snVec lagrangianRot1 = -JRot1 / m_KRot1;
+		snVec4SetW(lagrangianRot1, 0);
 		m_actor->setAngularVelocity(m_actor->getAngularVelocity() + m_invIBCrossA * lagrangianRot1);
 
 		//solve second rotation constraint
-		float JRot2 = snVec3Dot(m_cCrossA, m_actor->getAngularVelocity());
-		float lagrangianRot2 = -JRot2 / m_KRot2;
+		snVec JRot2 = snVec3Dot(m_cCrossA, m_actor->getAngularVelocity());
+		snVec lagrangianRot2 = -JRot2 / m_KRot2;
+		snVec4SetW(lagrangianRot2, 0);
 		m_actor->setAngularVelocity(m_actor->getAngularVelocity() + m_invICCrossA * lagrangianRot2);
 	}
 }

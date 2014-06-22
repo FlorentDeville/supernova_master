@@ -487,7 +487,12 @@ namespace Supernova
 	snVec snMatrixTransform3(const snMatrix44f& _m, const snVec& _v)
 	{
 		//compute first matrix column time X
-		return snVec4Set(snVec3Dot(_v, _m[0]), snVec3Dot(_v, _m[1]), snVec3Dot(_v, _m[2]), 0);
+		snVec x = snVec3Dot(_v, _m[0]);
+		snVec y = snVec3Dot(_v, _m[1]);
+		snVec z = snVec3Dot(_v, _m[2]);
+
+		snVec shuffle = _mm_shuffle_ps(x, y, _MM_SHUFFLE(VEC_ID_X, VEC_ID_X, VEC_ID_X, VEC_ID_X));
+		return _mm_shuffle_ps(shuffle, z, _MM_SHUFFLE(VEC_ID_W, VEC_ID_X, VEC_ID_Z, VEC_ID_X));
 	}
 
 	void snMatrixMultiply4(const snMatrix44f& _m1, const snMatrix44f& _m2, snMatrix44f& _res)

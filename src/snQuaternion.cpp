@@ -42,7 +42,7 @@ namespace Supernova
 	void snQuaternionMultiply(const snVec& _q1, const snVec& _q2, snVec& _result)
 	{
 		snVec q1Crossq2 = snVec3Cross(_q1, _q2);
-		float q1Dotq2 = snVec3Dot(_q1, _q2);
+		float q1Dotq2 = snVec4GetX(snVec3Dot(_q1, _q2));
 		float resultW = snVec4GetW(_q1) * snVec4GetW(_q2) - q1Dotq2;
 
 		_result = (_q2 * snVec4GetW(_q1)) + (_q1 * snVec4GetW(_q2)) + q1Crossq2;
@@ -91,35 +91,35 @@ namespace Supernova
 		float tr = m00 + m11 + m22;
 		if (tr > 0) 
 		{
-			float S = sqrt(tr + 1.0) * 2; // S=4*qw 
-			qw = 0.25 * S;
+			float S = sqrtf(tr + 1.f) * 2; // S=4*qw 
+			qw = 0.25f * S;
 			qx = (m12 - m21) / S;
 			qy = (m20 - m02) / S;
 			qz = (m01 - m10) / S;
 		}
 		else if ((m00 > m11)&(m00 > m22)) 
 		{
-			float S = sqrt(1.0 + m00 - m11 - m22) * 2; // S=4*qx 
+			float S = sqrtf(1.f + m00 - m11 - m22) * 2; // S=4*qx 
 			qw = (m12 - m21) / S;
-			qx = 0.25 * S;
+			qx = 0.25f * S;
 			qy = (m10 + m01) / S;
 			qz = (m20 + m02) / S;
 		}
 		else if (m11 > m22) 
 		{
-			float S = sqrt(1.0 + m11 - m00 - m22) * 2; // S=4*qy
+			float S = sqrtf(1.f + m11 - m00 - m22) * 2; // S=4*qy
 			qw = (m20 - m02) / S;
 			qx = (m10 + m01) / S;
-			qy = 0.25 * S;
+			qy = 0.25f * S;
 			qz = (m21 + m12) / S;
 		}
 		else 
 		{
-			float S = sqrt(1.0 + m22 - m00 - m11) * 2; // S=4*qz
+			float S = sqrtf(1.f + m22 - m00 - m11) * 2; // S=4*qz
 			qw = (m10 - m01) / S;
 			qx = (m02 + m20) / S;
 			qy = (m12 + m21) / S;
-			qz = 0.25 * S;
+			qz = 0.25f * S;
 		}
 
 		return snVec4Set(qx, qy, qz, qw);

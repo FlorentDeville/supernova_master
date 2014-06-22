@@ -66,14 +66,15 @@ namespace Supernova
 		snVec m_rCrossT1InvI[2];
 
 		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
-		float m_effectiveMass;
+		snVec m_effectiveMass;
 
 		//The effective mass for the second tangent vector.
-		float m_secondEffectiveMass;
+		snVec m_secondEffectiveMass;
 
 		//The accumulated impulse for the second tangent vector.
-		float m_secondAccumulatedImpulseMagnitude;
+		snVec m_secondAccumulatedImpulseMagnitude;
 
+		snVec m_accumulatedImpulseMagnitude;
 	public:
 		snFrictionConstraint();
 

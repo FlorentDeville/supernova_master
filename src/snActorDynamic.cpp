@@ -284,12 +284,12 @@ namespace Supernova
 		//if the linear speed is too small, set it to 0.
 		float sqSpeed = snVec3SquaredNorme(m_v);
 		if (sqSpeed < _linearSpeed2Limit)
-			m_v = snVec();
+			m_v = snVec4Set(0);
 
 		//if the angular speed is too small, set it to 0.
 		sqSpeed = snVec3SquaredNorme(m_w);
 		if (sqSpeed < _angularSpeed2Limit)
-			m_w = snVec();
+			m_w = snVec4Set(0);
 
 		//calculate position using euler integration
 		m_x = m_x + m_v * _dt;

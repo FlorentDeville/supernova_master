@@ -47,11 +47,16 @@ namespace Supernova
 
 		inline snVec snVec4Set(float _value);
 
+		//Set the x, y and z component to _value. Set to w component to 0.
+		inline snVec snVec3Set(float _value);
+
 		inline snVec operator*(const snVec& _a, const snVec& _b);
 
 		inline snVec operator*(const snVec& _a, float _f);
 
 		inline snVec operator*(float _f, const snVec& _a);
+
+		inline snVec operator/(const snVec& _a, const snVec& _b);
 
 		inline snVec operator+(const snVec& _a, const snVec& _b);
 
@@ -61,9 +66,7 @@ namespace Supernova
 
 		inline bool operator == (const snVec& _a, const snVec& _b);
 
-		inline float snVec3Dot(const snVec& _a, const snVec& _b);
-
-		//inline snVec snVec3Dot(const snVec& _a, const snVec& _b);
+		inline snVec snVec3Dot(const snVec& _a, const snVec& _b);
 
 		inline float snVec4Dot(const snVec& _a, const snVec& _b);
 
@@ -117,6 +120,11 @@ namespace Supernova
 
 		//Clamp each component of _v using each component of _min as minimum value and each component of _max as maximum value
 		inline snVec snVec4Clamp(const snVec& _v, const snVec& _min, const snVec& _max);
+
+		//Compare each member of _a to each member of _b and return true if all of them are inferiors.
+		inline bool snVec3Inferior(const snVec& _a, const snVec& _b);
+
+		inline bool snVec3SuperiorOrEqual(const snVec& _a, const snVec& _b);
 	}
 }
 

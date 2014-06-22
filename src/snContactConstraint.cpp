@@ -48,7 +48,7 @@ namespace Supernova
 	/// <summary>
 	/// Initializes a new instance of the <see cref="snContactConstraint"/> class.
 	/// </summary>
-	snContactConstraint::snContactConstraint() : snIConstraint(), m_effectiveMass(0)
+	snContactConstraint::snContactConstraint() : snIConstraint(), m_effectiveMass(snVec4Set(0))
 	{
 	}
 
@@ -85,7 +85,7 @@ namespace Supernova
 	/// <param name="_dt">The _DT.</param>
 	void snContactConstraint::prepare(float _dt)
 	{
-		m_accumulatedImpulseMagnitude = 0;
+		m_accumulatedImpulseMagnitude = snVec4Set(0);
 
 		//world center of mass = position + center of mass
 		//so radius = point - world center of mass = point - position - center of mass
@@ -103,27 +103,28 @@ namespace Supernova
 		rCrossNInvI = snMatrixTransform3(m_rCrossN[1], m_bodies[1]->getInvWorldInertia());
 		snVec tempB = snVec3Cross(rCrossNInvI, m_radius[1]);
 
-		float sumInvMass = m_bodies[0]->getInvMass() + m_bodies[1]->getInvMass();
+		snVec sumInvMass = snVec4Set(m_bodies[0]->getInvMass() + m_bodies[1]->getInvMass());
 
 		// 1/ ( 1/ma + 1/mb + ( [(ra X n)Ia-1] X ra + [(rb X n)Ib-1] X rb) . N)
-		m_effectiveMass = 1.f / (sumInvMass + snVec3Dot(tempA + tempB, m_normal));
+		m_effectiveMass = sumInvMass + snVec3Dot(tempA + tempB, m_normal);
+		m_effectiveMass = snVec4GetInverse(m_effectiveMass);
 
 		//compute relative velocity
 		snVec v0 = m_bodies[0]->getLinearVelocity() + snVec3Cross(m_bodies[0]->getAngularVelocity(), m_radius[0]);
 		snVec v1 = m_bodies[1]->getLinearVelocity() + snVec3Cross(m_bodies[1]->getAngularVelocity(), m_radius[1]);
-		float relVel = snVec3Dot(m_normal, v1 - v0);
+		snVec relVel = snVec3Dot(m_normal, v1 - v0);
 
 		//compute the resitution coefficient as the average of the coeff of the actors
 		float restitution = (m_bodies[0]->getPhysicMaterial().m_restitution + m_bodies[1]->getPhysicMaterial().m_restitution) * 0.5f;
 
 		//compute the velocity correction
 		float error = m_scene->getContactConstraintBeta() / _dt * max<float>(0, m_penetrationDepth - m_bodies[0]->getSkinDepth() - m_bodies[1]->getSkinDepth());
-		m_velocityBias = -restitution * relVel - error;
+		snVec vecError = snVec3Set(-error);
+		m_velocityBias = vecError - (restitution * relVel);
 
 		//compute invI * (r x N)T
 		m_invI_rCrossN[0] = snMatrixTransform3(m_bodies[0]->getInvWorldInertia(), m_rCrossN[0]);
 		m_invI_rCrossN[1] = snMatrixTransform3(m_bodies[1]->getInvWorldInertia(), m_rCrossN[1]);
-
 	}
 
 	/// <summary>
@@ -133,15 +134,15 @@ namespace Supernova
 	{
 		//compute relative velocity between the two colliding bodies
 		snVec deltaLinVel = m_bodies[1]->getLinearVelocity() - m_bodies[0]->getLinearVelocity();
-		float dv = snVec3Dot(m_normal, deltaLinVel) +
+		snVec dv = snVec3Dot(m_normal, deltaLinVel) +
 			snVec3Dot(m_rCrossN[1], m_bodies[1]->getAngularVelocity()) - snVec3Dot(m_rCrossN[0], m_bodies[0]->getAngularVelocity());
 
 		//compute lagrange multiplier
-		float lagrangian = (m_velocityBias - dv) * m_effectiveMass;
+		snVec lagrangian = (m_velocityBias - dv) * m_effectiveMass;
 
 		//clamp lambda
-		float oldAccLambda = m_accumulatedImpulseMagnitude;
-		m_accumulatedImpulseMagnitude = clamp(m_accumulatedImpulseMagnitude + lagrangian, -SN_FLOAT_MAX, 0);
+		snVec oldAccLambda = m_accumulatedImpulseMagnitude;
+		m_accumulatedImpulseMagnitude = clampComponents(m_accumulatedImpulseMagnitude + lagrangian, -SN_FLOAT_MAX, 0);
 		lagrangian = m_accumulatedImpulseMagnitude - oldAccLambda;
 
 		//compute the impulse
@@ -173,5 +174,10 @@ namespace Supernova
 	snVec const * snContactConstraint::getRadius() const
 	{
 		return m_radius;
+	}
+
+	snVec snContactConstraint::getAccumulatedImpulseMagnitude() const
+	{
+		return m_accumulatedImpulseMagnitude;
 	}
 }

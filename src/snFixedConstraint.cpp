@@ -41,7 +41,7 @@ using namespace Supernova::Vector;
 namespace Supernova
 {
 	snFixedConstraint::snFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance)
-		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_distance(_distance)
+		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_distance(_distance), m_accumulatedImpulseMagnitude(0)
 	{
 		
 	}

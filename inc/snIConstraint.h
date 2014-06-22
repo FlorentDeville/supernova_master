@@ -48,13 +48,10 @@ namespace Supernova
 		//Indicate if this constraint is currently active.
 		bool m_active;
 
-		//Store the total impulse.
-		float m_accumulatedImpulseMagnitude;
-
 	public:
 
 		//Default constructor
-		snIConstraint() : m_accumulatedImpulseMagnitude(0), m_active(false){}
+		snIConstraint() : m_active(false){}
 
 		//Default destructor
 		virtual ~snIConstraint(){}
@@ -77,8 +74,6 @@ namespace Supernova
 		{
 			_aligned_free(_p);
 		}
-
-		float getAccumulatedImpulseMagnitude() const{ return m_accumulatedImpulseMagnitude; }
 
 		void setIsActive(bool _isActive){ m_active = _isActive; }
 

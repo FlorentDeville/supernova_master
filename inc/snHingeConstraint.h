@@ -132,7 +132,7 @@ namespace Supernova
 		snVec m_bCrossA, m_cCrossA;
 
 		//K matrices for the first and second rotational constraints
-		float m_KRot1, m_KRot2;
+		snVec m_KRot1, m_KRot2;
 
 		//I-1 * (b x a) and I-1 * (c x a)
 		snVec m_invIBCrossA, m_invICCrossA;

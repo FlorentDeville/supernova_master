@@ -42,7 +42,7 @@
 
 using namespace Supernova::Vector;
 
-#define SN_SAME_DIRECTION(_v1, _v2) snVec3Dot(_v1, _v2) > 0
+#define SN_SAME_DIRECTION(_v1, _v2) snVec4GetX(snVec3Dot(_v1, _v2)) > 0
 
 namespace Supernova
 {
@@ -78,7 +78,7 @@ namespace Supernova
 			snVec newPoint = support(_c1, _c2, direction);
 
 			//check if we passed the origin
-			if (snVec3Dot(newPoint, direction) <= 0)
+			if (snVec4GetX(snVec3Dot(newPoint, direction)) <= 0)
 				return res;
 
 			//add the new point to the simplex
@@ -267,14 +267,14 @@ namespace Supernova
 		snVec ADB = snVec3Cross(AD, AB);
 
 		//check on what side of the triangle the opposite point is
-		int BSideOnACD = sign(snVec3Dot(ACD, AB));
-		int CSideOnADB = sign(snVec3Dot(ADB, AC));
-		int DSideOnABC = sign(snVec3Dot(ABC, AD));
+		int BSideOnACD = sign(snVec4GetX(snVec3Dot(ACD, AB)));
+		int CSideOnADB = sign(snVec4GetX(snVec3Dot(ADB, AC)));
+		int DSideOnABC = sign(snVec4GetX(snVec3Dot(ABC, AD)));
 
 		//check if the origin is on the same side as a point relative to a triangle
-		bool ABSameAsOrigin = sign(snVec3Dot(ACD, AO)) == BSideOnACD;
-		bool ACSameAsOrigin = sign(snVec3Dot(ADB, AO)) == CSideOnADB;
-		bool ADSameAsOrigin = sign(snVec3Dot(ABC, AO)) == DSideOnABC;
+		bool ABSameAsOrigin = sign(snVec4GetX(snVec3Dot(ACD, AO))) == BSideOnACD;
+		bool ACSameAsOrigin = sign(snVec4GetX(snVec3Dot(ADB, AO))) == CSideOnADB;
+		bool ADSameAsOrigin = sign(snVec4GetX(snVec3Dot(ABC, AO))) == DSideOnABC;
 
 		if (ABSameAsOrigin && ACSameAsOrigin && ADSameAsOrigin) // the origin is inside the tetrahedron
 			return true;
@@ -283,7 +283,7 @@ namespace Supernova
 			//remove B and point direction to the other side of ACD
 			_simplex[2] = _simplex[3];
 			--_simplexCount;
-			_direction = ACD * -BSideOnACD;
+			_direction = ACD * -(float)BSideOnACD;
 		}
 		else if (!ACSameAsOrigin) //the point C is not in the direction of the origin
 		{
@@ -291,7 +291,7 @@ namespace Supernova
 			_simplex[1] = _simplex[2];
 			_simplex[2] = _simplex[3];
 			--_simplexCount;
-			_direction = ADB * -CSideOnADB;
+			_direction = ADB * -(float)CSideOnADB;
 		}
 		else // !ADSameAsOrigin : the point D is not in the direction of the origin
 		{
@@ -300,7 +300,7 @@ namespace Supernova
 			_simplex[1] = _simplex[2];
 			_simplex[2] = _simplex[3];
 			--_simplexCount;
-			_direction = ABC * -DSideOnABC;
+			_direction = ABC * -(float)DSideOnABC;
 		}
 
 		//check now the triangle.
@@ -323,7 +323,7 @@ namespace Supernova
 			snVec newVertex = support(_c1, _c2, revNormal);
 
 			//check if we are closer to the origin
-			float newPointDistance = snVec3Dot(revNormal, newVertex);
+			float newPointDistance = snVec4GetX(snVec3Dot(revNormal, newVertex));
 
 			const float EPA_TOLERANCE = 0.01f;
 			if ((newPointDistance - distance) < EPA_TOLERANCE)
@@ -362,7 +362,7 @@ namespace Supernova
 			snVec newVertex = support(_c1, _c2, revNormal);
 
 			//check if we are closer to the origin
-			float newPointDistance = snVec3Dot(revNormal, newVertex);
+			float newPointDistance = snVec4GetX(snVec3Dot(revNormal, newVertex));
 
 			snVec triangle[3];
 			_simplex.getTriangle(closestTriangleId, triangle[0], triangle[1], triangle[2]);
@@ -386,7 +386,7 @@ namespace Supernova
 			{
 				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[0], triangle[1], snVec4Set(0, 0, 0, 1));
 				snVec we1 = support(_c1, _c2, ve1);
-				if (snVec3Dot(ve1, we1) != snVec3Dot(ve1, ve1))
+				if (!(snVec3Dot(ve1, we1) == snVec3Dot(ve1, ve1)))
 				{
 					int edgeVertexId = _simplex.addVertex(we1);
 					_simplex.addTriangle(id0, edgeVertexId, newVertexId);
@@ -401,7 +401,7 @@ namespace Supernova
 			{
 				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[1], triangle[2], snVec4Set(0, 0, 0, 1));
 				snVec we1 = support(_c1, _c2, ve1);
-				if (snVec3Dot(ve1, we1) != snVec3Dot(ve1, ve1))
+				if (!(snVec3Dot(ve1, we1) == snVec3Dot(ve1, ve1)))
 				{
 					int edgeVertexId = _simplex.addVertex(we1);
 					_simplex.addTriangle(id1, edgeVertexId, newVertexId);
@@ -416,7 +416,7 @@ namespace Supernova
 			{
 				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[2], triangle[0], snVec4Set(0, 0, 0, 1));
 				snVec we1 = support(_c1, _c2, ve1);
-				if (snVec3Dot(ve1, we1) != snVec3Dot(ve1, ve1))
+				if (!(snVec3Dot(ve1, we1) == snVec3Dot(ve1, ve1)))
 				{
 					int edgeVertexId = _simplex.addVertex(we1);
 					_simplex.addTriangle(id2, edgeVertexId, newVertexId);

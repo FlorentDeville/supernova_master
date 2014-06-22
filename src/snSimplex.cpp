@@ -131,7 +131,7 @@ namespace Supernova
 
 			//compute the distance to the origin
 			snVec AO = snVec4Set(0, 0, 0, 1) - vertices[0];
-			float distance = snVec3Dot(n, AO);
+			float distance = snVec4GetX(snVec3Dot(n, AO));
 
 			int side = sign(distance);
 			distance *= side;
@@ -176,8 +176,8 @@ namespace Supernova
 		snVec ab = b - a;
 		snVec ac = c - a;
 		snVec ap = snVec4Set(0, 0, 0, 1) - a;
-		float d1 = snVec3Dot(ab, ap);
-		float d2 = snVec3Dot(ac, ap);
+		float d1 = snVec4GetX(snVec3Dot(ab, ap));
+		float d2 = snVec4GetX(snVec3Dot(ac, ap));
 		if (d1 <= 0.f && d2 <= 0.f)
 		{
 			_closestPoint = a;
@@ -185,8 +185,8 @@ namespace Supernova
 		}
 
 		snVec bp = snVec4Set(0, 0, 0, 1) - b;
-		float d3 = snVec3Dot(ab, bp);
-		float d4 = snVec3Dot(ac, bp);
+		float d3 = snVec4GetX(snVec3Dot(ab, bp));
+		float d4 = snVec4GetX(snVec3Dot(ac, bp));
 		if (d3 >= 0.f && d4 <= d3)
 		{
 			_closestPoint = b;
@@ -202,8 +202,8 @@ namespace Supernova
 		}
 
 		snVec cp = snVec4Set(0, 0, 0, 1) - c;
-		float d5 = snVec3Dot(ab, cp);
-		float d6 = snVec3Dot(ac, cp);
+		float d5 = snVec4GetX(snVec3Dot(ab, cp));
+		float d6 = snVec4GetX(snVec3Dot(ac, cp));
 		if (d6 >= 0.f && d5 <= d6)
 		{
 			_closestPoint = c;
@@ -240,7 +240,7 @@ namespace Supernova
 
 		snVec e1p = _p - _e1;
 
-		float distance = snVec3Dot(edge, e1p);
+		float distance = snVec4GetX(snVec3Dot(edge, e1p));
 		distance = clamp(distance, 0.f, length);
 
 		return _e1 + (edge * distance);

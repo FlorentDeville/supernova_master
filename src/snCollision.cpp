@@ -239,12 +239,20 @@ namespace Supernova
 		const snVec* s1Normals = _box->getWorldNormal();
 
 		//compute the minimum distance between the box and the plan
-		float minDistance = snVec4GetX(extends) * fabsf(snVec3Dot(s1Normals[0], _plan->getWorldNormal())) +
-			snVec4GetY(extends) * fabsf(snVec3Dot(s1Normals[1], _plan->getWorldNormal())) +
-			snVec4GetZ(extends) * fabsf(snVec3Dot(s1Normals[2], _plan->getWorldNormal()));
+		snVec dot0 = snVec4GetAbsolute(snVec3Dot(s1Normals[0], _plan->getWorldNormal()));
+		snVec dot1 = snVec4GetAbsolute(snVec3Dot(s1Normals[1], _plan->getWorldNormal()));
+		snVec dot2 = snVec4GetAbsolute(snVec3Dot(s1Normals[2], _plan->getWorldNormal()));
+
+		snVec dot = _mm_shuffle_ps(dot0, dot1, _MM_SHUFFLE(3, 2, 1, 0));
+		dot = _mm_shuffle_ps(dot, dot2, _MM_SHUFFLE(3, 2, 1, 0));
+		snVec minDistance = dot * extends;
+
+		/*snVec minDistance = snVec4GetX(extends) * snVec4GetAbsolute(snVec3Dot(s1Normals[0], _plan->getWorldNormal())) +
+			snVec4GetY(extends) * snVec4GetAbsolute(snVec3Dot(s1Normals[1], _plan->getWorldNormal())) +
+			snVec4GetZ(extends) * snVec4GetAbsolute(snVec3Dot(s1Normals[2], _plan->getWorldNormal()));*/
 		
 		//compare the real distance to the min distance
-		float overlap = boxDistance - minDistance;
+		float overlap = boxDistance - snVec4GetX(minDistance);
 
 		snCollisionResult res;
 		if (overlap < 0)

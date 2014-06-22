@@ -97,14 +97,18 @@ namespace Supernova
 		//I-1(r X N)T
 		snVec m_invI_rCrossN[2];
 
-		//Bias velocity
-		float m_velocityBias;
+		//Bias velocity. The value is duplicated in each component.
+		snVec m_velocityBias;
 
 		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
-		float m_effectiveMass;
+		//The value is duplicated in each component. W = 0
+		snVec m_effectiveMass;
 
 		//Scene containing this constraints.
 		snScene const * m_scene;
+
+		//The accumulated impulse. The value is duplicated in each component.
+		snVec m_accumulatedImpulseMagnitude;
 
 	public:
 		snContactConstraint();
@@ -124,6 +128,10 @@ namespace Supernova
 
 		//Return an array of two vector containing the radius of each actor.
 		snVec const * getRadius() const;
+
+		//Return a vector containing the accumulated impulse magnitude. It's value is duplicated in each component
+		// of the vector except w = 0.
+		snVec getAccumulatedImpulseMagnitude() const;
 	};
 }
 

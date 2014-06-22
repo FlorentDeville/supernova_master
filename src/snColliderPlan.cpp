@@ -81,12 +81,12 @@ namespace Supernova
 	float snColliderPlan::getDistance(const snVec& _o) const
 	{
 		//compute -d in ax + by + cy = -d using the normal and a corner
-		float minusD = snVec3Dot(getWorldNormal(), getWorldCorners()[0]);
+		snVec minusD = snVec3Dot(getWorldNormal(), getWorldCorners()[0]);
 
 		//compute l
-		float l = (-minusD + snVec3Dot(getWorldNormal(), _o)) / snVec3SquaredNorme(getWorldNormal());
+		snVec l = (-minusD + snVec3Dot(getWorldNormal(), _o)) * (1.f / snVec3SquaredNorme(getWorldNormal()));
 
-		return l;
+		return snVec4GetX(l);
 	}
 
 	void snColliderPlan::initialize(const snVec* _corners)

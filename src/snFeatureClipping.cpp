@@ -61,20 +61,20 @@ namespace Supernova
 		snVec edge2B1 = closestPolygonB1[1] - closestPolygonB1[2];
 		snVec NormalB1 = snVec3Cross(edge1B1, edge2B1);
 		snVec3Normalize(NormalB1);
-		float dotB1 = snVec3Dot(NormalB1, _normal);
+		snVec dotB1 = snVec3Dot(NormalB1, _normal);
 
 		snVec edge1B2 = closestPolygonB2[1] - closestPolygonB2[0];
 		snVec edge2B2 = closestPolygonB2[1] - closestPolygonB2[2];
 		snVec NormalB2 = snVec3Cross(edge1B2, edge2B2);
 		snVec3Normalize(NormalB2);
-		float dotB2 = snVec3Dot(NormalB2, _normal);
+		snVec dotB2 = snVec3Dot(NormalB2, _normal);
 
 		snVec* Reference = 0;
 		snVec* Incident = 0;
 		const snICollider* ReferenceBox;
 		const snICollider* IncidentBox;
 		int ReferenceFaceId, IncidentFaceId;
-		if (dotB1 < dotB2)
+		if (snVec3Inferior(dotB1, dotB2))
 		{
 			Reference = closestPolygonB2;
 			Incident = closestPolygonB1;
@@ -106,7 +106,7 @@ namespace Supernova
 			snVec adjacentNormal = ReferenceBox->getWorldNormalOfFace(adjacentFaces[i]);
 			snVec vertexInPlan = ReferenceBox->getWorldVertexOfFace(adjacentFaces[i]);
 
-			float d = snVec3Dot(adjacentNormal, vertexInPlan);
+			float d = snVec4GetX(snVec3Dot(adjacentNormal, vertexInPlan));
 
 			//clip the incident polygon using the plane
 			snVecVector clipped;
@@ -128,7 +128,7 @@ namespace Supernova
 			
 			snVec adjacentNormal = ReferenceBox->getWorldNormalOfFace(ReferenceFaceId);
 			snVec vertexInPlan = ReferenceBox->getWorldVertexOfFace(ReferenceFaceId);
-			float d = snVec3Dot(adjacentNormal, vertexInPlan);
+			snVec d = snVec3Dot(adjacentNormal, vertexInPlan);
 
 			//Reserve space to avoid several dynamic allocations
 			_patchPenetrations.reserve(incidentPolygon.size());
@@ -136,12 +136,12 @@ namespace Supernova
 
 			for (snVecVectorConstIterator vertex = incidentPolygon.cbegin(); vertex != incidentPolygon.cend(); ++vertex)
 			{
-				float dot = d - snVec3Dot(*vertex, adjacentNormal);
+				snVec dot = d - snVec3Dot(*vertex, adjacentNormal);
 				//only keep vertices on the good side.
-				if (dot >= 0.0f)
+				if (snVec3SuperiorOrEqual(dot, snVec4Set(0.0f)))
 				{
 					_patch.push_back(*vertex);
-					_patchPenetrations.push_back(dot);
+					_patchPenetrations.push_back(snVec4GetX(dot));
 				}
 			}
 		}
@@ -168,8 +168,8 @@ namespace Supernova
 		for (snVecVectorConstIterator i = _polygon.cbegin(); i != _polygon.cend(); ++i)
 		{
 			//check if the vertices are on the good side of the plan
-			float d1 = snVec3Dot(firstPoint, _n) - _d;
-			float d2 = snVec3Dot(*i, _n) - _d;
+			float d1 = snVec4GetX(snVec3Dot(firstPoint, _n)) - _d;
+			float d2 = snVec4GetX(snVec3Dot(*i, _n)) - _d;
 
 			const float planeThickness = 0.0f;
 			bool isP1OnCorrectSide = d1 <= planeThickness;
@@ -208,11 +208,11 @@ namespace Supernova
 		snVec edge = _end - _start;
 		snVec3Normalize(edge);
 
-		float NDotS = snVec3Dot(_n, _start);
-		float NDotEdge = snVec3Dot(_n, edge);
-		assert(NDotEdge != 0.f);
+		snVec NDotS = snVec3Dot(_n, _start);
+		snVec NDotEdge = snVec3Dot(_n, edge);
+		//assert(NDotEdge != 0.f);
 
-		float parameter = (_d - NDotS) / NDotEdge;
+		snVec parameter = (snVec3Set(_d) - NDotS) / NDotEdge;
 
 		_intersection = _start + edge * parameter;
 	}
