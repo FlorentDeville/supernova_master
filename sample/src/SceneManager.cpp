@@ -1313,7 +1313,7 @@ namespace Devil
 
 		WORLD->deactivateCollisionPoint();
 
-		scene->setGravity(snVec4Set(0, -9.81f * 10, 0, 0));
+		scene->setGravity(snVec4Set(0, -9.81f * 20, 0, 0));
 		scene->setContactConstraintBeta(0.05f);
 		scene->setSolverIterationCount(30);
 		scene->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
