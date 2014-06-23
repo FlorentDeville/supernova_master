@@ -45,6 +45,8 @@
 #include "snFeatureClipping.h"
 #include <assert.h>
 
+#include "snSAT.h"
+
 using namespace Supernova::Vector;
 
 namespace Supernova
@@ -116,52 +118,20 @@ namespace Supernova
 
 	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snICollider* const _c2)
 	{
+		snCollisionResult res;
 		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
 		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
-
-		snCollisionResult res;
-
-		const snVec* s1Normals;
-		const snVec* s2Normals;
-
-		s1Normals = _b1->getWorldNormal();
-		s2Normals = _b2->getWorldNormal();
-
-		snVec smallestOverlapNormal;
-		float smallestOverlap = SN_FLOAT_MAX;		
-
-		//compute collider overlap using the normals
-		const float NORMAL_COUNT = 3;
-		for (int i = 0; i < NORMAL_COUNT; ++i)
-		{
-			bool overlapRes = true;		
-			overlapRes = computeBoxesOverlap(*_b1, *_b2, s1Normals[i], smallestOverlapNormal, smallestOverlap);
-			if (!overlapRes) return res;		
-			overlapRes = computeBoxesOverlap(*_b1, *_b2, s2Normals[i], smallestOverlapNormal, smallestOverlap);
-			if (!overlapRes) return res;		
-		}	
-
-		//compute overlap for the cross product of the normals
-		for (int i = 0; i < NORMAL_COUNT; ++i)
-		{
-			for (int j = i; j < NORMAL_COUNT; ++j)
-			{
-				snVec cross = snVec3Cross(s1Normals[i], s2Normals[j]);
-				if (snVec3SquaredNorme(cross) != 1.f) continue;
-				bool overlapRes = computeBoxesOverlap(*_b1, *_b2, cross, smallestOverlapNormal, smallestOverlap);
-				if (!overlapRes) return res;
-			}
-		}
+		const snISATCollider* _s1 = static_cast<const snISATCollider*>(_b1);
+		const snISATCollider* _s2 = static_cast<const snISATCollider*>(_b2);
+		if (!snSAT::queryIntersection(*_s1, *_s2, res.m_normal))
+			return res;
 
 		//there is a collision so find the collision patch
 		res.m_collision = true;
-		res.m_normal = smallestOverlapNormal;
-
-		assert(smallestOverlap > 0.f);
 
 		//find collision patch using clipping algorithm.
 		snFeatureClipping clipping;
-		bool clippingResult = clipping.findContactPatch(*_b1, *_b2, smallestOverlapNormal, res.m_contacts, res.m_penetrations);
+		bool clippingResult = clipping.findContactPatch(*_b1, *_b2, res.m_normal, res.m_contacts, res.m_penetrations);
 		res.m_collision = clippingResult;
 		return res;
 	}
@@ -236,7 +206,9 @@ namespace Supernova
 		snVec extends = _box->getSize() * 0.5f;
 
 		//get the box normals
-		const snVec* s1Normals = _box->getWorldNormal();
+		const int OOB_NORMAL_COUNT = 3;
+		snVec s1Normals[OOB_NORMAL_COUNT];
+		_box->getUniqueNormals(s1Normals, OOB_NORMAL_COUNT);
 
 		//compute the minimum distance between the box and the plan
 		snVec dot0 = snVec4GetAbsolute(snVec3Dot(s1Normals[0], _plan->getWorldNormal()));
@@ -286,33 +258,5 @@ namespace Supernova
 			res.m_penetrations.push_back(_sphere->getRadius() - distance);
 			return res;
 		}
-	}
-
-	bool snCollision::computeBoxesOverlap(const snColliderBox& _c1, const snColliderBox& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap)
-	{
-		float minS1, minS2, maxS1, maxS2;
-
-		_c1.computeProjection(_axis, minS2, maxS2);
-		_c2.computeProjection(_axis, minS1, maxS1);
-
-		float diff1 = maxS1 - minS2;
- 		float diff2 = maxS2 - minS1;
-		
-		//no collision
-		if (diff1 <= 0.f || diff2 <= 0.f)
-			return false;
-
-		//collision, get the minimum overlap with the axis
-		if (diff1 < _overlap)
-		{
-			_overlap = diff1;
-			_separatingAxis = _axis;
-		}
-		if (diff2 < _overlap)
-		{
-			_overlap = diff2;
-			_separatingAxis = _axis * -1;
-		}
-		return true;
 	}
 }

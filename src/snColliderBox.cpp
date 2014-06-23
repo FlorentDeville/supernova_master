@@ -212,7 +212,7 @@ namespace Supernova
 		return m_worldBox[id];
 	}
 
-	void snColliderBox::computeProjection(const snVec& _direction, float& _min, float& _max) const
+	void snColliderBox::projectToAxis(const snVec& _direction, float& _min, float& _max) const
 	{
 		//////////////////////////////////////////////////////////////////////
 		// The basic idea would be to compute the dot product of every point. Instead, convert the array of vector into 
@@ -268,9 +268,16 @@ namespace Supernova
 		_min = snVec4GetX(compare);
 	}
 
-	const snVec* snColliderBox::getWorldNormal() const
+	int snColliderBox::getUniqueNormals(snVec* _arrayNormals, int _arraySize) const
 	{
-		return m_worldNormals;
+		//not enough space to get the normals
+		if (_arraySize < 3)
+			return -1;
+
+		for (int i = 0; i < 3; ++i)
+			_arrayNormals[i] = m_worldNormals[i];
+		
+		return 3;
 	}
 
 	snVec snColliderBox::getClosestPoint(const snVec& _v) const
@@ -280,19 +287,15 @@ namespace Supernova
 		//Vector from the center of the box to the point
 		snVec dir = _v - m_worldOrigin;
 
-		//Get box normals
-		const snVec* normals;
-		normals = getWorldNormal();
-
 		//Loop through each normals
 		snVec halfSize = m_size * 0.5f;
 		for (int i = 0; i < 3; ++i)
 		{
 			//Projection of the point to the normal
-			snVec dot = snVec3Dot(dir, normals[i]);
+			snVec dot = snVec3Dot(dir, m_worldNormals[i]);
 			float extend = snVec4GetById(halfSize, i);
 			dot = clampComponents(dot, -extend, extend);
-			ret = ret + normals[i] * dot;
+			ret = ret + m_worldNormals[i] * dot;
 		}
 
 		return ret + m_worldOrigin;

@@ -36,10 +36,11 @@
 #define SN_COLLIDER_BOX_H
 
 #include "snICollider.h"
+#include "snISATCollider.h"
 
 namespace Supernova
 {
-	class snColliderBox : public snICollider
+	class snColliderBox : public snICollider, public snISATCollider
 	{
 	private:
 		static const int VERTEX_COUNT = 8;
@@ -86,18 +87,12 @@ namespace Supernova
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
 		snVec getFarthestPointInDirection(const snVec& _direction) const;
 
-		//Project the collider along an axis and return the min and max value. The direction has to be expressed in world coordinate.
-		void computeProjection(const snVec& _direction, float& _min, float& _max) const;
-
 		const snVec& getSize() const;
 
 		void setSize(const snVec& _size);
 
 		//Return an array containing the extends of the box for each axis.
 		const snVec& getExtends() const;
-
-		/*Return an array of three vectors containing normals along x, y and z axis (in that order) and in world coordinates.*/
-		const snVec* getWorldNormal() const;
 
 		/*Calculate the closest point to the box of the point given in parameter.*/
 		snVec getClosestPoint(const snVec&) const;
@@ -114,6 +109,16 @@ namespace Supernova
 
 		//Compute the bounding volume for this collider
 		void computeAABB(snAABB * const _boundingVolume) const;
+
+		//////////////////////////////////////////////////////////////////////
+		// Interface for SAT algorithm										//
+		//////////////////////////////////////////////////////////////////////
+
+		//Fill in an array with all the normals of the obb
+		int getUniqueNormals(snVec* _arrayNormals, int _arraySize) const;
+
+		//Make a projection of the obb onto an axis and get the min and max distance along this axis.
+		void projectToAxis(const snVec& _axis, float& _min, float& _max) const;
 
 	private:
 		void computeVertices();
