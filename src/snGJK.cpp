@@ -61,7 +61,7 @@ namespace Supernova
 		int simplexCount = 0;
 
 		//compute first direction from collider 1 to collider 2
-		snVec direction = _c2.getWorldOrigin() - _c1.getWorldOrigin();
+		snVec direction = snVec4Set(1, 0, 0, 0);//_c2.getWorldOrigin() - _c1.getWorldOrigin();
 
 		//compute first point of the simplex
 		simplex[simplexCount] = support(_c1, _c2, direction);

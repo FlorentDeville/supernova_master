@@ -144,7 +144,7 @@ namespace Supernova
 		snCollisionResult res;
 
 		//Get the vector between the sphere's origins.
-		snVec vecDistance = _s1->getWorldOrigin() - _s2->getWorldOrigin();
+		snVec vecDistance = _s1->getCenter() - _s2->getCenter();
 
 		//Calculate the minimum distance between the spheres
 		float squaredMinDistance = _s1->getRadius() + _s2->getRadius();
@@ -173,10 +173,10 @@ namespace Supernova
 		snCollisionResult res;
 
 		//Get the closest point to the box.
-		snVec closestPoint = _box->getClosestPoint(_sphere->getWorldOrigin());
+		snVec closestPoint = _box->getClosestPoint(_sphere->getCenter());
 
 		//Get the distance (squared) between the closest point and the sphere center.
-		snVec closestPointToSphere = closestPoint - _sphere->getWorldOrigin();
+		snVec closestPointToSphere = closestPoint - _sphere->getCenter();
 		float squaredDistanceClosestPoint = snVec3SquaredNorme(closestPointToSphere);
 		float squaredRadius = _sphere->getRadius() * _sphere->getRadius();
 
@@ -188,7 +188,7 @@ namespace Supernova
 		res.m_normal = closestPointToSphere;
 		snVec3Normalize(res.m_normal);
 		snVec4SetW(res.m_normal, 0);
-		snVec contactPoint = _sphere->getWorldOrigin() + res.m_normal * _sphere->getRadius();
+		snVec contactPoint = _sphere->getCenter() + res.m_normal * _sphere->getRadius();
 		res.m_contacts.push_back(contactPoint);
 		res.m_penetrations.push_back(snVec3Norme(contactPoint - closestPoint));
 		return res;
@@ -200,7 +200,7 @@ namespace Supernova
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
 
 		//get the distance between the box center and the plan
-		float boxDistance = fabsf(_plan->getDistance(_box->getWorldOrigin()));
+		float boxDistance = fabsf(_plan->getDistance(_box->getPosition()));
 		
 		//get the extends
 		snVec extends = _box->getSize() * 0.5f;
@@ -247,7 +247,7 @@ namespace Supernova
 		snCollisionResult res;
 
 		//get the distance between the sphere center and the plan
-		float distance = _plan->getDistance(_sphere->getWorldOrigin());
+		float distance = _plan->getDistance(_sphere->getCenter());
 
 		if (distance > _sphere->getRadius())
 			return res;

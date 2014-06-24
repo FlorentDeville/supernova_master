@@ -42,15 +42,19 @@ namespace Supernova
 	class snColliderSphere : public snICollider
 	{
 	private:
+
+		//Get the position of the center of the sphere
+		snVec m_center;
+
 		/*Sphere radius.*/
 		float m_radius;
 
 	public:
 		snColliderSphere(float _radius);
 
-		float getRadius()const;
+		snVec getCenter() const;
 
-		snVec getWorldOrigin()const;
+		float getRadius() const;
 
 		void setWorldTransform(const snMatrix44f& _transform);
 

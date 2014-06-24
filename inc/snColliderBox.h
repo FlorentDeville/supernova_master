@@ -47,6 +47,9 @@ namespace Supernova
 		static const int INDEX_COUNT = 24;
 		static const int FACE_COUNT = 6;
 
+		//Position of the center of the obb.
+		snVec m_pos;
+
 		//size of the box: width, height, depth.
 		snVec m_size;
 
@@ -75,6 +78,8 @@ namespace Supernova
 
 		//Destructor.
 		~snColliderBox();
+
+		snVec getPosition() const;
 
 		//Initialize the collider. Should be called once all the parameters of the collider are set.
 		void initialize();

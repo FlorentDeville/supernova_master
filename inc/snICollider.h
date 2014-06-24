@@ -60,9 +60,6 @@ namespace Supernova
 
 	protected:
 
-		/*Origin of the shape in world coordinate.*/
-		snVec m_worldOrigin;
-
 		//The type of collider
 		snEColliderType m_typeOfCollider;
 
@@ -95,8 +92,6 @@ namespace Supernova
 		virtual snVec getWorldVertexOfFace(int /*_faceId*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
 
 		snEColliderType getTypeOfCollider() const { return m_typeOfCollider; }
-
-		const snVec& getWorldOrigin() const { return m_worldOrigin; }
 
 		//Compute the bounding volume for this collider
 		virtual void computeAABB(snAABB * const /*_boundingVolume*/) const = 0;

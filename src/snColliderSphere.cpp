@@ -43,19 +43,19 @@ namespace Supernova
 		m_typeOfCollider = snEColliderSphere;
 	}
 
+	snVec snColliderSphere::getCenter() const
+	{
+		return m_center;
+	}
+
 	float snColliderSphere::getRadius()const
 	{
 		return m_radius;
 	}
 
-	snVec snColliderSphere::getWorldOrigin()const
-	{
-		return m_worldOrigin;
-	}
-
 	void snColliderSphere::setWorldTransform(const snMatrix44f& _transform)
 	{
-		m_worldOrigin = _transform[3];
+		m_center = _transform[3];
 	}
 
 	void snColliderSphere::initialize()
@@ -75,7 +75,7 @@ namespace Supernova
 	void snColliderSphere::computeAABB(snAABB * const _boundingVolume) const
 	{
 		snVec vecRadius = snVec4Set(m_radius, m_radius, m_radius, 0);
-		_boundingVolume->m_max = m_worldOrigin + vecRadius;
-		_boundingVolume->m_min = m_worldOrigin - vecRadius;
+		_boundingVolume->m_max = m_center + vecRadius;
+		_boundingVolume->m_min = m_center - vecRadius;
 	}
 }

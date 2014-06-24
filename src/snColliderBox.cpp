@@ -48,7 +48,7 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snColliderBox::snColliderBox() : snICollider(), m_size(), m_box()
+	snColliderBox::snColliderBox() : snICollider(), m_size(), m_box(), m_pos(snVec4Set(0))
 	{
 		m_typeOfCollider = snEColliderBox;
 	}
@@ -59,6 +59,11 @@ namespace Supernova
 	void snColliderBox::initialize()
 	{
 		computeVertices();
+	}
+
+	snVec snColliderBox::getPosition() const
+	{
+		return m_pos;
 	}
 
 	const snVec& snColliderBox::getSize() const
@@ -173,7 +178,7 @@ namespace Supernova
 			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform);
 
 		//world origin is the last row.
-		m_worldOrigin = snMatrixGetTranslation(_transform);
+		m_pos = snMatrixGetTranslation(_transform);
 
 		//world normals are just the rows of the transform matrix
 		m_worldNormals[0] = _transform[0];
@@ -285,7 +290,7 @@ namespace Supernova
 		snVec ret = snVec4Set(0, 0, 0, 0);
 
 		//Vector from the center of the box to the point
-		snVec dir = _v - m_worldOrigin;
+		snVec dir = _v - m_pos;
 
 		//Loop through each normals
 		snVec halfSize = m_size * 0.5f;
@@ -298,7 +303,7 @@ namespace Supernova
 			ret = ret + m_worldNormals[i] * dot;
 		}
 
-		return ret + m_worldOrigin;
+		return ret + m_pos;
 	}
 
 	void snColliderBox::getClosestPolygonProjected(const snVec& _n, snVec* const _polygon, int& _faceId) const
