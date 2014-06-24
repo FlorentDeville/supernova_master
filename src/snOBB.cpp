@@ -48,7 +48,7 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snOBB::snOBB() : snICollider(), m_size(), m_box(), m_pos(snVec4Set(0))
+	snOBB::snOBB(const snVec& _extends) : snICollider(), m_box(), m_pos(snVec4Set(0)), m_extends(_extends)
 	{
 		m_typeOfCollider = snEColliderBox;
 	}
@@ -66,27 +66,16 @@ namespace Supernova
 		return m_pos;
 	}
 
-	const snVec& snOBB::getSize() const
-	{
-		return m_size;
-	}
-
-	void snOBB::setSize(const snVec& _size)
-	{
-		m_size = _size;
-		m_extends = m_size * 0.5f;
-	}
-
-	const snVec& snOBB::getExtends() const
+	snVec snOBB::getExtends() const
 	{
 		return m_extends;
 	}
 
 	void snOBB::computeVertices()
 	{
-		float halfX = snVec4GetX(m_size) * 0.5f;
-		float halfY = snVec4GetY(m_size) * 0.5f;
-		float halfZ = snVec4GetZ(m_size) * 0.5f;
+		float halfX = snVec4GetX(m_extends);
+		float halfY = snVec4GetY(m_extends);
+		float halfZ = snVec4GetZ(m_extends);
 
 		m_box[0] = snVec4Set(halfX, halfY, -halfZ, 1);
 		m_box[1] = snVec4Set(halfX, -halfY, -halfZ, 1);
@@ -188,7 +177,7 @@ namespace Supernova
 
 	void snOBB::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
 	{
-		snVec squaredSize = m_size * m_size;
+		snVec squaredSize = m_extends * m_extends * 4;// size * size = (extends * 2) * (extends * 2) = extends * extends * 4;
 
 		float massOverTwelve = _mass / 12.f;
 		_inertiaTensor.m_r[0] = snVec4Set(massOverTwelve * (snVec4GetY(squaredSize) + snVec4GetZ(squaredSize)), 0, 0, 0);
@@ -293,12 +282,11 @@ namespace Supernova
 		snVec dir = _v - m_pos;
 
 		//Loop through each normals
-		snVec halfSize = m_size * 0.5f;
 		for (int i = 0; i < 3; ++i)
 		{
 			//Projection of the point to the normal
 			snVec dot = snVec3Dot(dir, m_worldNormals[i]);
-			float extend = snVec4GetById(halfSize, i);
+			float extend = snVec4GetById(m_extends, i);
 			dot = clampComponents(dot, -extend, extend);
 			ret = ret + m_worldNormals[i] * dot;
 		}

@@ -50,9 +50,6 @@ namespace Supernova
 		//Position of the center of the obb.
 		snVec m_pos;
 
-		//size of the box: width, height, depth.
-		snVec m_size;
-
 		//Half size of the box
 		snVec m_extends;
 
@@ -72,14 +69,16 @@ namespace Supernova
 		snVec m_worldNormals[3];
 
 	public:
-		//Constructor. You should not create collider yourself. Use snActor::createColliderBox instead. If you create a collider yourself
-		// it is your responsability to delete it.
-		snOBB();
+		//Constructor.
+		snOBB(const snVec& _extends);
 
 		//Destructor.
 		~snOBB();
 
 		snVec getPosition() const;
+
+		//Return a vector containing half the size of each dimension.
+		snVec getExtends() const;
 
 		//Initialize the collider. Should be called once all the parameters of the collider are set.
 		void initialize();
@@ -91,13 +90,6 @@ namespace Supernova
 
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
 		snVec getFarthestPointInDirection(const snVec& _direction) const;
-
-		const snVec& getSize() const;
-
-		void setSize(const snVec& _size);
-
-		//Return an array containing the extends of the box for each axis.
-		const snVec& getExtends() const;
 
 		/*Calculate the closest point to the box of the point given in parameter.*/
 		snVec getClosestPoint(const snVec&) const;

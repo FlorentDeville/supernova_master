@@ -40,7 +40,6 @@
 #include "snOBB.h"
 #include "snColliderSphere.h"
 #include "snVec.h"
-using namespace Supernova::Vector;
 
 #include "Graphics.h"
 #include "Camera.h"
@@ -98,7 +97,7 @@ namespace Devil
 				case snEColliderType::snEColliderBox:
 				{
 					snOBB* box = static_cast<snOBB*>((*i)->m_collider);
-					scale.createScale(box->getSize());
+					scale.createScale(box->getExtends() * 2);
 					gfx = GRAPHICS->getBox();
 				}
 				break;

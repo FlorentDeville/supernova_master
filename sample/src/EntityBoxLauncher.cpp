@@ -80,8 +80,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 0;
 
 			//create collider
-			snOBB* collider = new snOBB();
-			collider->setSize(Supernova::Vector::snVec4Set(width, height, depth, 0));
+			snOBB* collider = new snOBB(Supernova::Vector::snVec4Set(width, height, depth, 0) * 0.5f);
 			act->addCollider(collider);
 			act->updateMassAndInertia(50);
 			act->initialize();
