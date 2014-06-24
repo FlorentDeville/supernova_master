@@ -38,7 +38,7 @@
 #include "snScene.h"
 #include "snVec.inl"
 #include "snActorDynamic.h"
-#include "snColliderBox.h"
+#include "snOBB.h"
 
 #include "World.h"
 #include "EntityCamera.h"
@@ -80,7 +80,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 0;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(Supernova::Vector::snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 			act->updateMassAndInertia(50);

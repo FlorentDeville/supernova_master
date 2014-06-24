@@ -19,7 +19,6 @@
 #include "snColliderSphere.h"
 #include "snColliderPlan.h"
 
-#include "snColliderBox.h"
 #include "snScene.h"
 #include "snActorDynamic.h"
 #include "snFactory.h"

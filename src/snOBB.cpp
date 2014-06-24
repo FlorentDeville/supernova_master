@@ -35,7 +35,7 @@
 //Warning because m_box is in the initialization list. From the MSDN, the warning can be disabled.
 #pragma warning( disable : 4351)
 
-#include "snColliderBox.h"
+#include "snOBB.h"
 
 #include <assert.h>
 
@@ -48,41 +48,41 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snColliderBox::snColliderBox() : snICollider(), m_size(), m_box(), m_pos(snVec4Set(0))
+	snOBB::snOBB() : snICollider(), m_size(), m_box(), m_pos(snVec4Set(0))
 	{
 		m_typeOfCollider = snEColliderBox;
 	}
 
-	snColliderBox::~snColliderBox()
+	snOBB::~snOBB()
 	{}
 
-	void snColliderBox::initialize()
+	void snOBB::initialize()
 	{
 		computeVertices();
 	}
 
-	snVec snColliderBox::getPosition() const
+	snVec snOBB::getPosition() const
 	{
 		return m_pos;
 	}
 
-	const snVec& snColliderBox::getSize() const
+	const snVec& snOBB::getSize() const
 	{
 		return m_size;
 	}
 
-	void snColliderBox::setSize(const snVec& _size)
+	void snOBB::setSize(const snVec& _size)
 	{
 		m_size = _size;
 		m_extends = m_size * 0.5f;
 	}
 
-	const snVec& snColliderBox::getExtends() const
+	const snVec& snOBB::getExtends() const
 	{
 		return m_extends;
 	}
 
-	void snColliderBox::computeVertices()
+	void snOBB::computeVertices()
 	{
 		float halfX = snVec4GetX(m_size) * 0.5f;
 		float halfY = snVec4GetY(m_size) * 0.5f;
@@ -172,7 +172,7 @@ namespace Supernova
 
 	}
 
-	void snColliderBox::setWorldTransform(const snMatrix44f& _transform)
+	void snOBB::setWorldTransform(const snMatrix44f& _transform)
 	{
 		for (int i = 0; i < 8; ++i)
 			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform);
@@ -186,7 +186,7 @@ namespace Supernova
 		m_worldNormals[2] = _transform[2];
 	}
 
-	void snColliderBox::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
+	void snOBB::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
 	{
 		snVec squaredSize = m_size * m_size;
 
@@ -197,7 +197,7 @@ namespace Supernova
 		_inertiaTensor.m_r[3] = snVec4Set(0, 0, 0, 1);
 	}
 
-	snVec snColliderBox::getFarthestPointInDirection(const snVec& _direction) const
+	snVec snOBB::getFarthestPointInDirection(const snVec& _direction) const
 	{
 		float maxDotProduct = -SN_FLOAT_MAX;
 		int id = -1;
@@ -217,7 +217,7 @@ namespace Supernova
 		return m_worldBox[id];
 	}
 
-	void snColliderBox::projectToAxis(const snVec& _direction, float& _min, float& _max) const
+	void snOBB::projectToAxis(const snVec& _direction, float& _min, float& _max) const
 	{
 		//////////////////////////////////////////////////////////////////////
 		// The basic idea would be to compute the dot product of every point. Instead, convert the array of vector into 
@@ -273,7 +273,7 @@ namespace Supernova
 		_min = snVec4GetX(compare);
 	}
 
-	int snColliderBox::getUniqueNormals(snVec* _arrayNormals, int _arraySize) const
+	int snOBB::getUniqueNormals(snVec* _arrayNormals, int _arraySize) const
 	{
 		//not enough space to get the normals
 		if (_arraySize < 3)
@@ -285,7 +285,7 @@ namespace Supernova
 		return 3;
 	}
 
-	snVec snColliderBox::getClosestPoint(const snVec& _v) const
+	snVec snOBB::getClosestPoint(const snVec& _v) const
 	{
 		snVec ret = snVec4Set(0, 0, 0, 0);
 
@@ -306,7 +306,7 @@ namespace Supernova
 		return ret + m_pos;
 	}
 
-	void snColliderBox::getClosestPolygonProjected(const snVec& _n, snVec* const _polygon, int& _faceId) const
+	void snOBB::getClosestPolygonProjected(const snVec& _n, snVec* const _polygon, int& _faceId) const
 	{
 		//find the closest point projected onto the normal
 		float min = SN_FLOAT_MAX;
@@ -351,7 +351,7 @@ namespace Supernova
 		_polygon[3] = m_worldBox[m_idFaces[minPolyId + 3]];
 	}
 
-	snVec snColliderBox::getWorldNormalOfFace(int _faceId) const
+	snVec snOBB::getWorldNormalOfFace(int _faceId) const
 	{
 		switch (_faceId)
 		{
@@ -387,17 +387,17 @@ namespace Supernova
 		}
 	}
 
-	const int* snColliderBox::getAdjacentFaces(int _faceId) const
+	const int* snOBB::getAdjacentFaces(int _faceId) const
 	{
 		return m_facesAdjacent[_faceId];
 	}
 
-	snVec snColliderBox::getWorldVertexOfFace(int _faceId) const
+	snVec snOBB::getWorldVertexOfFace(int _faceId) const
 	{
 		return m_worldBox[m_idFaces[_faceId * 4]];
 	}
 
-	void snColliderBox::computeAABB(snAABB * const _boundingVolume) const
+	void snOBB::computeAABB(snAABB * const _boundingVolume) const
 	{
 		_boundingVolume->m_max = m_worldBox[0];
 		_boundingVolume->m_min = m_worldBox[0];

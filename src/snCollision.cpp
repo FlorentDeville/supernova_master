@@ -33,7 +33,7 @@
 /****************************************************************************/
 
 #include "snCollision.h"
-#include "snColliderBox.h"
+#include "snOBB.h"
 #include "snColliderSphere.h"
 #include "snColliderPlan.h"
 
@@ -119,8 +119,8 @@ namespace Supernova
 	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		snCollisionResult res;
-		const snColliderBox* _b1 = static_cast<const snColliderBox*>(_c1);
-		const snColliderBox* _b2 = static_cast<const snColliderBox*>(_c2);
+		const snOBB* _b1 = static_cast<const snOBB*>(_c1);
+		const snOBB* _b2 = static_cast<const snOBB*>(_c2);
 		const snISATCollider* _s1 = static_cast<const snISATCollider*>(_b1);
 		const snISATCollider* _s2 = static_cast<const snISATCollider*>(_b2);
 		if (!snSAT::queryIntersection(*_s1, *_s2, res.m_normal))
@@ -167,7 +167,7 @@ namespace Supernova
 
 	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snICollider* const _c2)
 	{
-		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
+		const snOBB* _box = static_cast<const snOBB*>(_c1);
 		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c2);
 
 		snCollisionResult res;
@@ -196,7 +196,7 @@ namespace Supernova
 
 	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snICollider* const /*_c2*/)
 	{
-		const snColliderBox* _box = static_cast<const snColliderBox*>(_c1);
+		const snOBB* _box = static_cast<const snOBB*>(_c1);
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
 
 		//get the distance between the box center and the plan

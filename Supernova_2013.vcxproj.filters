@@ -30,9 +30,6 @@
     <ClInclude Include="inc\snCollisionResult.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snColliderBox.h">
-      <Filter>Collision\Collider</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snColliderSphere.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
@@ -84,9 +81,6 @@
     </ClInclude>
     <ClInclude Include="inc\snPointToPointConstraint.h">
       <Filter>Simulation\Constraints</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snAABB.h">
-      <Filter>Collision</Filter>
     </ClInclude>
     <ClInclude Include="inc\snContactConstraintManager.h">
       <Filter>Simulation</Filter>
@@ -148,11 +142,14 @@
     <ClInclude Include="inc\snSAT.h">
       <Filter>Algorithms</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snAABB.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snOBB.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\snColliderBox.cpp">
-      <Filter>Collision\Collider</Filter>
-    </ClCompile>
     <ClCompile Include="src\snColliderPlan.cpp">
       <Filter>Collision\Collider</Filter>
     </ClCompile>
@@ -186,9 +183,6 @@
     </ClCompile>
     <ClCompile Include="src\snPointToPointConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snAABB.cpp">
-      <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\snContactConstraintManager.cpp">
       <Filter>Simulation</Filter>
@@ -234,6 +228,12 @@
     </ClCompile>
     <ClCompile Include="src\snSAT.cpp">
       <Filter>Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snAABB.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snOBB.cpp">
+      <Filter>Collision\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

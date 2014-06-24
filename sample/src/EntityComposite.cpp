@@ -37,7 +37,7 @@
 #include "snIActor.h"
 #include "snICollider.h"
 #include "snColliderContainer.h"
-#include "snColliderBox.h"
+#include "snOBB.h"
 #include "snColliderSphere.h"
 #include "snVec.h"
 using namespace Supernova::Vector;
@@ -97,7 +97,7 @@ namespace Devil
 			{
 				case snEColliderType::snEColliderBox:
 				{
-					snColliderBox* box = static_cast<snColliderBox*>((*i)->m_collider);
+					snOBB* box = static_cast<snOBB*>((*i)->m_collider);
 					scale.createScale(box->getSize());
 					gfx = GRAPHICS->getBox();
 				}

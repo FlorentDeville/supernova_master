@@ -45,7 +45,7 @@
 #include "snScene.h"
 #include "snActorDynamic.h"
 #include "snActorStatic.h"
-#include "snColliderBox.h"
+#include "snOBB.h"
 #include "snColliderSphere.h"
 #include "snQuaternion.h"
 #include "snDebugger.h"
@@ -188,7 +188,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 0.25f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 			act->updateMassAndInertia(200);
@@ -220,7 +220,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 			act->updateMassAndInertia(100);
@@ -251,7 +251,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 			act->updateMassAndInertia(100);
@@ -281,7 +281,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -312,7 +312,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -356,7 +356,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -396,7 +396,7 @@ namespace Devil
 				act->setSkinDepth(0.025f);
 
 				//create collider
-				snColliderBox* collider = new snColliderBox();
+				snOBB* collider = new snOBB();
 				collider->setSize(snVec4Set(width, height, depth, 0));
 				act->addCollider(collider);
 
@@ -438,7 +438,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -470,7 +470,7 @@ namespace Devil
 			previousActor = act;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -510,7 +510,7 @@ namespace Devil
 			act->setLinearDampingCoeff(0.1f);
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -559,7 +559,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1;
 
 			//create collider				
-			snColliderBox* 	collider = new snColliderBox();
+			snOBB* 	collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 				
@@ -606,7 +606,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -642,7 +642,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			float cubeSize = 5;
 			collider->setSize(snVec4Set(cubeSize, cubeSize, cubeSize, 0));
 			act->addCollider(collider);
@@ -669,7 +669,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = -1.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			float cubeSize = 5;
 			collider->setSize(snVec4Set(cubeSize, cubeSize, cubeSize, 0));
 			act->addCollider(collider);
@@ -696,7 +696,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 0.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			float cubeSize = 5;
 			collider->setSize(snVec4Set(cubeSize, cubeSize, cubeSize, 0));
 			act->addCollider(collider);
@@ -743,7 +743,7 @@ namespace Devil
 			act->setAngularVelocity(snVec4Set(0, v, 0, 0));
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -790,7 +790,7 @@ namespace Devil
 			act->setLinearVelocity(snVec4Set(v, 0, v, 0));
 			
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(width, height, depth, 0));
 			act->addCollider(collider);
 
@@ -843,7 +843,7 @@ namespace Devil
 			kin->setLinearDampingCoeff(0.f);
 
 			//create collider
-			snColliderBox* box = new snColliderBox();
+			snOBB* box = new snOBB();
 			box->setSize(snVec4Set(width, height, depth, 0));
 
 			kin->addCollider(box);
@@ -887,7 +887,7 @@ namespace Devil
 			dyn->getPhysicMaterial().m_restitution = 0.f;
 
 			//create collider
-			snColliderBox* box = new snColliderBox();
+			snOBB* box = new snOBB();
 			box->setSize(snVec4Set(width, height, depth, 0));
 
 			dyn->addCollider(box);
@@ -921,7 +921,7 @@ namespace Devil
 			sta->getPhysicMaterial().m_restitution = 1.f;
 
 			//create collider
-			snColliderBox* box = new snColliderBox();
+			snOBB* box = new snOBB();
 			box->setSize(snVec4Set(width, height, depth, 0));
 
 			sta->addCollider(box);
@@ -968,7 +968,7 @@ namespace Devil
 			});
 
 			//create collider
-			snColliderBox* box = new snColliderBox();
+			snOBB* box = new snOBB();
 			box->setSize(snVec4Set(width, height, depth, 0));
 
 			sta->addCollider(box);
@@ -1042,7 +1042,7 @@ namespace Devil
 			actor->getPhysicMaterial().m_friction = 0.1f;
 			actor->getPhysicMaterial().m_restitution = 0.f;
 
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(dominoSize);
 
 			actor->addCollider(collider);
@@ -1082,7 +1082,7 @@ namespace Devil
 			actor->getPhysicMaterial().m_restitution = 0.f;
 			actor->setLinearDampingCoeff(0.5f);
 
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			float size = 3;
 			collider->setSize(snVec4Set(size, size, size, 0));
 
@@ -1112,7 +1112,7 @@ namespace Devil
 			actor->getPhysicMaterial().m_restitution = 0.f;
 			actor->setIsKinematic(true);
 
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			float width = 15;
 			float height = 1;
 			float depth = 10;
@@ -1158,7 +1158,7 @@ namespace Devil
 				SCENEMGR->activateDominoSceneHammerBlocker();
 			});
 
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			float width = 30;
 			float height = 30;
 			float depth = 30;
@@ -1241,7 +1241,7 @@ namespace Devil
 		for (int pinId = 0; pinId < PIN_COUNT; ++pinId)
 		{
 			//create the pin
-			snColliderBox* xBox = new snColliderBox();
+			snOBB* xBox = new snOBB();
 			xBox->setSize(snVec4Set(length, thickness, depth, 0));
 
 			snMatrix44f localRotation;
@@ -1252,7 +1252,7 @@ namespace Devil
 			act->addCollider(xBox, localTransform);
 
 			//fill in the space between the pins
-			snColliderBox* fill = new snColliderBox();
+			snOBB* fill = new snOBB();
 			fill->setSize(snVec4Set(length * 0.7f, 4, depth, 0));
 
 			localRotation.createRotationZ(angle * (pinId + 0.5f));
@@ -1327,37 +1327,37 @@ namespace Devil
 		scene->createActorDynamic(&actEnvironment, actEnvironmentId);
 
 		const float THICKNESS = 20;
-		snColliderBox* levelOne = new snColliderBox();
+		snOBB* levelOne = new snOBB();
 		levelOne->setSize(snVec4Set(200, THICKNESS, 200, 0));
 		actEnvironment->addCollider(levelOne);
 
-		levelOne = new snColliderBox();
+		levelOne = new snOBB();
 		levelOne->setSize(snVec4Set(200, THICKNESS, 50, 0));
 		snMatrix44f transform;
 		transform.createTranslation(snVec4Set(200, 0, 0, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
-		levelOne = new snColliderBox();
+		levelOne = new snOBB();
 		levelOne->setSize(snVec4Set(50, THICKNESS, 200, 0));
 		transform.createTranslation(snVec4Set(325, 0, 75, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
-		levelOne = new snColliderBox();
+		levelOne = new snOBB();
 		levelOne->setSize(snVec4Set(200, THICKNESS, 50, 0));
 		transform.createTranslation(snVec4Set(450, 0, 150, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
-		levelOne = new snColliderBox();
+		levelOne = new snOBB();
 		levelOne->setSize(snVec4Set(50, THICKNESS, 200, 0));
 		transform.createTranslation(snVec4Set(575, 0, 75, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
-		levelOne = new snColliderBox();
+		levelOne = new snOBB();
 		levelOne->setSize(snVec4Set(200, THICKNESS, 50, 0));
 		transform.createTranslation(snVec4Set(700, 0, 0, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
-		levelOne = new snColliderBox();
+		levelOne = new snOBB();
 		levelOne->setSize(snVec4Set(200, THICKNESS, 200, 0));
 		transform.createTranslation(snVec4Set(900, 0, 0, 1));
 		actEnvironment->addCollider(levelOne, transform);
@@ -1385,6 +1385,7 @@ namespace Devil
 		ball->setPosition(snVec4Set(-50, 60 + sphereRadius, 0, 1));
 		ball->getPhysicMaterial().m_restitution = 0;
 		ball->getPhysicMaterial().m_friction = 1;
+		ball->setName("ball");
 		ball->initialize();
 
 		//WORLD->createComposite(ball, m_colors[3]);
@@ -1412,7 +1413,7 @@ namespace Devil
 		act->getPhysicMaterial().m_friction = _friction;
 
 		//create collider
-		snColliderBox* collider = new snColliderBox();
+		snOBB* collider = new snOBB();
 		collider->setSize(snVec4Set(width, height, depth, 0));
 		act->addCollider(collider);
 
@@ -1495,7 +1496,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(pillarWidth, pillarHeight, pillarDepth, 0));
 			act->addCollider(collider);
 
@@ -1542,7 +1543,7 @@ namespace Devil
 			act->getPhysicMaterial().m_friction = 1.f;
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(bedSize[i]);
 			act->addCollider(collider);
 
@@ -1593,7 +1594,7 @@ namespace Devil
 			scene->createActorStatic(&stat, actorId, snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(10, 500, 500, 0));
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
@@ -1624,7 +1625,7 @@ namespace Devil
 			scene->createActorStatic(&stat, actorId, snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(10, 500, 500, 0));
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
@@ -1655,7 +1656,7 @@ namespace Devil
 			scene->createActorStatic(&stat, actorId, snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(500, 500, 10, 0));
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
@@ -1686,7 +1687,7 @@ namespace Devil
 			scene->createActorStatic(&stat, actorId, snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
-			snColliderBox* collider = new snColliderBox();
+			snOBB* collider = new snOBB();
 			collider->setSize(snVec4Set(500, 500, 10, 0));
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
@@ -1735,7 +1736,7 @@ namespace Devil
 		float angle = SN_PI / PIN_COUNT;
 		for (int pinId = 0; pinId < PIN_COUNT; ++pinId)
 		{
-			snColliderBox* xBox = new snColliderBox();
+			snOBB* xBox = new snOBB();
 			xBox->setSize(snVec4Set(_length, THICKNESS, DEPTH, 0));
 
 			snMatrix44f localRotation;
@@ -1746,7 +1747,7 @@ namespace Devil
 			act->addCollider(xBox, localRotation);
 
 			//fill in the space between the pins
-			snColliderBox* fill = new snColliderBox();
+			snOBB* fill = new snOBB();
 			fill->setSize(snVec4Set(_length * 0.7f, 4, DEPTH, 0));
 
 			localRotation.createRotationZ(angle * (pinId + 0.5f));

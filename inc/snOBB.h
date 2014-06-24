@@ -32,15 +32,15 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLIDER_BOX_H
-#define SN_COLLIDER_BOX_H
+#ifndef SN_OBB_H
+#define SN_OBB_H
 
 #include "snICollider.h"
 #include "snISATCollider.h"
 
 namespace Supernova
 {
-	class snColliderBox : public snICollider, public snISATCollider
+	class snOBB : public snICollider, public snISATCollider
 	{
 	private:
 		static const int VERTEX_COUNT = 8;
@@ -74,10 +74,10 @@ namespace Supernova
 	public:
 		//Constructor. You should not create collider yourself. Use snActor::createColliderBox instead. If you create a collider yourself
 		// it is your responsability to delete it.
-		snColliderBox();
+		snOBB();
 
 		//Destructor.
-		~snColliderBox();
+		~snOBB();
 
 		snVec getPosition() const;
 
@@ -132,4 +132,4 @@ namespace Supernova
 	};
 }
 
-#endif // SN_COLLIDER_BOX_H
+#endif // SN_OBB_H

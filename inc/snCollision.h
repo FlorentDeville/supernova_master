@@ -49,7 +49,7 @@ using std::map;
 namespace Supernova
 {
 	/*Forward declaration*/
-	class snColliderBox;
+	class snOBB;
 	class snColliderSphere;
 	class snColliderPlan;
 	class snIActor;

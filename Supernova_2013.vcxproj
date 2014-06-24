@@ -22,7 +22,7 @@
     <ClInclude Include="inc\snCollisionFlag.h" />
     <ClInclude Include="inc\snDebugger.h" />
     <ClInclude Include="inc\snAABB.h" />
-    <ClInclude Include="inc\snColliderBox.h" />
+    <ClInclude Include="inc\snOBB.h" />
     <ClInclude Include="inc\snColliderPlan.h" />
     <ClInclude Include="inc\snColliderSphere.h" />
     <ClInclude Include="inc\snCollision.h" />
@@ -58,7 +58,7 @@
     <ClCompile Include="src\snActorDynamic.cpp" />
     <ClCompile Include="src\snActorPairManager.cpp" />
     <ClCompile Include="src\snActorStatic.cpp" />
-    <ClCompile Include="src\snColliderBox.cpp" />
+    <ClCompile Include="src\snOBB.cpp" />
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
