@@ -38,11 +38,13 @@
     <ClInclude Include="inc\snIActor.h" />
     <ClInclude Include="inc\snICollider.h" />
     <ClInclude Include="inc\snIConstraint.h" />
+    <ClInclude Include="inc\snISATCollider.h" />
     <ClInclude Include="inc\snMath.h" />
     <ClInclude Include="inc\snMatrix44f.h" />
     <ClInclude Include="inc\snPhysicMaterial.h" />
     <ClInclude Include="inc\snPointToPointConstraint.h" />
     <ClInclude Include="inc\snQuaternion.h" />
+    <ClInclude Include="inc\snSAT.h" />
     <ClInclude Include="inc\snScene.h" />
     <ClInclude Include="inc\snSimplex.h" />
     <ClInclude Include="inc\snSweepManager.h" />
@@ -75,6 +77,7 @@
     <ClCompile Include="src\snMatrix44f.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
+    <ClCompile Include="src\snSAT.cpp" />
     <ClCompile Include="src\snScene.cpp" />
     <ClCompile Include="src\snSimplex.cpp" />
     <ClCompile Include="src\snSweepManager.cpp" />

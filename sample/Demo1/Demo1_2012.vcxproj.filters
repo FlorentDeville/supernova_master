@@ -40,6 +40,9 @@
     <Filter Include="World\Entities\Skybox">
       <UniqueIdentifier>{ab2b2e4b-22a5-42ad-83f8-b7a1cdde6b10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Helper">
+      <UniqueIdentifier>{464ba6fd-2318-4428-81d8-a4dc34483d5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -150,6 +153,9 @@
     </ClCompile>
     <ClCompile Include="..\src\EntitySkybox.cpp">
       <Filter>World\Entities\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\VecLinearDamper.cpp">
+      <Filter>Helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,10 +282,19 @@
     <ClInclude Include="..\src\EntitySkybox.h">
       <Filter>World\Entities\Skybox</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Damper.h">
+      <Filter>Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\VecLinearDamper.h">
+      <Filter>Helper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont">
       <Filter>Graphics\font</Filter>
+    </None>
+    <None Include="..\src\Damper.inl">
+      <Filter>Helper</Filter>
     </None>
   </ItemGroup>
 </Project>

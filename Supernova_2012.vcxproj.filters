@@ -19,21 +19,12 @@
     <Filter Include="Simulation\Constraints">
       <UniqueIdentifier>{a729f281-7e66-4b23-b051-b373cdc32e26}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Algorithms">
+      <UniqueIdentifier>{f033fbc2-83bc-4e53-a6b1-0c53a59dd684}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\snCollision.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snCollisionResult.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snFeatureClipping.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snGJK.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snSimplex.h">
       <Filter>Collision</Filter>
     </ClInclude>
     <ClInclude Include="inc\snColliderBox.h">
@@ -133,6 +124,24 @@
     <ClInclude Include="inc\snColliderContainer.h">
       <Filter>Collision</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snSimplex.h">
+      <Filter>Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snGJK.h">
+      <Filter>Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snFeatureClipping.h">
+      <Filter>Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snCollision.h">
+      <Filter>Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snSAT.h">
+      <Filter>Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snISATCollider.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderBox.cpp">
@@ -143,18 +152,6 @@
     </ClCompile>
     <ClCompile Include="src\snColliderSphere.cpp">
       <Filter>Collision\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snCollision.cpp">
-      <Filter>Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snFeatureClipping.cpp">
-      <Filter>Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snGJK.cpp">
-      <Filter>Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snSimplex.cpp">
-      <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snMath.cpp">
@@ -216,6 +213,21 @@
     </ClCompile>
     <ClCompile Include="src\snColliderContainer.cpp">
       <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snGJK.cpp">
+      <Filter>Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snSimplex.cpp">
+      <Filter>Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snFeatureClipping.cpp">
+      <Filter>Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snCollision.cpp">
+      <Filter>Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snSAT.cpp">
+      <Filter>Algorithms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
