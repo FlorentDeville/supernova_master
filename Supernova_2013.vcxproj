@@ -79,13 +79,13 @@
     <ClCompile Include="src\snMatrix44f.cpp" />
     <ClCompile Include="src\snContactConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
-    <ClCompile Include="src\snSAT.cpp" />
     <ClCompile Include="src\snScene.cpp" />
     <ClCompile Include="src\snSimplex.cpp" />
     <ClCompile Include="src\snSweepManager.cpp" />
     <ClCompile Include="src\snTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="inc\snSAT.inl" />
     <None Include="inc\snVec.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

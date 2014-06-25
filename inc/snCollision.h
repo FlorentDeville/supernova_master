@@ -92,7 +92,7 @@ namespace Supernova
 		snCollisionResult invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
 
 		//Check collision between two boxes
-		static snCollisionResult queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snICollider* const _c2);
+		static snCollisionResult queryTestCollisionOBBVersusOBB(const snICollider* const _c1, const snICollider* const _c2);
 
 		static snCollisionResult queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snICollider* const _c2);
 

@@ -45,7 +45,7 @@
 #include "snFeatureClipping.h"
 #include <assert.h>
 
-#include "snSAT.h"
+#include "snSAT.inl"
 
 using namespace Supernova::Vector;
 
@@ -54,7 +54,7 @@ namespace Supernova
 	snCollision::snCollision()
 	{
 		//initialize the collision query map
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderBox), &Supernova::snCollision::queryTestCollisionBoxVersusBox));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderBox), &Supernova::snCollision::queryTestCollisionOBBVersusOBB));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderSphere), &Supernova::snCollision::queryTestCollisionSphereVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderPlan), &Supernova::snCollision::queryTestCollisionBoxVersusPlan));
@@ -116,14 +116,12 @@ namespace Supernova
 			
 	}
 
-	snCollisionResult snCollision::queryTestCollisionBoxVersusBox(const snICollider* const _c1, const snICollider* const _c2)
+	snCollisionResult snCollision::queryTestCollisionOBBVersusOBB(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		snCollisionResult res;
 		const snOBB* _b1 = static_cast<const snOBB*>(_c1);
 		const snOBB* _b2 = static_cast<const snOBB*>(_c2);
-		const snISATCollider* _s1 = static_cast<const snISATCollider*>(_b1);
-		const snISATCollider* _s2 = static_cast<const snISATCollider*>(_b2);
-		if (!snSAT::queryIntersection(*_s1, *_s2, res.m_normal))
+		if (!snSAT::queryIntersection<snOBB, snOBB>(*_b1, *_b2, res.m_normal))
 			return res;
 
 		//there is a collision so find the collision patch

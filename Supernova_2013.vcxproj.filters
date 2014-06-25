@@ -229,9 +229,6 @@
     <ClCompile Include="src\snSimplex.cpp">
       <Filter>Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\snSAT.cpp">
-      <Filter>Algorithms</Filter>
-    </ClCompile>
     <ClCompile Include="src\snAABB.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
@@ -242,6 +239,9 @@
   <ItemGroup>
     <None Include="inc\snVec.inl">
       <Filter>Tools</Filter>
+    </None>
+    <None Include="inc\snSAT.inl">
+      <Filter>Algorithms</Filter>
     </None>
   </ItemGroup>
 </Project>
