@@ -42,6 +42,7 @@ namespace Supernova
 	class snICollider;
 	class snCollisionResult;
 	class snSimplex;
+	class snIGJKCollider;
 
 	//Provide functionnalty to check collision between colliders using GJK algorithm.
 	class snGJK
@@ -57,11 +58,11 @@ namespace Supernova
 		virtual ~snGJK();
 
 		//Check if two colliders are intersecting.
-		snCollisionResult queryIntersection(const snICollider& _c1, const snICollider& _c2) const;
+		snCollisionResult queryIntersection(const snIGJKCollider& _c1, const snIGJKCollider& _c2) const;
 
 	private:
 		//Compute the point from the minkowski difference in a particular direction for two colliders
-		snVec support(const snICollider& _c1, const snICollider& _c2, const snVec& _direction) const;
+		snVec support(const snIGJKCollider& _c1, const snIGJKCollider& _c2, const snVec& _direction) const;
 
 		//Check if a simplex contains the origin. If the simplex does not contain the origin, the simplex and the direction are updated.
 		bool doSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
@@ -76,9 +77,9 @@ namespace Supernova
 		bool checkThreeSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
 
 		//Expand a simplex and return the collision normal.
-		snVec expandPolytope(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2) const;
+		snVec expandPolytope(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2) const;
 
-		bool expandPolytopeV2(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal) const;
+		bool expandPolytopeV2(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal) const;
 	};
 }
 

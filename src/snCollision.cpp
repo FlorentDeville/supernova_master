@@ -203,7 +203,7 @@ namespace Supernova
 		float boxDistance = fabsf(_plan->getDistance(_box->getPosition()));
 		
 		//get the extends
-		snVec extends = _box->getSize() * 0.5f;
+		snVec extends = _box->getExtends();
 
 		//get the box normals
 		const int OOB_NORMAL_COUNT = 3;

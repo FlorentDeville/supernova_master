@@ -31,22 +31,20 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef SN_I_SAT_COLLIDER_H
-#define SN_I_SAT_COLLIDER_H
+#ifndef SN_I_GJK_COLLIDER_H
+#define SN_I_GJK_COLLIDER_H
 
 #include "snVec.h"
 
 namespace Supernova
 {
-	//Interface for colliders that can be used in the SAT algorithm
-	class snISATCollider
+	//Interface to implement for a collider to be able to run GJK algorithm
+	class snIGJKCollider
 	{
 	public:
-
-		virtual int getUniqueNormals(snVec* _arrayNormals, int _arraySize) const = 0;
-
-		virtual void projectToAxis(const snVec& _axis, float& _min, float& _max) const = 0;
+		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
+		virtual snVec gjkSupport(const snVec& _direction) const = 0;
 	};
 }
 
-#endif //ifndef SN_I_SAT_COLLIDER_H
+#endif //ifndef SN_I_GJK_COLLIDER_H

@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\AlignmentAllocator.h" />
+    <ClInclude Include="inc\snIGJKCollider.h" />
     <ClInclude Include="inc\snISATCollider.h" />
     <ClInclude Include="inc\snActorDynamic.h" />
     <ClInclude Include="inc\snActorPair.h" />

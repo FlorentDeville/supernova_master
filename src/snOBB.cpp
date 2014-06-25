@@ -186,26 +186,6 @@ namespace Supernova
 		_inertiaTensor.m_r[3] = snVec4Set(0, 0, 0, 1);
 	}
 
-	snVec snOBB::getFarthestPointInDirection(const snVec& _direction) const
-	{
-		float maxDotProduct = -SN_FLOAT_MAX;
-		int id = -1;
-
-		//check every point
-		for (int i = 0; i < VERTEX_COUNT; ++i)
-		{
-			float dot = snVec4GetX(snVec3Dot(_direction, m_worldBox[i]));
-			if (dot > maxDotProduct)
-			{
-				maxDotProduct = dot;
-				id = i;
-			}
-		}
-
-		assert(id != -1);
-		return m_worldBox[id];
-	}
-
 	void snOBB::projectToAxis(const snVec& _direction, float& _min, float& _max) const
 	{
 		//////////////////////////////////////////////////////////////////////
@@ -272,6 +252,49 @@ namespace Supernova
 			_arrayNormals[i] = m_worldNormals[i];
 		
 		return 3;
+	}
+
+	snVec snOBB::gjkSupport(const snVec& _direction) const
+	{
+		//BOOOOOUUUUUUUUHHHHHHH
+		//That's how it should be done:
+		//
+		// dot0 = dot(_dir, normal[0])
+		// dot1 = dot(_dir, normal[1])
+		// dot2 = dot(_dir, normal[2])
+		// pos = dot(_dir, m_pos)
+		//return _dir * pos + dot0 * normal[0] + dot1 * normal[1] + dot2 * normal[2]
+		//
+		//4 dot product (1 mul, 2 shuffles, 2 add each) so 4 mul, 8 shuffles, 8 add
+		//4 multiplication
+		//3 addition
+		//so => 8 mul, 8 shuffle, 11 add
+		//
+		//Current versions:
+		//8 dot product => 8 mul, 16 shuffles, 16 add
+
+		snVec dot0 = snVec4GetAbsolute(snVec3Dot(_direction, m_worldNormals[0]));
+		snVec dot1 = snVec4GetAbsolute(snVec3Dot(_direction, m_worldNormals[1]));
+		snVec dot2 = snVec4GetAbsolute(snVec3Dot(_direction, m_worldNormals[2]));
+		snVec pos = snVec3Dot(_direction, m_pos);
+		return pos * _direction + m_worldNormals[0] * dot0 + m_worldNormals[1] * dot1 + m_worldNormals[2] * dot2;
+
+		//float maxDotProduct = -SN_FLOAT_MAX;
+		//int id = -1;
+
+		////check every point
+		//for (int i = 0; i < VERTEX_COUNT; ++i)
+		//{
+		//	float dot = snVec4GetX(snVec3Dot(_direction, m_worldBox[i]));
+		//	if (dot > maxDotProduct)
+		//	{
+		//		maxDotProduct = dot;
+		//		id = i;
+		//	}
+		//}
+
+		//assert(id != -1);
+		//return m_worldBox[id];
 	}
 
 	snVec snOBB::getClosestPoint(const snVec& _v) const

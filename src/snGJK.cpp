@@ -34,11 +34,13 @@
 
 #include "snGJK.h"
 #include "snVec.inl"
-#include "snICollider.h"
+
 #include "snTypes.h"
 #include "snMath.h"
 #include "snCollisionResult.h"
 #include "snSimplex.h"
+
+#include "snIGJKCollider.h"
 
 using namespace Supernova::Vector;
 
@@ -50,7 +52,7 @@ namespace Supernova
 
 	snGJK::~snGJK(){}
 
-	snCollisionResult snGJK::queryIntersection(const snICollider& _c1, const snICollider& _c2) const
+	snCollisionResult snGJK::queryIntersection(const snIGJKCollider& _c1, const snIGJKCollider& _c2) const
 	{
 		snCollisionResult res;
 		res.m_collision = false;
@@ -123,15 +125,15 @@ namespace Supernova
 		snVec3Normalize(res.m_normal);
 
 		//compute the collision patch
-		res.m_collision = m_clipping.findContactPatch(_c1, _c2, res.m_normal, res.m_contacts, res.m_penetrations);
+		//res.m_collision = m_clipping.findContactPatch(_c1, _c2, res.m_normal, res.m_contacts, res.m_penetrations);
 
 		return res;
 	}
 
-	snVec snGJK::support(const snICollider& _c1, const snICollider& _c2, const snVec& _direction) const
+	snVec snGJK::support(const snIGJKCollider& _c1, const snIGJKCollider& _c2, const snVec& _direction) const
 	{
-		snVec p1 = _c1.getFarthestPointInDirection(_direction);
-		snVec p2 = _c2.getFarthestPointInDirection(_direction * -1);
+		snVec p1 = _c1.gjkSupport(_direction);
+		snVec p2 = _c2.gjkSupport(-_direction);
 
 		return p1 - p2;
 	}
@@ -307,7 +309,7 @@ namespace Supernova
 		return checkTwoSimplex(_simplex, _simplexCount, _direction);
 	}
 
-	snVec snGJK::expandPolytope(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2) const
+	snVec snGJK::expandPolytope(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2) const
 	{
 		bool loopOver = false;
 		while (!loopOver)
@@ -335,7 +337,7 @@ namespace Supernova
 		return snVec();
 	}
 
-	bool snGJK::expandPolytopeV2(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal) const
+	bool snGJK::expandPolytopeV2(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal) const
 	{
 		bool loopOver = false;
 		while (!loopOver)

@@ -148,6 +148,9 @@
     <ClInclude Include="inc\snOBB.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snIGJKCollider.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderPlan.cpp">

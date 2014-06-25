@@ -37,10 +37,14 @@
 
 #include "snICollider.h"
 #include "snISATCollider.h"
+#include "snIGJKCollider.h"
 
 namespace Supernova
 {
-	class snOBB : public snICollider, public snISATCollider
+	class snOBB : 
+		public snICollider, 
+		public snISATCollider,
+		public snIGJKCollider
 	{
 	private:
 		static const int VERTEX_COUNT = 8;
@@ -88,9 +92,6 @@ namespace Supernova
 		//Compute the inertia tensor in a local frame.
 		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const;
 
-		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
-		snVec getFarthestPointInDirection(const snVec& _direction) const;
-
 		/*Calculate the closest point to the box of the point given in parameter.*/
 		snVec getClosestPoint(const snVec&) const;
 
@@ -116,6 +117,13 @@ namespace Supernova
 
 		//Make a projection of the obb onto an axis and get the min and max distance along this axis.
 		void projectToAxis(const snVec& _axis, float& _min, float& _max) const;
+
+		//////////////////////////////////////////////////////////////////////
+		// Interface for GJK algorithm										//
+		//////////////////////////////////////////////////////////////////////
+
+		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
+		snVec gjkSupport(const snVec& _direction) const;
 
 	private:
 		void computeVertices();

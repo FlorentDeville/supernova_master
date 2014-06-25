@@ -77,9 +77,6 @@ namespace Supernova
 		//Compute the inertia tensor in a local frame.
 		virtual void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const = 0;
 
-		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
-		virtual snVec getFarthestPointInDirection(const snVec& /*_direction*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
-
 		//Get the closest polygon projected onto the normal.
 		virtual void getClosestPolygonProjected(const snVec& /*_n*/, snVec* const /*_polygon*/, int& /*_count*/) const{};
 
