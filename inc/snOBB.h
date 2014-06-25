@@ -57,6 +57,10 @@ namespace Supernova
 		//Half size of the box
 		snVec m_extends;
 
+		//Normals expressed in wolrd coordinates.
+		snVec m_normals[3];
+
+		//The rest is here for cache purpose and needs to be cleaned.
 		//Vertices composing the box.
 		snVec m_box[VERTEX_COUNT];
 
@@ -68,9 +72,6 @@ namespace Supernova
 
 		//Vertices composing the box in world coordinates.
 		snVec m_worldBox[VERTEX_COUNT];
-
-		//Normals expressed in wolrd coordinates.
-		snVec m_worldNormals[3];
 
 	public:
 		//Constructor.

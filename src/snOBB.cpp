@@ -167,12 +167,12 @@ namespace Supernova
 			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform);
 
 		//world origin is the last row.
-		m_pos = snMatrixGetTranslation(_transform);
+		m_pos = _transform[3];
 
 		//world normals are just the rows of the transform matrix
-		m_worldNormals[0] = _transform[0];
-		m_worldNormals[1] = _transform[1];
-		m_worldNormals[2] = _transform[2];
+		m_normals[0] = _transform[0];
+		m_normals[1] = _transform[1];
+		m_normals[2] = _transform[2];
 	}
 
 	void snOBB::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
@@ -249,7 +249,7 @@ namespace Supernova
 			return -1;
 
 		for (int i = 0; i < 3; ++i)
-			_arrayNormals[i] = m_worldNormals[i];
+			_arrayNormals[i] = m_normals[i];
 		
 		return 3;
 	}
@@ -273,11 +273,11 @@ namespace Supernova
 		//Current versions:
 		//8 dot product => 8 mul, 16 shuffles, 16 add
 
-		snVec dot0 = snVec4GetAbsolute(snVec3Dot(_direction, m_worldNormals[0]));
-		snVec dot1 = snVec4GetAbsolute(snVec3Dot(_direction, m_worldNormals[1]));
-		snVec dot2 = snVec4GetAbsolute(snVec3Dot(_direction, m_worldNormals[2]));
+		snVec dot0 = snVec4GetAbsolute(snVec3Dot(_direction, m_normals[0]));
+		snVec dot1 = snVec4GetAbsolute(snVec3Dot(_direction, m_normals[1]));
+		snVec dot2 = snVec4GetAbsolute(snVec3Dot(_direction, m_normals[2]));
 		snVec pos = snVec3Dot(_direction, m_pos);
-		return pos * _direction + m_worldNormals[0] * dot0 + m_worldNormals[1] * dot1 + m_worldNormals[2] * dot2;
+		return pos * _direction + m_normals[0] * dot0 + m_normals[1] * dot1 + m_normals[2] * dot2;
 
 		//float maxDotProduct = -SN_FLOAT_MAX;
 		//int id = -1;
@@ -308,10 +308,10 @@ namespace Supernova
 		for (int i = 0; i < 3; ++i)
 		{
 			//Projection of the point to the normal
-			snVec dot = snVec3Dot(dir, m_worldNormals[i]);
+			snVec dot = snVec3Dot(dir, m_normals[i]);
 			float extend = snVec4GetById(m_extends, i);
 			dot = clampComponents(dot, -extend, extend);
-			ret = ret + m_worldNormals[i] * dot;
+			ret = ret + m_normals[i] * dot;
 		}
 
 		return ret + m_pos;
@@ -367,27 +367,27 @@ namespace Supernova
 		switch (_faceId)
 		{
 		case 0: //front
-			return m_worldNormals[2] * -1;
+			return m_normals[2] * -1;
 			break;
 
 		case 1: //right
-			return m_worldNormals[0];
+			return m_normals[0];
 			break;
 
 		case 2: //up
-			return m_worldNormals[1];
+			return m_normals[1];
 			break;
 
 		case 3: //bottom
-			return m_worldNormals[1] * -1;
+			return m_normals[1] * -1;
 			break;
 
 		case 4: //back
-			return m_worldNormals[2];
+			return m_normals[2];
 			break;
 
 		case 5: //left
-			return m_worldNormals[0] * -1;
+			return m_normals[0] * -1;
 			break;
 
 		default:
