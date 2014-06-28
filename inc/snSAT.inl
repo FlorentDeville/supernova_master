@@ -78,7 +78,7 @@ namespace Supernova
 	}
 
 	template <class T, class U>
-	static bool snSAT::queryOverlap(const T& _c1, const T& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap)
+	static bool snSAT::queryOverlap(const T& _c1, const U& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap)
 	{
 		float minS1, minS2, maxS1, maxS2;
 
@@ -89,7 +89,7 @@ namespace Supernova
 		float diff2 = maxS2 - minS1;
 
 		//no collision
-		if (diff1 <= 0.f || diff2 <= 0.f)
+		if (diff1 < 0.f || diff2 < 0.f)
 			return false;
 
 		//collision, get the minimum overlap with the axis

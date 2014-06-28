@@ -47,7 +47,7 @@ namespace Supernova
 	private:
 
 		template <class T, class U> 
-			static bool queryOverlap(const T& _c1, const T& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap);
+			static bool queryOverlap(const T& _c1, const U& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap);
 	};
 
 }
