@@ -34,6 +34,7 @@
 
 #include "snCollision.h"
 #include "snOBB.h"
+#include "snCapsule.h"
 #include "snColliderSphere.h"
 #include "snColliderPlan.h"
 
@@ -46,6 +47,7 @@
 #include <assert.h>
 
 #include "snSAT.h"
+#include "snGJK.h"
 
 using namespace Supernova::Vector;
 
@@ -59,6 +61,8 @@ namespace Supernova
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderPlan), &Supernova::snCollision::queryTestCollisionBoxVersusPlan));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderPlan), &Supernova::snCollision::queryTestCollisionSphereVersusPlan));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderSphere), &Supernova::snCollision::queryTestCollisionCapsuleVersusSphere));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderBox), &Supernova::snCollision::queryTestCollisionCapsuleVersusOBB));
 	}
 
 	snCollision::~snCollision(){}
@@ -256,5 +260,52 @@ namespace Supernova
 			res.m_penetrations.push_back(_sphere->getRadius() - distance);
 			return res;
 		}
+	}
+
+	snCollisionResult snCollision::queryTestCollisionCapsuleVersusSphere(const snICollider* const _c1, const snICollider* const _c2)
+	{
+		const snCapsule* _capsule = static_cast<const snCapsule*>(_c1);
+		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c2);
+	
+		//Get the closest point on the capsule
+		snVec center = _sphere->getCenter() - _capsule->getSecondEndPoint(); //vector from the second endpoint to the sphere's center
+		snVec dir = _capsule->getFirstEndPoint() - _capsule->getSecondEndPoint(); //vector from the second endpoint to the first endpoint.
+		float length = snVec3Norme(dir); //compute the distance between the two endpoints !!!!!!!!!!!!!COULD BE CACHED
+		snVec3Normalize(dir); //normalized the direction
+
+		//Compute the distance of the closest point along the capsule axis and clamp it.
+		snVec dot = snVec3Dot(dir, center);
+		snVec closestPointLength = clampComponents(dot, 0, length);
+
+		//Closest point is the closest point to the sphere on the capsule's axis.
+		snVec closestPoint = _capsule->getSecondEndPoint() + (dir * closestPointLength);
+
+		//Check the distance between the sphere's center and the closest point
+		float sqDistance = snVec3SquaredNorme(closestPoint - _sphere->getCenter());
+		float sqMinDistance = _sphere->getRadius() + _capsule->getRadius();
+		sqMinDistance *= sqMinDistance;
+
+		snCollisionResult res;
+		if (sqDistance <= sqMinDistance)
+		{
+			res.m_collision = true;
+			res.m_normal = _sphere->getCenter() - closestPoint;
+			snVec3Normalize(res.m_normal);
+			res.m_contacts.push_back(closestPoint + res.m_normal * _capsule->getRadius());
+			res.m_penetrations.push_back(sqrt(sqMinDistance) - sqrt(sqDistance)); //TODO : figure out how to avoid two sqrt!
+		}
+		
+
+		return res;
+	}
+
+	snCollisionResult snCollision::queryTestCollisionCapsuleVersusOBB(const snICollider* const _c1, const snICollider* const _c2)
+	{
+		const snCapsule* _capsule = static_cast<const snCapsule*>(_c1);
+		const snOBB* _obb = static_cast<const snOBB*>(_c2);
+
+		snCollisionResult res;
+		res.m_collision = snGJK::GJKIntersect<snCapsule, snOBB>(*_capsule, *_obb);
+		return res;
 	}
 }

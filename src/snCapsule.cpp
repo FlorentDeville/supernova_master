@@ -32,80 +32,95 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_H
-#define SN_COLLISION_H
-
-#include <malloc.h>
-#include <map>
-using std::map;
-
-#include "snGlobals.h"
-#include "snCollisionResult.h"
-#include "snICollider.h"
-
-//Compute the key to retrieve the collision query function in the map. The parameters are the type of colliders.
-#define SN_COLLISION_KEY(a, b) ((a<<8) | b)
+#include "snCapsule.h"
+#include "snAABB.h"
+using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	/*Forward declaration*/
-	class snOBB;
-	class snColliderSphere;
-	class snColliderPlan;
-	class snIActor;
-
-	//Make collision tests between all the different types of colliders available.
-	class SN_ALIGN snCollision
+	snCapsule::snCapsule(float _length, float _radius)
 	{
-	
-	private:
-		//Typedef of pointers to the collision query functions.
-		typedef snCollisionResult(*snQueryTestCollisionFunction)(const snICollider* const, const snICollider* const);
+		m_typeOfCollider = snEColliderCapsule;
 
-		typedef std::pair<unsigned short, snQueryTestCollisionFunction> snCollisionQueryMapElement;
+		float halfLength = _length * 0.5f;
+		m_a = snVec4Set(0, -halfLength, 0, 1);
+		m_b = snVec4Set(0, halfLength, 0, 1);
+		m_radius = _radius;
+	}
 
-		typedef map<unsigned short, snQueryTestCollisionFunction> snCollisionQueryMap;
+	snCapsule::snCapsule(const snVec& _a, const snVec& _b, float _radius)
+	{
+		m_typeOfCollider = snEColliderCapsule;
+		m_a = _a;
+		m_b = _b;
+		m_radius = _radius;
+	}
 
-		//Map between a key and a collision query function.
-		snCollisionQueryMap m_collisionQueryMap;
+	snVec snCapsule::getFirstEndPoint() const
+	{
+		return m_a;
+	}
 
-	public:
-		snCollision();
-		virtual ~snCollision();
+	snVec snCapsule::getSecondEndPoint() const
+	{
+		return m_b;
+	}
 
-		void queryTestCollision(snIActor*, snIActor*, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const;
+	float snCapsule::getRadius() const
+	{
+		return m_radius;
+	}
 
-		bool queryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
+	void snCapsule::initialize()
+	{
 
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, 16);
-		}
+	}
 
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
+	void snCapsule::setTransform(const snMatrix44f& _transform)
+	{
+		m_a = snMatrixTransform4(m_a, _transform);
+		m_b = snMatrixTransform4(m_b, _transform);
+	}
 
-	private:
+	void snCapsule::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
+	{
+		//let's not calculate the real inertia but approximate it with a box inertia tensor of dimension (radius, length, radius)
+		float length = snVec3Norme(m_b - m_a);
+		snVec size = snVec4Set(m_radius, length, m_radius, 0);
+		snVec sqSize = size * size;
 
-		snCollisionResult invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
+		float massOverTwelve = _mass / 12.f;
+		_inertiaTensor.m_r[0] = snVec4Set(massOverTwelve * (snVec4GetY(sqSize) + snVec4GetZ(sqSize)), 0, 0, 0);
+		_inertiaTensor.m_r[1] = snVec4Set(0, massOverTwelve * (snVec4GetX(sqSize) + snVec4GetZ(sqSize)), 0, 0);
+		_inertiaTensor.m_r[2] = snVec4Set(0, 0, massOverTwelve * (snVec4GetX(sqSize) + snVec4GetY(sqSize)), 0);
+		_inertiaTensor.m_r[3] = snVec4Set(0, 0, 0, 1);
+	}
 
-		//Check collision between two boxes
-		static snCollisionResult queryTestCollisionOBBVersusOBB(const snICollider* const _c1, const snICollider* const _c2);
+	void snCapsule::computeAABB(snAABB * const _boundingVolume) const
+	{
+		snVec extends = snVec4Set(m_radius, m_radius, m_radius, 0);
 
-		static snCollisionResult queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snICollider* const _c2);
+		snVec extendedA = m_a - extends;
+		snVec extendedB = m_b - extends;
+		_boundingVolume->m_min = snVec4GetMin(extendedA, extendedB);
 
-		static snCollisionResult queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snICollider* const _c2);
+		extendedA = m_a + extends;
+		extendedB = m_b + extends;
+		_boundingVolume->m_max = snVec4GetMax(extendedA, extendedB);
+	}
 
-		static snCollisionResult queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snICollider* const _c2);
+	snVec snCapsule::support(const snVec& _direction, float& _distance) const
+	{
+		snVec dir = m_a - m_b;
 
-		static snCollisionResult queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snICollider* const _c2);
+		snVec s = m_b + (_direction * snVec3Dot(dir, _direction)) + (_direction * m_radius);
+		_distance = snVec4GetX(snVec3Dot(_direction, s));
 
-		static snCollisionResult queryTestCollisionCapsuleVersusSphere(const snICollider* const _c1, const snICollider* const _c2);
+		return s;
+	}
 
-		static snCollisionResult queryTestCollisionCapsuleVersusOBB(const snICollider* const _c1, const snICollider* const _c2);
-	};
+	snVec snCapsule::anyPoint() const
+	{
+		return m_a;
+	}
 }
-
-#endif //SN_COLLISION_H

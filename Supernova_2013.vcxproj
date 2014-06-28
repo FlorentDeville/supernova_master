@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\AlignmentAllocator.h" />
+    <ClInclude Include="inc\snCapsule.h" />
     <ClInclude Include="inc\snIGJKCollider.h" />
     <ClInclude Include="inc\snISATCollider.h" />
     <ClInclude Include="inc\snActorDynamic.h" />
@@ -59,6 +60,7 @@
     <ClCompile Include="src\snActorDynamic.cpp" />
     <ClCompile Include="src\snActorPairManager.cpp" />
     <ClCompile Include="src\snActorStatic.cpp" />
+    <ClCompile Include="src\snCapsule.cpp" />
     <ClCompile Include="src\snOBB.cpp" />
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snColliderSphere.cpp" />

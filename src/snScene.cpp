@@ -51,6 +51,7 @@
 #include "snHingeConstraint.h"
 
 #include "snColliderSphere.h"
+#include "snCapsule.h"
 #include "snColliderContainer.h"
 
 #include "snTimer.h"
@@ -339,53 +340,34 @@ namespace Supernova
 
 	bool snScene::sphereCast(const snVec& _center, float _radius, const snVec& _direction, float _length)
 	{
-		//make an aabb around the sphere cast
-		snVec firstCorner = _center + snVec4Set(_radius, _radius, _radius, 0);
-		snVec secondCorner = _center - snVec4Set(_radius, _radius, _radius, 0);
-
-		snAABB firstBB;
-		firstBB.m_max = snVec4GetMax(firstCorner, secondCorner);
-		firstBB.m_min = snVec4GetMin(firstCorner, secondCorner);
-		
-		snVec endPoint = _center + _direction * _length;
-		firstCorner = endPoint + snVec4Set(_radius, _radius, _radius, 0);
-		secondCorner = endPoint - snVec4Set(_radius, _radius, _radius, 0);
-		snAABB secondBB;
-		secondBB.m_max = snVec4GetMax(firstCorner, secondCorner);
-		secondBB.m_min = snVec4GetMin(firstCorner, secondCorner);
-
-		snAABB fullBB;
-		mergeAABB(firstBB, secondBB, fullBB);
+		//make a capsule
+		snCapsule capsule(_center, _center + _direction * _length, _radius);
+		snAABB bb; 
+		capsule.computeAABB(&bb);
 
 		//Make the list of possibly colliding actors using the sweep and prune list
 		vector<snIActor*> pca;
-		m_sweepAndPrune.getPossiblyCollidingActor(fullBB, pca);
+		m_sweepAndPrune.getPossiblyCollidingActor(bb, pca);
 
 		//For each pca, check for collision
 		bool collision = false;
+		snColliderSphere sphere(_radius);
+		snMatrix44f transform;
 		for (vector<snIActor*>::iterator i = pca.begin(); i != pca.end(); ++i)
 		{
+			if ((*i)->getName() == "ball")
+				continue;
+
 			vector<snColliderContainer*>& colliders = (*i)->getColliders();
 			for (vector<snColliderContainer*>::iterator c = colliders.begin(); c != colliders.end(); ++c)
 			{
-				//Compute the sphere center
-				snVec pos = (*c)->m_localTransform.m_r[3];
-				snVec sphereCenter = _center + snVec3Dot(_direction, pos) * _direction;
-
-				//Make a sphere collider
-				snColliderSphere sphere(_radius);
-				snMatrix44f transform;
-				transform.createTranslation(sphereCenter);
-				sphere.setWorldTransform(transform);
-
 				//make collision test
-				bool res = m_collisionService.queryTestCollision(static_cast<snICollider*>(&sphere), (*c)->m_collider);
+				bool res = m_collisionService.queryTestCollision(&capsule, (*c)->m_collider);
 
-				//If a collision is detected, save the actor in the pca and go to the next actor.
+				//If a collision is detected, return true.
 				if (res)
 				{
 					collision = true;
-					pca.push_back(*i);
 					break;
 				}
 			}

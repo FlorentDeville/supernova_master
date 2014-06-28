@@ -31,81 +31,72 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
+#ifndef SN_CAPSULE_H
+#define SN_CAPSULE_H
 
-#ifndef SN_COLLISION_H
-#define SN_COLLISION_H
-
-#include <malloc.h>
-#include <map>
-using std::map;
-
-#include "snGlobals.h"
-#include "snCollisionResult.h"
 #include "snICollider.h"
+#include "snIGJKCollider.h"
 
-//Compute the key to retrieve the collision query function in the map. The parameters are the type of colliders.
-#define SN_COLLISION_KEY(a, b) ((a<<8) | b)
-
+#include "snVec.inl"
 namespace Supernova
 {
-	/*Forward declaration*/
-	class snOBB;
-	class snColliderSphere;
-	class snColliderPlan;
-	class snIActor;
-
-	//Make collision tests between all the different types of colliders available.
-	class SN_ALIGN snCollision
+	class SN_ALIGN snCapsule :
+		public snICollider,
+		public snIGJKCollider
 	{
-	
 	private:
-		//Typedef of pointers to the collision query functions.
-		typedef snCollisionResult(*snQueryTestCollisionFunction)(const snICollider* const, const snICollider* const);
+		//First end point of the capsule
+		snVec m_a;
 
-		typedef std::pair<unsigned short, snQueryTestCollisionFunction> snCollisionQueryMapElement;
+		//Second end point of the capsule
+		snVec m_b;
 
-		typedef map<unsigned short, snQueryTestCollisionFunction> snCollisionQueryMap;
-
-		//Map between a key and a collision query function.
-		snCollisionQueryMap m_collisionQueryMap;
+		//Radius of the capsule
+		float m_radius;
 
 	public:
-		snCollision();
-		virtual ~snCollision();
+		//Construct a capsule where the axis goes along the y axis and the origin is in the middle of the segment.
+		// It means the first endpoint a is (0, -_length * 0.5, 0, 1) and the second endpoint 
+		// b is (0, length * 0.5, 0, 1).
+		snCapsule(float _length, float _radius);
 
-		void queryTestCollision(snIActor*, snIActor*, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const;
+		//Construct a capsule using _a and _b respectively as first and second endpoint
+		snCapsule(const snVec& _a, const snVec& _b, float _radius);
 
-		bool queryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
+		//Return the first endpoint making the capsule.
+		snVec getFirstEndPoint() const;
 
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, 16);
-		}
+		//Return the second end point making the capsule
+		snVec getSecondEndPoint() const;
 
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
+		//Return the radius of the capsule
+		float getRadius() const;
 
-	private:
+		//////////////////////////////////////////////////////////////////////
+		// snICollider Interface											//
+		//////////////////////////////////////////////////////////////////////
 
-		snCollisionResult invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
+		//Initialize the collider. Should be called once all the parameters of the collider are set.
+		void initialize();
 
-		//Check collision between two boxes
-		static snCollisionResult queryTestCollisionOBBVersusOBB(const snICollider* const _c1, const snICollider* const _c2);
+		//Move the collider using the given transform matrix.
+		void setTransform(const snMatrix44f& _transform);
 
-		static snCollisionResult queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snICollider* const _c2);
+		//Compute the inertia tensor in the local frame.
+		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const;
 
-		static snCollisionResult queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snICollider* const _c2);
+		//Compute the bounding volume for this collider
+		void computeAABB(snAABB * const _boundingVolume) const;
 
-		static snCollisionResult queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snICollider* const _c2);
+		//////////////////////////////////////////////////////////////////////
+		// GJK Interface													//
+		//////////////////////////////////////////////////////////////////////
 
-		static snCollisionResult queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snICollider* const _c2);
+		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
+		snVec support(const snVec& _direction, float& _distance) const;
 
-		static snCollisionResult queryTestCollisionCapsuleVersusSphere(const snICollider* const _c1, const snICollider* const _c2);
-
-		static snCollisionResult queryTestCollisionCapsuleVersusOBB(const snICollider* const _c1, const snICollider* const _c2);
+		//Return any point making the collider
+		snVec anyPoint() const;
 	};
 }
-
-#endif //SN_COLLISION_H
+#endif //ifndef SN_CAPSULE_H

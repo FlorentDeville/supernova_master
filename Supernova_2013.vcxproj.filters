@@ -151,6 +151,9 @@
     <ClInclude Include="inc\snAABB.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snCapsule.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderPlan.cpp">
@@ -233,6 +236,9 @@
       <Filter>Collision\Collider</Filter>
     </ClCompile>
     <ClCompile Include="src\snAABB.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snCapsule.cpp">
       <Filter>Collision\Collider</Filter>
     </ClCompile>
   </ItemGroup>
