@@ -31,6 +31,8 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
+#ifndef SN_SAT_H
+#define SN_SAT_H
 
 #include "snVec.h"
 
@@ -49,5 +51,8 @@ namespace Supernova
 		template <class T, class U> 
 			static bool queryOverlap(const T& _c1, const U& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap);
 	};
-
 }
+
+#include "snSAT.inl"
+
+#endif //ifndef SN_SAT_H

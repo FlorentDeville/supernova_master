@@ -45,7 +45,7 @@
 #include "snFeatureClipping.h"
 #include <assert.h>
 
-#include "snSAT.inl"
+#include "snSAT.h"
 
 using namespace Supernova::Vector;
 

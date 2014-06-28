@@ -142,14 +142,14 @@
     <ClInclude Include="inc\snSAT.h">
       <Filter>Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snAABB.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snOBB.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
     <ClInclude Include="inc\snIGJKCollider.h">
       <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snAABB.h">
+      <Filter>Collision\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -229,10 +229,10 @@
     <ClCompile Include="src\snSimplex.cpp">
       <Filter>Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\snAABB.cpp">
-      <Filter>Collision</Filter>
-    </ClCompile>
     <ClCompile Include="src\snOBB.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snAABB.cpp">
       <Filter>Collision\Collider</Filter>
     </ClCompile>
   </ItemGroup>

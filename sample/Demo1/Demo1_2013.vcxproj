@@ -81,6 +81,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
       <AdditionalIncludeDirectories>..\src;..\..\inc;..\..\extern\DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <StructMemberAlignment>16Bytes</StructMemberAlignment>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
