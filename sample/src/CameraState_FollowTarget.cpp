@@ -43,6 +43,11 @@ using namespace DirectX;
 #include "snIActor.h"
 using Supernova::snIActor;
 
+#include "snFactory.h"
+#include "snScene.h"
+#include "snDebugger.h"
+using namespace Supernova;
+
 namespace Devil
 {
 	CameraState_FollowTarget::CameraState_FollowTarget(EntityCamera* _camera, IWorldEntity* _target, float _distance, float _height)
@@ -95,6 +100,20 @@ namespace Devil
 		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 
 		XMVECTOR cameraPosition = targetPosition - (m_forward * m_distance) + (up * m_height);
+
+		snVec dir = cameraPosition - targetPosition;
+		float length = Vector::snVec3Norme(dir);
+		Vector::snVec3Normalize(dir);
+		bool res = SUPERNOVA->getScene(0)->sphereCast(targetPosition, 0.5f, dir, length);
+		if (res)
+		{
+			DEBUGGER->setWatchExpression(L"Sphere Cast", L"true");
+		}
+		else
+		{
+			DEBUGGER->setWatchExpression(L"Sphere Cast", L"false");
+		}
+
 		m_positionDamper.setIdealValue(cameraPosition);
 		cameraPosition = m_positionDamper.computeValue(WORLD->getDeltaTime());
 

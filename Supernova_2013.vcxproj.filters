@@ -30,9 +30,6 @@
     <ClInclude Include="inc\snCollisionResult.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snColliderSphere.h">
-      <Filter>Collision\Collider</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snColliderPlan.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
@@ -154,12 +151,12 @@
     <ClInclude Include="inc\snCapsule.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snSphere.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderPlan.cpp">
-      <Filter>Collision\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snColliderSphere.cpp">
       <Filter>Collision\Collider</Filter>
     </ClCompile>
     <ClCompile Include="src\snFactory.cpp" />
@@ -239,6 +236,9 @@
       <Filter>Collision\Collider</Filter>
     </ClCompile>
     <ClCompile Include="src\snCapsule.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snSphere.cpp">
       <Filter>Collision\Collider</Filter>
     </ClCompile>
   </ItemGroup>

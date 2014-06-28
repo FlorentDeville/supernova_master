@@ -3,14 +3,16 @@
 #include "System.h"
 
 #ifdef _DEBUG
-#include <xmmintrin.h>
-#include <emmintrin.h>
 //needed for memory leak detection. Do not change the order.
 #include <stdlib.h>
 #include <crtdbg.h>
-#include "snVec.inl"
-using namespace Supernova::Vector;
+
+#include "snOBB.h"
+#include "snGJK.h"
+#include "snSAT.h"
+#include "snVec.h"
 #include "snMatrix44f.h"
+using namespace Supernova::Vector;
 using namespace Supernova;
 #endif //_DEBUG
 
@@ -18,7 +20,24 @@ using namespace Devil;
 
 int CALLBACK WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nCmdShow*/)
 {
+	//snOBB box1(snVec4Set(5, 3.5, 5, 0));
+	//box1.initialize();
+	//snMatrix44f transform;
+	//transform.createTranslation(snVec4Set(0, 3.5, 0, 1));
+	//box1.setWorldTransform(transform);
 
+	//snOBB box2(snVec4Set(1.5, 1.5, 1.5, 0));
+	//box2.initialize();
+	//transform.createTranslation(snVec4Set(2, 9, 0, 1));
+	//box2.setWorldTransform(transform);
+
+	//bool resGJK1 = snGJK::GJKIntersect<snOBB, snOBB>(box1, box2);
+
+	//snGJK gjk;
+	//snCollisionResult resGJK2 = gjk.queryIntersection(box1, box2);
+
+	//snVec normal = snVec4Set(0);
+	//bool resSAT = snSAT::queryIntersection<snOBB, snOBB>(box1, box2, normal);
 #ifdef _DEBUG
 	//enable memory leak detection
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

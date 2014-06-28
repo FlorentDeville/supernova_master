@@ -32,14 +32,15 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLIDER_SHPERE_H
-#define SN_COLLIDER_SPHERE_H
+#ifndef SN_SPHERE_H
+#define SN_SPHERE_H
 
 #include "snICollider.h"
 
 namespace Supernova
 {
-	class snColliderSphere : public snICollider
+	class snSphere : 
+		public snICollider
 	{
 	private:
 
@@ -50,12 +51,15 @@ namespace Supernova
 		float m_radius;
 
 	public:
-		snColliderSphere(float _radius);
+		snSphere(float _radius);
 
 		snVec getCenter() const;
 
 		float getRadius() const;
 
+		//////////////////////////////////////////////////////////////////////
+		// snICollider Interface											//
+		//////////////////////////////////////////////////////////////////////
 		void setTransform(const snMatrix44f& _transform);
 
 		void initialize();
@@ -66,4 +70,4 @@ namespace Supernova
 	};
 }
 
-#endif //ifndef SN_COLLIDER_SPHERE_H
+#endif //ifndef SN_SPHERE_H

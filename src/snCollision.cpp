@@ -35,7 +35,7 @@
 #include "snCollision.h"
 #include "snOBB.h"
 #include "snCapsule.h"
-#include "snColliderSphere.h"
+#include "snSphere.h"
 #include "snColliderPlan.h"
 
 #include "snCollisionResult.h"
@@ -140,8 +140,8 @@ namespace Supernova
 
 	snCollisionResult snCollision::queryTestCollisionSphereVersusSphere(const snICollider* const _c1, const snICollider* const _c2)
 	{
-		const snColliderSphere* _s1 = static_cast<const snColliderSphere*>(_c1);
-		const snColliderSphere* _s2 = static_cast<const snColliderSphere*>(_c2);
+		const snSphere* _s1 = static_cast<const snSphere*>(_c1);
+		const snSphere* _s2 = static_cast<const snSphere*>(_c2);
 
 		snCollisionResult res;
 
@@ -170,7 +170,7 @@ namespace Supernova
 	snCollisionResult snCollision::queryTestCollisionBoxVersusSphere(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		const snOBB* _box = static_cast<const snOBB*>(_c1);
-		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c2);
+		const snSphere* _sphere = static_cast<const snSphere*>(_c2);
 
 		snCollisionResult res;
 
@@ -243,7 +243,7 @@ namespace Supernova
 
 	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snICollider* const /*_c2*/)
 	{
-		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c1);
+		const snSphere* _sphere = static_cast<const snSphere*>(_c1);
 		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
 
 		snCollisionResult res;
@@ -265,7 +265,7 @@ namespace Supernova
 	snCollisionResult snCollision::queryTestCollisionCapsuleVersusSphere(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		const snCapsule* _capsule = static_cast<const snCapsule*>(_c1);
-		const snColliderSphere* _sphere = static_cast<const snColliderSphere*>(_c2);
+		const snSphere* _sphere = static_cast<const snSphere*>(_c2);
 	
 		//Get the closest point on the capsule
 		snVec center = _sphere->getCenter() - _capsule->getSecondEndPoint(); //vector from the second endpoint to the sphere's center

@@ -16,7 +16,7 @@
 #include "EntityCamera.h"
 #include "EntityFixedConstraint.h"
 
-#include "snColliderSphere.h"
+#include "snSphere.h"
 #include "snColliderPlan.h"
 
 #include "snScene.h"

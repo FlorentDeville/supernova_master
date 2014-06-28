@@ -38,7 +38,7 @@
 #include "snICollider.h"
 #include "snColliderContainer.h"
 #include "snOBB.h"
-#include "snColliderSphere.h"
+#include "snSphere.h"
 #include "snVec.h"
 
 #include "Graphics.h"
@@ -104,7 +104,7 @@ namespace Devil
 
 				case snEColliderType::snEColliderSphere:
 				{
-					snColliderSphere* sphere = static_cast<snColliderSphere*>((*i)->m_collider);
+					snSphere* sphere = static_cast<snSphere*>((*i)->m_collider);
 					scale.createScale(sphere->getRadius() * 2);
 					gfx = GRAPHICS->getSphere();
 				}

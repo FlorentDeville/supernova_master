@@ -50,7 +50,7 @@
 #include "snFrictionConstraint.h"
 #include "snHingeConstraint.h"
 
-#include "snColliderSphere.h"
+#include "snSphere.h"
 #include "snCapsule.h"
 #include "snColliderContainer.h"
 
@@ -351,8 +351,6 @@ namespace Supernova
 
 		//For each pca, check for collision
 		bool collision = false;
-		snColliderSphere sphere(_radius);
-		snMatrix44f transform;
 		for (vector<snIActor*>::iterator i = pca.begin(); i != pca.end(); ++i)
 		{
 			if ((*i)->getName() == "ball")

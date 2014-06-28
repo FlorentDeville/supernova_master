@@ -46,7 +46,7 @@
 #include "snActorDynamic.h"
 #include "snActorStatic.h"
 #include "snOBB.h"
-#include "snColliderSphere.h"
+#include "snSphere.h"
 #include "snQuaternion.h"
 #include "snDebugger.h"
 
@@ -1341,7 +1341,7 @@ namespace Devil
 		int actorBallId = -1;
 		scene->createActorDynamic(&ball, actorBallId);
 		float sphereRadius = 10;
-		snColliderSphere* sphere = new snColliderSphere(sphereRadius);
+		snSphere* sphere = new snSphere(sphereRadius);
 		ball->addCollider(sphere);
 		ball->updateMassAndInertia(1);
 		ball->setPosition(snVec4Set(-50, 60 + sphereRadius, 0, 1));

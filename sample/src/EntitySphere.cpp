@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "GfxEntitySphere.h"
 
-#include "snColliderSphere.h"
+#include "snSphere.h"
 
 #include "snScene.h"
 

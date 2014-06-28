@@ -32,38 +32,38 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snColliderSphere.h"
+#include "snSphere.h"
 #include "snAABB.h"
 using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snColliderSphere::snColliderSphere(float _radius) : snICollider(), m_radius(_radius)
+	snSphere::snSphere(float _radius) : snICollider(), m_radius(_radius)
 	{
 		m_typeOfCollider = snEColliderSphere;
 	}
 
-	snVec snColliderSphere::getCenter() const
+	snVec snSphere::getCenter() const
 	{
 		return m_center;
 	}
 
-	float snColliderSphere::getRadius()const
+	float snSphere::getRadius()const
 	{
 		return m_radius;
 	}
 
-	void snColliderSphere::setTransform(const snMatrix44f& _transform)
+	void snSphere::setTransform(const snMatrix44f& _transform)
 	{
 		m_center = _transform[3];
 	}
 
-	void snColliderSphere::initialize()
+	void snSphere::initialize()
 	{
 		//nothing to do
 	}
 
-	void snColliderSphere::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
+	void snSphere::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
 	{
 		float inertia = 0.4f * _mass * m_radius * m_radius;
 		_inertiaTensor.m_r[0] = snVec4Set(inertia, 0, 0, 0);
@@ -72,7 +72,7 @@ namespace Supernova
 		_inertiaTensor.m_r[3] = snVec4Set(0, 0, 0, 0);
 	}
 
-	void snColliderSphere::computeAABB(snAABB * const _boundingVolume) const
+	void snSphere::computeAABB(snAABB * const _boundingVolume) const
 	{
 		snVec vecRadius = snVec4Set(m_radius, m_radius, m_radius, 0);
 		_boundingVolume->m_max = m_center + vecRadius;
