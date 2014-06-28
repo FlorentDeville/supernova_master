@@ -254,47 +254,24 @@ namespace Supernova
 		return 3;
 	}
 
-	snVec snOBB::gjkSupport(const snVec& _direction) const
+	snVec snOBB::support(const snVec& _direction, float& _distance) const
 	{
-		//BOOOOOUUUUUUUUHHHHHHH
-		//That's how it should be done:
-		//
-		// dot0 = dot(_dir, normal[0])
-		// dot1 = dot(_dir, normal[1])
-		// dot2 = dot(_dir, normal[2])
-		// pos = dot(_dir, m_pos)
-		//return _dir * pos + dot0 * normal[0] + dot1 * normal[1] + dot2 * normal[2]
-		//
-		//4 dot product (1 mul, 2 shuffles, 2 add each) so 4 mul, 8 shuffles, 8 add
-		//4 multiplication
-		//3 addition
-		//so => 8 mul, 8 shuffle, 11 add
-		//
-		//Current versions:
-		//8 dot product => 8 mul, 16 shuffles, 16 add
+		int dotX = sign(snVec4GetX(snVec3Dot(_direction, m_normals[0])));
+		int dotY = sign(snVec4GetX(snVec3Dot(_direction, m_normals[1])));
+		int dotZ = sign(snVec4GetX(snVec3Dot(_direction, m_normals[2])));
 
-		snVec dot0 = snVec4GetAbsolute(snVec3Dot(_direction, m_normals[0]));
-		snVec dot1 = snVec4GetAbsolute(snVec3Dot(_direction, m_normals[1]));
-		snVec dot2 = snVec4GetAbsolute(snVec3Dot(_direction, m_normals[2]));
-		snVec pos = snVec3Dot(_direction, m_pos);
-		return pos * _direction + m_normals[0] * dot0 + m_normals[1] * dot1 + m_normals[2] * dot2;
+		snVec pos = m_pos +
+			m_normals[0] * dotX * snVec4GetX(m_extends) +
+			m_normals[1] * dotY * snVec4GetY(m_extends) +
+			m_normals[2] * dotZ * snVec4GetZ(m_extends);
 
-		//float maxDotProduct = -SN_FLOAT_MAX;
-		//int id = -1;
+		_distance = snVec4GetX(snVec3Dot(_direction, pos));
+		return pos;
+	}
 
-		////check every point
-		//for (int i = 0; i < VERTEX_COUNT; ++i)
-		//{
-		//	float dot = snVec4GetX(snVec3Dot(_direction, m_worldBox[i]));
-		//	if (dot > maxDotProduct)
-		//	{
-		//		maxDotProduct = dot;
-		//		id = i;
-		//	}
-		//}
-
-		//assert(id != -1);
-		//return m_worldBox[id];
+	snVec snOBB::anyPoint() const
+	{
+		return m_worldBox[0];
 	}
 
 	snVec snOBB::getClosestPoint(const snVec& _v) const

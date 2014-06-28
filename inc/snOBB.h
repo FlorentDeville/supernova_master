@@ -124,7 +124,10 @@ namespace Supernova
 		//////////////////////////////////////////////////////////////////////
 
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
-		snVec gjkSupport(const snVec& _direction) const;
+		snVec support(const snVec& _direction, float& _distance) const;
+
+		//Return any point making the collider
+		snVec anyPoint() const;
 
 	private:
 		void computeVertices();

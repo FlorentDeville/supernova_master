@@ -36,6 +36,7 @@
 #define SN_GJK_H
 
 #include "snFeatureClipping.h"
+#define SUPPORT(dir) (_a.support(dir, maxS) - _b.support(-dir, minS));
 
 namespace Supernova
 {
@@ -60,6 +61,8 @@ namespace Supernova
 		//Check if two colliders are intersecting.
 		snCollisionResult queryIntersection(const snIGJKCollider& _c1, const snIGJKCollider& _c2) const;
 
+		template<class T, class U> static bool GJKIntersect(const T& _a, const U& _b);
+
 	private:
 		//Compute the point from the minkowski difference in a particular direction for two colliders
 		snVec support(const snIGJKCollider& _c1, const snIGJKCollider& _c2, const snVec& _direction) const;
@@ -80,7 +83,49 @@ namespace Supernova
 		snVec expandPolytope(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2) const;
 
 		bool expandPolytopeV2(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal) const;
+
+		static snVec UpdateSimplex(snVec* _s, int& _n);
+
+		static snVec UpdateTwoSimplex(snVec* _s, int& _n);
+		
+		static snVec UpdateThreeSimplex(snVec* _s, int& _n);
+
+		static snVec UpdateFourSimplex(snVec* _s, int& _n);
 	};
+
+	template<class T, class U> bool snGJK::GJKIntersect(const T& _a, const U& _b)
+	{
+		snVec support[4];
+		float maxS, minS;
+		// Start with an arbitrary point in the Minkowski set shape.
+		support[0] = _a.anyPoint() - _b.anyPoint();
+		snVec d = -support[0]; // First search direction is straight toward the origin from the found point.
+		if (snVec3SquaredNorme(d) < 1e-7f) // Robustness check: Test if the first arbitrary point we guessed produced the zero vector we are looking for!
+			return true;
+		int n = 1; // Stores the current number of points in the search simplex.
+		int nIterations = 50; // Robustness check: Limit the maximum number of iterations to perform to avoid infinite loop if types A or B are buggy!
+		while (nIterations-- > 0)
+		{
+			// Compute the extreme point to the direction d in the Minkowski set shape.
+			snVec3Normalize(d);
+			snVec newSupport = SUPPORT(d);
+#ifdef MATH_VEC_IS_FLOAT4
+			assume(newSupport.w == 0.f);
+#endif
+			// If the most extreme point in that search direction did not walk past the origin, then the origin cannot be contained in the Minkowski
+			// convex shape, and the two convex objects a and b do not share a common point - no intersection!
+			if (minS + maxS < 0.f)
+				return false;
+			// Add the newly evaluated point to the search simplex.
+			support[n++] = newSupport;
+			// Examine the current simplex, prune a redundant part of it, and produce the next search direction.
+			d = UpdateSimplex(support, n);
+			if (n == 0) // Was the origin contained in the current simplex? If so, then the convex shapes a and b do share a common point - intersection!
+				return true;
+		}
+		//assume2(false && "GJK intersection test did not converge to a result!", a.SerializeToString(), b.SerializeToString());
+		return false; // Report no intersection.
+	}
 }
 
 #endif //SN_GJK_H
