@@ -39,7 +39,7 @@
 
 #include "snGlobals.h"
 
-#include "snVec.inl"
+#include "snVec.h"
 using Supernova::snVec;
 
 #include <vector>

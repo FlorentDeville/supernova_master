@@ -41,7 +41,7 @@ using std::map;
 #include <string>
 using std::wstring;
 
-#include "snVec.inl"
+#include "snVec.h"
 
 namespace Supernova
 {

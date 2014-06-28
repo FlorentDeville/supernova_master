@@ -31,10 +31,6 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-
-#ifndef SN_VEC_INL
-#define SN_VEC_INL
-
 #include "snVec.h"
 
 #include <math.h>
@@ -318,5 +314,3 @@ namespace Supernova
 		}
 	}
 }
-
-#endif //ifndef SN_VEC_INL

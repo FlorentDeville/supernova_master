@@ -38,7 +38,7 @@
 #include "Camera.h"
 #include "GfxEntityBox.h"
 
-#include "snVec.inl"
+#include "snVec.h"
 #include "snIActor.h"
 
 using namespace Supernova::Vector;

@@ -44,7 +44,7 @@ namespace Supernova
 	class snScene;
 }
 
-#include "snVec.inl"
+#include "snVec.h"
 using Supernova::snVec;
 using Supernova::snScene;
 using Supernova::snCollisionMode;

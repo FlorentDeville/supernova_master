@@ -36,7 +36,7 @@
 #define COMPONENT_BACKGROUND_H
 
 #include "IComponent.h"
-#include "snVec.inl"
+#include "snVec.h"
 #include "snMatrix44f.h"
 
 namespace Supernova

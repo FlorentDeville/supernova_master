@@ -33,7 +33,7 @@
 /****************************************************************************/
 
 #include "snGJK.h"
-#include "snVec.inl"
+#include "snVec.h"
 
 #include "snTypes.h"
 #include "snMath.h"

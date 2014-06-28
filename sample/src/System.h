@@ -7,7 +7,7 @@
 #include "snScene.h"
 using Supernova::snScene;
 
-#include "snVec.inl"
+#include "snVec.h"
 using Supernova::snVec;
 
 namespace Devil

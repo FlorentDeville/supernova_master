@@ -33,7 +33,7 @@
 /****************************************************************************/
 #include "CameraState_FreeCamera.h"
 
-#include "snVec.inl"
+#include "snVec.h"
 #include <DirectXMath.h>
 using namespace DirectX;
 

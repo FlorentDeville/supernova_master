@@ -38,7 +38,7 @@
 #include <vector>
 using std::vector;
 
-#include "snVec.inl"
+#include "snVec.h"
 using Supernova::snVec;
 
 #include "snGlobals.h"

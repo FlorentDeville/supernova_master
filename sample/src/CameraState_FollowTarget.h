@@ -38,7 +38,7 @@
 #include "IState.h"
 using namespace Devil::FSM;
 
-#include "snVec.inl"
+#include "snVec.h"
 
 using Supernova::snVec;
 #include "snGlobals.h"

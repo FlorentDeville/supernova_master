@@ -35,7 +35,7 @@
 #ifndef SN_QUATERNION_H
 #define SN_QUATERNION_H
 
-#include "snVec.inl"
+#include "snVec.h"
 
 namespace Supernova
 {

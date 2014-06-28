@@ -36,7 +36,7 @@
 #include "snMath.h"
 #include "snContactConstraint.h"
 
-#include "snVec.inl"
+#include "snVec.h"
 
 using namespace Supernova::Vector;
 

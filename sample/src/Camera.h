@@ -11,7 +11,7 @@ using DirectX::XMFLOAT3;
 #include <DirectXMath.h>
 using DirectX::XMMATRIX;
 
-#include "snVec.inl"
+#include "snVec.h"
 using Supernova::snVec;
 
 namespace Devil

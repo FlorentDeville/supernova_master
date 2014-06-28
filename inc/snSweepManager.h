@@ -38,7 +38,7 @@
 #include <list>
 using std::list;
 
-#include "snVec.inl"
+#include "snVec.h"
 
 #include <vector>
 using std::vector;

@@ -37,7 +37,7 @@
 
 #include "IComponent.h"
 
-#include "snVec.inl"
+#include "snVec.h"
 using Supernova::snVec;
 
 namespace Supernova

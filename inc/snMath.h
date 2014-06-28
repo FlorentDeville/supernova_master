@@ -45,7 +45,7 @@
 
 #define SN_PI 3.1415926f
 
-#include "snVec.inl"
+#include "snVec.h"
 
 namespace Supernova
 {

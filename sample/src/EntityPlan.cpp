@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "D3D.h"
 
-#include "snVec.inl"
+#include "snVec.h"
 #include "snIActor.h"
 
 using namespace DirectX;

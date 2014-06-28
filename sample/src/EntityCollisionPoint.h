@@ -5,7 +5,7 @@
 
 #include <vector>
 using namespace std;
-#include "snVec.inl"
+#include "snVec.h"
 
 namespace Supernova
 {

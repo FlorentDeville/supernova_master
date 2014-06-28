@@ -35,7 +35,7 @@
 #ifndef SN_I_CONSTRAINT_H
 #define SN_I_CONSTRAINT_H
 
-#include "snVec.inl"
+#include "snVec.h"
 #include "snGlobals.h"
 
 namespace Supernova

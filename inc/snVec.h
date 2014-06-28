@@ -128,4 +128,6 @@ namespace Supernova
 	}
 }
 
+#include "snVec.inl"
+
 #endif //ifndef SN_VEC_H

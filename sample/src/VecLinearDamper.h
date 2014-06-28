@@ -36,7 +36,7 @@
 #define VEC_LINEAR_DAMPER_H
 
 #include "Damper.inl"
-#include "snVec.inl"
+#include "snVec.h"
 using Supernova::snVec;
 
 namespace Devil

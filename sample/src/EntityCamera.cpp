@@ -38,7 +38,7 @@
 #include "World.h"
 #include "Input.h"
 
-#include "snVec.inl"
+#include "snVec.h"
 
 using namespace DirectX;
 
@@ -69,7 +69,7 @@ namespace Devil
 		CameraState_FreeCamera* stateFreeCamera = new CameraState_FreeCamera(this);
 		m_fsmRunner.addState(CAMERA_STATE_FREE_CAMERA, stateFreeCamera);
 		
-		CameraState_FollowTarget* stateFollowTarget = new CameraState_FollowTarget(this, (IWorldEntity*)WORLD->getMonkeyBall(), 140, 50);
+		CameraState_FollowTarget* stateFollowTarget = new CameraState_FollowTarget(this, (IWorldEntity*)WORLD->getMonkeyBall(), 140, 0);
 		m_fsmRunner.addState(CAMERA_STATE_FOLLOW_TARGET, stateFollowTarget);
 
 		m_fsmRunner.setInitialState(CAMERA_STATE_FREE_CAMERA);

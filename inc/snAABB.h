@@ -32,7 +32,7 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snVec.inl"
+#include "snVec.h"
 
 namespace Supernova
 {

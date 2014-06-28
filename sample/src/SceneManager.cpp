@@ -1293,6 +1293,7 @@ namespace Devil
 		snActorDynamic* actEnvironment = 0;
 		int actEnvironmentId = -1;
 		scene->createActorDynamic(&actEnvironment, actEnvironmentId);
+		actEnvironment->setName("level");
 
 		const float THICKNESS = 20;
 		snOBB* levelOne = new snOBB(snVec4Set(200, THICKNESS, 200, 0) * 0.5f);

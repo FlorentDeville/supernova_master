@@ -36,7 +36,7 @@
 
 #include "snFactory.h"
 #include "snScene.h"
-#include "snVec.inl"
+#include "snVec.h"
 #include "snActorDynamic.h"
 #include "snOBB.h"
 
