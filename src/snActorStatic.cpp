@@ -122,7 +122,7 @@ namespace Supernova
 		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
 			(*i)->m_collider->initialize();
-			(*i)->m_collider->setWorldTransform(transform);				
+			(*i)->m_collider->setTransform(transform);				
 		}
 
 		//compute the AABB

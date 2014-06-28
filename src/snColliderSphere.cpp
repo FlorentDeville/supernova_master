@@ -53,7 +53,7 @@ namespace Supernova
 		return m_radius;
 	}
 
-	void snColliderSphere::setWorldTransform(const snMatrix44f& _transform)
+	void snColliderSphere::setTransform(const snMatrix44f& _transform)
 	{
 		m_center = _transform[3];
 	}

@@ -23,7 +23,7 @@ namespace Supernova
 		snColliderPlan(const snVec* _corners);
 		virtual ~snColliderPlan();
 
-		void setWorldTransform(const snMatrix44f& _transform);
+		void setTransform(const snMatrix44f& _transform);
 
 		const snVec& getNormal()const;
 

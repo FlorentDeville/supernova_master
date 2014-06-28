@@ -56,7 +56,7 @@ namespace Supernova
 
 		float getRadius() const;
 
-		void setWorldTransform(const snMatrix44f& _transform);
+		void setTransform(const snMatrix44f& _transform);
 
 		void initialize();
 

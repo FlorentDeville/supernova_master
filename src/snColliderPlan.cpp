@@ -29,7 +29,7 @@ namespace Supernova
 	{
 	}
 
-	void snColliderPlan::setWorldTransform(const snMatrix44f& _transform)
+	void snColliderPlan::setTransform(const snMatrix44f& _transform)
 	{
 		for (int i = 0; i < 4; ++i)
 		{

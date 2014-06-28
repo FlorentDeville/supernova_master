@@ -72,7 +72,7 @@ namespace Supernova
 		virtual void initialize() = 0;
 
 		//Move the collider using the given transform matrix.
-		virtual void setWorldTransform(const snMatrix44f& _transform) = 0;
+		virtual void setTransform(const snMatrix44f& _transform) = 0;
 
 		//Compute the inertia tensor in a local frame.
 		virtual void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const = 0;

@@ -161,7 +161,7 @@ namespace Supernova
 
 	}
 
-	void snOBB::setWorldTransform(const snMatrix44f& _transform)
+	void snOBB::setTransform(const snMatrix44f& _transform)
 	{
 		for (int i = 0; i < 8; ++i)
 			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform);
@@ -261,9 +261,9 @@ namespace Supernova
 		int dotZ = sign(snVec4GetX(snVec3Dot(_direction, m_normals[2])));
 
 		snVec pos = m_pos +
-			m_normals[0] * dotX * snVec4GetX(m_extends) +
-			m_normals[1] * dotY * snVec4GetY(m_extends) +
-			m_normals[2] * dotZ * snVec4GetZ(m_extends);
+			m_normals[0] * (float)dotX * snVec4GetX(m_extends) +
+			m_normals[1] * (float)dotY * snVec4GetY(m_extends) +
+			m_normals[2] * (float)dotZ * snVec4GetZ(m_extends);
 
 		_distance = snVec4GetX(snVec3Dot(_direction, pos));
 		return pos;

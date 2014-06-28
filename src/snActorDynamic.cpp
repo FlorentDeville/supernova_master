@@ -267,7 +267,7 @@ namespace Supernova
 		{
 			snMatrix44f worldTransform;
 			snMatrixMultiply4((*i)->m_localTransform, globalTransform, worldTransform);
-			(*i)->m_collider->setWorldTransform(worldTransform);
+			(*i)->m_collider->setTransform(worldTransform);
 		}
 
 		computeBoundingVolume();
