@@ -68,7 +68,10 @@ namespace Supernova
 			for (int j = i; j < NORMAL_COUNT; ++j)
 			{
 				snVec cross = snVec3Cross(s1Normals[i], s2Normals[j]);
-				if (snVec3SquaredNorme(cross) != 1.f) continue;
+				const float EPSILON = 1e-7f;
+				if (snVec3SquaredNorme(cross) < EPSILON) continue;
+
+				snVec3Normalize(cross);
 				if (!queryOverlap<T, U>(_c1, _c2, cross, _collisionNormal, smallestOverlap))
 					return false;
 			}
