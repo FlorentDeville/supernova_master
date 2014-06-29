@@ -125,7 +125,16 @@ namespace Supernova
 		snCollisionResult res;
 		const snOBB* _b1 = static_cast<const snOBB*>(_c1);
 		const snOBB* _b2 = static_cast<const snOBB*>(_c2);
-		if (!snSAT::queryIntersection<snOBB, snOBB>(*_b1, *_b2, res.m_normal))
+		bool resSAT = snSAT::queryIntersection<snOBB, snOBB>(*_b1, *_b2, res.m_normal);
+
+#if _DEBUG
+		bool resGJK = snGJK::gjkIntersect<snOBB, snOBB>(*_b1, *_b2);
+
+		if (resSAT != resGJK)
+			assert(false);
+#endif
+
+		if (!resSAT)
 			return res;
 
 		//there is a collision so find the collision patch
@@ -305,7 +314,7 @@ namespace Supernova
 		const snOBB* _obb = static_cast<const snOBB*>(_c2);
 
 		snCollisionResult res;
-		res.m_collision = snGJK::GJKIntersect<snCapsule, snOBB>(*_capsule, *_obb);
+		res.m_collision = snGJK::gjkIntersect<snCapsule, snOBB>(*_capsule, *_obb);
 		return res;
 	}
 }

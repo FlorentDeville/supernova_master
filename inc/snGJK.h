@@ -36,7 +36,6 @@
 #define SN_GJK_H
 
 #include "snFeatureClipping.h"
-#define SUPPORT(dir) (_a.support(dir, maxS) - _b.support(-dir, minS));
 
 namespace Supernova
 {
@@ -49,6 +48,9 @@ namespace Supernova
 	class snGJK
 	{
 	private:
+		//The maximum number of iteration for the algorithm.
+		static const int MAX_ITERATION = 50;
+
 		snFeatureClipping m_clipping;
 
 	public:
@@ -61,7 +63,7 @@ namespace Supernova
 		//Check if two colliders are intersecting.
 		snCollisionResult queryIntersection(const snIGJKCollider& _c1, const snIGJKCollider& _c2) const;
 
-		template<class T, class U> static bool GJKIntersect(const T& _a, const U& _b);
+		template<class T, class U> static bool gjkIntersect(const T& _a, const U& _b);
 
 	private:
 		//Compute the point from the minkowski difference in a particular direction for two colliders
@@ -84,47 +86,55 @@ namespace Supernova
 
 		bool expandPolytopeV2(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal) const;
 
-		static snVec UpdateSimplex(snVec* _s, int& _n);
+		static snVec updateSimplex(snVec* _s, int& _n);
 
-		static snVec UpdateTwoSimplex(snVec* _s, int& _n);
+		static snVec updateTwoSimplex(snVec* _s, int& _n);
 		
-		static snVec UpdateThreeSimplex(snVec* _s, int& _n);
+		static snVec updateThreeSimplex(snVec* _s, int& _n);
 
-		static snVec UpdateFourSimplex(snVec* _s, int& _n);
+		static snVec updateFourSimplex(snVec* _s, int& _n);
 	};
 
-	template<class T, class U> bool snGJK::GJKIntersect(const T& _a, const U& _b)
+	template<class T, class U> bool snGJK::gjkIntersect(const T& _a, const U& _b)
 	{
 		snVec support[4];
-		float maxS, minS;
-		// Start with an arbitrary point in the Minkowski set shape.
+		
+		//Start with an arbitrary point in the Minkowski set shape.
 		support[0] = _a.anyPoint() - _b.anyPoint();
-		snVec d = -support[0]; // First search direction is straight toward the origin from the found point.
-		if (snVec3SquaredNorme(d) < 1e-7f) // Robustness check: Test if the first arbitrary point we guessed produced the zero vector we are looking for!
+
+		//Go straight to the origin
+		snVec d = -support[0];
+
+		//Check if the first support point is the origin
+		if (snVec3SquaredNorme(d) < 1e-7f)
 			return true;
-		int n = 1; // Stores the current number of points in the search simplex.
-		int nIterations = 50; // Robustness check: Limit the maximum number of iterations to perform to avoid infinite loop if types A or B are buggy!
-		while (nIterations-- > 0)
+
+		//Start to iterate
+		int n = 1; 
+		int i = MAX_ITERATION;
+		while (--i >= 0)
 		{
-			// Compute the extreme point to the direction d in the Minkowski set shape.
+			//Normalize the direction and compute the support point.
 			snVec3Normalize(d);
-			snVec newSupport = SUPPORT(d);
-#ifdef MATH_VEC_IS_FLOAT4
-			assume(newSupport.w == 0.f);
-#endif
-			// If the most extreme point in that search direction did not walk past the origin, then the origin cannot be contained in the Minkowski
-			// convex shape, and the two convex objects a and b do not share a common point - no intersection!
+			float maxS, minS;
+			snVec newSupport = _a.support(d, maxS) - _b.support(-d, minS);
+
+			//If this new support point did not passed the origin then the Minkowski difference does not contain the origin so no collision.
 			if (minS + maxS < 0.f)
 				return false;
-			// Add the newly evaluated point to the search simplex.
-			support[n++] = newSupport;
-			// Examine the current simplex, prune a redundant part of it, and produce the next search direction.
-			d = UpdateSimplex(support, n);
-			if (n == 0) // Was the origin contained in the current simplex? If so, then the convex shapes a and b do share a common point - intersection!
+
+			//Update the simplex
+			support[n] = newSupport;
+			++n;
+			d = updateSimplex(support, n);
+
+			//If the origin lies inside the simplex then intersection
+			if (n == 0) 
 				return true;
 		}
-		//assume2(false && "GJK intersection test did not converge to a result!", a.SerializeToString(), b.SerializeToString());
-		return false; // Report no intersection.
+		
+		//We reached the maximum number of iteration so exit and report no intersection.
+		return false;
 	}
 }
 
