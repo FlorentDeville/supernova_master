@@ -154,6 +154,9 @@
     <ClInclude Include="inc\snSphere.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snLogger.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderPlan.cpp">
@@ -240,6 +243,9 @@
     </ClCompile>
     <ClCompile Include="src\snSphere.cpp">
       <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snLogger.cpp">
+      <Filter>Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

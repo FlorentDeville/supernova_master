@@ -27,12 +27,6 @@
     <ClInclude Include="inc\snCollisionResult.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snColliderBox.h">
-      <Filter>Collision\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snColliderSphere.h">
-      <Filter>Collision\Collider</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snColliderPlan.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
@@ -85,9 +79,6 @@
     <ClInclude Include="inc\snDebugger.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snAABB.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snContactConstraintManager.h">
       <Filter>Simulation</Filter>
     </ClInclude>
@@ -139,18 +130,27 @@
     <ClInclude Include="inc\snSAT.h">
       <Filter>Algorithms</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snLogger.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
     <ClInclude Include="inc\snISATCollider.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snAABB.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snCapsule.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snOBB.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snSphere.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\snColliderBox.cpp">
-      <Filter>Collision\Collider</Filter>
-    </ClCompile>
     <ClCompile Include="src\snColliderPlan.cpp">
-      <Filter>Collision\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snColliderSphere.cpp">
       <Filter>Collision\Collider</Filter>
     </ClCompile>
     <ClCompile Include="src\snFactory.cpp" />
@@ -183,9 +183,6 @@
     </ClCompile>
     <ClCompile Include="src\snDebugger.cpp">
       <Filter>Tools</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snAABB.cpp">
-      <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\snContactConstraintManager.cpp">
       <Filter>Simulation</Filter>
@@ -226,13 +223,28 @@
     <ClCompile Include="src\snCollision.cpp">
       <Filter>Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\snSAT.cpp">
-      <Filter>Algorithms</Filter>
+    <ClCompile Include="src\snLogger.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snAABB.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snCapsule.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snOBB.cpp">
+      <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snSphere.cpp">
+      <Filter>Collision\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="inc\snVec.inl">
       <Filter>Tools</Filter>
+    </None>
+    <None Include="inc\snSAT.inl">
+      <Filter>Algorithms</Filter>
     </None>
   </ItemGroup>
 </Project>

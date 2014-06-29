@@ -26,6 +26,7 @@
 #include "snFixedConstraint.h"
 #include "snDebugger.h"
 #include "snTimer.h"
+#include "snLogger.h"
 
 #include <string>
 #include <Windowsx.h>
@@ -45,6 +46,9 @@ namespace Devil
 
 	bool System::initialize(bool _fullScreen)
 	{
+		LOGGER->initialize();
+		LOGGER->logInfo("start");
+
 		m_fullScreen = _fullScreen;
 		m_deltaTime = 1000 / TICK;
 
@@ -103,7 +107,8 @@ namespace Devil
 		GRAPHICS->shutdown();
 		INPUT->shutdown();
 		SCENEMGR->shutdown();
-		
+		LOGGER->shutdown();
+
 		// Shutdown the window.
 		shutdownWindows();
 

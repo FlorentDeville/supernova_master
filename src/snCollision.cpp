@@ -31,6 +31,9 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
+#ifdef _DEBUG
+	#include "snLogger.h"
+#endif //ifdef _DEBUG
 
 #include "snCollision.h"
 #include "snOBB.h"
@@ -131,8 +134,36 @@ namespace Supernova
 		bool resGJK = snGJK::gjkIntersect<snOBB, snOBB>(*_b1, *_b2);
 
 		if (resSAT != resGJK)
+		{
+			snVec normals[3];
+			LOGGER->logWarn("");
+			LOGGER->logWarn("A difference was detected between SAT and GJK.");
+			LOGGER->logWarn("START DUMP");
+			LOGGER->logWarn(" - OBB 1 :");
+			LOGGER->logWarn("      pos = " + LOGGER->toString(_b1->getPosition()));
+			LOGGER->logWarn("      extends = " + LOGGER->toString(_b1->getExtends()));
+			_b1->getUniqueNormals(normals, 3);
+			LOGGER->logWarn("      nx = " + LOGGER->toString(normals[0]));
+			LOGGER->logWarn("      ny = " + LOGGER->toString(normals[1]));
+			LOGGER->logWarn("      nz = " + LOGGER->toString(normals[2]));
+
+			LOGGER->logWarn(" - OBB 2 :");
+			LOGGER->logWarn("      pos = " + LOGGER->toString(_b2->getPosition()));
+			LOGGER->logWarn("      extends = " + LOGGER->toString(_b2->getExtends()));
+			_b2->getUniqueNormals(normals, 3);
+			LOGGER->logWarn("      nx = " + LOGGER->toString(normals[0]));
+			LOGGER->logWarn("      ny = " + LOGGER->toString(normals[1]));
+			LOGGER->logWarn("      nz = " + LOGGER->toString(normals[2]));
+			string value = resSAT ? "true" : "false";
+			LOGGER->logWarn("SAT result : " + value);
+			value = resGJK ? "true" : "false";
+			LOGGER->logWarn("GJK result : " + value);
+			LOGGER->logWarn("STOP DUMP");
+			LOGGER->logWarn("");
+
 			assert(false);
-#endif
+		}
+#endif //ifdef _DEBUG
 
 		if (!resSAT)
 			return res;
