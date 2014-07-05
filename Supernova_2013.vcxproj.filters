@@ -25,6 +25,9 @@
     <Filter Include="Algorithms">
       <UniqueIdentifier>{f32021dc-ec70-46bd-aaa8-c2275f2f0ddb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Algorithms\EPA">
+      <UniqueIdentifier>{6d7b6057-8a35-4722-ad42-e2871e2098b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\snCollisionResult.h">
@@ -130,9 +133,6 @@
     <ClInclude Include="inc\snGJK.h">
       <Filter>Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snSimplex.h">
-      <Filter>Algorithms</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snISATCollider.h">
       <Filter>Collision</Filter>
     </ClInclude>
@@ -156,6 +156,18 @@
     </ClInclude>
     <ClInclude Include="inc\snLogger.h">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snEPATriangle.h">
+      <Filter>Algorithms\EPA</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snEPAEdge.h">
+      <Filter>Algorithms\EPA</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snEPA.h">
+      <Filter>Algorithms\EPA</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snEPASimplex.h">
+      <Filter>Algorithms\EPA</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -229,9 +241,6 @@
     <ClCompile Include="src\snGJK.cpp">
       <Filter>Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\snSimplex.cpp">
-      <Filter>Algorithms</Filter>
-    </ClCompile>
     <ClCompile Include="src\snOBB.cpp">
       <Filter>Collision\Collider</Filter>
     </ClCompile>
@@ -246,6 +255,18 @@
     </ClCompile>
     <ClCompile Include="src\snLogger.cpp">
       <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snEPAEdge.cpp">
+      <Filter>Algorithms\EPA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snEPATriangle.cpp">
+      <Filter>Algorithms\EPA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snEPA.cpp">
+      <Filter>Algorithms\EPA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snEPASimplex.cpp">
+      <Filter>Algorithms\EPA</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

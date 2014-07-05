@@ -38,7 +38,7 @@
 #include "snTypes.h"
 #include "snMath.h"
 #include "snCollisionResult.h"
-#include "snSimplex.h"
+#include "snEPASimplex.h"
 
 #include "snIGJKCollider.h"
 
@@ -321,131 +321,6 @@ namespace Supernova
 
 		//check now the triangle.
 		return checkTwoSimplex(_simplex, _simplexCount, _direction);
-	}
-
-	snVec snGJK::expandPolytope(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2) const
-	{
-		bool loopOver = false;
-		while (!loopOver)
-		{
-			//find the closest triangle to the origin
-			int closestTriangleId = -1;
-			snVec normal;
-			float distance = 0;
-			_simplex.computeTriangleClosestToOrigin(closestTriangleId, normal, distance);
-
-			//expand the polytope
-			snVec revNormal = normal *-1;
-			snVec newVertex = support(_c1, _c2, revNormal);
-
-			//check if we are closer to the origin
-			float newPointDistance = snVec4GetX(snVec3Dot(revNormal, newVertex));
-
-			const float EPA_TOLERANCE = 0.01f;
-			if ((newPointDistance - distance) < EPA_TOLERANCE)
-				return normal;
-
-			_simplex.expand(newVertex, closestTriangleId);
-		}
-
-		return snVec();
-	}
-
-	bool snGJK::expandPolytopeV2(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal) const
-	{
-		bool loopOver = false;
-		while (!loopOver)
-		{
-			//find the closest triangle to the origin
-			int closestTriangleId = -1;
-			snVec triangleNormal;
-			float distance = 0;
-			_simplex.computeTriangleClosestToOrigin(closestTriangleId, triangleNormal, distance);
-
-			////find the closest point to the origin
-			//snVec revNormal;
-			//_simplex.computeClosestPointToOriginInTriangle(closestTriangleId, revNormal);
-			//distance = revNormal.norme();
-			//const float MIN_PENETRATION = 0.0001f;
-			//if (distance <= MIN_PENETRATION)
-			//{
-			//	revNormal = triangleNormal * -1;
-			//	/*_normal = triangleNormal;
-			//	return true;*/
-			//}
-			snVec revNormal = triangleNormal * -1;
-			//find a new point for the simplex.
-			snVec newVertex = support(_c1, _c2, revNormal);
-
-			//check if we are closer to the origin
-			float newPointDistance = snVec4GetX(snVec3Dot(revNormal, newVertex));
-
-			snVec triangle[3];
-			_simplex.getTriangle(closestTriangleId, triangle[0], triangle[1], triangle[2]);
-			const float EPA_TOLERANCE = 0.01f;
-			if ((newPointDistance - distance) < EPA_TOLERANCE ||
-				newVertex == triangle[0] ||
-				newVertex == triangle[1] ||
-				newVertex == triangle[2])
-			{
-				snVec3Normalize(revNormal);
-				_normal = revNormal * -1;
-				return true;
-			}			
-
-			//add the new vertex
-			int newVertexId = _simplex.addVertex(newVertex);
-			int id0, id1, id2;
-			_simplex.getTriangle(closestTriangleId, id0, id1, id2);
-
-			//split the first edge
-			{
-				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[0], triangle[1], snVec4Set(0, 0, 0, 1));
-				snVec we1 = support(_c1, _c2, ve1);
-				if (!(snVec3Dot(ve1, we1) == snVec3Dot(ve1, ve1)))
-				{
-					int edgeVertexId = _simplex.addVertex(we1);
-					_simplex.addTriangle(id0, edgeVertexId, newVertexId);
-					_simplex.addTriangle(edgeVertexId, id1, newVertexId);
-				}
-				else
-				{
-					_simplex.addTriangle(id0, id1, newVertexId);
-				}
-			}
-			//split the second edge
-			{
-				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[1], triangle[2], snVec4Set(0, 0, 0, 1));
-				snVec we1 = support(_c1, _c2, ve1);
-				if (!(snVec3Dot(ve1, we1) == snVec3Dot(ve1, ve1)))
-				{
-					int edgeVertexId = _simplex.addVertex(we1);
-					_simplex.addTriangle(id1, edgeVertexId, newVertexId);
-					_simplex.addTriangle(edgeVertexId, id2, newVertexId);
-				}
-				else
-				{
-					_simplex.addTriangle(id1, id2, newVertexId);
-				}
-			}
-			//split the third edge
-			{
-				snVec ve1 = _simplex.computeClosestPointForSegment(triangle[2], triangle[0], snVec4Set(0, 0, 0, 1));
-				snVec we1 = support(_c1, _c2, ve1);
-				if (!(snVec3Dot(ve1, we1) == snVec3Dot(ve1, ve1)))
-				{
-					int edgeVertexId = _simplex.addVertex(we1);
-					_simplex.addTriangle(id2, edgeVertexId, newVertexId);
-					_simplex.addTriangle(edgeVertexId, id0, newVertexId);
-				}
-				else
-				{
-					_simplex.addTriangle(id2, id0, newVertexId);
-				}
-			}
-			_simplex.setTriangleValidity(closestTriangleId, false);
-			//_simplex.expand(newVertex, closestTriangleId);
-		}
 	}
 
 	snVec snGJK::updateSimplex(snVec* _s, int& _n)

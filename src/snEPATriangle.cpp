@@ -1,0 +1,183 @@
+/****************************************************************************/
+/*Copyright (c) 2014, Florent DEVILLE.                                      */
+/*All rights reserved.                                                      */
+/*                                                                          */
+/*Redistribution and use in source and binary forms, with or without        */
+/*modification, are permitted provided that the following conditions        */
+/*are met:                                                                  */
+/*                                                                          */
+/* - Redistributions of source code must retain the above copyright         */
+/*notice, this list of conditions and the following disclaimer.             */
+/* - Redistributions in binary form must reproduce the above                */
+/*copyright notice, this list of conditions and the following               */
+/*disclaimer in the documentation and/or other materials provided           */
+/*with the distribution.                                                    */
+/* - The names of its contributors cannot be used to endorse or promote     */
+/*products derived from this software without specific prior written        */
+/*permission.                                                               */
+/* - The source code cannot be used for commercial purposes without         */
+/*its contributors' permission.                                             */
+/*                                                                          */
+/*THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS       */
+/*"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT         */
+/*LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS         */
+/*FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE            */
+/*COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,       */
+/*INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,      */
+/*BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;          */
+/*LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER          */
+/*CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT        */
+/*LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN         */
+/*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
+/*POSSIBILITY OF SUCH DAMAGE.                                               */
+/****************************************************************************/
+#include "snEPATriangle.h"
+#include "snEPASimplex.h"
+
+#include <assert.h>
+#include <new>
+
+using namespace Supernova::Vector;
+
+namespace Supernova
+{
+	snEPATriangle::snEPATriangle()
+	{
+		m_verticesId[0] = 0;
+		m_verticesId[1] = 0;
+		m_verticesId[2] = 0;
+		m_isObsolete = false;
+	}
+
+	snEPATriangle::snEPATriangle(const snSimplex& _simplex, unsigned int _idVertex0, unsigned int _idVertex1, unsigned int _idVertex2)
+	{
+		m_verticesId[0] = _idVertex0;
+		m_verticesId[1] = _idVertex1;
+		m_verticesId[2] = _idVertex2;
+		m_isObsolete = false;
+
+		//compute normal
+		m_normal = snVec3Cross(_simplex.getVertex(1) - _simplex.getVertex(0), _simplex.getVertex(2) - _simplex.getVertex(0));
+		snVec3Normalize(m_normal);
+	}
+
+	snEPATriangle::~snEPATriangle()
+	{}
+
+	unsigned int snEPATriangle::getVertexId(unsigned int _id) const
+	{
+		assert(_id >= 0 && _id <= 2);
+		return m_verticesId[_id];
+	}
+
+	bool snEPATriangle::getIsObsolete() const
+	{
+		return m_isObsolete;
+	}
+
+	snEPAEdge& snEPATriangle::getAdjacentEdge(unsigned int _id)
+	{
+		return m_adjacentEdges[_id];
+	}
+
+	snVec snEPATriangle::getNormal() const
+	{
+		return m_normal;
+	}
+
+	bool snEPATriangle::setAdjacentEdge(const snEPAEdge& _adjacent, unsigned int _id)
+	{
+		//Check if the vertices match between the two triangles
+		bool valid = (m_verticesId[_id] == _adjacent.getEndVertexId()) && (m_verticesId[(_id + 1) % 3] == _adjacent.getStartVertexId());
+		assert(valid);
+		if (!valid)
+			return false;
+
+		//Set the edge
+		m_adjacentEdges[_id] = _adjacent;
+		return true;
+	}
+
+	bool snEPATriangle::setAdjacentEdge(snEPATriangle* _triangle, unsigned int _adjacentEdgeId, unsigned int _edgeId)
+	{
+		//Check if the vertices match between the two triangles
+		bool valid = (m_verticesId[_edgeId] == _triangle->getVertexId((_adjacentEdgeId + 1) % 3)) 
+			&& (m_verticesId[(_edgeId + 1) % 3] == _triangle->getVertexId(_adjacentEdgeId));
+		if (!valid)
+			return false;
+
+		snEPAEdge* edge = &m_adjacentEdges[_edgeId];
+		new (edge)snEPAEdge(_triangle, _adjacentEdgeId);
+		return true;
+	}
+
+	void snEPATriangle::setIsObsolete(bool _isObsolete)
+	{
+		m_isObsolete = _isObsolete;
+	}
+
+	bool snEPATriangle::isVisibleFromVertex(const snSimplex& _simplex, unsigned int _id)
+	{
+		snVec dot = snVec3Dot(m_normal, _simplex.getVertex(_id) - _simplex.getVertex(0));
+
+		return !snVec3Inferior(dot, VEC_ZERO);
+	}
+
+	void snEPATriangle::quickHull(snSimplex& _simplex, unsigned int _id)
+	{
+		//the new vertex is visible from the triangle (it's a precondition).
+		setIsObsolete(true);
+
+		//Save the number of triangle in the simplex
+		unsigned int savedTriangleCount = _simplex.getVertexCount();
+
+		//Recursive call to apply quickhull to other triangles
+		m_adjacentEdges[0].quickHull(_simplex, _id);
+		m_adjacentEdges[1].quickHull(_simplex, _id);
+		m_adjacentEdges[2].quickHull(_simplex, _id);
+
+		unsigned int j = _simplex.getVertexCount() - 1;
+		for (unsigned int i = savedTriangleCount; i != _simplex.getVertexCount(); j = i++)
+		{
+			//make the other halflinks
+			snEPATriangle* newTriangle = _simplex.getTriangle(i);
+			snEPATriangle* existingTriangle = newTriangle->getAdjacentEdge(0).getOwner();
+			existingTriangle->setAdjacentEdge(newTriangle, 1, newTriangle->getAdjacentEdge(1).getId());
+
+			//make the two other links
+			newTriangle->setAdjacentEdge(_simplex.getTriangle(j), 2, 0);
+			_simplex.getTriangle(j)->setAdjacentEdge(newTriangle, 0, 2);
+		}
+	}
+
+	void snEPATriangle::computeClosestPointToOrigin(const snSimplex& _simplex, snVec& _closestPoint, float& _distance)
+	{
+		snVec p0 = _simplex.getVertex(m_verticesId[0]);
+
+		snVec v1 = _simplex.getVertex(m_verticesId[1]) - p0;
+		snVec v2 = _simplex.getVertex(m_verticesId[2]) - p0;
+
+		snVec v1Dotv1 = snVec3Dot(v1, v1);
+		snVec v1Dotv2 = snVec3Dot(v1, v2);
+		snVec v2Dotv2 = snVec3Dot(v2, v2);
+		snVec p0Dotv1 = snVec3Dot(p0, v1);
+		snVec p0Dotv2 = snVec3Dot(p0, v2);
+
+		// Compute determinant
+		snVec det = v1Dotv1 * v2Dotv2 - v1Dotv2 * v1Dotv2;
+
+		// Compute lambda values
+		snVec lambda1 = p0Dotv2 * v1Dotv2 - p0Dotv1 * v2Dotv2;
+		snVec lambda2 = p0Dotv1 * v1Dotv2 - p0Dotv2 * v1Dotv1;
+
+		// the determinant must be positive
+		assert(snVec3Inferior(VEC_ZERO, det));
+		
+		// Compute the closest point v
+		_closestPoint = p0 + snVec4Set(1, 1, 1, 0) / det * (lambda1 * v1 + lambda2 * v2);
+
+		// Compute the distance of closest point to the origin
+		_distance = snVec3Norme(_closestPoint);
+
+	}
+}

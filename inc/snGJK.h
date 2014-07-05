@@ -81,11 +81,6 @@ namespace Supernova
 		//Check a simplex made of four points (tetrahedron).
 		bool checkThreeSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
 
-		//Expand a simplex and return the collision normal.
-		snVec expandPolytope(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2) const;
-
-		bool expandPolytopeV2(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal) const;
-
 		static snVec updateSimplex(snVec* _s, int& _n);
 
 		static snVec updateTwoSimplex(snVec* _s, int& _n);
