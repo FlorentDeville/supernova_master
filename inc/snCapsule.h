@@ -51,6 +51,12 @@ namespace Supernova
 		//Second end point of the capsule
 		snVec m_b;
 
+		//First endpoint in local frame.
+		snVec m_localA;
+		
+		//Second end point in local frame.
+		snVec m_localB;
+
 		//Radius of the capsule
 		float m_radius;
 

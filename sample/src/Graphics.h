@@ -37,6 +37,7 @@ namespace Devil
 
 	class GfxEntitySphere;
 	class GfxEntityBox;
+	class GfxEntityCylinder;
 	class GfxEntityPlan;
 	class Texture;
 
@@ -81,10 +82,13 @@ namespace Devil
 		SpriteFont* m_spriteFontConsolas;
 
 		//Id of the box graphic entity
-		unsigned int m_IdBox;
+		unsigned int m_idBox;
 
 		//Id of the sphere graphic entity
-		unsigned int m_IdSphere;
+		unsigned int m_idSphere;
+
+		//Id of the cylinder entity
+		unsigned int m_idCylinder;
 
 		//Id of the checker texture
 		unsigned int m_IdTexChecker;
@@ -140,6 +144,8 @@ namespace Devil
 
 		IGfxEntity* getSphere();
 
+		IGfxEntity* getCylinder();
+
 		Texture* getTexture(unsigned int _id);
 
 		Texture* getTexChecker();
@@ -151,6 +157,8 @@ namespace Devil
 		GfxEntityBox* createBox();
 
 		GfxEntitySphere* createSphere();
+
+		GfxEntityCylinder* createCylinder();
 	};
 
 #define GRAPHICS Graphics::getInstance()

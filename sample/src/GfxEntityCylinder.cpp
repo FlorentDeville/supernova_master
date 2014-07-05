@@ -32,104 +32,40 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SCENE_MANAGER_H
-#define SCENE_MANAGER_H
-
-#include <malloc.h>
-
-#include "snCollisionMode.h"
-
-namespace Supernova
-{
-	class snScene;
-}
-
-#include "snVec.h"
-using Supernova::snVec;
-using Supernova::snScene;
-using Supernova::snCollisionMode;
-
-#include <DirectXMath.h>
-using DirectX::XMFLOAT4;
-
-#include <string>
-using std::wstring;
+#include "GfxEntityCylinder.h"
+#include "Texture.h"
 
 namespace Devil
 {
-	class IComponent;
-	class EntityComposite;
-
-	class SceneManager
+	GfxEntityCylinder::GfxEntityCylinder()
 	{
-	private:
-		static SceneManager* m_instance;
 
-		//The collision mode to use when creating a scene.
-		snCollisionMode m_collisionMode;
+	}
 
-		//Array of colors
-		XMFLOAT4 m_colors[5];
+	GfxEntityCylinder::~GfxEntityCylinder()
+	{
 
-		IComponent* m_dominoHammerBlockerPath;
+	}
 
-	public:
-		static SceneManager* getInstance();
+	bool GfxEntityCylinder::initialize(ID3D11DeviceContext* _device)
+	{
+		m_primitive = GeometricPrimitive::CreateCylinder(_device, 1.f, 2.f, 32U, false);
+		return true;
+	}
 
-		bool initialize();
-		void shutdown();
+	void GfxEntityCylinder::shutdown()
+	{
 
-		void update();
+	}
 
-		//Scene with simple boxes interactions.
-		void createBasicTest();
+	void GfxEntityCylinder::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color,
+		const Texture* const _texture, bool _wireframe)
+	{
+		ID3D11ShaderResourceView* resource = 0;
+		if (_texture != 0)
+			resource = _texture->getTexture();
 
-		//Box Stacking
-		void createStacking();
-
-		//Constraints (rope)
-		void createConstraints();
-
-		//Stack
-		void createTower();
-
-		void createSceneFriction();
-
-		void createSceneDamping();
-
-		//Show difference between static, dynamic and kinematic
-		void createSceneActorsType();
-
-		void createSceneDomino();
-
-		void createSceneComposite();
-
-		void createSceneMonkeyBall();
-
-		void createSceneGJK();
-
-		void setCollisionMode(snCollisionMode _collisionMode);
-		
-		void createGround(snScene* const _scene, float _restitution, float _friction);
-
-		void activateDominoSceneHammerBlocker();
-
-	private:
-		SceneManager();
-		virtual ~SceneManager();
-
-		void clearScene() const;
-
-		snVec createTowerLevel(snScene* const _scene, const snVec& _origin) const;
-
-		//Create the bisic actor of the world.
-		void createSandbox(const std::wstring& _sceneName);
-
-		EntityComposite* createWheel(const snVec& _position, const snVec& _orientation, const XMFLOAT4& _color, float _length);
-	};
-
-#define SCENEMGR SceneManager::getInstance()
+		m_primitive->Draw(_world, _view, _projection, _color, resource, _wireframe);
+	}
 
 }
-
-#endif //ifndef SCENE_MANAGER_H

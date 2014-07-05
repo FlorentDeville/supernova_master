@@ -47,6 +47,8 @@
 #include "snActorStatic.h"
 #include "snOBB.h"
 #include "snSphere.h"
+#include "snCapsule.h"
+
 #include "snQuaternion.h"
 #include "snDebugger.h"
 
@@ -147,11 +149,11 @@ namespace Devil
 			createSceneComposite();
 			INPUT->keyUp(120);
 		}
-		else if (INPUT->isKeyDown(121))//F10
+		else if (INPUT->isKeyDown('9'))//9
 		{
 			clearScene();
-			createSceneMonkeyBall();
-			INPUT->keyUp(121);
+			createSceneGJK();
+			INPUT->keyUp('9');
 		}
 	}
 
@@ -1357,6 +1359,46 @@ namespace Devil
 		ComponentBackground* cBack = new ComponentBackground(actEnvironment, ball, initialPosition, initialOrientation);
 		entity->addPreUpdateComponent(cBack);
 
+	}
+
+	void SceneManager::createSceneGJK()
+	{
+		createSandbox(L"GJK");
+
+		snScene* scene = SUPERNOVA->getScene(0);
+
+		//create box
+		snActorDynamic* actBox = 0;
+		int boxId = -1;
+		scene->createActorDynamic(&actBox, boxId);
+
+		snOBB* colBox = new snOBB(snVec4Set(5, 1, 1, 0));
+		actBox->setPosition(snVec4Set(0, 10, 0, 1));
+		actBox->setOrientation(snVec4Set(0, 0, 0, 1));
+		actBox->addCollider(colBox);
+		actBox->updateMassAndInertia(10);
+		actBox->initialize();
+
+		WORLD->createComposite(actBox, m_colors[2]);
+
+		//create cylinder
+		snActorDynamic* actCapsule = 0;
+		int cylinderId = 0;
+
+		scene->createActorDynamic(&actCapsule, cylinderId);
+
+		snCapsule* colCapsule = new snCapsule(10, 5);
+		actCapsule->setPosition(snVec4Set(10, 15, 0, 1));
+		actCapsule->setOrientation(snVec4Set(0, 0, 0, 1));
+		actCapsule->addCollider(colCapsule);
+		actCapsule->setIsKinematic(true);
+		actCapsule->initialize();
+
+		WORLD->createComposite(actCapsule, m_colors[3]);
+
+		//set camera position
+		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -80, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 0, 1));
 	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)

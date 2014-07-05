@@ -172,6 +172,9 @@
     <ClCompile Include="..\src\VecLinearDamper.cpp">
       <Filter>Helper\Damper</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\GfxEntityCylinder.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -302,6 +305,9 @@
     </ClInclude>
     <ClInclude Include="..\src\VecLinearDamper.h">
       <Filter>Helper\Damper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GfxEntityCylinder.h">
+      <Filter>Graphics\GfxEntities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

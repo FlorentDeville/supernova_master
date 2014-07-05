@@ -32,104 +32,36 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SCENE_MANAGER_H
-#define SCENE_MANAGER_H
+#ifndef GFX_ENTITY_CYLINDER_H
+#define GFX_ENTITY_CYLINDER_H
 
-#include <malloc.h>
+#include "IGfxEntity.h"
 
-#include "snCollisionMode.h"
+#include "GeometricPrimitive.h"
+using DirectX::GeometricPrimitive;
 
-namespace Supernova
-{
-	class snScene;
-}
-
-#include "snVec.h"
-using Supernova::snVec;
-using Supernova::snScene;
-using Supernova::snCollisionMode;
-
-#include <DirectXMath.h>
-using DirectX::XMFLOAT4;
-
-#include <string>
-using std::wstring;
+#include <memory>
 
 namespace Devil
 {
-	class IComponent;
-	class EntityComposite;
-
-	class SceneManager
+	class GfxEntityCylinder : public IGfxEntity
 	{
 	private:
-		static SceneManager* m_instance;
 
-		//The collision mode to use when creating a scene.
-		snCollisionMode m_collisionMode;
-
-		//Array of colors
-		XMFLOAT4 m_colors[5];
-
-		IComponent* m_dominoHammerBlockerPath;
+		std::unique_ptr<GeometricPrimitive> m_primitive;
 
 	public:
-		static SceneManager* getInstance();
+		GfxEntityCylinder();
 
-		bool initialize();
+		virtual ~GfxEntityCylinder();
+
+		bool initialize(ID3D11DeviceContext* _device);
+
 		void shutdown();
 
-		void update();
-
-		//Scene with simple boxes interactions.
-		void createBasicTest();
-
-		//Box Stacking
-		void createStacking();
-
-		//Constraints (rope)
-		void createConstraints();
-
-		//Stack
-		void createTower();
-
-		void createSceneFriction();
-
-		void createSceneDamping();
-
-		//Show difference between static, dynamic and kinematic
-		void createSceneActorsType();
-
-		void createSceneDomino();
-
-		void createSceneComposite();
-
-		void createSceneMonkeyBall();
-
-		void createSceneGJK();
-
-		void setCollisionMode(snCollisionMode _collisionMode);
-		
-		void createGround(snScene* const _scene, float _restitution, float _friction);
-
-		void activateDominoSceneHammerBlocker();
-
-	private:
-		SceneManager();
-		virtual ~SceneManager();
-
-		void clearScene() const;
-
-		snVec createTowerLevel(snScene* const _scene, const snVec& _origin) const;
-
-		//Create the bisic actor of the world.
-		void createSandbox(const std::wstring& _sceneName);
-
-		EntityComposite* createWheel(const snVec& _position, const snVec& _orientation, const XMFLOAT4& _color, float _length);
+		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color,
+			const Texture* const _texture, bool _wireframe);
 	};
-
-#define SCENEMGR SceneManager::getInstance()
-
 }
 
-#endif //ifndef SCENE_MANAGER_H
+#endif //ifndef GFX_ENTITY_CYLINDER_H

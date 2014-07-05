@@ -39,6 +39,7 @@
 #include "snColliderContainer.h"
 #include "snOBB.h"
 #include "snSphere.h"
+#include "snCapsule.h"
 #include "snVec.h"
 
 #include "Graphics.h"
@@ -107,6 +108,42 @@ namespace Devil
 					snSphere* sphere = static_cast<snSphere*>((*i)->m_collider);
 					scale.createScale(sphere->getRadius() * 2);
 					gfx = GRAPHICS->getSphere();
+				}
+				break;
+
+				case snEColliderType::snEColliderCapsule:
+				{
+					snCapsule* capsule = static_cast<snCapsule*>((*i)->m_collider);
+					float diameter = capsule->getRadius() * 2;
+
+					//draw the first sphere
+					scale.createScale(diameter);
+					snMatrix44f translate;
+					translate.createTranslation(capsule->getFirstEndPoint());
+					snMatrixMultiply4(scale, translate, worldTransform);
+					XMMATRIX dxWorldMatrix;
+					dxWorldMatrix.r[0] = worldTransform.m_r[0];
+					dxWorldMatrix.r[1] = worldTransform.m_r[1];
+					dxWorldMatrix.r[2] = worldTransform.m_r[2];
+					dxWorldMatrix.r[3] = worldTransform.m_r[3];
+
+					gfx = GRAPHICS->getSphere();
+					gfx->render(dxWorldMatrix, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
+
+					//draw the second sphere
+					translate.createTranslation(capsule->getSecondEndPoint());
+					snMatrixMultiply4(scale, translate, worldTransform);
+					dxWorldMatrix.r[0] = worldTransform.m_r[0];
+					dxWorldMatrix.r[1] = worldTransform.m_r[1];
+					dxWorldMatrix.r[2] = worldTransform.m_r[2];
+					dxWorldMatrix.r[3] = worldTransform.m_r[3];
+					gfx->render(dxWorldMatrix, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
+
+					//prepare the capsule
+					snMatrixMultiply4((*i)->m_localTransform, globalTransform, temp);
+					float length = Supernova::Vector::snVec3Norme(capsule->getFirstEndPoint() - capsule->getSecondEndPoint());
+					scale.createScale(Supernova::Vector::snVec4Set(capsule->getRadius(), length, capsule->getRadius(), 1));
+					gfx = GRAPHICS->getCylinder();
 				}
 				break;
 

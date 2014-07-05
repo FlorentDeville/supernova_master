@@ -41,16 +41,21 @@ namespace Supernova
 	snCapsule::snCapsule(float _length, float _radius)
 	{
 		m_typeOfCollider = snEColliderCapsule;
+		m_radius = _radius;
 
 		float halfLength = _length * 0.5f;
-		m_a = snVec4Set(0, -halfLength, 0, 1);
-		m_b = snVec4Set(0, halfLength, 0, 1);
-		m_radius = _radius;
+		m_localA = snVec4Set(0, -halfLength, 0, 1);
+		m_localB = snVec4Set(0, halfLength, 0, 1);
+
+		m_a = m_localA;
+		m_b = m_localB;
 	}
 
 	snCapsule::snCapsule(const snVec& _a, const snVec& _b, float _radius)
 	{
 		m_typeOfCollider = snEColliderCapsule;
+		m_localA = _a;
+		m_localB = _b;
 		m_a = _a;
 		m_b = _b;
 		m_radius = _radius;
@@ -78,8 +83,8 @@ namespace Supernova
 
 	void snCapsule::setTransform(const snMatrix44f& _transform)
 	{
-		m_a = snMatrixTransform4(m_a, _transform);
-		m_b = snMatrixTransform4(m_b, _transform);
+		m_a = snMatrixTransform4(m_localA, _transform);
+		m_b = snMatrixTransform4(m_localB, _transform);
 	}
 
 	void snCapsule::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const

@@ -14,6 +14,7 @@
 #include "GfxEntitySphere.h"
 #include "GfxEntityBox.h"
 #include "GfxEntityPlan.h"
+#include "GfxEntityCylinder.h"
 
 #include <DirectXMath.h>
 #include <SpriteBatch.h>
@@ -32,7 +33,8 @@ namespace Devil
 		return m_Instance;
 	}
 
-	Graphics::Graphics() : m_screenWidth(0), m_screenHeight(0), m_clearScreenColor(Colors::Black), m_spriteBatch(0), m_spriteFontConsolas(0)
+	Graphics::Graphics() : m_screenWidth(0), m_screenHeight(0), m_clearScreenColor(Colors::Black), m_spriteBatch(0), m_spriteFontConsolas(0),
+		m_idBox(255), m_idSphere(255), m_idCylinder(255)
 	{
 		m_D3D = 0;
 		m_Camera = 0;
@@ -167,12 +169,17 @@ namespace Devil
 
 	IGfxEntity* Graphics::getBox()
 	{
-		return m_entityList[m_IdBox];
+		return m_entityList[m_idBox];
 	}
 
 	IGfxEntity* Graphics::getSphere()
 	{
-		return m_entityList[m_IdSphere];
+		return m_entityList[m_idSphere];
+	}
+
+	IGfxEntity* Graphics::getCylinder()
+	{
+		return m_entityList[m_idCylinder];
 	}
 
 	Texture* Graphics::getTexture(unsigned int _id)
@@ -224,6 +231,7 @@ namespace Devil
 		//load meshes
 		createBox();
 		createSphere();
+		createCylinder();
 
 		Texture* myTexture = new Texture();
 		if (!myTexture->loadWIC(L"check.png"))
@@ -279,20 +287,29 @@ namespace Devil
 
 	GfxEntitySphere* Graphics::createSphere()
 	{
-		GfxEntitySphere* NewSphere = new GfxEntitySphere();
-		NewSphere->initialize(m_D3D->getDeviceContext());
-		m_IdSphere = m_entityList.size();
-		m_entityList.push_back(dynamic_cast<IGfxEntity*>(NewSphere));
-		return NewSphere;
+		GfxEntitySphere* sphere = new GfxEntitySphere();
+		sphere->initialize(m_D3D->getDeviceContext());
+		m_idSphere = m_entityList.size();
+		m_entityList.push_back(dynamic_cast<IGfxEntity*>(sphere));
+		return sphere;
+	}
+
+	GfxEntityCylinder* Graphics::createCylinder()
+	{
+		GfxEntityCylinder* cylinder = new GfxEntityCylinder();
+		cylinder->initialize(m_D3D->getDeviceContext());
+		m_idCylinder = m_entityList.size();
+		m_entityList.push_back(dynamic_cast<IGfxEntity*>(cylinder));
+		return cylinder;
 	}
 
 	GfxEntityBox* Graphics::createBox()
 	{
-		GfxEntityBox* NewBox = new GfxEntityBox();
-		NewBox->initialize(m_D3D->getDeviceContext());
-		m_IdBox = m_entityList.size();
-		m_entityList.push_back(dynamic_cast<IGfxEntity*>(NewBox));
-		return NewBox;
+		GfxEntityBox* box = new GfxEntityBox();
+		box->initialize(m_D3D->getDeviceContext());
+		m_idBox = m_entityList.size();
+		m_entityList.push_back(dynamic_cast<IGfxEntity*>(box));
+		return box;
 	}
 
 	GfxEntityPlan* Graphics::createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color)
