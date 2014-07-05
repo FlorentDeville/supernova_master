@@ -96,15 +96,15 @@ namespace Supernova
 		/*Calculate the closest point to the box of the point given in parameter.*/
 		snVec getClosestPoint(const snVec&) const;
 
-		//get the closest polygon projected onto the normal.
-		void getClosestPolygonProjected(const snVec& _n, snVec* const _polygon, int& _count) const;
+		//Return the feature the farthest along the normal.
+		//_n : direction along which the search of the farthest feature has to be done.
+		//_polygon : array of 4 vectors filled by the function containing the feature. 
+		//_count : the number of vectors in the features. Always 4.
+		//_featureId : unique id of the feature.
+		void getClosestFeature(const snVec& _n, snVec* const _polygon, unsigned int& _count, unsigned int& _featureId) const;
 
 		//return the normal in workd coordinate of the face
-		snVec getWorldNormalOfFace(int _faceId) const;
-
-		const int* getAdjacentFaces(int _faceId) const;
-
-		snVec getWorldVertexOfFace(int _faceId) const;
+		snVec getFeatureNormal(unsigned int _featureId) const;
 
 		//Compute the bounding volume for this collider
 		void computeAABB(snAABB * const _boundingVolume) const;

@@ -107,15 +107,15 @@ namespace Supernova
 
 		//down
 		m_idFaces[12] = 1;
-		m_idFaces[13] = 5;
+		m_idFaces[13] = 2;
 		m_idFaces[14] = 6;
-		m_idFaces[15] = 2;
+		m_idFaces[15] = 5;
 
 		//back
 		m_idFaces[16] = 7;
-		m_idFaces[17] = 6;
+		m_idFaces[17] = 4;
 		m_idFaces[18] = 5;
-		m_idFaces[19] = 4;
+		m_idFaces[19] = 6;
 
 		//left
 		m_idFaces[20] = 6;
@@ -294,7 +294,7 @@ namespace Supernova
 		return ret + m_pos;
 	}
 
-	void snOBB::getClosestPolygonProjected(const snVec& _n, snVec* const _polygon, int& _faceId) const
+	void snOBB::getClosestFeature(const snVec& _n, snVec* const _polygon, unsigned int& _count, unsigned int& _featureId) const
 	{
 		//find the closest point projected onto the normal
 		float min = SN_FLOAT_MAX;
@@ -332,16 +332,17 @@ namespace Supernova
 			}
 		}
 
-		_faceId = int(minPolyId * 0.25f);
+		_featureId = int(minPolyId * 0.25f);
 		_polygon[0] = m_worldBox[m_idFaces[minPolyId]];
 		_polygon[1] = m_worldBox[m_idFaces[minPolyId + 1]];
 		_polygon[2] = m_worldBox[m_idFaces[minPolyId + 2]];
 		_polygon[3] = m_worldBox[m_idFaces[minPolyId + 3]];
+		_count = 4;
 	}
 
-	snVec snOBB::getWorldNormalOfFace(int _faceId) const
+	snVec snOBB::getFeatureNormal(unsigned int _featureId) const
 	{
-		switch (_faceId)
+		switch (_featureId)
 		{
 		case 0: //front
 			return m_normals[2] * -1;
@@ -373,16 +374,6 @@ namespace Supernova
 			break;
 
 		}
-	}
-
-	const int* snOBB::getAdjacentFaces(int _faceId) const
-	{
-		return m_facesAdjacent[_faceId];
-	}
-
-	snVec snOBB::getWorldVertexOfFace(int _faceId) const
-	{
-		return m_worldBox[m_idFaces[_faceId * 4]];
 	}
 
 	void snOBB::computeAABB(snAABB * const _boundingVolume) const

@@ -196,7 +196,6 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[1]);
-			_ASSERTE(_CrtCheckMemory());
 			box->setActor(act);
 
 			blockOneHeight = snVec4GetY(pos) + height * 0.5f;
@@ -231,7 +230,7 @@ namespace Devil
 
 			platformHeight = snVec4GetY(pos) + height * 0.5f;
 		}
-
+		
 		//second block
 		float blockTwoHeight = 0;
 		{
@@ -291,7 +290,7 @@ namespace Devil
 
 			blockThreeHeight = snVec4GetY(pos) + height * 0.5f;
 		}
-
+		
 		//dynamic
 		{
 			float width = 3;

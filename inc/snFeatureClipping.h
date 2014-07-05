@@ -64,6 +64,7 @@ namespace Supernova
 		//Compute the intersection between a plane and a line.
 		void computeIntersection(const snVec& _n, float _d, const snVec& _start, const snVec& _end, snVec& _intersection) const;
 
+		void test_newClipping(snVec* _reference, const snVec& referenceNormal, snVec* _incident, snVecVector& _result) const;
 	};
 }
 

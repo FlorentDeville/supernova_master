@@ -48,71 +48,23 @@ namespace Supernova
 		snVecVector& _patch, vector<float>& _patchPenetrations) const
 	{
 		//find the closest polygon
-		snVec closestPolygonB1[4];
-		snVec closestPolygonB2[4];
+		snVec feature1[4];
+		snVec feature2[4];
 
-		int FaceIdB1, FaceIdB2;
-		_c1.getClosestPolygonProjected(_normal, closestPolygonB1, FaceIdB1);
-		_c2.getClosestPolygonProjected(_normal * -1, closestPolygonB2, FaceIdB2);
+		unsigned int featureSize1, featureSize2;
+		unsigned int featureId1, featureId2;
+		_c1.getClosestFeature(_normal, feature1, featureSize1, featureId1);
+		_c2.getClosestFeature(_normal * -1, feature2, featureSize2, featureId2);
 
-		//find the reference polygon. It is the polygon the most orthogonal to the normal. So the dot product between the poly normal and the
-		//collision normal is the bigger.
-		snVec edge1B1 = closestPolygonB1[1] - closestPolygonB1[0];
-		snVec edge2B1 = closestPolygonB1[1] - closestPolygonB1[2];
-		snVec NormalB1 = snVec3Cross(edge1B1, edge2B1);
-		snVec3Normalize(NormalB1);
-		snVec dotB1 = snVec3Dot(NormalB1, _normal);
+		const snICollider* ReferenceBox = &_c1;
+		unsigned int ReferenceFaceId = featureId1;
+		snVec* Reference = feature1;
+		snVec* Incident = feature2;
 
-		snVec edge1B2 = closestPolygonB2[1] - closestPolygonB2[0];
-		snVec edge2B2 = closestPolygonB2[1] - closestPolygonB2[2];
-		snVec NormalB2 = snVec3Cross(edge1B2, edge2B2);
-		snVec3Normalize(NormalB2);
-		snVec dotB2 = snVec3Dot(NormalB2, _normal);
-
-		snVec* Reference = 0;
-		snVec* Incident = 0;
-		const snICollider* ReferenceBox;
-		const snICollider* IncidentBox;
-		int ReferenceFaceId, IncidentFaceId;
-		if (snVec3Inferior(dotB1, dotB2))
-		{
-			Reference = closestPolygonB2;
-			Incident = closestPolygonB1;
-			ReferenceBox = &_c2;
-			IncidentBox = &_c1;
-			ReferenceFaceId = FaceIdB2;
-			IncidentFaceId = FaceIdB1;
-		}
-		else
-		{
-			Reference = closestPolygonB1;
-			Incident = closestPolygonB2;
-			ReferenceBox = &_c1;
-			IncidentBox = &_c2;
-			ReferenceFaceId = FaceIdB1;
-			IncidentFaceId = FaceIdB2;
-		}
-
-		//get the list of plan to use for clipping
-		const int* adjacentFaces = ReferenceBox->getAdjacentFaces(ReferenceFaceId);
+		//Loop through each edge of the plane
+		snVec referencePlaneNormal = ReferenceBox->getFeatureNormal(ReferenceFaceId);
 		snVecVector incidentPolygon;
-		incidentPolygon.reserve(4);
-		for (int i = 0; i < 4; ++i)
-			incidentPolygon.push_back(Incident[i]);
-
-		//loop through each adjacent faces
-		for (int i = 0; i < 4; ++i)
-		{
-			snVec adjacentNormal = ReferenceBox->getWorldNormalOfFace(adjacentFaces[i]);
-			snVec vertexInPlan = ReferenceBox->getWorldVertexOfFace(adjacentFaces[i]);
-
-			float d = snVec4GetX(snVec3Dot(adjacentNormal, vertexInPlan));
-
-			//clip the incident polygon using the plane
-			snVecVector clipped;
-			clipPolygon(incidentPolygon, adjacentNormal, d, clipped);
-			incidentPolygon.swap(clipped);
-		}
+		test_newClipping(Reference, referencePlaneNormal, Incident, incidentPolygon);
 
 		if (incidentPolygon.size() == 0)
 		{
@@ -120,15 +72,11 @@ namespace Supernova
 		}
 
 		assert(incidentPolygon.size() > 0);
-
-		
+	
 		//if more than one vertices left, clip using the reference plane
 		if (incidentPolygon.size() > 0)
 		{
-			
-			snVec adjacentNormal = ReferenceBox->getWorldNormalOfFace(ReferenceFaceId);
-			snVec vertexInPlan = ReferenceBox->getWorldVertexOfFace(ReferenceFaceId);
-			snVec d = snVec3Dot(adjacentNormal, vertexInPlan);
+			snVec d = snVec3Dot(referencePlaneNormal, Reference[0]);
 
 			//Reserve space to avoid several dynamic allocations
 			_patchPenetrations.reserve(incidentPolygon.size());
@@ -136,7 +84,7 @@ namespace Supernova
 
 			for (snVecVectorConstIterator vertex = incidentPolygon.cbegin(); vertex != incidentPolygon.cend(); ++vertex)
 			{
-				snVec dot = d - snVec3Dot(*vertex, adjacentNormal);
+				snVec dot = d - snVec3Dot(*vertex, referencePlaneNormal);
 				//only keep vertices on the good side.
 				if (snVec3SuperiorOrEqual(dot, snVec4Set(0.0f)))
 				{
@@ -215,5 +163,31 @@ namespace Supernova
 		snVec parameter = (snVec3Set(_d) - NDotS) / NDotEdge;
 
 		_intersection = _start + edge * parameter;
+	}
+
+	void snFeatureClipping::test_newClipping(snVec* _reference, const snVec& referenceNormal, snVec* _incident, snVecVector& _result) const
+	{
+		//Loop through each edge of the plane
+		unsigned int previous = 3;
+		_result.reserve(4);
+		for (int i = 0; i < 4; ++i)
+			_result.push_back(_incident[i]);
+
+		for (unsigned int i = 0; i < 4; ++i)
+		{
+			//compute the normal of the clipping plan for the edge going from previous to i.
+			snVec edge = _reference[i] - _reference[previous];
+			snVec outwardNormal = snVec3Cross(referenceNormal, edge);
+			snVec3Normalize(outwardNormal);
+
+			float d = snVec4GetX(snVec3Dot(outwardNormal, _reference[i]));
+
+			//clip the incident polygon using the plane
+			snVecVector clipped;
+			clipPolygon(_result, outwardNormal, d, clipped);
+			_result.swap(clipped);
+
+			previous = i;
+		}
 	}
 }

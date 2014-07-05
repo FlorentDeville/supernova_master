@@ -42,4 +42,6 @@
 #define SN_ALIGN_SIZE 16
 #define SN_ALIGN __declspec(align(SN_ALIGN_SIZE))
 
+#define SN_UNREFERENCED_PARAMETER(P) (P)
+
 #endif //SN_GLOBALS_H

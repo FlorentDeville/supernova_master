@@ -36,6 +36,7 @@
 #define SN_ICOLLIDER_H
 
 #include "snMatrix44f.h"
+#include "snGlobals.h"
 
 namespace Supernova
 {
@@ -78,16 +79,27 @@ namespace Supernova
 		//Compute the inertia tensor in a local frame.
 		virtual void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const = 0;
 
-		//Get the closest polygon projected onto the normal.
-		virtual void getClosestPolygonProjected(const snVec& /*_n*/, snVec* const /*_polygon*/, int& /*_count*/) const{};
+		//Return the feature the farthest along the normal.
+		//_n : direction along which the search of the farthest feature has to be done.
+		//_polygon : array of 4 vectors filled by the function containing the feature. 
+		//_count : the number of vectors in the features : 1 = vertex, 2 = edge, 3 = triangle, 4 = face
+		//_featureId : unique id of the feature.
+		virtual void getClosestFeature(const snVec& _n, snVec* const _polygon, unsigned int& _count, unsigned int& _featureId) const
+		{
+			SN_UNREFERENCED_PARAMETER(_n);
+			SN_UNREFERENCED_PARAMETER(_polygon);
+			SN_UNREFERENCED_PARAMETER(_count);
+			SN_UNREFERENCED_PARAMETER(_featureId);
+			throw;
+		};
 
-		//Get the ids of all the adjacent faces.
-		virtual const int* getAdjacentFaces(int /*_faceId*/) const { return 0; };
-
-		//Return the normal in world coordinate of the face
-		virtual snVec getWorldNormalOfFace(int /*_faceId*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
-
-		virtual snVec getWorldVertexOfFace(int /*_faceId*/) const { return Supernova::Vector::snVec4Set(0, 0, 0, 1); };
+		//Return the normal of a feature.
+		virtual snVec getFeatureNormal(unsigned int _featureId) const 
+		{ 
+			//return Supernova::Vector::snVec4Set(0, 0, 0, 1); 
+			SN_UNREFERENCED_PARAMETER(_featureId);
+			throw;
+		};
 
 		snEColliderType getTypeOfCollider() const { return m_typeOfCollider; }
 
