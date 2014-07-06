@@ -31,21 +31,24 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-
-#ifndef SN_EPA_H
-#define SN_EPA_H
+#ifndef SN_CLOSEST_POINT_H
+#define SN_CLOSEST_POINT_H
 
 #include "snVec.h"
 
 namespace Supernova
 {
-	class snSimplex;
-	class snIGJKCollider;
-
-	class snEPA
+	class snClosestPoint
 	{
 	public:
-		bool execute(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal, float& _depth) const;
+		//Find the closest point _c1 and _c2 of s1 = [_p1 _q1] and s2 = [_p2, _q2].
+		//s1(s) = _p1 + s * (_q1 - _p1)
+		//s2(t) = _p2 + t * (_q2 - _p2)
+		static void SegmentSegment(const snVec& _p1, const snVec& _q1, const snVec& _p2, const snVec& _q2,
+			float& s, float& t, snVec& _c1, snVec& _c2);
+
+		//Find the closest point on a triangle
+		static snVec PointTriangle(const snVec& _p, const snVec& _a, const snVec& _b, const snVec& _c);
 	};
 }
-#endif //ifdnef SN_EPA_H
+#endif //ifndef SN_CLOSEST_POINT_H

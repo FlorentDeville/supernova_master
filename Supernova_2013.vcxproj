@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="inc\AlignmentAllocator.h" />
     <ClInclude Include="inc\snCapsule.h" />
+    <ClInclude Include="inc\snClosestPoint.h" />
     <ClInclude Include="inc\snEPA.h" />
     <ClInclude Include="inc\snEPAEdge.h" />
     <ClInclude Include="inc\snEPATriangle.h" />
@@ -65,6 +66,7 @@
     <ClCompile Include="src\snActorPairManager.cpp" />
     <ClCompile Include="src\snActorStatic.cpp" />
     <ClCompile Include="src\snCapsule.cpp" />
+    <ClCompile Include="src\snClosestPoint.cpp" />
     <ClCompile Include="src\snEPA.cpp" />
     <ClCompile Include="src\snEPAEdge.cpp" />
     <ClCompile Include="src\snEPATriangle.cpp" />

@@ -78,11 +78,17 @@ namespace Supernova
 		//Return the triangle with id _id
 		snEPATriangle* getTriangle(unsigned int _id);
 
+		//Return the number of triangle in the simplex
+		unsigned int getTriangleCount() const;
+
 		//Add a new vertex to the vertex buffer and return the id of the new vertex.
 		unsigned int addVertex(const snVec& _vertex);
 
 		//Add a triangle to the simplex maed with the three vertices with ids _vertexId0, _vertexId1, _vertexId2
 		snEPATriangle* addTriangle(unsigned int _vertexId0, unsigned int _vertexId1, unsigned int _vertexId2);
+
+		//Link two edge1 of triangle1 to edge2 of triangle2.
+		void addLink(snEPATriangle* triangle1, unsigned int _edgeId1, snEPATriangle* triangle2, unsigned int _edgeId2);
 
 		//Return a pointer to the closest triangle to the origin
 		snEPATriangle* getClosestTriangleToOrigin();

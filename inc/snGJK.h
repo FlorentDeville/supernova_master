@@ -63,7 +63,7 @@ namespace Supernova
 		//Check if two colliders are intersecting.
 		snCollisionResult queryIntersection(const snIGJKCollider& _c1, const snIGJKCollider& _c2) const;
 
-		template<class T, class U> static bool gjkIntersect(const T& _a, const U& _b);
+		template<class T, class U> static bool gjkIntersect(const T& _a, const U& _b, snVec* _simplex);
 
 	private:
 		//Compute the point from the minkowski difference in a particular direction for two colliders
@@ -90,15 +90,13 @@ namespace Supernova
 		static snVec updateFourSimplex(snVec* _s, int& _n);
 	};
 
-	template<class T, class U> bool snGJK::gjkIntersect(const T& _a, const U& _b)
+	template<class T, class U> bool snGJK::gjkIntersect(const T& _a, const U& _b, snVec* _simplex)
 	{
-		snVec support[4];
-		
 		//Start with an arbitrary point in the Minkowski set shape.
-		support[0] = _a.anyPoint() - _b.anyPoint();
+		_simplex[0] = _a.anyPoint() - _b.anyPoint();
 
 		//Go straight to the origin
-		snVec d = -support[0];
+		snVec d = -_simplex[0];
 
 		//Check if the first support point is the origin
 		if (snVec3SquaredNorme(d) < 1e-7f)
@@ -119,9 +117,9 @@ namespace Supernova
 				return false;
 
 			//Update the simplex
-			support[n] = newSupport;
+			_simplex[n] = newSupport;
 			++n;
-			d = updateSimplex(support, n);
+			d = updateSimplex(_simplex, n);
 
 			//If the origin lies inside the simplex then intersection
 			if (n == 0) 

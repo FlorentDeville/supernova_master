@@ -60,8 +60,11 @@ namespace Supernova
 		//Flag to indicate if this triangle has to be considered a part of the simplex.
 		bool m_isObsolete;
 
-		//Outward normal.
-		snVec m_normal;
+		//Closest point to the origin
+		snVec m_closestPoint;
+
+		//The squared distance to the origin
+		float m_sqDistance;
 
 	public:
 		snEPATriangle();
@@ -79,8 +82,11 @@ namespace Supernova
 		//Return an edge identified by its id.
 		snEPAEdge& getAdjacentEdge(unsigned int _id);
 
-		//Return the normal pointing to the outside of the simplex
-		snVec getNormal() const;
+		//Return the squared distance of the triangle to the origin
+		float getSqDistance() const;
+
+		//Return the closest point to the origin
+		snVec getClosestPoint() const;
 
 		//Set the edge _adjacent adjacents to the edge with id _id of the current triangle.
 		//Return true if the edge was added. 
@@ -99,7 +105,8 @@ namespace Supernova
 		//Insert the new point in the simplex in the current triangle and make sure the simplex stays convex.
 		void quickHull(snSimplex& _simplex, unsigned int _id);
 
-		void computeClosestPointToOrigin(const snSimplex& _simplex, snVec& _closestPoint, float& _distance);
+	private:
+		void computeClosestPointToOrigin(const snSimplex& _simplex);
 	};
 }
 

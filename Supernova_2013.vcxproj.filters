@@ -28,6 +28,9 @@
     <Filter Include="Algorithms\EPA">
       <UniqueIdentifier>{6d7b6057-8a35-4722-ad42-e2871e2098b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Queries">
+      <UniqueIdentifier>{ca9ac563-e08a-4c29-87b1-a0e402f87e80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\snCollisionResult.h">
@@ -169,6 +172,9 @@
     <ClInclude Include="inc\snEPASimplex.h">
       <Filter>Algorithms\EPA</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snClosestPoint.h">
+      <Filter>Queries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snColliderPlan.cpp">
@@ -267,6 +273,9 @@
     </ClCompile>
     <ClCompile Include="src\snEPASimplex.cpp">
       <Filter>Algorithms\EPA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snClosestPoint.cpp">
+      <Filter>Queries</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

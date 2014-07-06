@@ -65,6 +65,11 @@ namespace Supernova
 		return (&m_triangles[_id]);
 	}
 
+	unsigned int snSimplex::getTriangleCount() const
+	{
+		return m_trianglesCount;
+	}
+
 	unsigned int snSimplex::addVertex(const snVec& _vertex)
 	{
 		assert(m_vertexCount < MAX_VERTEX_COUNT);
@@ -82,10 +87,16 @@ namespace Supernova
 		return newTriangle;
 	}
 
+	void snSimplex::addLink(snEPATriangle* triangle1, unsigned int _edgeId1, snEPATriangle* triangle2, unsigned int _edgeId2)
+	{
+		triangle1->setAdjacentEdge(triangle2, _edgeId2, _edgeId1);
+		triangle2->setAdjacentEdge(triangle1, _edgeId1, _edgeId2);
+	}
+
 	snEPATriangle* snSimplex::getClosestTriangleToOrigin()
 	{
 		snEPATriangle* closest = 0;
-		float distance = SN_FLOAT_MAX;
+		float sqDistance = SN_FLOAT_MAX;
 
 		for (unsigned int i = 0; i < m_trianglesCount; ++i)
 		{
@@ -95,11 +106,14 @@ namespace Supernova
 			if (tri.getIsObsolete())
 				continue;
 
-			float triDistance = snVec4GetX(snVec3Dot(tri.getNormal(), VEC_ZERO - m_vertexBuffer[tri.getVertexId(0)]));
-			if (triDistance < distance)
+			float triDistance = tri.getSqDistance();
+			//float triDistance = snVec4GetX(snVec3Dot(tri.getNormal(), m_vertexBuffer[tri.getVertexId(0)]));
+			assert(triDistance >= 0.f);
+
+			if (triDistance < sqDistance)
 			{
 				closest = &tri;
-				distance = triDistance;
+				sqDistance = triDistance;
 			}
 		}
 

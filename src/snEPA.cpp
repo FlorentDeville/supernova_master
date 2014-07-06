@@ -37,6 +37,10 @@
 #include "snIGJKCollider.h"
 using namespace Supernova::Vector;
 
+#include "snClosestPoint.h"
+
+#include <assert.h>
+
 namespace Supernova
 {
 	bool snEPA::execute(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal, float& _depth) const
@@ -46,16 +50,16 @@ namespace Supernova
 		{
 			//get the closest triangle to the origin
 			snEPATriangle* closestTriangle = _simplex.getClosestTriangleToOrigin();
+			assert(closestTriangle != 0);
 
 			//get the closest distance to the origin
-			snVec closestPoint;
-			float distance = 0;
-			closestTriangle->computeClosestPointToOrigin(_simplex, closestPoint, distance);
+			snVec closestPoint = closestTriangle->getClosestPoint();
+			float distance = closestTriangle->getSqDistance();
 
 			//get a point in the same direction as the outward normal
 			float dist0 = 0;
 			float dist1 = 0;
-			snVec newVertex = _c1.support(closestTriangle->getNormal(), dist0) - _c2.support(-closestTriangle->getNormal(), dist1);
+			snVec newVertex = _c1.support(closestPoint, dist0) - _c2.support(-closestPoint, dist1);
 
 			//check if we are closer to the origin
 			float newDistance = dist0 + dist1;
@@ -64,7 +68,8 @@ namespace Supernova
 			const float EPA_TOLERANCE = 0.01f;
 			if ((newDistance - distance) < EPA_TOLERANCE)
 			{
-				_normal = closestTriangle->getNormal();
+				_normal = closestTriangle->getClosestPoint();
+				snVec3Normalize(_normal);
 				_depth = distance;
 				return true;
 			}

@@ -31,7 +31,9 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
+
 #ifdef _DEBUG
+	//#define SANITY_GJK
 	#include "snLogger.h"
 #endif //ifdef _DEBUG
 
@@ -51,6 +53,8 @@
 
 #include "snSAT.h"
 #include "snGJK.h"
+#include "snEPA.h"
+#include "snEPASimplex.h"
 
 using namespace Supernova::Vector;
 
@@ -130,7 +134,7 @@ namespace Supernova
 		const snOBB* _b2 = static_cast<const snOBB*>(_c2);
 		bool resSAT = snSAT::queryIntersection<snOBB, snOBB>(*_b1, *_b2, res.m_normal);
 
-#if _DEBUG
+#ifdef SANITY_GJK
 		bool resGJK = snGJK::gjkIntersect<snOBB, snOBB>(*_b1, *_b2);
 
 		if (resSAT != resGJK)
@@ -345,7 +349,38 @@ namespace Supernova
 		const snOBB* _obb = static_cast<const snOBB*>(_c2);
 
 		snCollisionResult res;
-		res.m_collision = snGJK::gjkIntersect<snCapsule, snOBB>(*_capsule, *_obb);
+		res.m_collision = false;
+
+		snVec gjkSimplex[4];
+		if(!snGJK::gjkIntersect<snCapsule, snOBB>(*_capsule, *_obb, gjkSimplex))
+			return res;
+
+		snEPA epa;
+		snSimplex simplex;
+		simplex.addVertex(gjkSimplex[0]);
+		simplex.addVertex(gjkSimplex[1]);
+		simplex.addVertex(gjkSimplex[2]);
+		simplex.addVertex(gjkSimplex[3]);
+
+		snEPATriangle* t0 = simplex.addTriangle(0, 2, 1);
+		snEPATriangle* t1 = simplex.addTriangle(0, 1, 3);
+		snEPATriangle* t2 = simplex.addTriangle(1, 2, 3);
+		snEPATriangle* t3 = simplex.addTriangle(2, 0, 3);
+
+		simplex.addLink(t0, 0, t3, 0);
+		simplex.addLink(t0, 1, t2, 0);
+		simplex.addLink(t0, 2, t1, 0);
+		simplex.addLink(t1, 1, t2, 2);
+		simplex.addLink(t2, 1, t3, 2);
+		simplex.addLink(t3, 1, t1, 2);
+		
+		float depth = 0;
+		if (!epa.execute(simplex, *_capsule, *_obb, res.m_normal, depth))
+			return res;
+
+		snFeatureClipping clipping;
+		res.m_collision = clipping.findContactPatch(*_c1, *_c2, res.m_normal, res.m_contacts, res.m_penetrations);
+
 		return res;
 	}
 }

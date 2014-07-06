@@ -65,6 +65,21 @@ namespace Supernova
 		void computeIntersection(const snVec& _n, float _d, const snVec& _start, const snVec& _end, snVec& _intersection) const;
 
 		void test_newClipping(snVec* _reference, const snVec& referenceNormal, snVec* _incident, snVecVector& _result) const;
+
+		void clipVertexVertex(snVec* _feature1, snVec* _feature2, const snVec& _n, snVecVector& _patch, 
+			vector<float>& _patchPenetrations) const;
+
+		void clipVertexEdge(snVec* _featureVertex, snVec* _featureEdge, const snVec& _n, snVecVector& _patch, 
+			vector<float>& _patchPenetrations) const;
+
+		void clipVertexFace(snVec* _featureVertex, snVec* _featureFace, const snVec& _n, snVecVector& _patch, 
+			vector<float>& _patchPenetrations) const;
+
+		void clipEdgeEdge(snVec* _featureEdge1, snVec* _featureEdge2, const snVec& _n, snVecVector& _patch, 
+			vector<float>& _patchPenetrations) const;
+
+		bool clipFaceFace(snVec* _reference, const snVec& _referenceFeatureNormal, snVec* _incident, snVecVector& _patch,
+			vector<float>& _patchPenetrations) const;
 	};
 }
 

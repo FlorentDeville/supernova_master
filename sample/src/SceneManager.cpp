@@ -1366,19 +1366,19 @@ namespace Devil
 
 		snScene* scene = SUPERNOVA->getScene(0);
 
-		//create box
-		snActorDynamic* actBox = 0;
-		int boxId = -1;
-		scene->createActorDynamic(&actBox, boxId);
+		////create box
+		//snActorDynamic* actBox = 0;
+		//int boxId = -1;
+		//scene->createActorDynamic(&actBox, boxId);
 
-		snOBB* colBox = new snOBB(snVec4Set(5, 1, 1, 0));
-		actBox->setPosition(snVec4Set(0, 10, 0, 1));
-		actBox->setOrientation(snVec4Set(0, 0, 0, 1));
-		actBox->addCollider(colBox);
-		actBox->updateMassAndInertia(10);
-		actBox->initialize();
+		//snOBB* colBox = new snOBB(snVec4Set(5, 1, 1, 0));
+		//actBox->setPosition(snVec4Set(0, 10, 0, 1));
+		//actBox->setOrientation(snVec4Set(0, 0, 0, 1));
+		//actBox->addCollider(colBox);
+		//actBox->updateMassAndInertia(10);
+		//actBox->initialize();
 
-		WORLD->createComposite(actBox, m_colors[2]);
+		//WORLD->createComposite(actBox, m_colors[2]);
 
 		//create cylinder
 		snActorDynamic* actCapsule = 0;
@@ -1388,16 +1388,18 @@ namespace Devil
 
 		snCapsule* colCapsule = new snCapsule(10, 5);
 		actCapsule->setPosition(snVec4Set(10, 15, 0, 1));
-		actCapsule->setOrientation(snVec4Set(0, 0, 0, 1));
+		actCapsule->setOrientation(snQuaternionFromEuler(0, 0, 3.14f * 0.5f));
 		actCapsule->addCollider(colCapsule);
-		actCapsule->setIsKinematic(true);
+		//actCapsule->setIsKinematic(true);
 		actCapsule->initialize();
 
-		WORLD->createComposite(actCapsule, m_colors[3]);
+		EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[3]);
+		comp->setWireframe(true);
 
 		//set camera position
 		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -80, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 0, 1));
+		WORLD->activateCollisionPoint();
 	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)
