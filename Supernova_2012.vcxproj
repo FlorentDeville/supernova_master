@@ -18,6 +18,7 @@
     <ClInclude Include="inc\snActorPairManager.h" />
     <ClInclude Include="inc\snActorStatic.h" />
     <ClInclude Include="inc\snCapsule.h" />
+    <ClInclude Include="inc\snClosestPoint.h" />
     <ClInclude Include="inc\snColliderContainer.h" />
     <ClInclude Include="inc\snColliderPlan.h" />
     <ClInclude Include="inc\snCollision.h" />
@@ -27,6 +28,10 @@
     <ClInclude Include="inc\snContactConstraint.h" />
     <ClInclude Include="inc\snContactConstraintManager.h" />
     <ClInclude Include="inc\snDebugger.h" />
+    <ClInclude Include="inc\snEPA.h" />
+    <ClInclude Include="inc\snEPAEdge.h" />
+    <ClInclude Include="inc\snEPASimplex.h" />
+    <ClInclude Include="inc\snEPATriangle.h" />
     <ClInclude Include="inc\snFactory.h" />
     <ClInclude Include="inc\snFeatureClipping.h" />
     <ClInclude Include="inc\snFixedConstraint.h" />
@@ -47,7 +52,6 @@
     <ClInclude Include="inc\snQuaternion.h" />
     <ClInclude Include="inc\snSAT.h" />
     <ClInclude Include="inc\snScene.h" />
-    <ClInclude Include="inc\snSimplex.h" />
     <ClInclude Include="inc\snSphere.h" />
     <ClInclude Include="inc\snSweepManager.h" />
     <ClInclude Include="inc\snTimer.h" />
@@ -60,6 +64,7 @@
     <ClCompile Include="src\snActorPairManager.cpp" />
     <ClCompile Include="src\snActorStatic.cpp" />
     <ClCompile Include="src\snCapsule.cpp" />
+    <ClCompile Include="src\snClosestPoint.cpp" />
     <ClCompile Include="src\snColliderContainer.cpp" />
     <ClCompile Include="src\snColliderPlan.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
@@ -67,6 +72,10 @@
     <ClCompile Include="src\snContactConstraint.cpp" />
     <ClCompile Include="src\snContactConstraintManager.cpp" />
     <ClCompile Include="src\snDebugger.cpp" />
+    <ClCompile Include="src\snEPA.cpp" />
+    <ClCompile Include="src\snEPAEdge.cpp" />
+    <ClCompile Include="src\snEPASimplex.cpp" />
+    <ClCompile Include="src\snEPATriangle.cpp" />
     <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />
     <ClCompile Include="src\snFixedConstraint.cpp" />
@@ -81,7 +90,6 @@
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
     <ClCompile Include="src\snScene.cpp" />
-    <ClCompile Include="src\snSimplex.cpp" />
     <ClCompile Include="src\snSphere.cpp" />
     <ClCompile Include="src\snSweepManager.cpp" />
     <ClCompile Include="src\snTimer.cpp" />

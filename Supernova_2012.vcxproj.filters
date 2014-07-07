@@ -22,6 +22,12 @@
     <Filter Include="Algorithms">
       <UniqueIdentifier>{f033fbc2-83bc-4e53-a6b1-0c53a59dd684}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Queries">
+      <UniqueIdentifier>{2f7689d4-7655-447e-8a0c-e693a23bc497}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Algorithms\EPA">
+      <UniqueIdentifier>{18e3804e-6ef4-49c1-8ebe-2bfca54c4f09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\snCollisionResult.h">
@@ -115,9 +121,6 @@
     <ClInclude Include="inc\snColliderContainer.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snSimplex.h">
-      <Filter>Algorithms</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snGJK.h">
       <Filter>Algorithms</Filter>
     </ClInclude>
@@ -147,6 +150,21 @@
     </ClInclude>
     <ClInclude Include="inc\snSphere.h">
       <Filter>Collision\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snClosestPoint.h">
+      <Filter>Queries</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snEPA.h">
+      <Filter>Algorithms\EPA</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snEPAEdge.h">
+      <Filter>Algorithms\EPA</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snEPASimplex.h">
+      <Filter>Algorithms\EPA</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snEPATriangle.h">
+      <Filter>Algorithms\EPA</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -214,9 +232,6 @@
     <ClCompile Include="src\snGJK.cpp">
       <Filter>Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\snSimplex.cpp">
-      <Filter>Algorithms</Filter>
-    </ClCompile>
     <ClCompile Include="src\snFeatureClipping.cpp">
       <Filter>Algorithms</Filter>
     </ClCompile>
@@ -237,6 +252,21 @@
     </ClCompile>
     <ClCompile Include="src\snSphere.cpp">
       <Filter>Collision\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snClosestPoint.cpp">
+      <Filter>Queries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snEPA.cpp">
+      <Filter>Algorithms\EPA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snEPAEdge.cpp">
+      <Filter>Algorithms\EPA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snEPASimplex.cpp">
+      <Filter>Algorithms\EPA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snEPATriangle.cpp">
+      <Filter>Algorithms\EPA</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
