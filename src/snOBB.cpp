@@ -297,12 +297,12 @@ namespace Supernova
 	void snOBB::getClosestFeature(const snVec& _n, snVec* const _polygon, unsigned int& _count, unsigned int& _featureId) const
 	{
 		//find the closest point projected onto the normal
-		float min = SN_FLOAT_MAX;
+		float min = -SN_FLOAT_MAX;
 		int minId = -1;
 		for (int i = 0; i < VERTEX_COUNT; ++i)
 		{
 			float d = snVec4GetX(snVec3Dot(_n, m_worldBox[i]));
-			if (d < min)
+			if (d > min)
 			{
 				min = d;
 				minId = i;
@@ -310,7 +310,7 @@ namespace Supernova
 		}
 
 		//loop through each polygon
-		float minPoly = SN_FLOAT_MAX;
+		float minPoly = -SN_FLOAT_MAX;
 		int minPolyId = 0;
 		for (int polyId = 0; polyId < INDEX_COUNT; polyId += 4)
 		{
@@ -325,7 +325,7 @@ namespace Supernova
 			snVec sumOfDot = snVec3Dot(_n, m_worldBox[m_idFaces[polyId]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 1]]) +
 				snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 2]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 3]]);
 
-			if (snVec4GetX(sumOfDot) < minPoly)
+			if (snVec4GetX(sumOfDot) > minPoly)
 			{
 				minPoly = snVec4GetX(sumOfDot);
 				minPolyId = polyId;

@@ -104,7 +104,7 @@ namespace Supernova
 		if (diff2 < _overlap)
 		{
 			_overlap = diff2;
-			_separatingAxis = _axis * -1;
+			_separatingAxis = -_axis;
 		}
 		return true;
 	}

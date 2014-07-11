@@ -91,7 +91,7 @@ namespace Supernova
 	{
 		//let's not calculate the real inertia but approximate it with a box inertia tensor of dimension (radius, length, radius)
 		float length = snVec3Norme(m_b - m_a);
-		snVec size = snVec4Set(m_radius, length, m_radius, 0);
+		snVec size = snVec4Set(m_radius * 2, length, m_radius * 2, 0);
 		snVec sqSize = size * size;
 
 		float massOverTwelve = _mass / 12.f;
@@ -121,7 +121,7 @@ namespace Supernova
 		//check if the feature is the first end
 		float dot = snVec4GetX(snVec3Dot(ab, _n));
 
-		const float EPSILON = 1e-7f;
+		const float EPSILON = 1e-2f;
 
 		if (dot < -EPSILON) //first endpoint
 		{

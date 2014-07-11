@@ -52,10 +52,12 @@ namespace Supernova
 		snVec feature1[4];
 		snVec feature2[4];
 
+		//Get the cloest feature for each collider.
+		//As the normal goes from the second body to the first one, the opposed normal is used for the first collider.
 		unsigned int featureSize1, featureSize2;
 		unsigned int featureId1, featureId2;
-		_c1.getClosestFeature(_normal, feature1, featureSize1, featureId1);
-		_c2.getClosestFeature(_normal * -1, feature2, featureSize2, featureId2);
+		_c1.getClosestFeature(-_normal, feature1, featureSize1, featureId1);
+		_c2.getClosestFeature(_normal, feature2, featureSize2, featureId2);
 
 		if (featureSize1 == 1 && featureSize2 == 1)//vertex - vertex
 		{
@@ -93,56 +95,10 @@ namespace Supernova
 		}
 		else //Edge - Face or Face - Face
 		{
-			return clipFaceFace(feature2, _c1.getFeatureNormal(featureId2), feature1, _patch, _patchPenetrations);
+			return clipFaceFace(feature2, _c2.getFeatureNormal(featureId2), feature1, _patch, _patchPenetrations);
 		}
 
 		return true;
-		//const snICollider* ReferenceBox = &_c1;
-		//unsigned int ReferenceFaceId = featureId1;
-		//snVec* Reference = feature1;
-		//snVec* Incident = feature2;
-
-		////Loop through each edge of the plane
-		//snVec referencePlaneNormal = ReferenceBox->getFeatureNormal(ReferenceFaceId);
-		//snVecVector incidentPolygon;
-		//test_newClipping(Reference, referencePlaneNormal, Incident, incidentPolygon);
-
-		//if (incidentPolygon.size() == 0)
-		//{
-		//	return false;
-		//}
-
-		//assert(incidentPolygon.size() > 0);
-	
-		////if more than one vertices left, clip using the reference plane
-		//if (incidentPolygon.size() > 0)
-		//{
-		//	snVec d = snVec3Dot(referencePlaneNormal, Reference[0]);
-
-		//	//Reserve space to avoid several dynamic allocations
-		//	_patchPenetrations.reserve(incidentPolygon.size());
-		//	_patch.reserve(incidentPolygon.size());
-
-		//	for (snVecVectorConstIterator vertex = incidentPolygon.cbegin(); vertex != incidentPolygon.cend(); ++vertex)
-		//	{
-		//		snVec dot = d - snVec3Dot(*vertex, referencePlaneNormal);
-		//		//only keep vertices on the good side.
-		//		if (snVec3SuperiorOrEqual(dot, snVec4Set(0.0f)))
-		//		{
-		//			_patch.push_back(*vertex);
-		//			_patchPenetrations.push_back(snVec4GetX(dot));
-		//		}
-		//	}
-		//}
-
-		//if (_patch.size() == 0)
-		//{
-		//	return false;
-		//}
-
-		//assert(_patch.size() > 0);
-
-		//return true;
 	}
 
 	void snFeatureClipping::clipPolygon(const snVecVector& _polygon, const snVec& _n, float _d, snVecVector& _clippedPolygon) const
@@ -249,9 +205,27 @@ namespace Supernova
 		vector<float>& _patchPenetrations) const
 	{
 		//This won't work when the features is a quad.
-		snVec closestPoint = snClosestPoint::PointTriangle(_featureVertex[0], _featureFace[0], _featureFace[1], _featureFace[2]);
+		snVec closestPoint;
+			
+		snVec p1 = snClosestPoint::PointTriangle(_featureVertex[0], _featureFace[0], _featureFace[1], _featureFace[2]);
+		snVec p2 = snClosestPoint::PointTriangle(_featureVertex[0], _featureFace[0], _featureFace[3], _featureFace[2]);
+
+		snVec diff1 = _featureVertex[0] - p1;
+		snVec diff2 = _featureVertex[0] - p2;
+
+		snVec dot1 = snVec3Dot(diff1, diff1);
+		snVec dot2 = snVec3Dot(diff2, diff2);
+
+		if (snVec3Inferior(dot1, dot2))
+			closestPoint = p1;
+		else
+			closestPoint = p2;
+
 		_patch.push_back(_featureVertex[0]);
-		_patchPenetrations.push_back(snVec4GetX(snVec3Dot(_n, _featureVertex[0] - closestPoint)));
+
+		float depth = fabsf(snVec4GetX(snVec3Dot(_n, _featureVertex[0] - closestPoint)));
+		//float dist = snVec3Norme(_featureVertex[0] - closestPoint);
+		_patchPenetrations.push_back(depth);
 	}
 
 	void snFeatureClipping::clipEdgeEdge(snVec* _featureEdge1, snVec* _featureEdge2, const snVec& _n, snVecVector& _patch,

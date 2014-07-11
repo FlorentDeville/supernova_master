@@ -68,7 +68,7 @@ namespace Supernova
 			const float EPA_TOLERANCE = 0.01f;
 			if ((newDistance - distance) < EPA_TOLERANCE)
 			{
-				_normal = closestTriangle->getClosestPoint();
+				_normal = -closestTriangle->getClosestPoint();
 				snVec3Normalize(_normal);
 				_depth = distance;
 				return true;
