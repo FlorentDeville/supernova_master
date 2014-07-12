@@ -46,7 +46,6 @@ namespace Supernova
 	bool snEPA::execute(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal, float& _depth) const
 	{
 		snEPATriangle* closestTriangle = 0;
-		float distance = 0;
 
 		bool loopOver = false;
 		while (!loopOver)
@@ -58,7 +57,7 @@ namespace Supernova
 
 			//get the closest distance to the origin
 			snVec closestPoint = closestTriangle->getClosestPoint();
-			distance = closestTriangle->getSqDistance();
+			float distance = closestTriangle->getSqDistance();
 
 			//get a point in the same direction as the outward normal
 			float dist0 = 0;
@@ -67,11 +66,16 @@ namespace Supernova
 
 			//check if we are closer to the origin
 			float newDistance = dist0 + dist1;
-
+			
 			//If the new distance is not bigger than the closest triangle, then finish
 			const float EPA_TOLERANCE = 0.01f;
 			if ((newDistance - distance) < EPA_TOLERANCE)
 			{
+				//if the distance is inferior to contact epsilon, consider it as no collision
+				const float CONTACT_EPSILON = 10e-5f;
+				if (distance <= CONTACT_EPSILON)
+					return false;
+
 				break;
 			}
 
@@ -81,9 +85,10 @@ namespace Supernova
 				break;
 		}
 
+		//compute the normal and depth using the closest triangle.
 		_normal = -closestTriangle->getClosestPoint();
 		snVec3Normalize(_normal);
-		_depth = distance;
+		_depth = sqrtf(closestTriangle->getSqDistance()); //booouuuuuhhh sqrt = bad!!!!!!!!! 
 		return true;
 	}
 }
