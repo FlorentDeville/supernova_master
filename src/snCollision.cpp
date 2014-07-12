@@ -69,7 +69,6 @@ namespace Supernova
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderPlan), &Supernova::snCollision::queryTestCollisionBoxVersusPlan));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderPlan), &Supernova::snCollision::queryTestCollisionSphereVersusPlan));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderSphere), &Supernova::snCollision::queryTestCollisionCapsuleVersusSphere));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderBox), &Supernova::snCollision::queryTestCollisionCapsuleVersusOBB));
 	}
 
 	snCollision::~snCollision(){}
@@ -107,6 +106,7 @@ namespace Supernova
 
 	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const
 	{
+		//first look for a specific algorithm in the jump table
 		unsigned short key = SN_COLLISION_KEY(_c1->getTypeOfCollider(), _c2->getTypeOfCollider());
 		snCollisionQueryMap::const_iterator i = m_collisionQueryMap.find(key);
 		
@@ -115,15 +115,19 @@ namespace Supernova
 			snQueryTestCollisionFunction func = i->second;
 			return func(_c1, _c2);
 		}
-		else
+
+		key = SN_COLLISION_KEY(_c2->getTypeOfCollider(), _c1->getTypeOfCollider());
+		i = m_collisionQueryMap.find(key);
+		if (i != m_collisionQueryMap.cend())
 		{
-			key = SN_COLLISION_KEY(_c2->getTypeOfCollider(), _c1->getTypeOfCollider());
-			i = m_collisionQueryMap.find(key);
 			snQueryTestCollisionFunction func = i->second;
 			snCollisionResult res = func(_c2, _c1);
 			res.m_normal = -res.m_normal;
 			return res;
 		}
+
+		//No specific algorithm found, use the default GJK.
+		return queryTestCollisionGJK(_c1, _c2);
 			
 	}
 
@@ -343,7 +347,7 @@ namespace Supernova
 		return res;
 	}
 
-	snCollisionResult snCollision::queryTestCollisionCapsuleVersusOBB(const snICollider* const _c1, const snICollider* const _c2)
+	snCollisionResult snCollision::queryTestCollisionGJK(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		snCollisionResult res;
 		res.m_collision = false;
