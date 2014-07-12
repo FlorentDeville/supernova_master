@@ -117,7 +117,7 @@ namespace Supernova
 	void snCapsule::getClosestFeature(const snVec& _n, snVec* const _polygon, unsigned int& _count, unsigned int& _featureId) const
 	{
 		snVec ab = m_b - m_a;
-
+		
 		//check if the feature is the first end
 		float dot = snVec4GetX(snVec3Dot(ab, _n));
 
@@ -139,7 +139,7 @@ namespace Supernova
 		{
 			_count = 2;
 			_polygon[0] = m_a + _n * m_radius;
-			_polygon[1] = m_a + _n * m_radius;
+			_polygon[1] = m_b + _n * m_radius;
 			_featureId = 2;
 		}
 	}

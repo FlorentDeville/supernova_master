@@ -103,10 +103,9 @@ namespace Supernova
 		bool isVisibleFromVertex(const snSimplex& _simplex, unsigned int _id);
 
 		//Insert the new point in the simplex in the current triangle and make sure the simplex stays convex.
-		void quickHull(snSimplex& _simplex, unsigned int _id);
+		bool quickHull(snSimplex& _simplex, unsigned int _id);
 
-	private:
-		void computeClosestPointToOrigin(const snSimplex& _simplex);
+		bool computeClosestPointToOrigin(const snSimplex& _simplex);
 	};
 }
 

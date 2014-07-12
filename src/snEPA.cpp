@@ -45,16 +45,20 @@ namespace Supernova
 {
 	bool snEPA::execute(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal, float& _depth) const
 	{
+		snEPATriangle* closestTriangle = 0;
+		float distance = 0;
+
 		bool loopOver = false;
 		while (!loopOver)
 		{
 			//get the closest triangle to the origin
-			snEPATriangle* closestTriangle = _simplex.getClosestTriangleToOrigin();
-			assert(closestTriangle != 0);
+			closestTriangle = _simplex.getClosestTriangleToOrigin();
+			if (closestTriangle == 0)
+				return false;
 
 			//get the closest distance to the origin
 			snVec closestPoint = closestTriangle->getClosestPoint();
-			float distance = closestTriangle->getSqDistance();
+			distance = closestTriangle->getSqDistance();
 
 			//get a point in the same direction as the outward normal
 			float dist0 = 0;
@@ -68,17 +72,18 @@ namespace Supernova
 			const float EPA_TOLERANCE = 0.01f;
 			if ((newDistance - distance) < EPA_TOLERANCE)
 			{
-				_normal = -closestTriangle->getClosestPoint();
-				snVec3Normalize(_normal);
-				_depth = distance;
-				return true;
+				break;
 			}
 
 			//expand the simplex
 			unsigned int vertexId = _simplex.addVertex(newVertex);
-			closestTriangle->quickHull(_simplex, vertexId);
+			if (!closestTriangle->quickHull(_simplex, vertexId))
+				break;
 		}
 
-		return false;
+		_normal = -closestTriangle->getClosestPoint();
+		snVec3Normalize(_normal);
+		_depth = distance;
+		return true;
 	}
 }

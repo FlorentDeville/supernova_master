@@ -526,7 +526,7 @@ namespace Devil
 		createSandbox(L"Tower");
 		snScene* scene = SUPERNOVA->getScene(0);
 		scene->setSolverIterationCount(120); //Wooooooooo that's a lot!!!!!!
-		scene->setContactConstraintBeta(0.005f);
+		//scene->setContactConstraintBeta(0.005f);
 		scene->setAngularSquaredSpeedThreshold(0.f);
 		WORLD->getCamera()->setPosition(snVec4Set(50, 50, 100, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(5, 7, 0, 1));
@@ -1365,20 +1365,23 @@ namespace Devil
 		createSandbox(L"GJK");
 
 		snScene* scene = SUPERNOVA->getScene(0);
+		scene->setContactConstraintBeta(0.005f);
 
-		////create box
+		////create box reference
 		//snActorDynamic* actBox = 0;
 		//int boxId = -1;
 		//scene->createActorDynamic(&actBox, boxId);
 
-		//snOBB* colBox = new snOBB(snVec4Set(5, 1, 1, 0));
-		//actBox->setPosition(snVec4Set(0, 10, 0, 1));
-		//actBox->setOrientation(snVec4Set(0, 0, 0, 1));
+		//snOBB* colBox = new snOBB(snVec4Set(5, 5, 5, 0));
+		//actBox->setPosition(snVec4Set(-10, 15, 0, 1));
+		////actBox->setOrientation(snVec4Set(0, 0, 0, 1));
+		//actBox->setOrientation(snQuaternionFromEuler(0, 0, -3.14f * 0.15f));
 		//actBox->addCollider(colBox);
 		//actBox->updateMassAndInertia(10);
 		//actBox->initialize();
 
-		//WORLD->createComposite(actBox, m_colors[2]);
+		//EntityComposite* entityBox = WORLD->createComposite(actBox, m_colors[2]);
+		//entityBox->setWireframe(true);
 
 		//create cylinder
 		snActorDynamic* actCapsule = 0;
@@ -1388,9 +1391,13 @@ namespace Devil
 
 		snCapsule* colCapsule = new snCapsule(10, 5);
 		actCapsule->setPosition(snVec4Set(10, 15, 0, 1));
-		actCapsule->setOrientation(snQuaternionFromEuler(0, 0, 3.14f * 0.5f));
+		actCapsule->setOrientation(snQuaternionFromEuler(1, 1, -3.14f * 0.15f));
+		actCapsule->setAngularVelocity(snVec4Set(5, 0, 0, 0));
 		actCapsule->addCollider(colCapsule);
+		actCapsule->getPhysicMaterial().m_friction = 1.f;
+		actCapsule->getPhysicMaterial().m_restitution = 0.f;
 		//actCapsule->setIsKinematic(true);
+		actCapsule->updateMassAndInertia(10);
 		actCapsule->initialize();
 
 		EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[3]);

@@ -33,6 +33,7 @@
 /****************************************************************************/
 #include "snEPATriangle.h"
 #include "snEPASimplex.h"
+#include "snClosestPoint.h"
 
 #include <assert.h>
 #include <new>
@@ -55,8 +56,6 @@ namespace Supernova
 		m_verticesId[1] = _idVertex1;
 		m_verticesId[2] = _idVertex2;
 		m_isObsolete = false;
-
-		computeClosestPointToOrigin(_simplex);
 	}
 
 	snEPATriangle::~snEPATriangle()
@@ -126,7 +125,7 @@ namespace Supernova
 		return snVec4GetX(snVec3Dot(m_closestPoint, closestToVert)) > 0.0;
 	}
 
-	void snEPATriangle::quickHull(snSimplex& _simplex, unsigned int _id)
+	bool snEPATriangle::quickHull(snSimplex& _simplex, unsigned int _id)
 	{
 		//the new vertex is visible from the triangle (it's a precondition).
 		setIsObsolete(true);
@@ -135,9 +134,14 @@ namespace Supernova
 		unsigned int savedTriangleCount = _simplex.getTriangleCount();
 
 		//Recursive call to apply quickhull to other triangles
-		m_adjacentEdges[0].quickHull(_simplex, _id);
-		m_adjacentEdges[1].quickHull(_simplex, _id);
-		m_adjacentEdges[2].quickHull(_simplex, _id);
+		if (!m_adjacentEdges[0].quickHull(_simplex, _id))
+			return false;
+
+		if (!m_adjacentEdges[1].quickHull(_simplex, _id))
+			return false;
+
+		if (!m_adjacentEdges[2].quickHull(_simplex, _id))
+			return false;
 
 		unsigned int j = _simplex.getTriangleCount() - 1;
 		for (unsigned int i = savedTriangleCount; i != _simplex.getTriangleCount(); j = i++)
@@ -150,38 +154,16 @@ namespace Supernova
 			//make the two other links
 			_simplex.addLink(newTriangle, 0, _simplex.getTriangle(j), 2);
 		}
+
+		return true;
 	}
 
-	void snEPATriangle::computeClosestPointToOrigin(const snSimplex& _simplex)
+	bool snEPATriangle::computeClosestPointToOrigin(const snSimplex& _simplex)
 	{
-		snVec p0 = _simplex.getVertex(m_verticesId[0]);
-
-		snVec v1 = _simplex.getVertex(m_verticesId[1]) - p0;
-		snVec v2 = _simplex.getVertex(m_verticesId[2]) - p0;
-
-		snVec v1Dotv1 = snVec3Dot(v1, v1);
-		snVec v1Dotv2 = snVec3Dot(v1, v2);
-		snVec v2Dotv2 = snVec3Dot(v2, v2);
-		snVec p0Dotv1 = snVec3Dot(p0, v1);
-		snVec p0Dotv2 = snVec3Dot(p0, v2);
-
-		// Compute determinant
-		snVec det = v1Dotv1 * v2Dotv2 - v1Dotv2 * v1Dotv2;
-		snVec4SetW(det, 1);
-
-		// Compute lambda values
-		snVec lambda1 = p0Dotv2 * v1Dotv2 - p0Dotv1 * v2Dotv2;
-		snVec lambda2 = p0Dotv1 * v1Dotv2 - p0Dotv2 * v1Dotv1;
-
-		// the determinant must be positive
-		assert(snVec3Inferior(VEC_ZERO, det));
-
-		// Compute the closest point v
-		//_closestPoint = p0 + snVec4Set(1, 1, 1, 0) / det * (lambda1 * v1 + lambda2 * v2);
-		m_closestPoint = p0 + (lambda1 * v1 + lambda2 * v2) / det;
-
-		// Compute the squared distance of closest point to the origin
+		m_closestPoint = snClosestPoint::PointTriangle(VEC_ZERO, _simplex.getVertex(m_verticesId[0]), _simplex.getVertex(m_verticesId[1]),
+			_simplex.getVertex(m_verticesId[2]));
 		m_sqDistance = snVec4GetX(snVec3Dot(m_closestPoint, m_closestPoint));
 
+		return true;
 	}
 }

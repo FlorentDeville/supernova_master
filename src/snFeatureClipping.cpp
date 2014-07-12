@@ -91,11 +91,11 @@ namespace Supernova
 		}
 		else if (featureSize1 >= 3) //Face - edge or Face - Face
 		{
-			return clipFaceFace(feature1, _c1.getFeatureNormal(featureId1), feature2, _patch, _patchPenetrations);
+			return clipFaceFace(feature1, _c1.getFeatureNormal(featureId1), feature2, featureSize2, _patch, _patchPenetrations);
 		}
 		else //Edge - Face or Face - Face
 		{
-			return clipFaceFace(feature2, _c2.getFeatureNormal(featureId2), feature1, _patch, _patchPenetrations);
+			return clipFaceFace(feature2, _c2.getFeatureNormal(featureId2), feature1, featureSize1, _patch, _patchPenetrations);
 		}
 
 		return true;
@@ -162,12 +162,12 @@ namespace Supernova
 		_intersection = _start + edge * parameter;
 	}
 
-	void snFeatureClipping::test_newClipping(snVec* _reference, const snVec& referenceNormal, snVec* _incident, snVecVector& _result) const
+	void snFeatureClipping::test_newClipping(snVec* _reference, const snVec& referenceNormal, snVec* _incident, int _incidentSize, snVecVector& _result) const
 	{
 		//Loop through each edge of the plane
 		unsigned int previous = 3;
-		_result.reserve(4);
-		for (int i = 0; i < 4; ++i)
+		_result.reserve(_incidentSize);
+		for (int i = 0; i < _incidentSize; ++i)
 			_result.push_back(_incident[i]);
 
 		for (unsigned int i = 0; i < 4; ++i)
@@ -241,11 +241,11 @@ namespace Supernova
 
 	}
 
-	bool snFeatureClipping::clipFaceFace(snVec* _reference, const snVec& _referenceFeatureNormal, snVec* _incident, snVecVector& _patch,
+	bool snFeatureClipping::clipFaceFace(snVec* _reference, const snVec& _referenceFeatureNormal, snVec* _incident, int _incidentSize, snVecVector& _patch,
 		vector<float>& _patchPenetrations) const
 	{
 		snVecVector incidentPolygon;
-		test_newClipping(_reference, _referenceFeatureNormal, _incident, incidentPolygon);
+		test_newClipping(_reference, _referenceFeatureNormal, _incident, _incidentSize, incidentPolygon);
 
 		if (incidentPolygon.size() == 0)
 		{

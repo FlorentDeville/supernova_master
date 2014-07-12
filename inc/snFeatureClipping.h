@@ -64,7 +64,7 @@ namespace Supernova
 		//Compute the intersection between a plane and a line.
 		void computeIntersection(const snVec& _n, float _d, const snVec& _start, const snVec& _end, snVec& _intersection) const;
 
-		void test_newClipping(snVec* _reference, const snVec& referenceNormal, snVec* _incident, snVecVector& _result) const;
+		void test_newClipping(snVec* _reference, const snVec& referenceNormal, snVec* _incident, int _incidentSize, snVecVector& _result) const;
 
 		void clipVertexVertex(snVec* _feature1, snVec* _feature2, const snVec& _n, snVecVector& _patch, 
 			vector<float>& _patchPenetrations) const;
@@ -78,7 +78,7 @@ namespace Supernova
 		void clipEdgeEdge(snVec* _featureEdge1, snVec* _featureEdge2, const snVec& _n, snVecVector& _patch, 
 			vector<float>& _patchPenetrations) const;
 
-		bool clipFaceFace(snVec* _reference, const snVec& _referenceFeatureNormal, snVec* _incident, snVecVector& _patch,
+		bool clipFaceFace(snVec* _reference, const snVec& _referenceFeatureNormal, snVec* _incident, int _incidentSize, snVecVector& _patch,
 			vector<float>& _patchPenetrations) const;
 	};
 }

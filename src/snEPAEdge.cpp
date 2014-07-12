@@ -67,11 +67,11 @@ namespace Supernova
 		return m_owner->getVertexId((m_id + 1) % 3);
 	}
 
-	void snEPAEdge::quickHull(snSimplex& _simplex, unsigned int _id)
+	bool snEPAEdge::quickHull(snSimplex& _simplex, unsigned int _id)
 	{
 		//ignore obsolete triangles.
 		if (m_owner->getIsObsolete())
-			return;
+			return true;
 
 		if (m_owner->isVisibleFromVertex(_simplex, _id))
 		{
@@ -79,16 +79,23 @@ namespace Supernova
 			m_owner->setIsObsolete(true);
 
 			//check the other edges
-			m_owner->getAdjacentEdge((m_id + 1) % 3).quickHull(_simplex, _id);
-			m_owner->getAdjacentEdge((m_id + 2) % 3).quickHull(_simplex, _id);
+			if (!m_owner->getAdjacentEdge((m_id + 1) % 3).quickHull(_simplex, _id))
+				return false;
+
+			if (!m_owner->getAdjacentEdge((m_id + 2) % 3).quickHull(_simplex, _id))
+				return false;
 		}
 		else
 		{
 			//This edge is a part of the horizon. Create a new triangle.
 			snEPATriangle* newTriangle = _simplex.addTriangle(_id, getEndVertexId(), getStartVertexId());
+			if (newTriangle == 0)
+				return false;;
 
 			//Link the edge of the new triangle to the edge of the current triangle
 			newTriangle->setAdjacentEdge(m_owner, m_id, 1);
 		}
+
+		return true;
 	}
 }

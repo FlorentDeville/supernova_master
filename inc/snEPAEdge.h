@@ -72,7 +72,7 @@ namespace Supernova
 		unsigned int getEndVertexId() const;
 
 		//Check if this edge is part of the horizon of the vertex and update the simplex.
-		void quickHull(snSimplex& _simplex, unsigned int _id);
+		bool quickHull(snSimplex& _simplex, unsigned int _id);
 	};
 }
 

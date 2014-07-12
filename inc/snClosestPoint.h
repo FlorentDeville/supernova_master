@@ -47,7 +47,7 @@ namespace Supernova
 		static void SegmentSegment(const snVec& _p1, const snVec& _q1, const snVec& _p2, const snVec& _q2,
 			float& s, float& t, snVec& _c1, snVec& _c2);
 
-		//Find the closest point on a triangle
+		//Find the closest point on a triangle using voronoi region
 		static snVec PointTriangle(const snVec& _p, const snVec& _a, const snVec& _b, const snVec& _c);
 	};
 }

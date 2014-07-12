@@ -79,11 +79,18 @@ namespace Supernova
 
 	snEPATriangle* snSimplex::addTriangle(unsigned int _vertexId0, unsigned int _vertexId1, unsigned int _vertexId2)
 	{
-		assert(m_trianglesCount < MAX_TRIANGLE_COUNT);
+		if (m_trianglesCount >= MAX_TRIANGLE_COUNT)
+			return false;
+
 		snEPATriangle* newTriangle = &m_triangles[m_trianglesCount++];
 
 		::new (newTriangle)snEPATriangle(*this, _vertexId0, _vertexId1, _vertexId2);
-
+		if (!newTriangle->computeClosestPointToOrigin(*this))
+		{
+			--m_trianglesCount;
+			return 0;
+		}
+		
 		return newTriangle;
 	}
 

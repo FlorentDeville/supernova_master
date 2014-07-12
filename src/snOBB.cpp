@@ -296,48 +296,53 @@ namespace Supernova
 
 	void snOBB::getClosestFeature(const snVec& _n, snVec* const _polygon, unsigned int& _count, unsigned int& _featureId) const
 	{
-		//find the closest point projected onto the normal
-		float min = -SN_FLOAT_MAX;
-		int minId = -1;
-		for (int i = 0; i < VERTEX_COUNT; ++i)
+		unsigned int fID = 0;
 		{
-			float d = snVec4GetX(snVec3Dot(_n, m_worldBox[i]));
-			if (d > min)
+			float maxDot = -SN_FLOAT_MAX;
+			int normalId = -1;
+			int side = 0;
+
+			//loop through each obb normal to find the one the closest to the normal in argument
+			for (int i = 0; i < 3; ++i)
 			{
-				min = d;
-				minId = i;
+				float dot = snVec4GetX(snVec3Dot(_n, m_normals[i] * (1.f / snVec4GetById(m_extends, i))));
+
+				if (dot > maxDot && dot > 0) //if _n is going to the same direction as the normal
+				{
+					maxDot = dot;
+					normalId = i;
+					side = 1;
+				}
+				else if (-dot > maxDot && -dot > 0) //_n is going to the same direction as -normal
+				{
+					maxDot = -dot;
+					normalId = i;
+					side = -1;
+				}
+
 			}
+
+			if (normalId == 0 && side == 1)
+				_featureId = 1;
+			else if (normalId == 0 && side == -1)
+				_featureId = 5;
+			else if (normalId == 1 && side == 1)
+				_featureId = 2;
+			else if (normalId == 1 && side == -1)
+				_featureId = 3;
+			else if (normalId == 2 && side == 1)
+				_featureId = 4;
+			else
+				_featureId = 0;
+
+			fID = _featureId;
+			unsigned int indexId = fID * 4;
+			_polygon[0] = m_worldBox[m_idFaces[indexId]];
+			_polygon[1] = m_worldBox[m_idFaces[indexId + 1]];
+			_polygon[2] = m_worldBox[m_idFaces[indexId + 2]];
+			_polygon[3] = m_worldBox[m_idFaces[indexId + 3]];
+			_count = 4;
 		}
-
-		//loop through each polygon
-		float minPoly = -SN_FLOAT_MAX;
-		int minPolyId = 0;
-		for (int polyId = 0; polyId < INDEX_COUNT; polyId += 4)
-		{
-			//check if the polygon contains the closest vertex
-			if (m_idFaces[polyId] != minId &&
-				m_idFaces[polyId + 1] != minId &&
-				m_idFaces[polyId + 2] != minId &&
-				m_idFaces[polyId + 3] != minId)
-				continue;
-
-			//make the sum of dot product
-			snVec sumOfDot = snVec3Dot(_n, m_worldBox[m_idFaces[polyId]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 1]]) +
-				snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 2]]) + snVec3Dot(_n, m_worldBox[m_idFaces[polyId + 3]]);
-
-			if (snVec4GetX(sumOfDot) > minPoly)
-			{
-				minPoly = snVec4GetX(sumOfDot);
-				minPolyId = polyId;
-			}
-		}
-
-		_featureId = int(minPolyId * 0.25f);
-		_polygon[0] = m_worldBox[m_idFaces[minPolyId]];
-		_polygon[1] = m_worldBox[m_idFaces[minPolyId + 1]];
-		_polygon[2] = m_worldBox[m_idFaces[minPolyId + 2]];
-		_polygon[3] = m_worldBox[m_idFaces[minPolyId + 3]];
-		_count = 4;
 	}
 
 	snVec snOBB::getFeatureNormal(unsigned int _featureId) const
