@@ -312,5 +312,16 @@ namespace Supernova
 			vmask = vmask | 0xf000;
 			return (vmask == 0xffff);
 		}
+
+		unsigned int snVec3GetMinAxis(const snVec& _v)
+		{
+			unsigned int axis = 0;
+			if (snVec4GetById(_v, axis) > snVec4GetById(_v, 1))
+				axis = 1;
+			if (snVec4GetById(_v, axis) > snVec4GetById(_v, 2))
+				axis = 2;
+
+			return axis;
+		}
 	}
 }

@@ -125,6 +125,9 @@ namespace Supernova
 		inline bool snVec3Inferior(const snVec& _a, const snVec& _b);
 
 		inline bool snVec3SuperiorOrEqual(const snVec& _a, const snVec& _b);
+
+		//Return the id of the minimum axis
+		inline unsigned int snVec3GetMinAxis(const snVec& _v);
 	}
 }
 
