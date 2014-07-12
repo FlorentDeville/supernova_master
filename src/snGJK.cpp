@@ -39,8 +39,7 @@
 #include "snMath.h"
 #include "snCollisionResult.h"
 #include "snEPASimplex.h"
-
-#include "snIGJKCollider.h"
+#include "snICollider.h"
 
 #include <assert.h>
 
@@ -58,269 +57,44 @@ namespace Supernova
 
 	snGJK::~snGJK(){}
 
-	snCollisionResult snGJK::queryIntersection(const snIGJKCollider& _c1, const snIGJKCollider& _c2) const
+	bool snGJK::gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* _simplex)
 	{
-		snCollisionResult res;
-		res.m_collision = false;
+		//Start with an arbitrary point in the Minkowski set shape.
+		_simplex[0] = _a.anyPoint() - _b.anyPoint();
 
-		snVec simplex[4];
+		//Go straight to the origin
+		snVec d = -_simplex[0];
 
-		//vector of point making the resulting simplex.
-		int simplexCount = 0;
-
-		//compute first direction from collider 1 to collider 2
-		snVec direction = snVec4Set(1, 0, 0, 0);//_c2.getWorldOrigin() - _c1.getWorldOrigin();
-
-		//compute first point of the simplex
-		simplex[simplexCount] = support(_c1, _c2, direction);
-		++simplexCount;
-
-		//compute direction in opposite direction
-		direction = direction * -1;
-		
-		//while not over
-		bool over = false;
-		while (!over)
-		{
-			//compute another point
-			snVec newPoint = support(_c1, _c2, direction);
-
-			//check if we passed the origin
-			if (snVec4GetX(snVec3Dot(newPoint, direction)) <= 0)
-				return res;
-
-			//add the new point to the simplex
-			simplex[simplexCount] = newPoint;
-			++simplexCount;
-
-			//check if the simplex enclose the origin.
-			over = doSimplex(simplex, simplexCount, direction);
-		}
-
-		////create a simplex for the EPA
-		//snSimplex epaSimplex;
-		//epaSimplex.addVertex(simplex[0]);
-		//epaSimplex.addVertex(simplex[1]);
-		//epaSimplex.addVertex(simplex[2]);
-		//epaSimplex.addVertex(simplex[3]);
-
-		//epaSimplex.addTriangle(0, 1, 2);
-		//epaSimplex.addTriangle(0, 3, 1);
-		//epaSimplex.addTriangle(1, 3, 2);
-		//epaSimplex.addTriangle(0, 2, 3);
-		//
-		////res.m_normal = expandPolytope(epaSimplex, _c1, _c2);
-
-		//snSimplex epaSimplex2;
-		//epaSimplex2.addVertex(simplex[0]);
-		//epaSimplex2.addVertex(simplex[1]);
-		//epaSimplex2.addVertex(simplex[2]);
-		//epaSimplex2.addVertex(simplex[3]);
-
-		//epaSimplex2.addTriangle(0, 1, 2);
-		//epaSimplex2.addTriangle(0, 3, 1);
-		//epaSimplex2.addTriangle(1, 3, 2);
-		//epaSimplex2.addTriangle(0, 2, 3);
-		//snVec tempNormal;
-		//res.m_collision = expandPolytopeV2(epaSimplex2, _c1, _c2, tempNormal);
-		///*if (!(res.m_normal == tempNormal))
-		//	int a = 0;*/
-
-		//res.m_normal = tempNormal;
-		
-		snVec3Normalize(res.m_normal);
-
-		//compute the collision patch
-		//res.m_collision = m_clipping.findContactPatch(_c1, _c2, res.m_normal, res.m_contacts, res.m_penetrations);
-
-		return res;
-	}
-
-	snVec snGJK::support(const snIGJKCollider& _c1, const snIGJKCollider& _c2, const snVec& _direction) const
-	{
-		float t;
-		snVec p1 = _c1.support(_direction, t);
-		snVec p2 = _c2.support(-_direction, t);
-
-		return p1 - p2;
-	}
-
-	bool snGJK::doSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const
-	{
-		switch (_simplexCount)
-		{
-		case 2:
-			return checkOneSimplex(_simplex, _simplexCount, _direction);
-
-		case 3:
-			return checkTwoSimplex(_simplex, _simplexCount, _direction);
-
-		case 4:
-			return checkThreeSimplex(_simplex, _simplexCount, _direction);
-
-		default:
+		//Check if the first support point is the origin
+		if (snVec3SquaredNorme(d) < 1e-7f)
 			return false;
-		}
-	}
 
-	bool snGJK::checkOneSimplex(snVec* const _s, int& _simplexCount, snVec& _direction) const
-	{
-		//Three possible cases : 
-		// 1) closest to _s[0]
-		// 2) closest to _s[1]
-		// 3) closest to the line
-		//As we come from _s[0], case 1 is impossible. Only case 2 and 3 are possible
-
-		//_simplex[1] is A. It is the last point added.
-		//_simplex[0] is B. It is the first point entered in the simplex.
-		snVec AB = _s[0] - _s[1];
-		snVec AO = VEC_ZERO - _s[1];
-
-		if (SN_SAME_DIRECTION(AB, AO)) //Case 3)
-			_direction = snVec3Cross(snVec3Cross(AB, AO), AB);
-		else
+		//Start to iterate
+		int n = 1;
+		int i = MAX_ITERATION;
+		while (--i >= 0)
 		{
-			//Case 2)
-			_direction = AO;
-			--_simplexCount;
+			//Normalize the direction and compute the support point.
+			snVec3Normalize(d);
+			float maxS, minS;
+			snVec newSupport = _a.support(d, maxS) - _b.support(-d, minS);
+
+			//If this new support point did not passed the origin then the Minkowski difference does not contain the origin so no collision.
+			if (minS + maxS < 0.f)
+				return false;
+
+			//Update the simplex
+			_simplex[n] = newSupport;
+			++n;
+			d = updateSimplex(_simplex, n);
+
+			//If the origin lies inside the simplex then intersection
+			if (n == 0)
+				return true;
 		}
 
+		//We reached the maximum number of iteration so exit and report no intersection.
 		return false;
-	}
-
-	bool snGJK::checkTwoSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const
-	{
-		//A = _simplex[2]. The last point entered in the simplex.
-		//B = _simplex[1].
-		//C = _simplex[0].
-		snVec AO = snVec4Set(0, 0, 0, 1) - _simplex[2];
-
-		snVec AB = _simplex[1] - _simplex[2];
-		snVec AC = _simplex[0] - _simplex[2];
-
-		snVec ABC = snVec3Cross(AB, AC);
-
-		snVec E2 = snVec3Cross(ABC, AC);
-
-		if (SN_SAME_DIRECTION(E2, AO))
-		{
-			if (SN_SAME_DIRECTION(AC, AO))
-			{
-				//keep [C, A]
-				_simplex[1] = _simplex[2];
-				--_simplexCount;
-				_direction = snVec3Cross(snVec3Cross(AC, AO), AC);
-			}
-			else
-			{
-				if (SN_SAME_DIRECTION(AB, AO))
-				{
-					//Keep [B, A]
-					_simplex[0] = _simplex[1];
-					_simplex[1] = _simplex[2];
-					--_simplexCount;
-					_direction = snVec3Cross(snVec3Cross(AB, AO), AB);
-				}
-				else
-				{
-					//keep [A]
-					_simplex[0] = _simplex[2];
-					_simplexCount = 1;
-					_direction = AO;
-				}
-			}
-		}
-		else
-		{
-			snVec E1 = snVec3Cross(AB, ABC);
-			if (SN_SAME_DIRECTION(E1, AO))
-			{
-				if (SN_SAME_DIRECTION(AB, AO))
-				{
-					//Keep [B, A]
-					_simplex[0] = _simplex[1];
-					_simplex[1] = _simplex[2];
-					--_simplexCount;
-					_direction = snVec3Cross(snVec3Cross(AB, AO), AB);
-				}
-				else
-				{
-					//keep [A]
-					_simplex[0] = _simplex[2];
-					_simplexCount = 1;
-					_direction = AO;
-				}
-			}
-			else
-			{
-				if (SN_SAME_DIRECTION(ABC, AO))
-				{
-					_direction = ABC;
-				}
-				else
-				{
-					/*snVec temp = _simplex[0];
-					_simplex[0] = _simplex[1];
-					_simplex[1] = temp;*/
-					_direction = ABC * -1;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	bool snGJK::checkThreeSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const
-	{
-		//A = _simplex[3]. The last point inserted. B = _simplex[2], C = _simplex[1], D = _simplex[0]
-		snVec AO = snVec4Set(0, 0, 0, 1) - _simplex[3];
-		snVec AD = _simplex[0] - _simplex[3];
-		snVec AC = _simplex[1] - _simplex[3];
-		snVec AB = _simplex[2] - _simplex[3];
-
-		snVec ABC = snVec3Cross(AB, AC);
-		snVec ACD = snVec3Cross(AC, AD);
-		snVec ADB = snVec3Cross(AD, AB);
-
-		//check on what side of the triangle the opposite point is
-		int BSideOnACD = sign(snVec4GetX(snVec3Dot(ACD, AB)));
-		int CSideOnADB = sign(snVec4GetX(snVec3Dot(ADB, AC)));
-		int DSideOnABC = sign(snVec4GetX(snVec3Dot(ABC, AD)));
-
-		//check if the origin is on the same side as a point relative to a triangle
-		bool ABSameAsOrigin = sign(snVec4GetX(snVec3Dot(ACD, AO))) == BSideOnACD;
-		bool ACSameAsOrigin = sign(snVec4GetX(snVec3Dot(ADB, AO))) == CSideOnADB;
-		bool ADSameAsOrigin = sign(snVec4GetX(snVec3Dot(ABC, AO))) == DSideOnABC;
-
-		if (ABSameAsOrigin && ACSameAsOrigin && ADSameAsOrigin) // the origin is inside the tetrahedron
-			return true;
-		else if (!ABSameAsOrigin) //the point B is not in the direction of the origin
-		{
-			//remove B and point direction to the other side of ACD
-			_simplex[2] = _simplex[3];
-			--_simplexCount;
-			_direction = ACD * -(float)BSideOnACD;
-		}
-		else if (!ACSameAsOrigin) //the point C is not in the direction of the origin
-		{
-			//remove C and point direction to the other side of ADB
-			_simplex[1] = _simplex[2];
-			_simplex[2] = _simplex[3];
-			--_simplexCount;
-			_direction = ADB * -(float)CSideOnADB;
-		}
-		else // !ADSameAsOrigin : the point D is not in the direction of the origin
-		{
-			//remove D and point direction to the other side of ABC
-			_simplex[0] = _simplex[1];
-			_simplex[1] = _simplex[2];
-			_simplex[2] = _simplex[3];
-			--_simplexCount;
-			_direction = ABC * -(float)DSideOnABC;
-		}
-
-		//check now the triangle.
-		return checkTwoSimplex(_simplex, _simplexCount, _direction);
 	}
 
 	snVec snGJK::updateSimplex(snVec* _s, int& _n)

@@ -42,7 +42,6 @@ namespace Supernova
 	class snICollider;
 	class snCollisionResult;
 	class snSimplex;
-	class snIGJKCollider;
 
 	//Provide functionnalty to check collision between colliders using GJK algorithm.
 	class snGJK
@@ -60,26 +59,9 @@ namespace Supernova
 		//Default destructor
 		virtual ~snGJK();
 
-		//Check if two colliders are intersecting.
-		snCollisionResult queryIntersection(const snIGJKCollider& _c1, const snIGJKCollider& _c2) const;
-
-		template<class T, class U> static bool gjkIntersect(const T& _a, const U& _b, snVec* _simplex);
+		static bool gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* _simplex);
 
 	private:
-		//Compute the point from the minkowski difference in a particular direction for two colliders
-		snVec support(const snIGJKCollider& _c1, const snIGJKCollider& _c2, const snVec& _direction) const;
-
-		//Check if a simplex contains the origin. If the simplex does not contain the origin, the simplex and the direction are updated.
-		bool doSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
-
-		//Check a simplex made of two points (a line).
-		bool checkOneSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
-
-		//Check a simplex made of three points (a triangle)
-		bool checkTwoSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
-
-		//Check a simplex made of four points (tetrahedron).
-		bool checkThreeSimplex(snVec* const _simplex, int& _simplexCount, snVec& _direction) const;
 
 		static snVec updateSimplex(snVec* _s, int& _n);
 
@@ -89,46 +71,6 @@ namespace Supernova
 
 		static snVec updateFourSimplex(snVec* _s, int& _n);
 	};
-
-	template<class T, class U> bool snGJK::gjkIntersect(const T& _a, const U& _b, snVec* _simplex)
-	{
-		//Start with an arbitrary point in the Minkowski set shape.
-		_simplex[0] = _a.anyPoint() - _b.anyPoint();
-
-		//Go straight to the origin
-		snVec d = -_simplex[0];
-
-		//Check if the first support point is the origin
-		if (snVec3SquaredNorme(d) < 1e-7f)
-			return true;
-
-		//Start to iterate
-		int n = 1; 
-		int i = MAX_ITERATION;
-		while (--i >= 0)
-		{
-			//Normalize the direction and compute the support point.
-			snVec3Normalize(d);
-			float maxS, minS;
-			snVec newSupport = _a.support(d, maxS) - _b.support(-d, minS);
-
-			//If this new support point did not passed the origin then the Minkowski difference does not contain the origin so no collision.
-			if (minS + maxS < 0.f)
-				return false;
-
-			//Update the simplex
-			_simplex[n] = newSupport;
-			++n;
-			d = updateSimplex(_simplex, n);
-
-			//If the origin lies inside the simplex then intersection
-			if (n == 0) 
-				return true;
-		}
-		
-		//We reached the maximum number of iteration so exit and report no intersection.
-		return false;
-	}
 }
 
 #endif //SN_GJK_H

@@ -35,14 +35,11 @@
 #define SN_CAPSULE_H
 
 #include "snICollider.h"
-#include "snIGJKCollider.h"
 
 #include "snVec.h"
 namespace Supernova
 {
-	class SN_ALIGN snCapsule :
-		public snICollider,
-		public snIGJKCollider
+	class SN_ALIGN snCapsule : public snICollider
 	{
 	private:
 		//First end point of the capsule

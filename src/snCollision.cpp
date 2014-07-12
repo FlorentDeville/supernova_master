@@ -345,14 +345,11 @@ namespace Supernova
 
 	snCollisionResult snCollision::queryTestCollisionCapsuleVersusOBB(const snICollider* const _c1, const snICollider* const _c2)
 	{
-		const snCapsule* _capsule = static_cast<const snCapsule*>(_c1);
-		const snOBB* _obb = static_cast<const snOBB*>(_c2);
-
 		snCollisionResult res;
 		res.m_collision = false;
 
 		snVec gjkSimplex[4];
-		if(!snGJK::gjkIntersect<snCapsule, snOBB>(*_capsule, *_obb, gjkSimplex))
+		if (!snGJK::gjkIntersect(*_c1, *_c2, gjkSimplex))
 			return res;
 
 		snEPA epa;
@@ -375,7 +372,7 @@ namespace Supernova
 		simplex.addLink(t3, 1, t1, 2);
 		
 		float depth = 0;
-		if (!epa.execute(simplex, *_capsule, *_obb, res.m_normal, depth))
+		if (!epa.execute(simplex, *_c1, *_c2, res.m_normal, depth))
 			return res;
 
 		snFeatureClipping clipping;

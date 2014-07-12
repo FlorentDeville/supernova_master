@@ -101,6 +101,27 @@ namespace Supernova
 			throw;
 		};
 
+#pragma region GJK
+		//////////////////////////////////////////////////////////////////////
+		// GJK Interface													//
+		//////////////////////////////////////////////////////////////////////
+
+		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
+		virtual snVec support(const snVec& _direction, float& _distance) const
+		{
+			SN_UNREFERENCED_PARAMETER(_direction);
+			SN_UNREFERENCED_PARAMETER(_distance);
+			throw;
+		}
+
+		//Return any point making the collider
+		virtual snVec anyPoint() const
+		{
+			throw;
+		}
+
+#pragma endregion
+
 		snEColliderType getTypeOfCollider() const { return m_typeOfCollider; }
 
 		//Compute the bounding volume for this collider

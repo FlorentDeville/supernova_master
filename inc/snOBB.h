@@ -37,14 +37,12 @@
 
 #include "snICollider.h"
 #include "snISATCollider.h"
-#include "snIGJKCollider.h"
 
 namespace Supernova
 {
 	class snOBB : 
 		public snICollider, 
-		public snISATCollider,
-		public snIGJKCollider
+		public snISATCollider
 	{
 	private:
 		static const int VERTEX_COUNT = 8;

@@ -40,12 +40,12 @@
 namespace Supernova
 {
 	class snSimplex;
-	class snIGJKCollider;
+	class snICollider;
 
 	class snEPA
 	{
 	public:
-		bool execute(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal, float& _depth) const;
+		bool execute(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal, float& _depth) const;
 	};
 }
 #endif //ifdnef SN_EPA_H

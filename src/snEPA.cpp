@@ -34,7 +34,7 @@
 #include "snEPA.h"
 
 #include "snEPASimplex.h"
-#include "snIGJKCollider.h"
+#include "snICollider.h"
 using namespace Supernova::Vector;
 
 #include "snClosestPoint.h"
@@ -43,7 +43,7 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	bool snEPA::execute(snSimplex& _simplex, const snIGJKCollider& _c1, const snIGJKCollider& _c2, snVec& _normal, float& _depth) const
+	bool snEPA::execute(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal, float& _depth) const
 	{
 		snEPATriangle* closestTriangle = 0;
 
