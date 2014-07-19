@@ -114,6 +114,13 @@ namespace Supernova
 			throw;
 		}
 
+		//Return the farthest point in the direction provided as parameter.
+		virtual snVec support(const snVec& _direction) const
+		{
+			SN_UNREFERENCED_PARAMETER(_direction);
+			throw;
+		}
+
 		//Return any point making the collider
 		virtual snVec anyPoint() const
 		{

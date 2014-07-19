@@ -41,7 +41,7 @@
 
 namespace Supernova
 {
-	const unsigned int MAX_TRIANGLE_COUNT = 50;
+	const unsigned int MAX_TRIANGLE_COUNT = 200;
 	const unsigned int MAX_VERTEX_COUNT = 150;
 
 	//Represent a simplex as produced by the GJK algorithm.

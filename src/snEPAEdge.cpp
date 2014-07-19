@@ -90,7 +90,7 @@ namespace Supernova
 			//This edge is a part of the horizon. Create a new triangle.
 			snEPATriangle* newTriangle = _simplex.addTriangle(_id, getEndVertexId(), getStartVertexId());
 			if (newTriangle == 0)
-				return false;;
+				return false;
 
 			//Link the edge of the new triangle to the edge of the current triangle
 			newTriangle->setAdjacentEdge(m_owner, m_id, 1);

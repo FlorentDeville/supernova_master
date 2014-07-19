@@ -1387,21 +1387,44 @@ namespace Devil
 		snActorDynamic* actCapsule = 0;
 		int cylinderId = 0;
 
-		scene->createActorDynamic(&actCapsule, cylinderId);
+		const unsigned int SHAPE_COUNT = 10;
+		snVec offsetPosition = snVec4Set(0, 20, 0, 0);
+		float orientationOffset = 2 * 3.14f * (1.f / SHAPE_COUNT);
+		for (unsigned int i = 0; i < SHAPE_COUNT; ++i)
+		{
+			scene->createActorDynamic(&actCapsule, cylinderId);
+			snCapsule* colCapsule = new snCapsule(10, 5);
+			actCapsule->setPosition(snVec4Set(0, 15, 0, 1) + i * offsetPosition);
+			actCapsule->setOrientation(snQuaternionFromEuler( i * orientationOffset, 0, i * orientationOffset));
+			//actCapsule->setLinearVelocity(snVec4Set(0, 3, 0, 0));
+			//actCapsule->setAngularVelocity(snVec4Set(-5, 2, 0, 0));
+			actCapsule->addCollider(colCapsule);
+			actCapsule->getPhysicMaterial().m_friction = 1.f;
+			actCapsule->getPhysicMaterial().m_restitution = 0.f;
+			//actCapsule->setIsKinematic(true);
+			actCapsule->updateMassAndInertia(10);
+			actCapsule->initialize();
+			EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[3]);
+			comp->setWireframe(true);
+		}
 
-		snCapsule* colCapsule = new snCapsule(10, 5);
-		actCapsule->setPosition(snVec4Set(10, 15, 0, 1));
-		actCapsule->setOrientation(snQuaternionFromEuler(1, 1, -3.14f * 0.15f));
-		actCapsule->setAngularVelocity(snVec4Set(5, 0, 0, 0));
-		actCapsule->addCollider(colCapsule);
-		actCapsule->getPhysicMaterial().m_friction = 1.f;
-		actCapsule->getPhysicMaterial().m_restitution = 0.f;
-		//actCapsule->setIsKinematic(true);
-		actCapsule->updateMassAndInertia(10);
-		actCapsule->initialize();
-
-		EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[3]);
-		comp->setWireframe(true);
+		//{
+		//	scene->createActorDynamic(&actCapsule, cylinderId);
+		//	snCapsule* colCapsule = new snCapsule(10, 5);
+		//	//snOBB* colCapsule = new snOBB(snVec4Set(5, 5, 5, 0));
+		//	actCapsule->setPosition(snVec4Set(0, 26, 0, 1));
+		//	actCapsule->setOrientation(snQuaternionFromEuler(3.14f * 0.5f, 0, 0));
+		//	//actCapsule->setLinearVelocity(snVec4Set(0, -3, 0, 0));
+		//	//actCapsule->setAngularVelocity(snVec4Set(0, 0, 5, 0));
+		//	actCapsule->addCollider(colCapsule);
+		//	actCapsule->getPhysicMaterial().m_friction = 1.f;
+		//	actCapsule->getPhysicMaterial().m_restitution = 0.f;
+		//	//actCapsule->setIsKinematic(true);
+		//	actCapsule->updateMassAndInertia(10);
+		//	actCapsule->initialize();
+		//	EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[3]);
+		//	comp->setWireframe(true);
+		//}
 
 		//set camera position
 		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -80, 1));

@@ -80,7 +80,7 @@ namespace Supernova
 	snEPATriangle* snSimplex::addTriangle(unsigned int _vertexId0, unsigned int _vertexId1, unsigned int _vertexId2)
 	{
 		if (m_trianglesCount >= MAX_TRIANGLE_COUNT)
-			return false;
+			return 0;
 
 		snEPATriangle* newTriangle = &m_triangles[m_trianglesCount++];
 
@@ -115,8 +115,11 @@ namespace Supernova
 
 			float triDistance = tri.getSqDistance();
 			//float triDistance = snVec4GetX(snVec3Dot(tri.getNormal(), m_vertexBuffer[tri.getVertexId(0)]));
-			assert(triDistance >= 0.f);
+			if (!(triDistance >= 0.f))
+				continue;
 
+			//assert(triDistance >= 0.f);
+			
 			if (triDistance < sqDistance)
 			{
 				closest = &tri;

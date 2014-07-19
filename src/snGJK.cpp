@@ -57,7 +57,7 @@ namespace Supernova
 
 	snGJK::~snGJK(){}
 
-	bool snGJK::gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* _simplex)
+	bool snGJK::gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* _simplex, unsigned int& _simplexSize)
 	{
 		//Start with an arbitrary point in the Minkowski set shape.
 		_simplex[0] = _a.anyPoint() - _b.anyPoint();
@@ -76,16 +76,16 @@ namespace Supernova
 		{
 			//Normalize the direction and compute the support point.
 			snVec3Normalize(d);
-			float maxS, minS;
-			snVec newSupport = _a.support(d, maxS) - _b.support(-d, minS);
-
+			snVec newSupport = _a.support(d) - _b.support(-d);
+			float distance = snVec4GetX(snVec3Dot(newSupport, d));
 			//If this new support point did not passed the origin then the Minkowski difference does not contain the origin so no collision.
-			if (minS + maxS < 0.f)
+			if (distance < 0.f)
 				return false;
 
 			//Update the simplex
 			_simplex[n] = newSupport;
 			++n;
+			_simplexSize = n;
 			d = updateSimplex(_simplex, n);
 
 			//If the origin lies inside the simplex then intersection

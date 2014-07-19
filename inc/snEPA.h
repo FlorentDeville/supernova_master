@@ -46,6 +46,8 @@ namespace Supernova
 	{
 	public:
 		bool execute(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal, float& _depth) const;
+
+		bool isValidStartSimplex(const snVec& _p1, const snVec& _p2, const snVec& _p3, const snVec& _p4, unsigned int _wrongVertexId) const;
 	};
 }
 #endif //ifdnef SN_EPA_H

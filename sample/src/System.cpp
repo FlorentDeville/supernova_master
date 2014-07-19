@@ -94,7 +94,8 @@ namespace Devil
 		//SCENEMGR->createSceneDomino();
 		//SCENEMGR->createConstraints();
 		//SCENEMGR->createSceneComposite();
-		SCENEMGR->createSceneMonkeyBall();
+		//SCENEMGR->createSceneMonkeyBall();
+		SCENEMGR->createSceneGJK();
 
 		return true;
 	}

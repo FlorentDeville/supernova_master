@@ -59,7 +59,7 @@ namespace Supernova
 		//Default destructor
 		virtual ~snGJK();
 
-		static bool gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* _simplex);
+		static bool gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* _simplex, unsigned int& _simplexSize);
 
 	private:
 

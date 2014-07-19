@@ -256,17 +256,21 @@ namespace Supernova
 
 	snVec snOBB::support(const snVec& _direction, float& _distance) const
 	{
+		snVec pos = support(_direction);
+		_distance = snVec4GetX(snVec3Dot(_direction, pos));
+		return pos;
+	}
+
+	snVec snOBB::support(const snVec& _direction) const
+	{
 		int dotX = sign(snVec4GetX(snVec3Dot(_direction, m_normals[0])));
 		int dotY = sign(snVec4GetX(snVec3Dot(_direction, m_normals[1])));
 		int dotZ = sign(snVec4GetX(snVec3Dot(_direction, m_normals[2])));
 
-		snVec pos = m_pos +
+		return m_pos +
 			m_normals[0] * (float)dotX * snVec4GetX(m_extends) +
 			m_normals[1] * (float)dotY * snVec4GetY(m_extends) +
 			m_normals[2] * (float)dotZ * snVec4GetZ(m_extends);
-
-		_distance = snVec4GetX(snVec3Dot(_direction, pos));
-		return pos;
 	}
 
 	snVec snOBB::anyPoint() const

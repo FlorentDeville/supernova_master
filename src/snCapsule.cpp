@@ -147,16 +147,19 @@ namespace Supernova
 
 	snVec snCapsule::support(const snVec& _direction, float& _distance) const
 	{
-		snVec dot = snVec3Dot(_direction, m_b - m_a);
-
-		snVec s;
-		if (snVec4GetX(dot) >= 0)
-			s = m_b + _direction * m_radius;
-		else
-			s = m_a + _direction * m_radius;
-
+		snVec s = support(_direction);
 		_distance = snVec4GetX(snVec3Dot(_direction, s));
 		return s;
+	}
+
+	snVec snCapsule::support(const snVec& _direction) const
+	{
+		snVec dot = snVec3Dot(_direction, m_b - m_a);
+
+		if (snVec4GetX(dot) >= 0)
+			return m_b + _direction * m_radius;
+		else
+			return m_a + _direction * m_radius;
 	}
 
 	snVec snCapsule::anyPoint() const

@@ -353,27 +353,189 @@ namespace Supernova
 		res.m_collision = false;
 
 		snVec gjkSimplex[4];
-		if (!snGJK::gjkIntersect(*_c1, *_c2, gjkSimplex))
+		unsigned int simplexSize = 0;
+		if (!snGJK::gjkIntersect(*_c1, *_c2, gjkSimplex, simplexSize))
 			return res;
 
+		//Add points to the simplex
 		snEPA epa;
 		snSimplex simplex;
-		simplex.addVertex(gjkSimplex[0]);
-		simplex.addVertex(gjkSimplex[1]);
-		simplex.addVertex(gjkSimplex[2]);
-		simplex.addVertex(gjkSimplex[3]);
+		/*for (unsigned int i = 0; i < simplexSize; ++i)
+			simplex.addVertex(gjkSimplex[i]);*/
+		
+		if (simplexSize == 1) //This is just a contact point, ignore it.
+		{
+			return res;
+		}
+		else if (simplexSize == 2) //A line where the origin lies
+		{
+			// The simplex returned by GJK is a line segment d containing the origin.
+			// We add two additional support points to construct a hexahedron (two tetrahedron
+			// glued together with triangle faces. The idea is to compute three different vectors
+			// v1, v2 and v3 that are orthogonal to the segment d. The three vectors are relatively
+			// rotated of 120 degree around the d segment. The the three new points to
+			// construct the polytope are the three support points in those three directions
+			// v1, v2 and v3.
 
-		snEPATriangle* t0 = simplex.addTriangle(0, 2, 1);
-		snEPATriangle* t1 = simplex.addTriangle(0, 1, 3);
-		snEPATriangle* t2 = simplex.addTriangle(1, 2, 3);
-		snEPATriangle* t3 = simplex.addTriangle(2, 0, 3);
+			// Direction of the segment
+			snVec d = gjkSimplex[1] - gjkSimplex[0];
+			snVec3Normalize(d);
 
-		simplex.addLink(t0, 0, t3, 0);
-		simplex.addLink(t0, 1, t2, 0);
-		simplex.addLink(t0, 2, t1, 0);
-		simplex.addLink(t1, 1, t2, 2);
-		simplex.addLink(t2, 1, t3, 2);
-		simplex.addLink(t3, 1, t1, 2);
+			// Choose the coordinate axis from the minimal absolute component of the vector d
+			unsigned int minAxis = snVec3GetMinAxis(d);
+
+			// Compute sin(60)
+			const double sin60 = sqrt(3.0) * 0.5;
+
+			// Create a rotation quaternion to rotate the vector v1 to get the vectors
+			// v2 and v3
+			snVec rotationQuat = d * sin60;// snVec4Set(d.getX() * sin60, d.getY() * sin60, d.getZ() * sin60, 0.5);
+			snVec4SetW(rotationQuat, 0.5f);
+
+			// Construct the corresponding rotation matrix
+			snMatrix44f rotationMat;// = rotationQuat.getMatrix();
+			rotationMat.createRotationFromQuaternion(rotationQuat);
+
+			// Compute the vector v1, v2, v3
+			snVec v1 = snVec3Cross(d, snVec4Set(minAxis == 0, minAxis == 1, minAxis == 2, 0));// d.cross(Vector3D(minAxis == 0, minAxis == 1, minAxis == 2));
+			snVec v2 = snMatrixTransform3(v1, rotationMat);// rotationMat * v1;
+			snVec v3 = snMatrixTransform3(v2, rotationMat);// rotationMat * v2;
+			snVec3Normalize(v1);
+			snVec3Normalize(v2);
+			snVec3Normalize(v3);
+			// Compute the support point in the direction of v1
+			
+			/*suppPointsA[2] = boundingVolume1->getSupportPoint(v1, OBJECT_MARGIN);
+			suppPointsB[2] = boundingVolume2->getSupportPoint(v1.getOpposite(), OBJECT_MARGIN);
+			points[2] = suppPointsA[2] - suppPointsB[2];*/
+			snVec newPoint2 = _c1->support(v1) - _c2->support(-v1);
+
+			// Compute the support point in the direction of v2
+			/*suppPointsA[3] = boundingVolume1->getSupportPoint(v2, OBJECT_MARGIN);
+			suppPointsB[3] = boundingVolume2->getSupportPoint(v2.getOpposite(), OBJECT_MARGIN);
+			points[3] = suppPointsA[3] - suppPointsB[3];*/
+			snVec newPoint3 = _c1->support(v2) - _c2->support(-v2);
+
+			// Compute the support point in the direction of v3
+	/*		suppPointsA[4] = boundingVolume1->getSupportPoint(v3, OBJECT_MARGIN);
+			suppPointsB[4] = boundingVolume2->getSupportPoint(v3.getOpposite(), OBJECT_MARGIN);
+			points[4] = suppPointsA[4] - suppPointsB[4];*/
+			snVec newPoint4 = _c1->support(v3) - _c2->support(-v3);
+
+			// Now we have an hexahedron (two tetrahedron glued together). We can simply keep the
+			// tetrahedron that contains the origin in order that the initial polytope of the
+			// EPA algorithm is a tetrahedron, which is simpler to deal with.
+
+			// If the origin is in the tetrahedron of points 0, 2, 3, 4
+			//if (isOriginInTetrahedron(points[0], points[2], points[3], points[4]) == 0) 
+			unsigned int wrongId = 0;
+			if (epa.isValidStartSimplex(gjkSimplex[0], newPoint2, newPoint3, newPoint4, wrongId))
+			{
+				// We use the point 4 instead of point 1 for the initial tetrahedron
+				simplex.addVertex(gjkSimplex[0]);
+				simplex.addVertex(newPoint4);
+				simplex.addVertex(newPoint2);
+				simplex.addVertex(newPoint3);
+				/*suppPointsA[1] = suppPointsA[4];
+				suppPointsB[1] = suppPointsB[4];
+				points[1] = points[4];*/
+			}
+			//else if (isOriginInTetrahedron(points[1], points[2], points[3], points[4]) == 0) 
+			else if (epa.isValidStartSimplex(gjkSimplex[1], newPoint2, newPoint3, newPoint4, wrongId))
+			{  // If the origin is in the tetrahedron of points 1, 2, 3, 4
+				// We use the point 4 instead of point 0 for the initial tetrahedron
+				simplex.addVertex(newPoint4);
+				simplex.addVertex(gjkSimplex[1]);
+				simplex.addVertex(newPoint2);
+				simplex.addVertex(newPoint3);
+
+				/*suppPointsA[0] = suppPointsA[0];
+				suppPointsB[0] = suppPointsB[0];
+				points[0] = points[0];*/
+			}
+			else 
+			{
+				// The origin is not in the initial polytope
+				return res;
+			}
+
+			snEPATriangle* t0 = simplex.addTriangle(0, 2, 1);
+			snEPATriangle* t1 = simplex.addTriangle(0, 1, 3);
+			snEPATriangle* t2 = simplex.addTriangle(1, 2, 3);
+			snEPATriangle* t3 = simplex.addTriangle(2, 0, 3);
+
+			simplex.addLink(t0, 0, t3, 0);
+			simplex.addLink(t0, 1, t2, 0);
+			simplex.addLink(t0, 2, t1, 0);
+			simplex.addLink(t1, 1, t2, 2);
+			simplex.addLink(t2, 1, t3, 2);
+			simplex.addLink(t3, 1, t1, 2);
+			// The polytope contains now 4 vertices
+			//nbVertices = 4;
+
+		}
+		else if (simplexSize == 3)
+		{
+
+			//Compute the triangle normal and find 2 points on both sides of the triangle.
+			//Create a simplex from that.
+
+			// Compute the normal of the triangle
+			snVec v1 = gjkSimplex[1] - gjkSimplex[0];
+			snVec v2 = gjkSimplex[2] - gjkSimplex[0];
+			snVec n = snVec3Cross(v1, v2);
+			snVec3Normalize(n);
+
+			for (unsigned int i = 0; i < simplexSize; ++i)
+				simplex.addVertex(gjkSimplex[i]);
+
+			// Compute the two new vertices to obtain a hexahedron
+			int id4 = simplex.addVertex(_c1->support(n) - _c2->support(-n));
+			int id5 = simplex.addVertex(_c1->support(-n) - _c2->support(n));
+
+			//Create the triangles
+			snEPATriangle* t0 = simplex.addTriangle(0, 1, id4);
+			snEPATriangle* t1 = simplex.addTriangle(0, id4, 2);
+			snEPATriangle* t2 = simplex.addTriangle(1, 2, id4);
+
+			snEPATriangle* t3 = simplex.addTriangle(1, 0, id5);
+			snEPATriangle* t4 = simplex.addTriangle(id5, 0, 2);
+			snEPATriangle* t5 = simplex.addTriangle(1, id5, 2);
+
+			//Create the links
+			simplex.addLink(t0, 1, t2, 2);
+			simplex.addLink(t0, 2, t1, 0);
+			simplex.addLink(t1, 1, t2, 1);
+
+			simplex.addLink(t3, 2, t5, 0);
+			simplex.addLink(t5, 1, t4, 2);
+			simplex.addLink(t4, 0, t3, 1);
+
+			simplex.addLink(t2, 0, t5, 2);
+			simplex.addLink(t1, 2, t4, 1);
+			simplex.addLink(t0, 0, t3, 0);
+		}
+		else if (simplexSize == 4)
+		{
+			for (unsigned int i = 0; i < simplexSize; ++i)
+				simplex.addVertex(gjkSimplex[i]);
+
+			snEPATriangle* t0 = simplex.addTriangle(0, 2, 1);
+			snEPATriangle* t1 = simplex.addTriangle(0, 1, 3);
+			snEPATriangle* t2 = simplex.addTriangle(1, 2, 3);
+			snEPATriangle* t3 = simplex.addTriangle(2, 0, 3);
+
+			simplex.addLink(t0, 0, t3, 0);
+			simplex.addLink(t0, 1, t2, 0);
+			simplex.addLink(t0, 2, t1, 0);
+			simplex.addLink(t1, 1, t2, 2);
+			simplex.addLink(t2, 1, t3, 2);
+			simplex.addLink(t3, 1, t1, 2);
+		}
+		else
+		{
+			throw; // simplex size not handled
+		}
 		
 		float depth = 0;
 		if (!epa.execute(simplex, *_c1, *_c2, res.m_normal, depth))
@@ -384,4 +546,6 @@ namespace Supernova
 
 		return res;
 	}
+
+
 }

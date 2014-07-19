@@ -105,6 +105,9 @@ namespace Supernova
 		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
 		snVec support(const snVec& _direction, float& _distance) const;
 
+		//Return the farthest point in the direction provided as parameter.
+		snVec support(const snVec& _direction) const;
+
 		//Return any point making the collider
 		snVec anyPoint() const;
 	};
