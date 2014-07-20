@@ -131,12 +131,16 @@ namespace Supernova
 	snCollisionResult snCollision::queryTestCollisionOBBVersusOBB(const snICollider* const _c1, const snICollider* const _c2)
 	{
 		snCollisionResult res;
-		const snOBB* _b1 = static_cast<const snOBB*>(_c1);
-		const snOBB* _b2 = static_cast<const snOBB*>(_c2);
-		bool resSAT = snSAT::queryIntersection<snOBB, snOBB>(*_b1, *_b2, res.m_normal);
+
+		snSAT sat;
+		bool resSAT = sat.queryIntersection(*_c1, *_c2, res.m_normal);
 
 #ifdef SANITY_GJK
-		bool resGJK = snGJK::gjkIntersect<snOBB, snOBB>(*_b1, *_b2);
+		const snOBB* _b1 = static_cast<const snOBB*>(_c1);
+		const snOBB* _b2 = static_cast<const snOBB*>(_c2);
+		snVec simplex[4];
+		unsigned int simplexSize;
+		bool resGJK = snGJK::gjkIntersect(*_b1, *_b2, simplex, simplexSize);
 
 		if (resSAT != resGJK)
 		{
@@ -178,7 +182,7 @@ namespace Supernova
 
 		//find collision patch using clipping algorithm.
 		snFeatureClipping clipping;
-		bool clippingResult = clipping.findContactPatch(*_b1, *_b2, res.m_normal, res.m_contacts, res.m_penetrations);
+		bool clippingResult = clipping.findContactPatch(*_c1, *_c2, res.m_normal, res.m_contacts, res.m_penetrations);
 		res.m_collision = clippingResult;
 		return res;
 	}

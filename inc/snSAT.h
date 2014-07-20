@@ -38,21 +38,20 @@
 
 namespace Supernova
 {
+	class snICollider;
+
 	class snSAT
 	{
 	public:
 		//Make a collision test between two colliders and return the collision normal.
 		//The two types T and U must implement the interface snISATCollider.
 		//Return true if the colliders intersects. False otherwise.
-		template <class T, class U> static bool queryIntersection(const T& _c1, const U& _c2, snVec& collisionNormal);
+		bool queryIntersection(const snICollider& _c1, const snICollider& _c2, snVec& collisionNormal);
 
 	private:
 
-		template <class T, class U> 
-			static bool queryOverlap(const T& _c1, const U& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap);
+		bool queryOverlap(const snICollider& _c1, const snICollider& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap);
 	};
 }
-
-#include "snSAT.inl"
 
 #endif //ifndef SN_SAT_H

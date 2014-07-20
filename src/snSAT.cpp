@@ -33,15 +33,14 @@
 /****************************************************************************/
 
 #include "snSAT.h"
-
+#include "snICollider.h"
 #include "snVec.h"
 #include "snMath.h"
 using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	template <class T, class U>
-	bool snSAT::queryIntersection(const T& _c1, const U& _c2, snVec& _collisionNormal)
+	bool snSAT::queryIntersection(const snICollider& _c1, const snICollider& _c2, snVec& _collisionNormal)
 	{
 		const int NORMAL_COUNT = 3;
 		snVec s1Normals[NORMAL_COUNT];
@@ -55,9 +54,9 @@ namespace Supernova
 		//compute collider overlap using the normals
 		for (int i = 0; i < NORMAL_COUNT; ++i)
 		{
-			if (!queryOverlap<T, U>(_c1, _c2, s1Normals[i], _collisionNormal, smallestOverlap))
+			if (!queryOverlap(_c1, _c2, s1Normals[i], _collisionNormal, smallestOverlap))
 				return false;
-			if (!queryOverlap<T, U>(_c1, _c2, s2Normals[i], _collisionNormal, smallestOverlap))
+			if (!queryOverlap(_c1, _c2, s2Normals[i], _collisionNormal, smallestOverlap))
 				return false;
 		}
 
@@ -71,7 +70,7 @@ namespace Supernova
 				if (snVec3SquaredNorme(cross) < EPSILON) continue;
 
 				snVec3Normalize(cross);
-				if (!queryOverlap<T, U>(_c1, _c2, cross, _collisionNormal, smallestOverlap))
+				if (!queryOverlap(_c1, _c2, cross, _collisionNormal, smallestOverlap))
 					return false;
 			}
 		}
@@ -79,8 +78,7 @@ namespace Supernova
 		return true;
 	}
 
-	template <class T, class U>
-	static bool snSAT::queryOverlap(const T& _c1, const U& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap)
+	bool snSAT::queryOverlap(const snICollider& _c1, const snICollider& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap)
 	{
 		float minS1, minS2, maxS1, maxS2;
 

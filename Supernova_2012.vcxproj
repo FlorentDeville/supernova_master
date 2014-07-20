@@ -86,15 +86,13 @@
     <ClCompile Include="src\snOBB.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
+    <ClCompile Include="src\snSAT.cpp" />
     <ClCompile Include="src\snScene.cpp" />
     <ClCompile Include="src\snSphere.cpp" />
     <ClCompile Include="src\snSweepManager.cpp" />
     <ClCompile Include="src\snTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="inc\snSAT.inl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </None>
     <None Include="inc\snVec.inl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>
