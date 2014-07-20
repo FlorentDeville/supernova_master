@@ -17,7 +17,6 @@
 #include "EntityFixedConstraint.h"
 
 #include "snSphere.h"
-#include "snColliderPlan.h"
 
 #include "snScene.h"
 #include "snActorDynamic.h"

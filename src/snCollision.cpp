@@ -41,7 +41,6 @@
 #include "snOBB.h"
 #include "snCapsule.h"
 #include "snSphere.h"
-#include "snColliderPlan.h"
 
 #include "snCollisionResult.h"
 #include "snColliderContainer.h"
@@ -66,8 +65,6 @@ namespace Supernova
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderBox), &Supernova::snCollision::queryTestCollisionOBBVersusOBB));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderSphere), &Supernova::snCollision::queryTestCollisionSphereVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderPlan), &Supernova::snCollision::queryTestCollisionBoxVersusPlan));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderPlan), &Supernova::snCollision::queryTestCollisionSphereVersusPlan));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderSphere), &Supernova::snCollision::queryTestCollisionCapsuleVersusSphere));
 	}
 
@@ -242,72 +239,6 @@ namespace Supernova
 		res.m_contacts.push_back(contactPoint);
 		res.m_penetrations.push_back(snVec3Norme(contactPoint - closestPoint));
 		return res;
-	}
-
-	snCollisionResult snCollision::queryTestCollisionBoxVersusPlan(const snICollider* const _c1, const snICollider* const /*_c2*/)
-	{
-		const snOBB* _box = static_cast<const snOBB*>(_c1);
-		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
-
-		//get the distance between the box center and the plan
-		float boxDistance = fabsf(_plan->getDistance(_box->getPosition()));
-		
-		//get the extends
-		snVec extends = _box->getExtends();
-
-		//get the box normals
-		const int OOB_NORMAL_COUNT = 3;
-		snVec s1Normals[OOB_NORMAL_COUNT];
-		_box->getUniqueNormals(s1Normals, OOB_NORMAL_COUNT);
-
-		//compute the minimum distance between the box and the plan
-		snVec dot0 = snVec4GetAbsolute(snVec3Dot(s1Normals[0], _plan->getWorldNormal()));
-		snVec dot1 = snVec4GetAbsolute(snVec3Dot(s1Normals[1], _plan->getWorldNormal()));
-		snVec dot2 = snVec4GetAbsolute(snVec3Dot(s1Normals[2], _plan->getWorldNormal()));
-
-		snVec dot = _mm_shuffle_ps(dot0, dot1, _MM_SHUFFLE(3, 2, 1, 0));
-		dot = _mm_shuffle_ps(dot, dot2, _MM_SHUFFLE(3, 2, 1, 0));
-		snVec minDistance = dot * extends;
-
-		/*snVec minDistance = snVec4GetX(extends) * snVec4GetAbsolute(snVec3Dot(s1Normals[0], _plan->getWorldNormal())) +
-			snVec4GetY(extends) * snVec4GetAbsolute(snVec3Dot(s1Normals[1], _plan->getWorldNormal())) +
-			snVec4GetZ(extends) * snVec4GetAbsolute(snVec3Dot(s1Normals[2], _plan->getWorldNormal()));*/
-		
-		//compare the real distance to the min distance
-		float overlap = boxDistance - snVec4GetX(minDistance);
-
-		snCollisionResult res;
-		if (overlap < 0)
-		{
-			res.m_collision = true;
-			res.m_normal = _plan->getWorldNormal();
-			res.m_penetrations.push_back(fabs(overlap));
-		}
-		else
-			res.m_collision = false;
-		
-		return res;
-	}
-
-	snCollisionResult snCollision::queryTestCollisionSphereVersusPlan(const snICollider* const _c1, const snICollider* const /*_c2*/)
-	{
-		const snSphere* _sphere = static_cast<const snSphere*>(_c1);
-		const snColliderPlan* _plan = static_cast<const snColliderPlan*>(_c1);
-
-		snCollisionResult res;
-
-		//get the distance between the sphere center and the plan
-		float distance = _plan->getDistance(_sphere->getCenter());
-
-		if (distance > _sphere->getRadius())
-			return res;
-		else
-		{
-			res.m_collision = true;
-			res.m_normal = _plan->getWorldNormal();
-			res.m_penetrations.push_back(_sphere->getRadius() - distance);
-			return res;
-		}
 	}
 
 	snCollisionResult snCollision::queryTestCollisionCapsuleVersusSphere(const snICollider* const _c1, const snICollider* const _c2)

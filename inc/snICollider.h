@@ -52,7 +52,6 @@ namespace Supernova
 	{
 		snEColliderUnknown,
 		snEColliderBox,
-		snEColliderPlan,
 		snEColliderSphere,
 		snEColliderCapsule
 	};

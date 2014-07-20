@@ -33,9 +33,6 @@
     <ClInclude Include="inc\snCollisionResult.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snColliderPlan.h">
-      <Filter>Collision\Collider</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snICollider.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
@@ -168,9 +165,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\snColliderPlan.cpp">
-      <Filter>Collision\Collider</Filter>
-    </ClCompile>
     <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snMath.cpp">
       <Filter>Tools</Filter>
