@@ -129,7 +129,7 @@ namespace Supernova
 		unsigned int minAxis = snVec3GetMinAxis(d);
 
 		// sin(60) = sqrt(3) / 2
-		const double sin60 = sqrt(3.0) * 0.5f;
+		const float sin60 = sqrt(3.f) * 0.5f;
 
 		// Create a rotation quaternion to rotate the direction vector of 120 degrees.
 		// R = (sin(theta/2) * x, sin(theta/2) * y, sin(theta/2)*z, cos(theta/2))
