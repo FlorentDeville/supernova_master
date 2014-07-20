@@ -106,14 +106,6 @@ namespace Supernova
 		// GJK Interface													//
 		//////////////////////////////////////////////////////////////////////
 
-		//Return the farthest point in the direction provided by the _direction vector. It does not need to be normalized.
-		virtual snVec support(const snVec& _direction, float& _distance) const
-		{
-			SN_UNREFERENCED_PARAMETER(_direction);
-			SN_UNREFERENCED_PARAMETER(_distance);
-			throw;
-		}
-
 		//Return the farthest point in the direction provided as parameter.
 		virtual snVec support(const snVec& _direction) const
 		{

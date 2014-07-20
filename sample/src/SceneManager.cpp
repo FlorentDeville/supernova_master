@@ -1394,10 +1394,13 @@ namespace Devil
 		{
 			scene->createActorDynamic(&actCapsule, cylinderId);
 			snCapsule* colCapsule = new snCapsule(10, 5);
+			/*actCapsule->setPosition(snVec4Set(0, 15, 0, 1));
+			actCapsule->setOrientation(snQuaternionFromEuler( 0, 0.f, 0));*/
 			actCapsule->setPosition(snVec4Set(0, 15, 0, 1) + i * offsetPosition);
-			actCapsule->setOrientation(snQuaternionFromEuler( i * orientationOffset, 0, i * orientationOffset));
-			//actCapsule->setLinearVelocity(snVec4Set(0, 3, 0, 0));
+			actCapsule->setOrientation(snQuaternionFromEuler(i * orientationOffset, 0.f, i * orientationOffset));
+			//actCapsule->setLinearVelocity(snVec4Set(0, 15, 0, 0));
 			//actCapsule->setAngularVelocity(snVec4Set(-5, 2, 0, 0));
+			actCapsule->setAngularDampingCoeff(0.2f);
 			actCapsule->addCollider(colCapsule);
 			actCapsule->getPhysicMaterial().m_friction = 1.f;
 			actCapsule->getPhysicMaterial().m_restitution = 0.f;
@@ -1412,8 +1415,8 @@ namespace Devil
 		//	scene->createActorDynamic(&actCapsule, cylinderId);
 		//	snCapsule* colCapsule = new snCapsule(10, 5);
 		//	//snOBB* colCapsule = new snOBB(snVec4Set(5, 5, 5, 0));
-		//	actCapsule->setPosition(snVec4Set(0, 26, 0, 1));
-		//	actCapsule->setOrientation(snQuaternionFromEuler(3.14f * 0.5f, 0, 0));
+		//	actCapsule->setPosition(snVec4Set(0.1, 35, 0, 1));
+		//	actCapsule->setOrientation(snQuaternionFromEuler(0, 0, 3.14f * 0.5f));
 		//	//actCapsule->setLinearVelocity(snVec4Set(0, -3, 0, 0));
 		//	//actCapsule->setAngularVelocity(snVec4Set(0, 0, 5, 0));
 		//	actCapsule->addCollider(colCapsule);
