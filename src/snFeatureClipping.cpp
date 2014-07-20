@@ -224,7 +224,6 @@ namespace Supernova
 		_patch.push_back(_featureVertex[0]);
 
 		float depth = fabsf(snVec4GetX(snVec3Dot(_n, _featureVertex[0] - closestPoint)));
-		//float dist = snVec3Norme(_featureVertex[0] - closestPoint);
 		_patchPenetrations.push_back(depth);
 	}
 
@@ -237,7 +236,8 @@ namespace Supernova
 		snClosestPoint::SegmentSegment(_featureEdge1[0], _featureEdge1[1], _featureEdge2[0], _featureEdge2[1], s, t, c1, c2);
 
 		_patch.push_back(c1);
-		_patchPenetrations.push_back(snVec4GetX(snVec3Dot(_n, c1 - c2)));
+		float depth = snVec4GetX(snVec3Dot(_n, c1 - c2));
+		_patchPenetrations.push_back(fabsf(depth));
 
 	}
 

@@ -105,7 +105,7 @@ namespace Supernova
 		//Check if the vertices match between the two triangles
 		bool valid = (m_verticesId[_edgeId] == _triangle->getVertexId((_adjacentEdgeId + 1) % 3)) 
 			&& (m_verticesId[(_edgeId + 1) % 3] == _triangle->getVertexId(_adjacentEdgeId));
-		assert(valid);
+
 		if (!valid)
 			return false;
 
@@ -149,10 +149,12 @@ namespace Supernova
 			//make the other halflinks
 			snEPATriangle* newTriangle = _simplex.getTriangle(i);
 			snEPATriangle* existingTriangle = newTriangle->getAdjacentEdge(1).getOwner();
-			existingTriangle->setAdjacentEdge(newTriangle, 1, newTriangle->getAdjacentEdge(1).getId());
+			if (!existingTriangle->setAdjacentEdge(newTriangle, 1, newTriangle->getAdjacentEdge(1).getId()))
+				return false;
 
 			//make the two other links
-			_simplex.addLink(newTriangle, 0, _simplex.getTriangle(j), 2);
+			if (!_simplex.addLink(newTriangle, 0, _simplex.getTriangle(j), 2))
+				return false;
 		}
 
 		return true;

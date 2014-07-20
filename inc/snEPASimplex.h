@@ -88,7 +88,7 @@ namespace Supernova
 		snEPATriangle* addTriangle(unsigned int _vertexId0, unsigned int _vertexId1, unsigned int _vertexId2);
 
 		//Link two edge1 of triangle1 to edge2 of triangle2.
-		void addLink(snEPATriangle* triangle1, unsigned int _edgeId1, snEPATriangle* triangle2, unsigned int _edgeId2);
+		bool addLink(snEPATriangle* triangle1, unsigned int _edgeId1, snEPATriangle* triangle2, unsigned int _edgeId2);
 
 		//Return a pointer to the closest triangle to the origin
 		snEPATriangle* getClosestTriangleToOrigin();

@@ -94,10 +94,15 @@ namespace Supernova
 		return newTriangle;
 	}
 
-	void snSimplex::addLink(snEPATriangle* triangle1, unsigned int _edgeId1, snEPATriangle* triangle2, unsigned int _edgeId2)
+	bool snSimplex::addLink(snEPATriangle* triangle1, unsigned int _edgeId1, snEPATriangle* triangle2, unsigned int _edgeId2)
 	{
-		triangle1->setAdjacentEdge(triangle2, _edgeId2, _edgeId1);
-		triangle2->setAdjacentEdge(triangle1, _edgeId1, _edgeId2);
+		if (!triangle1->setAdjacentEdge(triangle2, _edgeId2, _edgeId1))
+			return false;
+
+		if (!triangle2->setAdjacentEdge(triangle1, _edgeId1, _edgeId2))
+			return false;
+
+		return true;
 	}
 
 	snEPATriangle* snSimplex::getClosestTriangleToOrigin()
@@ -114,12 +119,10 @@ namespace Supernova
 				continue;
 
 			float triDistance = tri.getSqDistance();
-			//float triDistance = snVec4GetX(snVec3Dot(tri.getNormal(), m_vertexBuffer[tri.getVertexId(0)]));
+			
 			if (!(triDistance >= 0.f))
 				continue;
 
-			//assert(triDistance >= 0.f);
-			
 			if (triDistance < sqDistance)
 			{
 				closest = &tri;

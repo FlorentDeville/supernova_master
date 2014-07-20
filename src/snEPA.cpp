@@ -82,7 +82,7 @@ namespace Supernova
 			//expand the simplex
 			unsigned int vertexId = _simplex.addVertex(newVertex);
 			if (!closestTriangle->quickHull(_simplex, vertexId))
-				break;
+				return false;
 		}
 
 		//compute the normal and depth using the closest triangle.

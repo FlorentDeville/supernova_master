@@ -93,7 +93,8 @@ namespace Supernova
 				return false;
 
 			//Link the edge of the new triangle to the edge of the current triangle
-			newTriangle->setAdjacentEdge(m_owner, m_id, 1);
+			if (!newTriangle->setAdjacentEdge(m_owner, m_id, 1))
+				return false;
 		}
 
 		return true;
