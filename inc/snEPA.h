@@ -42,12 +42,31 @@ namespace Supernova
 	class snSimplex;
 	class snICollider;
 
+	//Take a simplex from GJK and execute the EPA algorithm on it to get the collision normal
 	class snEPA
 	{
 	public:
-		bool execute(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal, float& _depth) const;
 
-		bool isValidStartSimplex(const snVec& _p1, const snVec& _p2, const snVec& _p3, const snVec& _p4, unsigned int _wrongVertexId) const;
+		//Apply EPA to the simplex to find the collision normal.
+		bool execute(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal) const;
+
+		//Take a raw simplex (vector of snVec) coming from GJK and convert it into an snSimplex of four points or more that the
+		//function execute can use.
+		bool prepareSimplex(snVec * const _inSimplex, unsigned int _inSimplexSize, const snICollider& _c1, const snICollider& _c2, snSimplex& _outSimplex) const;
+
+	private:
+
+		//Make a simplex EPA can use from the gjk simplex with two points
+		bool prepareSimplex2(snVec * const _inSimplex, const snICollider& _c1, const snICollider& _c2, snSimplex& _outSimplex) const;
+
+		//Make a simplex EPA can use from the gjk simplex with three points
+		bool prepareSimplex3(snVec * const _inSimplex, const snICollider& _c1, const snICollider& _c2, snSimplex& _outSimplex) const;
+
+		//Make a simplex EPA can use from the gjk simplex with four points
+		bool prepareSimplex4(snVec * const _inSimplex, snSimplex& _outSimplex) const;
+
+		//Return true if the origin is inside the tetrahedrion defined by four points.
+		bool isValidStartSimplex(const snVec& _p1, const snVec& _p2, const snVec& _p3, const snVec& _p4) const;
 	};
 }
 #endif //ifdnef SN_EPA_H

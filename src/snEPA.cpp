@@ -43,35 +43,35 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	bool snEPA::execute(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal, float& _depth) const
+	bool snEPA::execute(snSimplex& _simplex, const snICollider& _c1, const snICollider& _c2, snVec& _normal) const
 	{
 		snEPATriangle* closestTriangle = 0;
 
 		bool loopOver = false;
 		while (!loopOver)
 		{
-			//get the closest triangle to the origin
+			//Get the closest triangle to the origin
 			closestTriangle = _simplex.getClosestTriangleToOrigin();
 			if (closestTriangle == 0)
 				return false;
 
-			//get the closest distance to the origin
+			//Get the closest distance to the origin
 			snVec closestPoint = closestTriangle->getClosestPoint();
 			float distance = closestTriangle->getSqDistance();
 
-			//get a point in the same direction as the outward normal
+			//Get a point in the same direction as the outward normal
 			snVec direction = closestPoint;
 			snVec3Normalize(direction);
 			snVec newVertex = _c1.support(direction) - _c2.support(-direction);
 
-			//check if we are closer to the origin
+			//Check if we are closer to the origin
 			float newDistance = snVec4GetX(snVec3Dot(newVertex, closestPoint));
 
 			//If the new distance is not bigger than the closest triangle, then finish
 			const float EPA_TOLERANCE = 0.01f;
 			if ((newDistance - distance) < EPA_TOLERANCE)
 			{
-				//if the distance is inferior to contact epsilon, consider it as no collision
+				//If the distance is inferior to contact epsilon, consider it as no collision
 				const float CONTACT_EPSILON = 10e-5f;
 				if (distance <= CONTACT_EPSILON)
 					return false;
@@ -79,66 +79,212 @@ namespace Supernova
 				break;
 			}
 
-			//expand the simplex
+			//Expand the simplex
 			unsigned int vertexId = _simplex.addVertex(newVertex);
 			if (!closestTriangle->quickHull(_simplex, vertexId))
 				return false;
 		}
 
-		//compute the normal and depth using the closest triangle.
+		//Compute the normal and depth using the closest triangle.
 		_normal = -closestTriangle->getClosestPoint();
 		snVec3Normalize(_normal);
-		_depth = sqrtf(closestTriangle->getSqDistance());
 		return true;
 	}
 
-	// Decide if the origin is in the tetrahedron
-	// Return 0 if the origin is in the tetrahedron and return the number (1,2,3 or 4) of
-	// the vertex that is wrong if the origin is not in the tetrahedron
-	bool snEPA::isValidStartSimplex(const snVec& _p1, const snVec& _p2, const snVec& _p3, const snVec& _p4, unsigned int _wrongVertexId) const
+	bool snEPA::prepareSimplex(snVec * const _inSimplex, unsigned int _inSimplexSize, const snICollider& _c1, const snICollider& _c2, snSimplex& _outSimplex) const
 	{
-		// Check vertex 1
-		snVec normal1 = snVec3Cross(_p2 - _p1, _p3 - _p1);//(p2 - p1).cross(p3 - p1);
-		//if (normal1.dot(p1) > 0.0 == normal1.dot(p4) > 0.0) 
-		if (snVec3Inferior(VEC_ZERO,snVec3Dot(normal1, _p1)) == snVec3Inferior(VEC_ZERO, snVec3Dot(normal1, _p4)))
+		if (_inSimplexSize == 1)
 		{
-			_wrongVertexId = 4;
+			//Ignore the collision when the simplex is a point.
 			return false;
-			//return 4;
+		}
+		else if (_inSimplexSize == 2)
+		{
+			return prepareSimplex2(_inSimplex, _c1, _c2, _outSimplex);
+		}
+		else if (_inSimplexSize == 3)
+		{
+			return prepareSimplex3(_inSimplex, _c1, _c2, _outSimplex);
+		}
+		else if (_inSimplexSize == 4)
+		{
+			return prepareSimplex4(_inSimplex, _outSimplex);
+		}
+		else
+		{
+			throw; // simplex size not handled
+		}
+	}
+
+	bool snEPA::prepareSimplex2(snVec * const _inSimplex, const snICollider& _c1, const snICollider& _c2, snSimplex& _outSimplex) const
+	{
+		//GJK returned a line. 
+		//Let's find three points around that line to make a simplex containing the origin.
+
+		// Direction of the segment
+		snVec d = _inSimplex[1] - _inSimplex[0];
+		snVec3Normalize(d);
+
+		// Choose the coordinate axis from the minimal absolute component of the vector d
+		unsigned int minAxis = snVec3GetMinAxis(d);
+
+		// sin(60) = sqrt(3) / 2
+		const double sin60 = sqrt(3.0) * 0.5f;
+
+		// Create a rotation quaternion to rotate the direction vector of 120 degrees.
+		// R = (sin(theta/2) * x, sin(theta/2) * y, sin(theta/2)*z, cos(theta/2))
+		//In our case sin(theta/2) = sin(60).
+		snVec rotationQuat = d * sin60;
+		snVec4SetW(rotationQuat, 0.5f);
+		snMatrix44f rotationMat;
+		rotationMat.createRotationFromQuaternion(rotationQuat);
+
+		// Compute the vector v1, v2, v3
+		snVec v1 = snVec3Cross(d, snVec4Set(minAxis == 0, minAxis == 1, minAxis == 2, 0));
+		snVec v2 = snMatrixTransform3(v1, rotationMat);
+		snVec v3 = snMatrixTransform3(v2, rotationMat);
+		snVec3Normalize(v1);
+		snVec3Normalize(v2);
+		snVec3Normalize(v3);
+
+		// Compute new support points.
+		snVec newPoint2 = _c1.support(v1) - _c2.support(-v1);
+		snVec newPoint3 = _c1.support(v2) - _c2.support(-v2);
+		snVec newPoint4 = _c1.support(v3) - _c2.support(-v3);
+
+		//Check which tetrahedron contains the origin
+		if (isValidStartSimplex(_inSimplex[0], newPoint2, newPoint3, newPoint4))
+		{
+			//Use the point 4 instead of point 1
+			_outSimplex.addVertex(_inSimplex[0]);
+			_outSimplex.addVertex(newPoint4);
+			_outSimplex.addVertex(newPoint2);
+			_outSimplex.addVertex(newPoint3);
+		}
+		else if (isValidStartSimplex(_inSimplex[1], newPoint2, newPoint3, newPoint4))
+		{
+			//Use the point 4 instead of point 0
+			_outSimplex.addVertex(newPoint4);
+			_outSimplex.addVertex(_inSimplex[1]);
+			_outSimplex.addVertex(newPoint2);
+			_outSimplex.addVertex(newPoint3);
+		}
+		else
+		{
+			// The origin is not in the initial polytope
+			return false;
 		}
 
-		// Check vertex 2
-		snVec normal2 = snVec3Cross(_p4 - _p2, _p3 - _p2); //(p4 - p2).cross(p3 - p2);
-		//if (normal2.dot(p2) > 0.0 == normal2.dot(p1) > 0.0) 
+		//Create the simplex
+		snEPATriangle* t0 = _outSimplex.addTriangle(0, 2, 1);
+		snEPATriangle* t1 = _outSimplex.addTriangle(0, 1, 3);
+		snEPATriangle* t2 = _outSimplex.addTriangle(1, 2, 3);
+		snEPATriangle* t3 = _outSimplex.addTriangle(2, 0, 3);
+
+		_outSimplex.addLink(t0, 0, t3, 0);
+		_outSimplex.addLink(t0, 1, t2, 0);
+		_outSimplex.addLink(t0, 2, t1, 0);
+		_outSimplex.addLink(t1, 1, t2, 2);
+		_outSimplex.addLink(t2, 1, t3, 2);
+		_outSimplex.addLink(t3, 1, t1, 2);
+
+		return true;
+	}
+
+	bool snEPA::prepareSimplex3(snVec * const _inSimplex, const snICollider& _c1, const snICollider& _c2, snSimplex& _outSimplex) const
+	{
+		//GJK returned a triangle.
+		//Find two points, each one on a side of the triangle and make a simplex out of that.
+
+		//Compute the normal of the triangle
+		snVec v1 = _inSimplex[1] - _inSimplex[0];
+		snVec v2 = _inSimplex[2] - _inSimplex[0];
+		snVec n = snVec3Cross(v1, v2);
+		snVec3Normalize(n);
+
+		//Add existing points to the simplex
+		for (unsigned int i = 0; i < 3; ++i)
+			_outSimplex.addVertex(_inSimplex[i]);
+
+		// Compute the two new vertices to obtain a hexahedron
+		int id4 = _outSimplex.addVertex(_c1.support(n) - _c2.support(-n));
+		int id5 = _outSimplex.addVertex(_c1.support(-n) - _c2.support(n));
+
+		//Create the triangles
+		snEPATriangle* t0 = _outSimplex.addTriangle(0, 1, id4);
+		snEPATriangle* t1 = _outSimplex.addTriangle(0, id4, 2);
+		snEPATriangle* t2 = _outSimplex.addTriangle(1, 2, id4);
+
+		snEPATriangle* t3 = _outSimplex.addTriangle(1, 0, id5);
+		snEPATriangle* t4 = _outSimplex.addTriangle(id5, 0, 2);
+		snEPATriangle* t5 = _outSimplex.addTriangle(1, id5, 2);
+
+		//Create the links
+		_outSimplex.addLink(t0, 1, t2, 2);
+		_outSimplex.addLink(t0, 2, t1, 0);
+		_outSimplex.addLink(t1, 1, t2, 1);
+
+		_outSimplex.addLink(t3, 2, t5, 0);
+		_outSimplex.addLink(t5, 1, t4, 2);
+		_outSimplex.addLink(t4, 0, t3, 1);
+
+		_outSimplex.addLink(t2, 0, t5, 2);
+		_outSimplex.addLink(t1, 2, t4, 1);
+		_outSimplex.addLink(t0, 0, t3, 0);
+
+		return true;
+	}
+
+	bool snEPA::prepareSimplex4(snVec * const _inSimplex, snSimplex& _outSimplex) const
+	{
+		for (unsigned int i = 0; i < 4; ++i)
+			_outSimplex.addVertex(_inSimplex[i]);
+
+		snEPATriangle* t0 = _outSimplex.addTriangle(0, 2, 1);
+		snEPATriangle* t1 = _outSimplex.addTriangle(0, 1, 3);
+		snEPATriangle* t2 = _outSimplex.addTriangle(1, 2, 3);
+		snEPATriangle* t3 = _outSimplex.addTriangle(2, 0, 3);
+
+		_outSimplex.addLink(t0, 0, t3, 0);
+		_outSimplex.addLink(t0, 1, t2, 0);
+		_outSimplex.addLink(t0, 2, t1, 0);
+		_outSimplex.addLink(t1, 1, t2, 2);
+		_outSimplex.addLink(t2, 1, t3, 2);
+		_outSimplex.addLink(t3, 1, t1, 2);
+
+		return true;
+	}
+
+	bool snEPA::isValidStartSimplex(const snVec& _p1, const snVec& _p2, const snVec& _p3, const snVec& _p4) const
+	{
+		//Check triangle 123
+		snVec normal1 = snVec3Cross(_p2 - _p1, _p3 - _p1);
+		if (snVec3Inferior(VEC_ZERO, snVec3Dot(normal1, _p1)) == snVec3Inferior(VEC_ZERO, snVec3Dot(normal1, _p4)))
+		{
+			return false;
+		}
+
+		//Check triangle 234
+		snVec normal2 = snVec3Cross(_p4 - _p2, _p3 - _p2);
 		if (snVec3Inferior(VEC_ZERO, snVec3Dot(normal2, _p2)) == snVec3Inferior(VEC_ZERO, snVec3Dot(normal2, _p1)))
 		{
-			_wrongVertexId = 1;
 			return false;
-			//return 1;
 		}
 
-		// Check vertex 3
-		snVec normal3 = snVec3Cross(_p4 - _p3, _p1 - _p3); //(p4 - p3).cross(p1 - p3);
-		//if (normal3.dot(p3) > 0.0 == normal3.dot(p2) > 0.0) 
+		//Check triangle 134
+		snVec normal3 = snVec3Cross(_p4 - _p3, _p1 - _p3);
 		if (snVec3Inferior(VEC_ZERO, snVec3Dot(normal3, _p3)) == snVec3Inferior(VEC_ZERO, snVec3Dot(normal3, _p2)))
 		{
-			_wrongVertexId = 2;
 			return false;
-			//return 2;
 		}
 
-		// Check vertex 4
-		snVec normal4 = snVec3Cross(_p2 - _p4, _p1 - _p4); //(p2 - p4).cross(p1 - p4);
-		//if (normal4.dot(p4) > 0.0 == normal4.dot(p3) > 0.0) 
+		//Check triangle 124
+		snVec normal4 = snVec3Cross(_p2 - _p4, _p1 - _p4);
 		if (snVec3Inferior(VEC_ZERO, snVec3Dot(normal4, _p4)) == snVec3Inferior(VEC_ZERO, snVec3Dot(normal4, _p3)))
 		{
-			_wrongVertexId = 3;
 			return false;
-			//return 3;
 		}
 
-		// The origin is in the tetrahedron, we return 0
 		return true;
 	}
-
 }
