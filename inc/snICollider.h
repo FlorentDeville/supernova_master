@@ -120,6 +120,32 @@ namespace Supernova
 
 #pragma endregion
 
+#pragma region SAT
+		//////////////////////////////////////////////////////////////////////
+		// SAT Interface													//
+		//////////////////////////////////////////////////////////////////////
+
+		//Fill in an array of unique normals to be tested by the SAT algorithms.
+		//_arraySize is the size of the array.
+		//Returns the number of normals available. Returns -1 if the array is not big enough.
+		virtual int getUniqueNormals(snVec* _arrayNormals, int _arraySize) const
+		{
+			SN_UNREFERENCED_PARAMETER(_arrayNormals);
+			SN_UNREFERENCED_PARAMETER(_arraySize);
+			throw;
+		}
+
+		//Project the collider along an axis and return the min and max values.
+		virtual void projectToAxis(const snVec& _axis, float& _min, float& _max) const
+		{
+			SN_UNREFERENCED_PARAMETER(_axis);
+			SN_UNREFERENCED_PARAMETER(_min);
+			SN_UNREFERENCED_PARAMETER(_max);
+			throw;
+		}
+
+#pragma endregion
+
 		snEColliderType getTypeOfCollider() const { return m_typeOfCollider; }
 
 		//Compute the bounding volume for this collider

@@ -133,9 +133,6 @@
     <ClInclude Include="inc\snLogger.h">
       <Filter>Tools</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snISATCollider.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snAABB.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>

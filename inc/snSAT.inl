@@ -33,7 +33,6 @@
 /****************************************************************************/
 
 #include "snSAT.h"
-#include "snISATCollider.h"
 
 #include "snVec.h"
 #include "snMath.h"

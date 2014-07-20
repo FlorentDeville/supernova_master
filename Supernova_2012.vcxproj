@@ -41,7 +41,6 @@
     <ClInclude Include="inc\snIActor.h" />
     <ClInclude Include="inc\snICollider.h" />
     <ClInclude Include="inc\snIConstraint.h" />
-    <ClInclude Include="inc\snISATCollider.h" />
     <ClInclude Include="inc\snLogger.h" />
     <ClInclude Include="inc\snMath.h" />
     <ClInclude Include="inc\snMatrix44f.h" />

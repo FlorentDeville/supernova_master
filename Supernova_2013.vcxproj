@@ -17,7 +17,6 @@
     <ClInclude Include="inc\snEPA.h" />
     <ClInclude Include="inc\snEPAEdge.h" />
     <ClInclude Include="inc\snEPATriangle.h" />
-    <ClInclude Include="inc\snISATCollider.h" />
     <ClInclude Include="inc\snActorDynamic.h" />
     <ClInclude Include="inc\snActorPair.h" />
     <ClInclude Include="inc\snActorPairManager.h" />

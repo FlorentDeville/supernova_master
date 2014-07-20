@@ -36,13 +36,10 @@
 #define SN_OBB_H
 
 #include "snICollider.h"
-#include "snISATCollider.h"
 
 namespace Supernova
 {
-	class snOBB : 
-		public snICollider, 
-		public snISATCollider
+	class snOBB : public snICollider
 	{
 	private:
 		static const int VERTEX_COUNT = 8;

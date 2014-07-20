@@ -133,9 +133,6 @@
     <ClInclude Include="inc\snGJK.h">
       <Filter>Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snISATCollider.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snSAT.h">
       <Filter>Algorithms</Filter>
     </ClInclude>
