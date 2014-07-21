@@ -4,8 +4,6 @@
 //Disable warning : structure was padded due to __declspec(align())
 #pragma warning( disable : 4324 )
 
-#include <d3d11.h>
-
 #include <DirectXMath.h>
 
 using DirectX::XMMATRIX;

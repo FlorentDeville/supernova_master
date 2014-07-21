@@ -71,21 +71,21 @@ namespace Supernova
 		snVec originMin = _bounding.m_min - m_boundingVolume.m_min;
 		snVec originMax = _bounding.m_max - m_boundingVolume.m_max;
 
-		int startColumn = snVec4GetX(originMin) / m_quadSize;
-		int startRow = snVec4GetZ(originMin) / m_quadSize;
+		unsigned int startColumn = snVec4GetX(originMin) / m_quadSize;
+		unsigned int startRow = snVec4GetZ(originMin) / m_quadSize;
 
 		if (startRow < 0)
 			startRow = 0;
 		if (startColumn < 0)
 			startColumn = 0;
 
-		int endColumn = snVec4GetX(originMax) / m_quadSize;
-		int endRow = snVec4GetZ(originMax) / m_quadSize;
+		unsigned int endColumn = snVec4GetX(originMax) / m_quadSize;
+		unsigned int endRow = snVec4GetZ(originMax) / m_quadSize;
 		
-		if (endRow >= m_width)
-			endRow = m_width - 1;
-		if (endColumn >= m_length)
-			endColumn = m_length - 1;
+		if (endRow >= m_length)
+			endRow = m_length - 1;
+		if (endColumn >= m_width)
+			endColumn = m_width - 1;
 
 		//from the indices of the quads, compute the indices of the triangles
 		unsigned int currentIndex = 0;

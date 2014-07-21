@@ -32,8 +32,8 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_HEIGHT_MAP
-#define SN_HEIGHT_MAP
+#ifndef SN_HEIGHT_MAP_H
+#define SN_HEIGHT_MAP_H
 
 #include "snICollider.h"
 #include "snVec.h"
@@ -108,4 +108,4 @@ namespace Supernova
 	};
 }
 
-#endif //ifndef SN_HEIGHT_MAP
+#endif //ifndef SN_HEIGHT_MAP_H
