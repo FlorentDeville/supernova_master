@@ -32,69 +32,42 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef GFX_ENTITY_HEIGHTMAP_H
-#define GFX_ENTITY_HEIGHTMAP_H
+#ifndef TERRAIN_COLLIDER_H
+#define TERRAIN_COLLIDER_H
 
-#include "IGfxEntity.h"
+#include "snHeightMap.h"
+using namespace Supernova;
 
-//Forward declaration of DX structures.
-struct ID3D11Buffer;
-struct ID3D11InputLayout;
-
-namespace DirectX
-{
-	class BasicEffect;
-}
-using DirectX::BasicEffect;
 
 namespace Devil
 {
-	//Renders a terrain using an height map as source
-	class __declspec(align(16)) GfxEntityHeightMap : public IGfxEntity
+	class GfxEntityHeightMap;
+
+	class TerrainCollider : public snHeightMap
 	{
-
 	private:
-		//Number of indices int the index buffer
-		unsigned int m_indicesCount;
+		snVec* m_vertices;
 
-		//Number of vertices in the vertex buffer.
+		snVec* m_verticesNormal;
+
+		unsigned long* m_indices;
+
 		unsigned int m_vertexCount;
 
-		//Buffer containing the vertices making the height map
-		ID3D11Buffer* m_vertexBuffer;
-		
-		//Buffer containing the indices forming the triangles of the height map
-		ID3D11Buffer* m_indexBuffer;
-		
-		//Description of the inputs
-		ID3D11InputLayout* m_inputLayout;
-
-		BasicEffect* m_effect;
+		unsigned int m_indexCount;
 
 	public:
-		//Construct the height map. It initializes the entire mesh (vertex buffer + index buffer)
-		// _lowerLeftcorner : the coordinate of the lower left corner. The y axis wll be ignored to take the value from the height map.
-		// _quadSize : size of a quad.
-		// _width : number of quads per row (along the x axis).
-		// _length : number of quads per column (along the z axis).
-		// _heights : array containing the height of each vertex.
-		GfxEntityHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length, float* heights);
+		TerrainCollider(const snVec& _min, const snVec& _max, float _quadSize, unsigned int _width, unsigned int _length,
+			float* _heights);
 
-		virtual ~GfxEntityHeightMap();
+		~TerrainCollider();
 
-		void shutdown();
+		//Fill in the array _triangle with the snVec making the triangle in position _x and _y in the height map.
+		void getTriangle(unsigned int _id, snVec* _triangle) const;
 
-		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color,
-			const Texture* const _texture, bool _wireframe);
-
-		unsigned int getVertexCount() const;
-
-		unsigned int getIndicesCount() const;
-
-		void* operator new(size_t _count);
-
-		void operator delete(void* _p);
+		//Return the normal of the triangle in position _x and _y.
+		snVec getNormal(unsigned int _x, unsigned int _y) const;
 	};
 }
 
-#endif // ifndef GFX_ENTITY_HEIGHTMAP_H
+#endif //ifndef TERRAIN_COLLIDER_H

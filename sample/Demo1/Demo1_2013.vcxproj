@@ -133,6 +133,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClCompile Include="..\src\PathExplorer.cpp" />
     <ClCompile Include="..\src\SceneManager.cpp" />
     <ClCompile Include="..\src\System.cpp" />
+    <ClCompile Include="..\src\TerrainCollider.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />
     <ClCompile Include="..\src\TextureShader.cpp" />
     <ClCompile Include="..\src\VecLinearDamper.cpp" />
@@ -180,6 +181,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClInclude Include="..\src\PathExplorer.h" />
     <ClInclude Include="..\src\SceneManager.h" />
     <ClInclude Include="..\src\System.h" />
+    <ClInclude Include="..\src\TerrainCollider.h" />
     <ClInclude Include="..\src\Texture.h" />
     <ClInclude Include="..\src\TextureShader.h" />
     <ClInclude Include="..\src\VecLinearDamper.h" />

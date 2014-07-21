@@ -65,6 +65,7 @@
 #include "ComponentBackground.h"
 
 #include "PathExplorer.h"
+#include "TerrainCollider.h"
 #include "snMath.h"
 
 using namespace Supernova;
@@ -1466,25 +1467,61 @@ namespace Devil
 		float size = 10;
 		unsigned int width = 256;
 		unsigned int length = 256;
-		snVec lowerLeftCorner = snVec4Set(-(float)length * 0.5f * size, 0, -(float)width * 0.5f * size, 0);
+		snVec lowerLeftCorner = snVec4Set(-(float)width * 0.5f * size, 0, -(float)length * 0.5f * size, 0);
 
 		unsigned int vertexCount = (width + 1) * (length + 1);
 		float* heightMap = new float[vertexCount];
 
 		float amplitude = 2;
+		snAABB boundingVolume;
+		float min = SN_FLOAT_MAX;
+		float max = -SN_FLOAT_MAX;
 		for (unsigned int i = 0; i < vertexCount; ++i)
 		{
 			heightMap[i] = amplitude * cosf((float)i);
+			if (heightMap[i] > max) max = heightMap[i];
+			if (heightMap[i] < min) min = heightMap[i];
 		}
+		boundingVolume.m_max = snVec4Set((float)width * 0.5f * size, max, (float)length * 0.5f * size, 0);
+		boundingVolume.m_min = snVec4Set(-(float)width * 0.5f * size, min, -(float)length * 0.5f * size, 0);
+
 		GfxEntityHeightMap* gfx = GRAPHICS->createHeightMap(lowerLeftCorner, size, width, length, heightMap);
 
 		EntityStaticMesh* entity = WORLD->createStaticMesh(static_cast<IGfxEntity*>(gfx));
 		entity->setWireframe(true);
 		delete[] heightMap;
 
+		{
+			//create the physic height map
+			snActorStatic* snMap;
+			int id = -1;
+			scene->createActorStatic(&snMap, id, snVec4Set(0), snVec4Set(0));
+			TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, size, width, length, heightMap);
+			snMap->addCollider(collider);
+			snMap->setName("terrain");
+			snMap->initialize();
+		}
+
+		{
+			//create a dynamic sphere
+			snActorDynamic* sphere;
+			int id = -1;
+			float radius = 5;
+			scene->createActorDynamic(&sphere, id);
+
+			snSphere* collider = new snSphere(radius);
+			sphere->addCollider(collider);
+			sphere->setPosition(snVec4Set(0, 10, 100, 1));
+			sphere->setOrientation(snVec4Set(0, 0, 0, 1));
+			sphere->updateMassAndInertia(10);
+			sphere->initialize();
+
+			WORLD->createComposite(sphere, m_colors[2]);
+		}
+
 		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
-		WORLD->getCamera()->setPosition(snVec4Set(0, 80, 0, 1));
-		WORLD->getCamera()->setLookAt(snVec4Set(0, 20, 100, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 10, 0, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 100, 1));
 
 		//create the box launcher
 		WORLD->createEntityBoxLauncher(1);

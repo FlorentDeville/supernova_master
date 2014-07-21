@@ -53,7 +53,7 @@ namespace Supernova
 
 	void snHeightMap::setTransform(const snMatrix44f& _transform){}
 
-	void snHeightMap::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor){}
+	void snHeightMap::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const{}
 
 	void snHeightMap::computeAABB(snAABB * const _boundingVolume) const
 	{
@@ -103,7 +103,7 @@ namespace Supernova
 				else
 					break;
 
-				newId += m_width;
+				++newId;
 				if (currentIndex < _maxTriangles)
 				{
 					_ids[currentIndex++] = newId;

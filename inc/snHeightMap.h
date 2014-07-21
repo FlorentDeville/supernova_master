@@ -45,11 +45,11 @@ namespace Supernova
 	//Triangles indices start from the bottom left corner to the right top corner. For each quad, the top left triangle id is 
 	// equal to the bottom left id + m_width
 	//		   _____ _____ _____ _____ 
-	//		  |12  /|13  /|14  /|15  /|
-	//	row 1 |  / 8|  / 9|  /10|  /11|		width = 4
+	//		  |9   /|11  /|13  /|15  /|
+	//	row 1 |  / 8|  /10|  /12|  /14|		width = 4
 	//	      |/____|/____|/____|/____|		length = 2
-	//		  |4   /|5   /|6   /|7   /|
-	//	row 0 |  / 0|  / 1|  / 2|  / 3|
+	//		  |1   /|3   /|5   /|7   /|
+	//	row 0 |  / 0|  / 2|  / 4|  / 6|
 	//	      |/____|/____|/____|/____|
 	//
 	//		   col0   col1  col2  col3
@@ -88,7 +88,7 @@ namespace Supernova
 
 		//Compute the inertia tensor in a local frame.
 		//The height map can only be used in a static actor so this method return a zero matrix.
-		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor);
+		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const;
 
 		//Compute the bounding volume for this collider.
 		//The height map is static so it actually get the AABB and doesn't compute it.

@@ -46,9 +46,9 @@ namespace Devil
 	GfxEntityHeightMap::GfxEntityHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length, float* heights)
 	{
 		//compute how many vertices we have
-		unsigned int vertexCount = (_width + 1) * (_length + 1);
-		XMVECTOR* verticesPosition = (XMVECTOR*)_aligned_malloc(sizeof(XMMATRIX) * vertexCount, 16);// new XMVECTOR[vertexCount];
-		XMVECTOR* verticesNormal = (XMVECTOR*)_aligned_malloc(sizeof(XMMATRIX)* vertexCount, 16);//new XMVECTOR[vertexCount];
+		m_vertexCount = (_width + 1) * (_length + 1);
+		XMVECTOR* verticesPosition = (XMVECTOR*)_aligned_malloc(sizeof(XMVECTOR)* m_vertexCount, 16);// new XMVECTOR[vertexCount];
+		XMVECTOR* verticesNormal = (XMVECTOR*)_aligned_malloc(sizeof(XMVECTOR)* m_vertexCount, 16);//new XMVECTOR[vertexCount];
 
 		//fill in the array of vertices
 		int vertexId = 0;
@@ -63,7 +63,7 @@ namespace Devil
 				++vertexId;
 			}
 		}
-
+		
 		//compute how many triangle and indices we need
 		unsigned int triangleCount = _width * _length * 2;
 		m_indicesCount = triangleCount * 3;
@@ -116,11 +116,11 @@ namespace Devil
 				indexId += 3;
 			}
 		}
-
+		
 		//compute normals
 		for (unsigned int row = 0; row <= _length; ++row) //loop through each row
 		{
-			unsigned int offset = row * _width;
+			unsigned int offset = row * (_width + 1);
 			for (unsigned int column = 0; column <= _width; ++column)//loop through each column
 			{
 				unsigned int vertexId = offset + column;
@@ -146,18 +146,18 @@ namespace Devil
 				{
 					verticesNormal[vertexId] = verticesNormal[vertexId] / 6;
 				}
+
+				verticesNormal[vertexId] = XMVector3Normalize(verticesNormal[vertexId]);
 			}
 
-			verticesNormal[vertexId] = XMVector3Normalize(verticesNormal[vertexId]);
 		}
 
 		//fill in dx structures
-		VertexPositionNormalColor* vertices = new VertexPositionNormalColor[vertexCount];
-		for (unsigned int i = 0; i < vertexCount; ++i)
+		VertexPositionNormalColor* vertices = new VertexPositionNormalColor[m_vertexCount];
+		for (unsigned int i = 0; i < m_vertexCount; ++i)
 		{
 			XMStoreFloat3(&vertices[i].position, verticesPosition[i]);
 			XMStoreFloat3(&vertices[i].normal, verticesNormal[i]);
-			//vertices[i].normal = XMFLOAT3(0, 1, 0);
 			vertices[i].color = color;
 		}
 
@@ -165,7 +165,7 @@ namespace Devil
 		// Set up the description of the static vertex buffer.
 		D3D11_BUFFER_DESC vertexBufferDesc;
 		vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		vertexBufferDesc.ByteWidth = sizeof(VertexPositionNormalColor)* vertexCount;
+		vertexBufferDesc.ByteWidth = sizeof(VertexPositionNormalColor)* m_vertexCount;
 		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		vertexBufferDesc.CPUAccessFlags = 0;
 		vertexBufferDesc.MiscFlags = 0;
@@ -237,6 +237,9 @@ namespace Devil
 	void GfxEntityHeightMap::render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color,
 		const Texture* const _texture, bool _wireframe)
 	{
+		UNREFERENCED_PARAMETER(_color);
+		UNREFERENCED_PARAMETER(_texture);
+
 		// Set vertex buffer stride and offset.
 		unsigned int stride = sizeof(VertexPositionNormalColor);
 		unsigned int offset = 0;
@@ -266,6 +269,16 @@ namespace Devil
 
 		if (_wireframe)
 			GRAPHICS->getDirectXWrapper()->turnOnFillMode();
+	}
+
+	unsigned int GfxEntityHeightMap::getVertexCount() const
+	{
+		return m_vertexCount;
+	}
+
+	unsigned int GfxEntityHeightMap::getIndicesCount() const
+	{
+		return m_indicesCount;
 	}
 
 	void* GfxEntityHeightMap::operator new(size_t _count)

@@ -55,6 +55,9 @@
     <Filter Include="Helper\Damper">
       <UniqueIdentifier>{101b5dc4-18d0-49c0-b6f3-406ddd5958f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{a818626c-3116-4f4a-afca-12a8e59f3d0b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -177,6 +180,9 @@
     </ClCompile>
     <ClCompile Include="..\src\EntityStaticMesh.cpp">
       <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TerrainCollider.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -314,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="..\src\EntityStaticMesh.h">
       <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TerrainCollider.h">
+      <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
