@@ -42,6 +42,7 @@
 #include "EntityBoxLauncher.h"
 #include "EntityComposite.h"
 #include "EntitySkybox.h"
+#include "EntityStaticMesh.h"
 
 #include "WorldHUD.h"
 #include "Input.h"
@@ -188,6 +189,13 @@ namespace Devil
 		EntitySkybox* skybox = new EntitySkybox(_target, _size, _color);
 		m_EntityList.push_back(skybox);
 		return skybox;
+	}
+
+	EntityStaticMesh* World::createStaticMesh(IGfxEntity* _gfx)
+	{
+		EntityStaticMesh* staticMesh = new EntityStaticMesh(_gfx);
+		m_EntityList.push_back(staticMesh);
+		return staticMesh;
 	}
 
 	void World::clearWorld()

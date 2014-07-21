@@ -172,6 +172,12 @@
     <ClCompile Include="..\src\GfxEntityCylinder.cpp">
       <Filter>Graphics\GfxEntities</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\GfxEntityHeightMap.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntityStaticMesh.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -302,6 +308,12 @@
     </ClInclude>
     <ClInclude Include="..\src\GfxEntityCylinder.h">
       <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GfxEntityHeightMap.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityStaticMesh.h">
+      <Filter>World\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

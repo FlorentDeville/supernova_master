@@ -43,6 +43,9 @@
     <Filter Include="Helper">
       <UniqueIdentifier>{464ba6fd-2318-4428-81d8-a4dc34483d5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics\GfxEntities">
+      <UniqueIdentifier>{f6e5de8e-55de-445a-8dee-d00aed64d258}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -55,15 +58,6 @@
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\src\EffectProvider.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\GfxEntityBox.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\GfxEntityPlan.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\GfxEntitySphere.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Graphics.cpp">
@@ -154,8 +148,23 @@
     <ClCompile Include="..\src\VecLinearDamper.cpp">
       <Filter>Helper</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\GfxEntityBox.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\GfxEntityCylinder.cpp">
-      <Filter>Graphics</Filter>
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GfxEntityPlan.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GfxEntitySphere.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GfxEntityHeightMap.cpp">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EntityStaticMesh.cpp">
+      <Filter>World\Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -171,19 +180,7 @@
     <ClInclude Include="..\src\EffectProvider.h">
       <Filter>Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\GfxEntityBox.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\GfxEntityPlan.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\GfxEntitySphere.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Graphics.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\IGfxEntity.h">
       <Filter>Graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Light.h">
@@ -285,8 +282,26 @@
     <ClInclude Include="..\src\VecLinearDamper.h">
       <Filter>Helper</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\GfxEntityBox.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\GfxEntityCylinder.h">
-      <Filter>Graphics</Filter>
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GfxEntityPlan.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GfxEntitySphere.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\IGfxEntity.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GfxEntityHeightMap.h">
+      <Filter>Graphics\GfxEntities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityStaticMesh.h">
+      <Filter>World\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

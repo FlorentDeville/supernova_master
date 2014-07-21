@@ -31,109 +31,63 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef WORLD_H
-#define WORLD_H
 
-#include <vector>
+#ifndef GFX_ENTITY_HEIGHTMAP_H
+#define GFX_ENTITY_HEIGHTMAP_H
 
-#include <DirectXMath.h>
+#include "IGfxEntity.h"
 
-#include "ComponentFloatingText.h"
+//Forward declaration of DX structures.
+struct ID3D11Buffer;
+struct ID3D11InputLayout;
 
-namespace Supernova
+namespace DirectX
 {
-	class snFixedConstraint;
-	class snPointToPointConstraint;
-	class snActorDynamic;
-	class snIActor;
+	class BasicEffect;
 }
+using DirectX::BasicEffect;
 
-using namespace Supernova;
 namespace Devil
 {
-	class IWorldEntity;
-	class EntitySphere;
-	class EntityBox;
-	class EntityCollisionPoint;
-	class EntityCamera;
-	class EntityFixedConstraint;
-	class EntityPointToPointConstraint;
-	class WorldHUD;
-	class EntityBoxLauncher;
-	class EntityComposite;
-	class EntitySkybox;
-	class EntityStaticMesh;
-
-	class IComponent;
-
-	class World
+	//Renders a terrain using an height map as source
+	class __declspec(align(16)) GfxEntityHeightMap : public IGfxEntity
 	{
+
 	private:
-		static World* m_Instance;
+		//Number of indices int the index buffer
+		unsigned int m_indicesCount;
 
-		std::vector<IWorldEntity*> m_EntityList;
+		//Buffer containing the vertices making the height map
+		ID3D11Buffer* m_vertexBuffer;
+		
+		//Buffer containing the indices forming the triangles of the height map
+		ID3D11Buffer* m_indexBuffer;
+		
+		//Description of the inputs
+		ID3D11InputLayout* m_inputLayout;
 
-		EntityCamera* m_camera;
-
-		EntityCollisionPoint* m_collisionPoint;
-
-		WorldHUD* m_hud;
-
-		EntityComposite* m_monkeyBall;
-
-		//time elapsed since the last update
-		float m_dt;
+		BasicEffect* m_effect;
 
 	public:
-		virtual ~World();
+		//Construct the height map. It initializes the entire mesh (vertex buffer + index buffer)
+		// _lowerLeftcorner : the coordinate of the lower left corner. The y axis wll be ignored to take the value from the height map.
+		// _quadSize : size of a quad.
+		// _width : number of quads per row (along the x axis).
+		// _length : number of quads per column (along the z axis).
+		// _heights : array containing the height of each vertex.
+		GfxEntityHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length, float* heights);
 
-		static World* getInstance();
-		static void shutdown();
+		virtual ~GfxEntityHeightMap();
 
-		bool initialize();
+		void shutdown();
 
-		EntitySphere* createSphere(float _diameter, const XMVECTOR& _color);
-		EntityBox* createBox(const XMFLOAT3&);
-		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityComposite* createComposite(snIActor* _actor, const XMFLOAT4& _color);
-		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
-		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
-		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
-		WorldHUD* createHUD();
-		EntityBoxLauncher* createEntityBoxLauncher(unsigned int _count);
-		EntityComposite* createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color);
-		EntitySkybox* createSkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);
-		EntityStaticMesh* createStaticMesh(IGfxEntity* _gfx);
+		void render(const XMMATRIX& _world, const XMMATRIX& _view, const XMMATRIX& _projection, const XMVECTOR& _color,
+			const Texture* const _texture, bool _wireframe);
 
-		//Delete all entities from the world.
-		void clearWorld();
+		void* operator new(size_t _count);
 
-		void update(float _dt);
-		void render();
-
-		EntityCamera* getCamera() const;
-		EntityComposite* getMonkeyBall() const;
-
-		//Return the entity owner of the actor
-		IWorldEntity* getEntityFromActor(snIActor* const _actor) const;
-
-		void toggleCollisionPointActivation();
-		void activateCollisionPoint();
-		void deactivateCollisionPoint();
-
-		void setPhysicsFPS(int _physicsFPS) const;
-		void setGraphicsFPS(int _graphicsFPS) const;
-
-		//Return the time elapsed since the last update
-		float getDeltaTime() const;
-
-	private:
-		World();
-
-		EntityCollisionPoint* createCollisionPoint(float _diameter);
+		void operator delete(void* _p);
 	};
-
-#define WORLD World::getInstance()
 }
 
-#endif
+#endif // ifndef GFX_ENTITY_HEIGHTMAP_H

@@ -39,6 +39,7 @@ namespace Devil
 	class GfxEntityBox;
 	class GfxEntityCylinder;
 	class GfxEntityPlan;
+	class GfxEntityHeightMap;
 	class Texture;
 
 	const float SCREEN_DEPTH = 10000.0f;
@@ -121,6 +122,9 @@ namespace Devil
 		void writeText(const wstring& _text, const XMFLOAT2& _p, float _scale);
 
 		GfxEntityPlan* createPlan(const XMFLOAT2&, const XMFLOAT4&);
+
+		GfxEntityHeightMap* createHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length, 
+			float* heights);
 
 		D3D* getDirectXWrapper();
 		Camera* getCamera();

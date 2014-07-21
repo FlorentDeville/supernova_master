@@ -114,9 +114,11 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClCompile Include="..\src\EntityPointToPointConstraint.cpp" />
     <ClCompile Include="..\src\EntitySkybox.cpp" />
     <ClCompile Include="..\src\EntitySphere.cpp" />
+    <ClCompile Include="..\src\EntityStaticMesh.cpp" />
     <ClCompile Include="..\src\FSMRunner.cpp" />
     <ClCompile Include="..\src\GfxEntityBox.cpp" />
     <ClCompile Include="..\src\GfxEntityCylinder.cpp" />
+    <ClCompile Include="..\src\GfxEntityHeightMap.cpp" />
     <ClCompile Include="..\src\GfxEntityPlan.cpp" />
     <ClCompile Include="..\src\GfxEntitySphere.cpp" />
     <ClCompile Include="..\src\Graphics.cpp" />
@@ -157,9 +159,11 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClInclude Include="..\src\EntityPointToPointConstraint.h" />
     <ClInclude Include="..\src\EntitySkybox.h" />
     <ClInclude Include="..\src\EntitySphere.h" />
+    <ClInclude Include="..\src\EntityStaticMesh.h" />
     <ClInclude Include="..\src\FSMRunner.h" />
     <ClInclude Include="..\src\GfxEntityBox.h" />
     <ClInclude Include="..\src\GfxEntityCylinder.h" />
+    <ClInclude Include="..\src\GfxEntityHeightMap.h" />
     <ClInclude Include="..\src\GfxEntityPlan.h" />
     <ClInclude Include="..\src\GfxEntitySphere.h" />
     <ClInclude Include="..\src\Graphics.h" />

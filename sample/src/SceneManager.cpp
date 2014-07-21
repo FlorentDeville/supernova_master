@@ -41,6 +41,8 @@
 #include "Input.h"
 #include "Graphics.h"
 
+#include "GfxEntityHeightMap.h"
+
 #include "snFactory.h"
 #include "snScene.h"
 #include "snActorDynamic.h"
@@ -55,6 +57,7 @@
 #include "EntityBox.h"
 #include "EntityCamera.h"
 #include "EntityComposite.h"
+#include "EntityStaticMesh.h"
 
 #include "ComponentFollowPath.h"
 #include "ComponentPathInterpolate.h"
@@ -154,6 +157,12 @@ namespace Devil
 			clearScene();
 			createSceneGJK();
 			INPUT->keyUp('9');
+		}
+		else if (INPUT->isKeyDown('8'))//9
+		{
+			clearScene();
+			createSceneTerrain();
+			INPUT->keyUp('8');
 		}
 	}
 
@@ -1433,6 +1442,52 @@ namespace Devil
 		WORLD->getCamera()->setPosition(snVec4Set(0, 80, -100, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 20, 0, 1));
 		WORLD->activateCollisionPoint();
+	}
+
+	void SceneManager::createSceneTerrain()
+	{
+		//initialize the world
+		WORLD->initialize();
+
+		WorldHUD* HUD = WORLD->createHUD();
+		HUD->setSceneName(L"Scene : Terrain");
+
+		GRAPHICS->setClearScreenColor(DirectX::Colors::DarkGray);
+
+		//create the physics scene
+		int sceneId = -1;
+		snScene* scene = 0;
+		SUPERNOVA->createScene(&scene, sceneId);
+		scene->setCollisionMode(m_collisionMode);
+
+		scene->setLinearSquaredSpeedThreshold(0.000001f);
+		scene->setAngularSquaredSpeedThreshold(0.000001f);
+
+		float size = 10;
+		unsigned int width = 256;
+		unsigned int length = 256;
+		snVec lowerLeftCorner = snVec4Set(-(float)length * 0.5f * size, 0, -(float)width * 0.5f * size, 0);
+
+		unsigned int vertexCount = (width + 1) * (length + 1);
+		float* heightMap = new float[vertexCount];
+
+		float amplitude = 2;
+		for (unsigned int i = 0; i < vertexCount; ++i)
+		{
+			heightMap[i] = amplitude * cosf((float)i);
+		}
+		GfxEntityHeightMap* gfx = GRAPHICS->createHeightMap(lowerLeftCorner, size, width, length, heightMap);
+
+		EntityStaticMesh* entity = WORLD->createStaticMesh(static_cast<IGfxEntity*>(gfx));
+		entity->setWireframe(true);
+		delete[] heightMap;
+
+		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 80, 0, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 20, 100, 1));
+
+		//create the box launcher
+		WORLD->createEntityBoxLauncher(1);
 	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)

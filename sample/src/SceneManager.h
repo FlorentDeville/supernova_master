@@ -108,6 +108,8 @@ namespace Devil
 
 		void createSceneGJK();
 
+		void createSceneTerrain();
+
 		void setCollisionMode(snCollisionMode _collisionMode);
 		
 		void createGround(snScene* const _scene, float _restitution, float _friction);

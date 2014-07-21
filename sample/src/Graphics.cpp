@@ -15,6 +15,7 @@
 #include "GfxEntityBox.h"
 #include "GfxEntityPlan.h"
 #include "GfxEntityCylinder.h"
+#include "GfxEntityHeightMap.h"
 
 #include <DirectXMath.h>
 #include <SpriteBatch.h>
@@ -318,5 +319,13 @@ namespace Devil
 		NewPlan->initialize(_size, _color);
 		m_entityList.push_back(dynamic_cast<IGfxEntity*>(NewPlan));
 		return NewPlan;
+	}
+
+	GfxEntityHeightMap* Graphics::createHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length,
+		float* heights)
+	{
+		GfxEntityHeightMap* heightMap = new GfxEntityHeightMap(_lowerLeftCorner, _quadSize, _width, _length, heights);
+		m_entityList.push_back(heightMap);
+		return heightMap;
 	}
 }

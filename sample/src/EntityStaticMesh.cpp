@@ -31,109 +31,34 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef WORLD_H
-#define WORLD_H
 
-#include <vector>
+#include "EntityStaticMesh.h"
+#include "IGfxEntity.h"
+#include "Graphics.h"
+#include "D3D.h"
+#include "Camera.h"
 
-#include <DirectXMath.h>
+using namespace DirectX;
 
-#include "ComponentFloatingText.h"
-
-namespace Supernova
-{
-	class snFixedConstraint;
-	class snPointToPointConstraint;
-	class snActorDynamic;
-	class snIActor;
-}
-
-using namespace Supernova;
 namespace Devil
 {
-	class IWorldEntity;
-	class EntitySphere;
-	class EntityBox;
-	class EntityCollisionPoint;
-	class EntityCamera;
-	class EntityFixedConstraint;
-	class EntityPointToPointConstraint;
-	class WorldHUD;
-	class EntityBoxLauncher;
-	class EntityComposite;
-	class EntitySkybox;
-	class EntityStaticMesh;
-
-	class IComponent;
-
-	class World
+	EntityStaticMesh::EntityStaticMesh(IGfxEntity* const _gfx) : m_gfx(_gfx)
 	{
-	private:
-		static World* m_Instance;
+	}
 
-		std::vector<IWorldEntity*> m_EntityList;
+	EntityStaticMesh::~EntityStaticMesh(){}
 
-		EntityCamera* m_camera;
+	void EntityStaticMesh::update(){}
 
-		EntityCollisionPoint* m_collisionPoint;
+	void EntityStaticMesh::render()
+	{
+		XMMATRIX proj;
+		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(proj);
 
-		WorldHUD* m_hud;
+		XMMATRIX view;
+		GRAPHICS->getCamera()->GetViewMatrix(view);
 
-		EntityComposite* m_monkeyBall;
-
-		//time elapsed since the last update
-		float m_dt;
-
-	public:
-		virtual ~World();
-
-		static World* getInstance();
-		static void shutdown();
-
-		bool initialize();
-
-		EntitySphere* createSphere(float _diameter, const XMVECTOR& _color);
-		EntityBox* createBox(const XMFLOAT3&);
-		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityComposite* createComposite(snIActor* _actor, const XMFLOAT4& _color);
-		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
-		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
-		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
-		WorldHUD* createHUD();
-		EntityBoxLauncher* createEntityBoxLauncher(unsigned int _count);
-		EntityComposite* createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color);
-		EntitySkybox* createSkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);
-		EntityStaticMesh* createStaticMesh(IGfxEntity* _gfx);
-
-		//Delete all entities from the world.
-		void clearWorld();
-
-		void update(float _dt);
-		void render();
-
-		EntityCamera* getCamera() const;
-		EntityComposite* getMonkeyBall() const;
-
-		//Return the entity owner of the actor
-		IWorldEntity* getEntityFromActor(snIActor* const _actor) const;
-
-		void toggleCollisionPointActivation();
-		void activateCollisionPoint();
-		void deactivateCollisionPoint();
-
-		void setPhysicsFPS(int _physicsFPS) const;
-		void setGraphicsFPS(int _graphicsFPS) const;
-
-		//Return the time elapsed since the last update
-		float getDeltaTime() const;
-
-	private:
-		World();
-
-		EntityCollisionPoint* createCollisionPoint(float _diameter);
-	};
-
-#define WORLD World::getInstance()
+		XMVECTOR color = XMVectorSet(1, 1, 1, 1);
+		m_gfx->render(DirectX::XMMatrixIdentity(), view, proj, color, 0, m_wireframe);
+	}
 }
-
-#endif
