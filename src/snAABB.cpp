@@ -53,7 +53,7 @@ namespace Supernova
 
 		int resCompare = resCompare1 & resCompare2;
 
-		return (resCompare & 0xffff) != 0;
+		return (resCompare & 0x0fff) == 0x0fff;
 	}
 
 	/// <summary>
