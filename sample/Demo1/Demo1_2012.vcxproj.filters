@@ -46,6 +46,9 @@
     <Filter Include="Graphics\GfxEntities">
       <UniqueIdentifier>{f6e5de8e-55de-445a-8dee-d00aed64d258}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{aebd6407-4e8f-46e8-a52e-cfa73f3e97ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -165,6 +168,9 @@
     </ClCompile>
     <ClCompile Include="..\src\EntityStaticMesh.cpp">
       <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TerrainCollider.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -302,6 +308,9 @@
     </ClInclude>
     <ClInclude Include="..\src\EntityStaticMesh.h">
       <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TerrainCollider.h">
+      <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
