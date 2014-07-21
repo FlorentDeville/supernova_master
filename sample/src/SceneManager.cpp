@@ -1407,7 +1407,7 @@ namespace Devil
 			//actCapsule->setIsKinematic(true);
 			actCapsule->updateMassAndInertia(10);
 			actCapsule->initialize();
-			EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[3]);
+			EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[i%4]);
 			comp->setWireframe(true);
 		}
 
@@ -1430,8 +1430,8 @@ namespace Devil
 		//}
 
 		//set camera position
-		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -80, 1));
-		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 0, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 80, -100, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 20, 0, 1));
 		WORLD->activateCollisionPoint();
 	}
 

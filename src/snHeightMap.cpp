@@ -31,24 +31,90 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef SN_AABB
-#define SN_AABB
 
-#include "snVec.h"
+#include "snHeightMap.h"
+using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	//Represent a axis aligned bounding box.
-	struct snAABB
+	snHeightMap::snHeightMap(const snVec& _min, const snVec& _max, float _quadSize, unsigned int _width, unsigned int _length)
 	{
-		snVec m_min;
-		snVec m_max;
-	};
+		m_typeOfCollider = snEColliderHeightMap;
+		m_boundingVolume.m_min = _min;
+		m_boundingVolume.m_max = _max;
+		m_quadSize = _quadSize;
+		m_width = _width;
+		m_length = _length;
+	}
 
-	//Return true if the two axis aligned bounding boxes are overlaping. return false otherwise.
-	bool AABBOverlap(snAABB const * const _a, snAABB const * const _b);
+	snHeightMap::~snHeightMap(){}
 
-	void mergeAABB(const snAABB& _first, const snAABB& _second, snAABB& _merge);
+	void snHeightMap::initialize(){}
+
+	void snHeightMap::setTransform(const snMatrix44f& _transform){}
+
+	void snHeightMap::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor){}
+
+	void snHeightMap::computeAABB(snAABB * const _boundingVolume) const
+	{
+		_boundingVolume->m_min = m_boundingVolume.m_min;
+		_boundingVolume->m_max = m_boundingVolume.m_max;
+	}
+
+	int snHeightMap::getOverlapTriangles(const snAABB& _bounding, unsigned int* const _ids, unsigned int _maxTriangles) const
+	{
+		//the bounding boxes do not overlap
+		if (!AABBOverlap(&_bounding, &m_boundingVolume))
+			return -1;
+
+		//compute the indices of the quads
+		snVec originMin = _bounding.m_min - m_boundingVolume.m_min;
+		snVec originMax = _bounding.m_max - m_boundingVolume.m_max;
+
+		int startColumn = snVec4GetX(originMin) / m_quadSize;
+		int startRow = snVec4GetZ(originMin) / m_quadSize;
+
+		if (startRow < 0)
+			startRow = 0;
+		if (startColumn < 0)
+			startColumn = 0;
+
+		int endColumn = snVec4GetX(originMax) / m_quadSize;
+		int endRow = snVec4GetZ(originMax) / m_quadSize;
+		
+		if (endRow >= m_width)
+			endRow = m_width - 1;
+		if (endColumn >= m_length)
+			endColumn = m_length - 1;
+
+		//from the indices of the quads, compute the indices of the triangles
+		unsigned int currentIndex = 0;
+		unsigned int twoWidth = 2 * m_width;
+		for (unsigned int row = startRow; row <= endRow; ++row)//loop through each row
+		{
+			unsigned int offsetY = row * twoWidth;
+			for (unsigned int column = startColumn; column <= endColumn; ++column) //loop through each column
+			{
+				unsigned int newId = offsetY + column;
+				if (currentIndex < _maxTriangles)
+				{
+					_ids[currentIndex++] = newId;
+				}
+				else
+					break;
+
+				newId += m_width;
+				if (currentIndex < _maxTriangles)
+				{
+					_ids[currentIndex++] = newId;
+				}
+				else
+					break;
+
+			}
+		}
+
+		return currentIndex;
+
+	}
 }
-
-#endif //ifndef SN_AABB

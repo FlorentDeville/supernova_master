@@ -53,7 +53,8 @@ namespace Supernova
 		snEColliderUnknown,
 		snEColliderBox,
 		snEColliderSphere,
-		snEColliderCapsule
+		snEColliderCapsule,
+		snEColliderHeightMap
 	};
 
 	class snICollider
@@ -77,6 +78,9 @@ namespace Supernova
 
 		//Compute the inertia tensor in a local frame.
 		virtual void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const = 0;
+
+		//Compute the bounding volume for this collider
+		virtual void computeAABB(snAABB * const /*_boundingVolume*/) const = 0;
 
 		//Return the feature the farthest along the normal.
 		//_n : direction along which the search of the farthest feature has to be done.
@@ -147,9 +151,6 @@ namespace Supernova
 #pragma endregion
 
 		snEColliderType getTypeOfCollider() const { return m_typeOfCollider; }
-
-		//Compute the bounding volume for this collider
-		virtual void computeAABB(snAABB * const /*_boundingVolume*/) const = 0;
 
 		void* operator new(size_t _count)
 		{

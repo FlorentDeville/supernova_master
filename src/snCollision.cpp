@@ -41,6 +41,7 @@
 #include "snOBB.h"
 #include "snCapsule.h"
 #include "snSphere.h"
+#include "snHeightMap.h"
 
 #include "snCollisionResult.h"
 #include "snColliderContainer.h"
@@ -55,6 +56,8 @@
 #include "snEPA.h"
 #include "snEPASimplex.h"
 
+#include "snClosestPoint.h"
+
 using namespace Supernova::Vector;
 
 namespace Supernova
@@ -66,6 +69,7 @@ namespace Supernova
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderSphere), &Supernova::snCollision::queryTestCollisionSphereVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderSphere), &Supernova::snCollision::queryTestCollisionCapsuleVersusSphere));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionSphereVersusHeightMap));
 	}
 
 	snCollision::~snCollision(){}
@@ -279,6 +283,66 @@ namespace Supernova
 		}
 		
 
+		return res;
+	}
+
+	snCollisionResult snCollision::queryTestCollisionSphereVersusHeightMap(const snICollider* const _c1, const snICollider* const _c2)
+	{
+		snCollisionResult res;
+
+		//Cast colliders
+		const snSphere* const sphere = static_cast<const snSphere* const>(_c1);
+		const snHeightMap* const heightMap = static_cast<const snHeightMap* const>(_c2);
+
+		//find triangles ids overlapping the sphere
+		const unsigned int MAX_TRIANGLE_COUNT = 10;
+		unsigned int triangleId[MAX_TRIANGLE_COUNT];
+
+		//Get the triangles ids
+		snAABB sphereBB;
+		sphere->computeAABB(&sphereBB);
+		unsigned int triangleCount = heightMap->getOverlapTriangles(sphereBB, triangleId, MAX_TRIANGLE_COUNT);
+		if (triangleCount == -1)
+			return res;
+
+		float sqRadius = sphere->getRadius() * sphere->getRadius();
+
+		//For each triangle, find the closest point
+		for (unsigned int i = 0; i < triangleCount; ++i)
+		{
+			//get the triangle vertices
+			snVec vertices[3];
+			heightMap->getTriangle(triangleId[i], vertices);
+
+			//find the closest point of the triangle to the sphere's center
+			snVec closestPoint = snClosestPoint::PointTriangle(sphere->getCenter(), vertices[0], vertices[1], vertices[2]);
+
+			//compare distance
+			snVec direction = sphere->getCenter() - closestPoint;
+			float sqDistance = snVec3SquaredNorme(direction);
+			if (sqDistance > sqRadius) // no collision
+				continue;
+
+			//Collision
+			res.m_contacts.push_back(closestPoint);
+			res.m_penetrations.push_back(sqrtf(sqDistance) - sphere->getRadius());
+		}
+
+		//no collision found
+		if (res.m_contacts.size() == 0)
+			return res;
+
+		//compute the normal (temporary)
+		snVec normal = snVec4Set(0);
+		for (unsigned int i = 0; i < res.m_contacts.size(); ++i)
+		{
+			snVec dir = sphere->getCenter() - res.m_contacts[i];
+			snVec3Normalize(dir);
+
+			normal = normal + dir;
+		}
+		res.m_normal = normal * (1.f / res.m_contacts.size());
+		res.m_collision = true;
 		return res;
 	}
 

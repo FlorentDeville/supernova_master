@@ -26,6 +26,7 @@
     <ClInclude Include="inc\snCollisionFlag.h" />
     <ClInclude Include="inc\snDebugger.h" />
     <ClInclude Include="inc\snAABB.h" />
+    <ClInclude Include="inc\snHeightMap.h" />
     <ClInclude Include="inc\snLogger.h" />
     <ClInclude Include="inc\snOBB.h" />
     <ClInclude Include="inc\snSphere.h" />
@@ -67,6 +68,7 @@
     <ClCompile Include="src\snEPA.cpp" />
     <ClCompile Include="src\snEPAEdge.cpp" />
     <ClCompile Include="src\snEPATriangle.cpp" />
+    <ClCompile Include="src\snHeightMap.cpp" />
     <ClCompile Include="src\snLogger.cpp" />
     <ClCompile Include="src\snOBB.cpp" />
     <ClCompile Include="src\snSphere.cpp" />

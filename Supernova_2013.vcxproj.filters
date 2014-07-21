@@ -166,6 +166,9 @@
     <ClInclude Include="inc\snClosestPoint.h">
       <Filter>Queries</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snHeightMap.h">
+      <Filter>Collision\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snFactory.cpp" />
@@ -267,6 +270,9 @@
     </ClCompile>
     <ClCompile Include="src\snSAT.cpp">
       <Filter>Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snHeightMap.cpp">
+      <Filter>Collision\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
