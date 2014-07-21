@@ -63,13 +63,9 @@ namespace Supernova
 
 	int snHeightMap::getOverlapTriangles(const snAABB& _bounding, unsigned int* const _ids, unsigned int _maxTriangles) const
 	{
-		//the bounding boxes do not overlap
-		if (!AABBOverlap(&_bounding, &m_boundingVolume))
-			return -1;
-
 		//compute the indices of the quads
 		snVec originMin = _bounding.m_min - m_boundingVolume.m_min;
-		snVec originMax = _bounding.m_max - m_boundingVolume.m_max;
+		snVec originMax = _bounding.m_max - m_boundingVolume.m_min;
 
 		unsigned int startColumn = snVec4GetX(originMin) / m_quadSize;
 		unsigned int startRow = snVec4GetZ(originMin) / m_quadSize;
@@ -95,7 +91,7 @@ namespace Supernova
 			unsigned int offsetY = row * twoWidth;
 			for (unsigned int column = startColumn; column <= endColumn; ++column) //loop through each column
 			{
-				unsigned int newId = offsetY + column;
+				unsigned int newId = offsetY + (column * 2);
 				if (currentIndex < _maxTriangles)
 				{
 					_ids[currentIndex++] = newId;

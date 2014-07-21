@@ -1465,8 +1465,8 @@ namespace Devil
 		scene->setAngularSquaredSpeedThreshold(0.000001f);
 
 		float size = 10;
-		unsigned int width = 256;
-		unsigned int length = 256;
+		unsigned int width = 64;
+		unsigned int length = 64;
 		snVec lowerLeftCorner = snVec4Set(-(float)width * 0.5f * size, 0, -(float)length * 0.5f * size, 0);
 
 		unsigned int vertexCount = (width + 1) * (length + 1);
@@ -1482,14 +1482,13 @@ namespace Devil
 			if (heightMap[i] > max) max = heightMap[i];
 			if (heightMap[i] < min) min = heightMap[i];
 		}
-		boundingVolume.m_max = snVec4Set((float)width * 0.5f * size, max, (float)length * 0.5f * size, 0);
-		boundingVolume.m_min = snVec4Set(-(float)width * 0.5f * size, min, -(float)length * 0.5f * size, 0);
+		boundingVolume.m_max = snVec4Set((float)width * 0.5f * size, max, (float)length * 0.5f * size, 1);
+		boundingVolume.m_min = snVec4Set(-(float)width * 0.5f * size, min, -(float)length * 0.5f * size, 1);
 
 		GfxEntityHeightMap* gfx = GRAPHICS->createHeightMap(lowerLeftCorner, size, width, length, heightMap);
 
 		EntityStaticMesh* entity = WORLD->createStaticMesh(static_cast<IGfxEntity*>(gfx));
 		entity->setWireframe(true);
-		delete[] heightMap;
 
 		{
 			//create the physic height map
@@ -1501,7 +1500,11 @@ namespace Devil
 			snMap->setName("terrain");
 			snMap->initialize();
 		}
+		delete[] heightMap;
 
+		const unsigned int SPHERE_COUNT = 20;
+		snVec offset = snVec4Set(0, 11, 0, 0);
+		for (int i = 0; i < SPHERE_COUNT; ++i)
 		{
 			//create a dynamic sphere
 			snActorDynamic* sphere;
@@ -1511,16 +1514,17 @@ namespace Devil
 
 			snSphere* collider = new snSphere(radius);
 			sphere->addCollider(collider);
-			sphere->setPosition(snVec4Set(0, 10, 100, 1));
+			sphere->setPosition(snVec4Set(0, 10, 0, 1) + offset * (float)i);
 			sphere->setOrientation(snVec4Set(0, 0, 0, 1));
 			sphere->updateMassAndInertia(10);
 			sphere->initialize();
 
-			WORLD->createComposite(sphere, m_colors[2]);
+			EntityComposite* entity = WORLD->createComposite(sphere, m_colors[2]);
+			entity->setWireframe(true);
 		}
 
 		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
-		WORLD->getCamera()->setPosition(snVec4Set(0, 10, 0, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -100, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 100, 1));
 
 		//create the box launcher

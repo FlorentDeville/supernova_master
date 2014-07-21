@@ -162,9 +162,9 @@ namespace Devil
 	void TerrainCollider::getTriangle(unsigned int _id, snVec* _triangle) const
 	{
 		unsigned int offset = _id * 3;
-		_triangle[0] = m_vertices[offset];
-		_triangle[1] = m_vertices[offset + 1];
-		_triangle[2] = m_vertices[offset + 2];
+		_triangle[0] = m_vertices[m_indices[offset]];
+		_triangle[1] = m_vertices[m_indices[offset + 1]];
+		_triangle[2] = m_vertices[m_indices[offset + 2]];
 
 		return;
 	}

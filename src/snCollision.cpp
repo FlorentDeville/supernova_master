@@ -212,6 +212,8 @@ namespace Supernova
 			res.m_normal = vecDistance;
 			snVec3Normalize(res.m_normal);
 			snVec4SetW(res.m_normal, 0);
+
+			res.m_contacts.push_back(_s2->getCenter() + res.m_normal * _s2->getRadius());
 			res.m_penetrations.push_back(sqrtf(squaredMinDistance) - snVec3Norme(vecDistance));
 
 		}
