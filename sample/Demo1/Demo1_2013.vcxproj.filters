@@ -109,9 +109,6 @@
     <ClCompile Include="..\src\EntityFixedConstraint.cpp">
       <Filter>World\Entities</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\EntityPlan.cpp">
-      <Filter>World\Entities</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\EntityPointToPointConstraint.cpp">
       <Filter>World\Entities</Filter>
     </ClCompile>
@@ -229,9 +226,6 @@
       <Filter>World\Entities</Filter>
     </ClInclude>
     <ClInclude Include="..\src\EntityFixedConstraint.h">
-      <Filter>World\Entities</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\EntityPlan.h">
       <Filter>World\Entities</Filter>
     </ClInclude>
     <ClInclude Include="..\src\EntityPointToPointConstraint.h">

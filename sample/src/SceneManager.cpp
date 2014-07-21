@@ -1396,7 +1396,7 @@ namespace Devil
 			snCapsule* colCapsule = new snCapsule(10, 5);
 			/*actCapsule->setPosition(snVec4Set(0, 15, 0, 1));
 			actCapsule->setOrientation(snQuaternionFromEuler( 0, 0.f, 0));*/
-			actCapsule->setPosition(snVec4Set(0, 15, 0, 1) + i * offsetPosition);
+			actCapsule->setPosition(snVec4Set(0, 15, 0, 1) + (float)i * offsetPosition);
 			actCapsule->setOrientation(snQuaternionFromEuler(i * orientationOffset, 0.f, i * orientationOffset));
 			//actCapsule->setLinearVelocity(snVec4Set(0, 15, 0, 0));
 			//actCapsule->setAngularVelocity(snVec4Set(-5, 2, 0, 0));

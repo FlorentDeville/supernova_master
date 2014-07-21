@@ -12,7 +12,6 @@
 
 #include "EntitySphere.h"
 #include "EntityBox.h"
-#include "EntityPlan.h"
 #include "EntityCamera.h"
 #include "EntityFixedConstraint.h"
 

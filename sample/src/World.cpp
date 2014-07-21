@@ -35,7 +35,6 @@
 
 #include "EntitySphere.h"
 #include "EntityBox.h"
-#include "EntityPlan.h"
 #include "EntityCollisionPoint.h"
 #include "EntityCamera.h"
 #include "EntityFixedConstraint.h"
@@ -120,14 +119,6 @@ namespace Devil
 		NewEntity->initialize(_size, _color);
 		m_EntityList.push_back(NewEntity);
 		return NewEntity;
-	}
-
-	EntityPlan* World::createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color)
-	{
-		EntityPlan* newEntity = new EntityPlan();
-		newEntity->initialize(_size, _color);
-		m_EntityList.push_back(newEntity);
-		return newEntity;
 	}
 
 	EntityComposite* World::createComposite(snIActor* _actor, const XMFLOAT4& _color)

@@ -54,7 +54,6 @@ namespace Devil
 	class IWorldEntity;
 	class EntitySphere;
 	class EntityBox;
-	class EntityPlan;
 	class EntityCollisionPoint;
 	class EntityCamera;
 	class EntityFixedConstraint;
@@ -95,7 +94,6 @@ namespace Devil
 		EntitySphere* createSphere(float _diameter, const XMVECTOR& _color);
 		EntityBox* createBox(const XMFLOAT3&);
 		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityPlan* createPlan(const XMFLOAT2& _size, const XMFLOAT4& _color);
 		EntityComposite* createComposite(snIActor* _actor, const XMFLOAT4& _color);
 		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
 		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
