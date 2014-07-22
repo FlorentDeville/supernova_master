@@ -1495,7 +1495,9 @@ namespace Devil
 		float size = 30;
 		TerrainLoader loader;
 		TerrainData data;
-		loader.loadRaw8("raw_8_bits.raw", data);
+		loader.loadRaw8("raw_8_bits.raw", -200, 800, data);
+		//loader.loadBitmap8("C:\\Users\\Florent\\Desktop\\terrain_8bits_256_256.bmp", -200, 800, data);
+		
 		unsigned int width = data.m_quadsPerColumn;
 		unsigned int length = data.m_quadsPerRow;
 		float max = data.m_max;
@@ -1550,7 +1552,7 @@ namespace Devil
 		}
 
 		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
-		WORLD->getCamera()->setPosition(snVec4Set(snVec4GetX(boundingVolume.m_max), 500, snVec4GetZ(boundingVolume.m_min), 1));
+		//WORLD->getCamera()->setPosition(snVec4Set(snVec4GetX(boundingVolume.m_max), 500, snVec4GetZ(boundingVolume.m_min), 1));
 		WORLD->getCamera()->setPosition(snVec4Set(0, 400, -400, 1));
 		//WORLD->getCamera()->setPosition(snVec4Set(0, 8000, -400, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 350, 0, 1));

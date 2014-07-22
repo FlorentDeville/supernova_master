@@ -54,9 +54,19 @@ namespace Devil
 
 			//Load a height map from a raw 16 bits bitmap file.
 			// _filename : path + filename to the file.
+			// _minScale : Minimum value to give to the minimum height in the map.
+			// _maxScale : Maximum value to give to the maximum height in the map.
 			// _data : Reference to a TerrainData object. The function will fill it with information from the file.
 			// return : true if the file was loaded. False if an error occurred.
-			bool loadRaw8(const string& _filename, TerrainData& _data);
+			bool loadRaw8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data);
+
+			//Load a height map from a 8 bits bitmap file.
+			// _filename : Path + filename to the file to load.
+			// _minScale : Minimum value to give to the minimum height in the map.
+			// _maxScale : Maximum value to give to the maximum height in the map.
+			// _data : Reference to a TerrainData object. The function will fill it with information from the file.
+			// return : True if the file was loaded. False if an error occurred.
+			bool loadBitmap8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data);
 		};
 	}
 }
