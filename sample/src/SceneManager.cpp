@@ -1463,6 +1463,8 @@ namespace Devil
 
 		scene->setLinearSquaredSpeedThreshold(0.000001f);
 		scene->setAngularSquaredSpeedThreshold(0.000001f);
+		snVec gravity = snVec4Set(0, -9.81f, 0, 0);
+		scene->setGravity(gravity * 4);
 
 		float size = 10;
 		unsigned int width = 64;
@@ -1497,6 +1499,7 @@ namespace Devil
 			scene->createActorStatic(&snMap, id, snVec4Set(0), snVec4Set(0));
 			TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, size, width, length, heightMap);
 			snMap->addCollider(collider);
+			snMap->getPhysicMaterial().m_friction = 1;
 			snMap->setName("terrain");
 			snMap->initialize();
 		}
@@ -1511,24 +1514,30 @@ namespace Devil
 			int id = -1;
 			float radius = 5;
 			scene->createActorDynamic(&sphere, id);
-
-			snSphere* collider = new snSphere(radius);
+			snICollider* collider = 0;
+			if (i % 2 == 0)
+				collider = new snSphere(radius);
+			else
+				collider = new snOBB(snVec4Set(radius, radius, radius, 0));
 			sphere->addCollider(collider);
 			sphere->setPosition(snVec4Set(0, 10, 0, 1) + offset * (float)i);
 			sphere->setOrientation(snVec4Set(0, 0, 0, 1));
 			sphere->updateMassAndInertia(10);
+			sphere->getPhysicMaterial().m_friction = 1;
 			sphere->initialize();
 
-			EntityComposite* entity = WORLD->createComposite(sphere, m_colors[2]);
-			entity->setWireframe(true);
+			EntityComposite* entity = WORLD->createComposite(sphere, m_colors[i % 4]);
+			entity->setWireframe(false);
 		}
 
 		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
-		WORLD->getCamera()->setPosition(snVec4Set(0, 10, -100, 1));
-		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 100, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(100, 80, -200, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 0, 1));
 
 		//create the box launcher
 		WORLD->createEntityBoxLauncher(1);
+
+		WORLD->deactivateCollisionPoint();
 	}
 
 	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)

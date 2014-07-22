@@ -70,6 +70,7 @@ namespace Supernova
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderSphere), &Supernova::snCollision::queryTestCollisionCapsuleVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionSphereVersusHeightMap));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionOBBVersusHeightMap));
 	}
 
 	snCollision::~snCollision(){}
@@ -346,6 +347,99 @@ namespace Supernova
 		res.m_normal = normal * (1.f / res.m_contacts.size());
 		res.m_collision = true;
 		return res;
+	}
+
+	snCollisionResult snCollision::queryTestCollisionOBBVersusHeightMap(const snICollider* const _c1, const snICollider* const _c2)
+	{
+		snCollisionResult res;
+
+		snAABB boundingVolume;
+		_c1->computeAABB(&boundingVolume);
+
+		//Get the overlapped triangles
+		const snHeightMap* const heightMap = static_cast<const snHeightMap* const>(_c2);
+		const int MAX_TRIANGLE = 10;
+		unsigned int trianglesId[MAX_TRIANGLE];
+		int triangleCount = heightMap->getOverlapTriangles(boundingVolume, trianglesId, MAX_TRIANGLE);
+
+		//no triangle => no collision
+		if (triangleCount <= 0)
+			return res;
+
+		//loop through each triangles
+		unsigned int patchCount = 0;
+		for (int i = 0; i < triangleCount; ++i)
+		{
+			//get the triangle information
+			snVec triangleNormal = heightMap->getNormal(trianglesId[i]);
+
+			snVec triangleVertices[3];
+			heightMap->getTriangle(trianglesId[i], triangleVertices);
+
+			//get the triangle offset along it's normal
+			float d = snVec4GetX(snVec3Dot(triangleNormal, triangleVertices[0]));
+
+			//check if the box overlap along the triangle normal
+			float min, max;
+			_c1->projectToAxis(triangleNormal, min, max);
+			min -= d;
+			max -= d;
+
+			//no overlap
+			if (min * max > 0)
+				continue;
+
+			//compute the patch
+			snVec obbFeature[4];
+			unsigned int obbFeatureSize;
+			unsigned int obbFeatureId;
+			_c1->getClosestFeature(-triangleNormal, obbFeature, obbFeatureSize, obbFeatureId);
+			snVec obbFeatureNormal = _c1->getFeatureNormal(obbFeatureId);
+
+			snFeatureClipping clipping;
+			snVecVector patch;
+			std::vector<float> penetration;
+			if (!clipping.findContactPatch(obbFeature, obbFeatureSize, obbFeatureNormal, triangleVertices, 3, triangleNormal, triangleNormal, patch, penetration))
+				continue;
+
+			//save result
+			++patchCount;
+			res.m_collision = true;
+			res.m_normal = res.m_normal + triangleNormal;
+			//reserve enough space
+			res.m_contacts.reserve(res.m_contacts.size() + patch.size());
+			res.m_penetrations.reserve(res.m_penetrations.size() + penetration.size());
+
+			for (unsigned int j = 0; j < patch.size(); ++j)
+			{
+				//check if the points we try to add already exists
+				bool add = true;
+				for (unsigned int k = 0; k < res.m_contacts.size(); ++k)
+				{
+					float delta = snVec3SquaredNorme(patch[j] - res.m_contacts[k]);
+					const float EPSILON = 0.01f;
+					if (delta <= EPSILON)
+					{
+						add = false;
+						break;
+					}
+				}
+
+				if (add)
+				{
+					res.m_contacts.push_back(patch[j]);
+					res.m_penetrations.push_back(penetration[j]);
+				}
+				
+			}
+		}
+
+		if (!res.m_collision)
+			return res;
+
+		res.m_normal = res.m_normal * (1.f / patchCount);
+		return res;
+
 	}
 
 	snCollisionResult snCollision::queryTestCollisionGJK(const snICollider* const _c1, const snICollider* const _c2)

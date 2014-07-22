@@ -49,7 +49,6 @@ namespace Devil
 		//compute how many vertices we have
 		m_vertexCount = (_width + 1) * (_length + 1);
 		m_vertices = (snVec*)_aligned_malloc(sizeof(snVec)* m_vertexCount, 16);
-		m_verticesNormal = (snVec*)_aligned_malloc(sizeof(snVec)* m_vertexCount, 16);
 
 		//fill in the array of vertices
 		int vertexId = 0;
@@ -61,7 +60,6 @@ namespace Devil
 			for (unsigned int column = 0; column <= _width; ++column) //loop through each column
 			{
 				m_vertices[vertexId] = offsetZ + snVec4Set(_quadSize, 0, 0, 0) * (float)column + snVec4Set(0, _heights[vertexId], 0, 0);
-				m_verticesNormal[vertexId] = snVec4Set(0, 0, 0, 0);
 				++vertexId;
 			}
 		}
@@ -69,9 +67,11 @@ namespace Devil
 		//compute how many triangle and indices we need
 		unsigned int triangleCount = _width * _length * 2;
 		m_indexCount = triangleCount * 3;
+		m_triangleNormal = (snVec*)_aligned_malloc(sizeof(snVec)* triangleCount, 16);
 
 		//create the index buffer
 		unsigned int indexId = 0;
+		unsigned int triangleId = 0;
 		m_indices = new unsigned long[m_indexCount];
 		unsigned int vertexPerRow = _width + 1;
 		for (unsigned int row = 0; row < _length; ++row) //loop through each row
@@ -81,8 +81,8 @@ namespace Devil
 			{
 				//lower right triangle
 				m_indices[indexId] = offsetId + column;
-				m_indices[indexId + 1] = offsetId + column + vertexPerRow + 1;
-				m_indices[indexId + 2] = offsetId + column + 1;
+				m_indices[indexId + 1] = offsetId + column + 1;
+				m_indices[indexId + 2] = offsetId + column + vertexPerRow + 1;
 
 				//compute normals
 				snVec v0 = m_vertices[m_indices[indexId]];
@@ -91,17 +91,14 @@ namespace Devil
 
 				snVec normal = snVec3Cross(v0 - v1, v2 - v1);
 				snVec3Normalize(normal);
-
-				m_verticesNormal[m_indices[indexId]] = m_verticesNormal[m_indices[indexId]] + normal;
-				m_verticesNormal[m_indices[indexId + 1]] = m_verticesNormal[m_indices[indexId + 1]] + normal;
-				m_verticesNormal[m_indices[indexId + 2]] = m_verticesNormal[m_indices[indexId + 2]] + normal;
+				m_triangleNormal[triangleId++] = normal;
 
 				//upper left triangle
 				indexId += 3;
 
 				m_indices[indexId] = offsetId + column;
-				m_indices[indexId + 1] = offsetId + column + vertexPerRow;
-				m_indices[indexId + 2] = offsetId + column + vertexPerRow + 1;
+				m_indices[indexId + 1] = offsetId + column + vertexPerRow + 1;
+				m_indices[indexId + 2] = offsetId + column + vertexPerRow;
 
 				//compute normals
 				v0 = m_vertices[m_indices[indexId]];
@@ -110,53 +107,19 @@ namespace Devil
 
 				normal = snVec3Cross(v0 - v1, v2 - v1);
 				snVec3Normalize(normal);
-
-				m_verticesNormal[m_indices[indexId]] = m_verticesNormal[m_indices[indexId]] + normal;
-				m_verticesNormal[m_indices[indexId + 1]] = m_verticesNormal[m_indices[indexId + 1]] + normal;
-				m_verticesNormal[m_indices[indexId + 2]] = m_verticesNormal[m_indices[indexId + 2]] + normal;
+				m_triangleNormal[triangleId++] = normal;
 
 				indexId += 3;
 			}
 		}
-
-		//compute normals
-		for (unsigned int row = 0; row <= _length; ++row) //loop through each row
-		{
-			unsigned int offset = row * (_width + 1);
-			for (unsigned int column = 0; column <= _width; ++column)//loop through each column
-			{
-				unsigned int vertexId = offset + column;
-
-				//case where a vertex is shared by 1 triangle
-				if ((row == 0 && column == _width) ||			//bottom right corner
-					(row == _length && column == 0))			//top left corner
-				{
-					//nothing to do
-				}
-				//case where a vertex is shared by 2 triangles
-				else if ((row == 0 && column == 0) ||			//bottom left corner
-					(row == _length && column == _width))		//top right corner
-				{
-					m_verticesNormal[vertexId] = m_verticesNormal[vertexId] * 0.5f;
-				}
-				//case where a vertex is shared by 3 triangles
-				else if (row == 0 || row == _length || column == 0 || column == _width)			//border
-				{
-					m_verticesNormal[vertexId] = m_verticesNormal[vertexId] * (1.f / 3.f);
-				}
-				else //the inside of the height map. Each vertex is shared by 6 triangles
-				{
-					m_verticesNormal[vertexId] = m_verticesNormal[vertexId] * (1.f / 6.f);
-				}
-
-				snVec3Normalize(m_verticesNormal[vertexId]);
-			}
-
-		}
 	}
 
 	TerrainCollider::~TerrainCollider()
-	{}
+	{
+		_aligned_free(m_vertices);
+		_aligned_free(m_triangleNormal);
+		delete[] m_indices;
+	}
 
 	//Fill in the array _triangle with the snVec making the triangle in position _x and _y in the height map.
 	void TerrainCollider::getTriangle(unsigned int _id, snVec* _triangle) const
@@ -170,8 +133,8 @@ namespace Devil
 	}
 
 	//Return the normal of the triangle in position _x and _y.
-	snVec TerrainCollider::getNormal(unsigned int _x, unsigned int _y) const
+	snVec TerrainCollider::getNormal(unsigned int _triangleId) const
 	{
-		return snVec4Set(0);
+		return m_triangleNormal[_triangleId];
 	}
 }

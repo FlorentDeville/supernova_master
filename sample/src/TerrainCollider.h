@@ -46,14 +46,19 @@ namespace Devil
 	class TerrainCollider : public snHeightMap
 	{
 	private:
+		//Vertex buffer
 		snVec* m_vertices;
 
-		snVec* m_verticesNormal;
+		//Normal of triangles
+		snVec* m_triangleNormal;
 
+		//Index buffer
 		unsigned long* m_indices;
 
+		//Number of vertex
 		unsigned int m_vertexCount;
 
+		//Number of index
 		unsigned int m_indexCount;
 
 	public:
@@ -66,7 +71,7 @@ namespace Devil
 		void getTriangle(unsigned int _id, snVec* _triangle) const;
 
 		//Return the normal of the triangle in position _x and _y.
-		snVec getNormal(unsigned int _x, unsigned int _y) const;
+		snVec getNormal(unsigned int _triangleId) const;
 	};
 }
 

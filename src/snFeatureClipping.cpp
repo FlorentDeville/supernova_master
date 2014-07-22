@@ -101,6 +101,52 @@ namespace Supernova
 		return true;
 	}
 
+	bool snFeatureClipping::findContactPatch(snVec* const _feature1, unsigned int _featureSize1, const snVec& _featureNormal1,
+		snVec* const _feature2, unsigned int _featureSize2, const snVec& _featureNormal2,
+		const snVec& _normal, snVecVector& _patch, vector<float>& _patchPenetrations) const
+	{
+		if (_featureSize1 == 1 && _featureSize2 == 1)//vertex - vertex
+		{
+			clipVertexVertex(_feature1, _feature2, _normal, _patch, _patchPenetrations);
+		}
+		else if ((_featureSize1 == 1 && _featureSize2 == 2) || (_featureSize1 == 2 && _featureSize2 == 1)) // vertex - edge
+		{
+			if (_featureSize1 == 1)
+			{
+				clipVertexEdge(_feature1, _feature2, _normal, _patch, _patchPenetrations);
+			}
+			else
+			{
+				clipVertexEdge(_feature2, _feature1, _normal, _patch, _patchPenetrations);
+			}
+		}
+		else if ((_featureSize1 == 1 && _featureSize2 >= 3) || (_featureSize1 >= 3 && _featureSize2 == 1)) //vertex - triangle
+		{
+			if (_featureSize1 == 1)
+			{
+				clipVertexFace(_feature1, _feature2, _normal, _patch, _patchPenetrations);
+			}
+			else
+			{
+				clipVertexFace(_feature2, _feature1, _normal, _patch, _patchPenetrations);
+			}
+		}
+		else if ((_featureSize1 == 2 && _featureSize2 == 2)) //edge - edge
+		{
+			clipEdgeEdge(_feature1, _feature2, _normal, _patch, _patchPenetrations);
+		}
+		else if (_featureSize1 >= 3) //Face - edge or Face - Face
+		{
+			return clipFaceFace(_feature1, _featureNormal1, _feature2, _featureSize2, _patch, _patchPenetrations);
+		}
+		else //Edge - Face or Face - Face
+		{
+			return clipFaceFace(_feature2, _featureNormal2, _feature1, _featureSize1, _patch, _patchPenetrations);
+		}
+
+		return true;
+	}
+
 	void snFeatureClipping::clipPolygon(const snVecVector& _polygon, const snVec& _n, float _d, snVecVector& _clippedPolygon) const
 	{
 		if (_polygon.size() == 0)

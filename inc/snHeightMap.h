@@ -101,7 +101,7 @@ namespace Supernova
 		virtual void getTriangle(unsigned int _id, snVec* _triangle) const = 0;
 
 		//Return the normal of the triangle in position _x and _y.
-		virtual snVec getNormal(unsigned int _x, unsigned int _y) const = 0;
+		virtual snVec getNormal(unsigned int _triangleId) const = 0;
 
 		//Return the ids of all the triangles overlaping the AABB.
 		int getOverlapTriangles(const snAABB& _bounding, unsigned int* const _ids, unsigned int _maxTriangles) const;

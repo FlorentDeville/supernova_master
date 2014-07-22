@@ -56,6 +56,20 @@ namespace Supernova
 		bool findContactPatch(const snICollider& _c1, const snICollider& _c2, const snVec& _normal, 
 			snVecVector& _patch, vector<float>& _patchPenetrations) const;
 
+		//Find the collision patch of two features.
+		// _feature1 : array of vertex for the first feature.
+		// _featureSize1 : number of vertex in first feature.
+		// _featureNormal1 : normal of the first feature pointing outside.
+		// _feature2 : array of vertex for the second feature.
+		// _featureSize2 : number of vertex in second feature.
+		// _featureNormal2 : normal of the second feature pointing outside.
+		// _normal : collision normal going from the second collider to the first one.
+		// _patch : the result of the clipping operation.
+		// _patchPenetrations : penetration depth for each vertex of the patch.
+		bool findContactPatch(snVec* const _feature1, unsigned int _featureSize1, const snVec& _featureNormal1,
+			snVec* const _feature2, unsigned int _featureSize2, const snVec& _featureNormal2, 
+			const snVec& _normal, snVecVector& _patch, vector<float>& _patchPenetrations) const;
+
 	private:
 
 		//Clip a polygon to keep only the points on the back side of a plan.
