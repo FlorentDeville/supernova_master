@@ -93,7 +93,8 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
-xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
+xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y
+xcopy $(ProjectDir)..\src\raw_8_bits.raw $(OutputPath) /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -134,6 +135,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClCompile Include="..\src\SceneManager.cpp" />
     <ClCompile Include="..\src\System.cpp" />
     <ClCompile Include="..\src\TerrainCollider.cpp" />
+    <ClCompile Include="..\src\TerrainLoader.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />
     <ClCompile Include="..\src\TextureShader.cpp" />
     <ClCompile Include="..\src\VecLinearDamper.cpp" />
@@ -182,6 +184,8 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
     <ClInclude Include="..\src\SceneManager.h" />
     <ClInclude Include="..\src\System.h" />
     <ClInclude Include="..\src\TerrainCollider.h" />
+    <ClInclude Include="..\src\TerrainData.h" />
+    <ClInclude Include="..\src\TerrainLoader.h" />
     <ClInclude Include="..\src\Texture.h" />
     <ClInclude Include="..\src\TextureShader.h" />
     <ClInclude Include="..\src\VecLinearDamper.h" />
@@ -190,6 +194,7 @@ xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont" />
+    <None Include="..\src\raw_8_bits.raw" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\src\check.png" />

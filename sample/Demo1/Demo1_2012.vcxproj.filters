@@ -19,9 +19,6 @@
     <Filter Include="SceneManager">
       <UniqueIdentifier>{0236c57c-32f6-4dd4-aad0-1f384e7e0f87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics\font">
-      <UniqueIdentifier>{4a2d33d3-7cfc-4c71-ad0e-49d00a840c7d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="World\Components">
       <UniqueIdentifier>{b7053a15-96f9-4de1-b3d2-9498a2c78271}</UniqueIdentifier>
     </Filter>
@@ -48,6 +45,15 @@
     </Filter>
     <Filter Include="Physics">
       <UniqueIdentifier>{aebd6407-4e8f-46e8-a52e-cfa73f3e97ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Assets">
+      <UniqueIdentifier>{40463a99-7e54-4a15-9455-daff26fe72b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Assets\Font">
+      <UniqueIdentifier>{4a2d33d3-7cfc-4c71-ad0e-49d00a840c7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Assets\Texture">
+      <UniqueIdentifier>{de67b841-482d-405e-86cb-e29af013085c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +176,9 @@
       <Filter>World\Entities</Filter>
     </ClCompile>
     <ClCompile Include="..\src\TerrainCollider.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TerrainLoader.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
@@ -312,13 +321,27 @@
     <ClInclude Include="..\src\TerrainCollider.h">
       <Filter>Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\TerrainData.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TerrainLoader.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont">
-      <Filter>Graphics\font</Filter>
+      <Filter>Graphics\Assets\Font</Filter>
     </None>
     <None Include="..\src\Damper.inl">
       <Filter>Helper</Filter>
     </None>
+    <None Include="..\src\raw_8_bits.raw">
+      <Filter>Graphics\Assets\Texture</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\src\check.png">
+      <Filter>Graphics\Assets\Texture</Filter>
+    </Image>
   </ItemGroup>
 </Project>

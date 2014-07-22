@@ -68,6 +68,12 @@
 #include "TerrainCollider.h"
 #include "snMath.h"
 
+#include "TerrainData.h"
+using Devil::Terrain::TerrainData;
+
+#include "TerrainLoader.h"
+using Devil::Terrain::TerrainLoader;
+
 using namespace Supernova;
 using namespace Supernova::Vector;
 
@@ -1466,15 +1472,16 @@ namespace Devil
 		snVec gravity = snVec4Set(0, -9.81f, 0, 0);
 		scene->setGravity(gravity * 4);
 
-		float size = 10;
-		unsigned int width = 64;
-		unsigned int length = 64;
+		/*
+		float size = 15;
+		unsigned int width = 256;
+		unsigned int length = 256;
 		snVec lowerLeftCorner = snVec4Set(-(float)width * 0.5f * size, 0, -(float)length * 0.5f * size, 0);
 
 		unsigned int vertexCount = (width + 1) * (length + 1);
 		float* heightMap = new float[vertexCount];
 
-		float amplitude = 2;
+		float amplitude = 4;
 		snAABB boundingVolume;
 		float min = SN_FLOAT_MAX;
 		float max = -SN_FLOAT_MAX;
@@ -1483,9 +1490,21 @@ namespace Devil
 			heightMap[i] = amplitude * cosf((float)i);
 			if (heightMap[i] > max) max = heightMap[i];
 			if (heightMap[i] < min) min = heightMap[i];
-		}
+		}*/
+
+		float size = 30;
+		TerrainLoader loader;
+		TerrainData data;
+		loader.loadRaw8("raw_8_bits.raw", data);
+		unsigned int width = data.m_quadsPerColumn;
+		unsigned int length = data.m_quadsPerRow;
+		float max = data.m_max;
+		float min = data.m_min;
+		snVec lowerLeftCorner = snVec4Set(-(float)width * 0.5f * size, 0, -(float)length * 0.5f * size, 0);
+		snAABB boundingVolume;
 		boundingVolume.m_max = snVec4Set((float)width * 0.5f * size, max, (float)length * 0.5f * size, 1);
 		boundingVolume.m_min = snVec4Set(-(float)width * 0.5f * size, min, -(float)length * 0.5f * size, 1);
+		float* heightMap = data.m_heights;
 
 		GfxEntityHeightMap* gfx = GRAPHICS->createHeightMap(lowerLeftCorner, size, width, length, heightMap);
 
@@ -1503,7 +1522,7 @@ namespace Devil
 			snMap->setName("terrain");
 			snMap->initialize();
 		}
-		delete[] heightMap;
+		//delete[] heightMap;
 
 		const unsigned int SPHERE_COUNT = 20;
 		snVec offset = snVec4Set(0, 11, 0, 0);
@@ -1520,7 +1539,7 @@ namespace Devil
 			else
 				collider = new snOBB(snVec4Set(radius, radius, radius, 0));
 			sphere->addCollider(collider);
-			sphere->setPosition(snVec4Set(0, 10, 0, 1) + offset * (float)i);
+			sphere->setPosition(snVec4Set(-10, 400, 0, 1) + offset * (float)i);
 			sphere->setOrientation(snVec4Set(0, 0, 0, 1));
 			sphere->updateMassAndInertia(10);
 			sphere->getPhysicMaterial().m_friction = 1;
@@ -1531,8 +1550,10 @@ namespace Devil
 		}
 
 		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
-		WORLD->getCamera()->setPosition(snVec4Set(100, 80, -200, 1));
-		WORLD->getCamera()->setLookAt(snVec4Set(0, 0, 0, 1));
+		WORLD->getCamera()->setPosition(snVec4Set(snVec4GetX(boundingVolume.m_max), 500, snVec4GetZ(boundingVolume.m_min), 1));
+		WORLD->getCamera()->setPosition(snVec4Set(0, 400, -400, 1));
+		//WORLD->getCamera()->setPosition(snVec4Set(0, 8000, -400, 1));
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 350, 0, 1));
 
 		//create the box launcher
 		WORLD->createEntityBoxLauncher(1);

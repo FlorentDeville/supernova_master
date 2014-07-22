@@ -184,6 +184,9 @@
     <ClCompile Include="..\src\TerrainCollider.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\TerrainLoader.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -324,10 +327,19 @@
     <ClInclude Include="..\src\TerrainCollider.h">
       <Filter>Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\TerrainLoader.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TerrainData.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont">
       <Filter>Graphics\Asset\Font</Filter>
+    </None>
+    <None Include="..\src\raw_8_bits.raw">
+      <Filter>Graphics\Asset\Texture</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

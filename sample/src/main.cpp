@@ -7,13 +7,6 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#include "snOBB.h"
-#include "snGJK.h"
-#include "snSAT.h"
-#include "snVec.h"
-#include "snMatrix44f.h"
-using namespace Supernova::Vector;
-using namespace Supernova;
 #endif //_DEBUG
 
 using namespace Devil;
