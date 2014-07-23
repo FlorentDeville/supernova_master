@@ -52,14 +52,16 @@ namespace Devil
 
 		//fill in the array of vertices
 		int vertexId = 0;
-		for (unsigned int row = 0; row <= _length; ++row) //loop through each row
+		for (int row = 1; row <= _length+1; ++row) //loop through each row
 		{
 			snVec lowerLeftCorner = _min;
 			snVec4SetY(lowerLeftCorner, 0);
-			snVec offsetZ = lowerLeftCorner + snVec4Set(0, 0, _quadSize, 0) * (float)row;
-			for (unsigned int column = 0; column <= _width; ++column) //loop through each column
+			snVec offsetZ = lowerLeftCorner + snVec4Set(0, 0, _quadSize, 0) * (float)(row-1);
+
+			unsigned int offsetVertexId = row * (_width + 3);
+			for (int column = 1; column <= _width+1; ++column) //loop through each column
 			{
-				m_vertices[vertexId] = offsetZ + snVec4Set(_quadSize, 0, 0, 0) * (float)column + snVec4Set(0, _heights[vertexId], 0, 0);
+				m_vertices[vertexId] = offsetZ + snVec4Set(_quadSize, 0, 0, 0) * (float)(column-1) + snVec4Set(0, _heights[offsetVertexId+column], 0, 0);
 				++vertexId;
 			}
 		}
