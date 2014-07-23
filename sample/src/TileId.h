@@ -32,52 +32,23 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef TERRAIN_LOADER_H
-#define TERRAIN_LOADER_H
-
-
-#include <string>
-using std::string;
+#ifndef TILE_ID_H
+#define TILE_ID_H
 
 namespace Devil
 {
 	namespace Terrain
 	{
-		class TerrainData;
-		class TerrainDescription;
-		struct TileId;
-
-		class TerrainLoader
+		//Id of a tile.
+		struct TileId
 		{
-		public:
-			TerrainLoader();
+			//Row id of the tile. It goes from the left to the right.
+			unsigned int m_rowId;
 
-			virtual ~TerrainLoader();
-
-			//Load a height map from a raw 16 bits bitmap file.
-			// _filename : path + filename to the file.
-			// _minScale : Minimum value to give to the minimum height in the map.
-			// _maxScale : Maximum value to give to the maximum height in the map.
-			// _data : Reference to a TerrainData object. The function will fill it with information from the file.
-			// return : true if the file was loaded. False if an error occurred.
-			bool loadRaw8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data) const;
-
-			//Load a height map from a 8 bits bitmap file.
-			// _filename : Path + filename to the file to load.
-			// _minScale : Minimum value to give to the minimum height in the map.
-			// _maxScale : Maximum value to give to the maximum height in the map.
-			// _data : Reference to a TerrainData object. The function will fill it with information from the file.
-			// return : True if the file was loaded. False if an error occurred.
-			bool loadBitmap8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data) const;
-
-			//Load a tile using information provided by a terrain description and a tile id.
-			// _desc : Must be a initialized TerrainDescription object.
-			// _tile : The id if the tile to load.
-			// _data : Reference to a TerrainData object. The function will fill it with information from the file.
-			// return : True if the file was loaded. False if an error occurred.
-			bool loadTile(const TerrainDescription& _desc, const TileId& _tile, TerrainData& _data) const;
+			//Column id of the tile. It goes from backward to forward.
+			unsigned int m_columnId;
 		};
 	}
 }
 
-#endif //ifndef TERRAIN_LOADER_H
+#endif //ifndef TILE_ID_H

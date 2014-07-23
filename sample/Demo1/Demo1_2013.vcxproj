@@ -67,7 +67,7 @@
     <PostBuildEvent>
       <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
 xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y
-xcopy $(ProjectDir)..\src\raw_8_bits.raw $(OutputPath) /y</Command>
+xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -95,7 +95,7 @@ xcopy $(ProjectDir)..\src\raw_8_bits.raw $(OutputPath) /y</Command>
     <PostBuildEvent>
       <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
 xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y
-xcopy $(ProjectDir)..\src\raw_8_bits.raw $(OutputPath) /y</Command>
+xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -136,6 +136,7 @@ xcopy $(ProjectDir)..\src\raw_8_bits.raw $(OutputPath) /y</Command>
     <ClCompile Include="..\src\SceneManager.cpp" />
     <ClCompile Include="..\src\System.cpp" />
     <ClCompile Include="..\src\TerrainCollider.cpp" />
+    <ClCompile Include="..\src\TerrainDescription.cpp" />
     <ClCompile Include="..\src\TerrainLoader.cpp" />
     <ClCompile Include="..\src\Texture.cpp" />
     <ClCompile Include="..\src\TextureShader.cpp" />
@@ -186,16 +187,18 @@ xcopy $(ProjectDir)..\src\raw_8_bits.raw $(OutputPath) /y</Command>
     <ClInclude Include="..\src\System.h" />
     <ClInclude Include="..\src\TerrainCollider.h" />
     <ClInclude Include="..\src\TerrainData.h" />
+    <ClInclude Include="..\src\TerrainDescription.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />
     <ClInclude Include="..\src\Texture.h" />
     <ClInclude Include="..\src\TextureShader.h" />
+    <ClInclude Include="..\src\TileId.h" />
     <ClInclude Include="..\src\VecLinearDamper.h" />
     <ClInclude Include="..\src\World.h" />
     <ClInclude Include="..\src\WorldHUD.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont" />
-    <None Include="..\src\raw_8_bits.raw" />
+    <None Include="..\src\raw_8_bits_256_256.raw" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\src\check.png" />

@@ -58,6 +58,9 @@
     <Filter Include="Physics">
       <UniqueIdentifier>{a818626c-3116-4f4a-afca-12a8e59f3d0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Terrain">
+      <UniqueIdentifier>{7b35f202-90f2-44ab-8804-39642c24a7c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -185,7 +188,10 @@
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\src\TerrainLoader.cpp">
-      <Filter>Physics</Filter>
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TerrainDescription.cpp">
+      <Filter>Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -327,18 +333,24 @@
     <ClInclude Include="..\src\TerrainCollider.h">
       <Filter>Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\TerrainLoader.h">
-      <Filter>Physics</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\TerrainData.h">
-      <Filter>Physics</Filter>
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TerrainLoader.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TerrainDescription.h">
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TileId.h">
+      <Filter>Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont">
       <Filter>Graphics\Asset\Font</Filter>
     </None>
-    <None Include="..\src\raw_8_bits.raw">
+    <None Include="..\src\raw_8_bits_256_256.raw">
       <Filter>Graphics\Asset\Texture</Filter>
     </None>
   </ItemGroup>

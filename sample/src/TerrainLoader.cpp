@@ -34,6 +34,8 @@
 
 #include "TerrainLoader.h"
 #include "TerrainData.h"
+#include "TerrainDescription.h"
+#include "TileId.h"
 
 #include <fstream>
 using std::ifstream;
@@ -52,7 +54,7 @@ namespace Devil
 		TerrainLoader::~TerrainLoader()
 		{}
 
-		bool TerrainLoader::loadRaw8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data)
+		bool TerrainLoader::loadRaw8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data) const
 		{
 			_data.m_min = SN_FLOAT_MAX;
 			_data.m_max = -SN_FLOAT_MAX;
@@ -101,7 +103,7 @@ namespace Devil
 			return true;
 		}
 
-		bool TerrainLoader::loadBitmap8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data)
+		bool TerrainLoader::loadBitmap8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data) const
 		{
 			//Open the file
 			std::ifstream file;
@@ -179,6 +181,81 @@ namespace Devil
 			delete[] datBuff[1];
 			delete[] pixels;
 
+			return true;
+		}
+
+		bool TerrainLoader::loadTile(const TerrainDescription& _desc, const TileId& _tile, TerrainData& _data) const
+		{
+			//Open the file
+			std::ifstream file;
+			file.open(_desc.getFilename(), std::ios::binary);
+			if (!file.is_open())
+			{
+				return false;
+			}
+
+			//Load the header
+			unsigned char* datBuff = 0;
+			datBuff = new unsigned char[sizeof(BITMAPFILEHEADER)];
+			file.read((char*)datBuff, sizeof(BITMAPFILEHEADER));
+			BITMAPFILEHEADER* bmpHeader = (BITMAPFILEHEADER*)datBuff;
+
+			//Allocate enough memory to load a scanline
+			unsigned char* pixels = new unsigned char[_desc.getVertexPerTileRow()];
+
+			//Allocate memory to load the height map
+			_data.m_heights = new float[_desc.getVertexPerTileColumn() * _desc.getVertexPerTileRow()];
+
+			//Compute the padding added at the end of each scanline (could be cached)
+			unsigned int padding = 4 - (_desc.getVertexPerRow() % 4);
+
+			//The size in bytes of an entire line of the texture including the padding (could be cached)
+			unsigned int terrainScanlineSize = _desc.getVertexPerRow() + padding;
+
+			//Offset in bytes from the start of line to the first vertex of the tile
+			unsigned int offsetFromStartOfLine = _tile.m_columnId * _desc.getQuadsPerTileRow();
+
+			//Offset in bytes from the start of the file to the first vertex of the tile
+			unsigned int offsetFromStartOfFile = (_tile.m_rowId * _desc.getQuadsPerTileColumn()) * terrainScanlineSize + offsetFromStartOfLine;
+			
+			//Offset in bytes from the last vertex of a line to the first vertex of the next line. (could be cached)
+			unsigned int offsetNextScanLine = _desc.getVertexPerRow() - _desc.getVertexPerTileRow() + padding;
+
+			//Compute the scale (could be cached)
+			const float UNSIGNED_CHAR_MAX_VALUE = 255.f;
+			float deltaScale = (_desc.getMaxScale() - _desc.getMinScale()) / UNSIGNED_CHAR_MAX_VALUE;
+
+			//Go to where image data starts, then read in image data
+			file.seekg(bmpHeader->bfOffBits + offsetFromStartOfFile, std::ios::beg);
+
+			//Loop through each scanline
+			unsigned int heightId = 0;
+			for (unsigned int scanline = 0; scanline < _desc.getVertexPerTileColumn(); ++scanline)
+			{
+				file.read((char*)pixels, _desc.getVertexPerTileRow());
+
+				//Loop through each vertex
+				for (unsigned int pixelId = 0; pixelId < _desc.getVertexPerTileRow(); pixelId++)
+				{
+					_data.m_heights[heightId] = (deltaScale * (float)pixels[pixelId]) + _desc.getMinScale();
+					if (_data.m_heights[heightId] < _data.m_min) _data.m_min = _data.m_heights[heightId];
+					if (_data.m_heights[heightId] > _data.m_max) _data.m_max = _data.m_heights[heightId];
+
+					++heightId;
+				}
+
+				file.seekg(offsetNextScanLine, std::ios::cur);
+			}
+		
+			file.close();
+
+			_data.m_quadsPerColumn = _desc.getQuadsPerTileColumn();
+			_data.m_quadsPerRow = _desc.getQuadsPerTileRow();
+			_data.m_vertexPerColumn = _desc.getVertexPerTileColumn();
+			_data.m_vertexPerRow = _desc.getVertexPerTileRow();
+
+			delete[] pixels;
+			delete datBuff;
 			return true;
 		}
 	}

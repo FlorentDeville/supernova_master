@@ -55,6 +55,9 @@
     <Filter Include="Graphics\Assets\Texture">
       <UniqueIdentifier>{de67b841-482d-405e-86cb-e29af013085c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Terrain">
+      <UniqueIdentifier>{48510fdc-67a8-4f97-a092-74a8bee72952}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -179,7 +182,10 @@
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\src\TerrainLoader.cpp">
-      <Filter>Physics</Filter>
+      <Filter>Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TerrainDescription.cpp">
+      <Filter>Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -322,10 +328,13 @@
       <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\src\TerrainData.h">
-      <Filter>Physics</Filter>
+      <Filter>Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\src\TerrainLoader.h">
-      <Filter>Physics</Filter>
+      <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TerrainDescription.h">
+      <Filter>Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -335,7 +344,7 @@
     <None Include="..\src\Damper.inl">
       <Filter>Helper</Filter>
     </None>
-    <None Include="..\src\raw_8_bits.raw">
+    <None Include="..\src\raw_8_bits_256_256.raw">
       <Filter>Graphics\Assets\Texture</Filter>
     </None>
   </ItemGroup>
