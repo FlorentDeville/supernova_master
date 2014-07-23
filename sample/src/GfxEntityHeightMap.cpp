@@ -46,99 +46,113 @@ namespace Devil
 	GfxEntityHeightMap::GfxEntityHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length, float* heights)
 	{
 		//compute how many vertices we have
-		m_vertexCount = (_width + 1) * (_length + 1);
+		m_vertexCount = (_width + 3) * (_length + 3);
 		XMVECTOR* verticesPosition = (XMVECTOR*)_aligned_malloc(sizeof(XMVECTOR)* m_vertexCount, 16);// new XMVECTOR[vertexCount];
 		XMVECTOR* verticesNormal = (XMVECTOR*)_aligned_malloc(sizeof(XMVECTOR)* m_vertexCount, 16);//new XMVECTOR[vertexCount];
 
 		//fill in the array of vertices
 		int vertexId = 0;
 		XMFLOAT4 color(0, 1, 0, 1);
-		for (unsigned int row = 0; row <= _length; ++row) //loop through each row
+		for (unsigned int row = 0; row <= _length+2; ++row) //loop through each row
 		{
-			XMVECTOR offsetZ = _lowerLeftCorner + XMVectorSet(0, 0, _quadSize, 0) * (float)row;
-			for (unsigned int column = 0; column <= _width; ++column) //loop through each column
+			int borderedRow = row - 1;
+			XMVECTOR q = XMVectorSet(0, 0, _quadSize * (row - 1), 0);
+			XMVECTOR offsetZ = _lowerLeftCorner + (XMVectorSet(0, 0, _quadSize, 0) * borderedRow);
+			for (unsigned int column = 0; column <= _width+2; ++column) //loop through each column
 			{
-				verticesPosition[vertexId] = offsetZ + XMVectorSet(_quadSize, 0, 0, 0) * (float)column + XMVectorSet(0, heights[vertexId], 0, 0);
+				int borderedColumn = column - 1;
+				verticesPosition[vertexId] = offsetZ + (XMVectorSet(_quadSize, 0, 0, 0) * (float)(borderedColumn)) + XMVectorSet(0, heights[vertexId], 0, 0);
 				verticesNormal[vertexId] = XMVectorSet(0, 0, 0, 0);
 				++vertexId;
 			}
 		}
 		
 		//compute how many triangle and indices we need
-		unsigned int triangleCount = _width * _length * 2;
+		unsigned int triangleCount = (_width) * (_length) * 2;
 		m_indicesCount = triangleCount * 3;
 
 		//create the index buffer
 		unsigned int indexId = 0;
 		unsigned long* indices = new unsigned long[m_indicesCount];
-		unsigned int vertexPerRow = _width + 1;
-		for (unsigned int row = 0; row < _length; ++row) //loop through each row
+		unsigned int vertexPerRow = _width + 3;
+		for (unsigned int row = 0; row < _length + 2; ++row) //loop through each row
 		{
 			unsigned int offsetId = row * vertexPerRow;
-			for (unsigned int column = 0; column < _width; ++column)//loop through each column
+			for (unsigned int column = 0; column < _width + 2; ++column)//loop through each column
 			{
-				//lower right triangle
-				indices[indexId] = offsetId + column;
-				indices[indexId + 1] = offsetId + column + vertexPerRow + 1;
-				indices[indexId + 2] = offsetId + column + 1;
-
+				unsigned int id0 = offsetId + column;
+				unsigned int id1 = offsetId + column + vertexPerRow + 1;
+				unsigned int id2 = offsetId + column + 1;
+				if (row != 0 && row != _length + 1 && column != 0 && column != _width + 1)
+				{
+					//lower right triangle
+					indices[indexId] = id0;
+					indices[indexId + 1] = id1;
+					indices[indexId + 2] = id2;
+					indexId += 3;
+				}
 				//compute normals
-				XMVECTOR v0 = verticesPosition[indices[indexId]];
-				XMVECTOR v1 = verticesPosition[indices[indexId + 1]];
-				XMVECTOR v2 = verticesPosition[indices[indexId + 2]];
+				XMVECTOR v0 = verticesPosition[id0];
+				XMVECTOR v1 = verticesPosition[id1];
+				XMVECTOR v2 = verticesPosition[id2];
 
 				XMVECTOR normal = XMVector3Cross(v0 - v1, v2 - v1);
 				normal = XMVector3Normalize(normal);
 				
-				verticesNormal[indices[indexId]] += normal;
-				verticesNormal[indices[indexId + 1]] += normal;
-				verticesNormal[indices[indexId + 2]] += normal;
+				verticesNormal[id0] += normal;
+				verticesNormal[id1] += normal;
+				verticesNormal[id2] += normal;
 				
-				//upper left triangle
-				indexId += 3;
-
-				indices[indexId] = offsetId + column;
-				indices[indexId + 1] = offsetId + column + vertexPerRow;
-				indices[indexId + 2] = offsetId + column + vertexPerRow + 1;
-
+			
+				id0 = offsetId + column;
+				id1 = offsetId + column + vertexPerRow;
+				id2 = offsetId + column + vertexPerRow + 1;
+				if (row != 0 && row != _length + 1 && column != 0 && column != _width + 1)
+				{
+					indices[indexId] = id0;
+					indices[indexId + 1] = id1;
+					indices[indexId + 2] = id2;
+					indexId += 3;
+				}
 				//compute normals
-				v0 = verticesPosition[indices[indexId]];
-				v1 = verticesPosition[indices[indexId + 1]];
-				v2 = verticesPosition[indices[indexId + 2]];
+				v0 = verticesPosition[id0];
+				v1 = verticesPosition[id1];
+				v2 = verticesPosition[id2];
 
 				normal = XMVector3Cross(v0 - v1, v2 - v1);
 				normal = XMVector3Normalize(normal);
 
-				verticesNormal[indices[indexId]] += normal;
-				verticesNormal[indices[indexId + 1]] += normal;
-				verticesNormal[indices[indexId + 2]] += normal;
-
-				indexId += 3;
+				verticesNormal[id0] += normal;
+				verticesNormal[id1] += normal;
+				verticesNormal[id2] += normal;			
 			}
 		}
 		
 		//compute normals
-		for (unsigned int row = 0; row <= _length; ++row) //loop through each row
+		//unsigned int vertexPerRow = _length + 3;
+		//unsigned int vertexPerColumn = _length + 3;
+
+		for (unsigned int row = 0; row <= _length+2; ++row) //loop through each row
 		{
-			unsigned int offset = row * (_width + 1);
-			for (unsigned int column = 0; column <= _width; ++column)//loop through each column
+			unsigned int offset = row * (_width + 3);
+			for (unsigned int column = 0; column <= _width+2; ++column)//loop through each column
 			{
 				unsigned int vertexId = offset + column;
 
 				//case where a vertex is shared by 1 triangle
-				if ((row == 0 && column == _width) ||			//bottom right corner
-					(row == _length && column == 0))			//top left corner
+				if ((row == 0 && column == _width+2) ||			//bottom right corner
+					(row == _length+2 && column == 0))			//top left corner
 				{
 					//nothing to do
 				}
 				//case where a vertex is shared by 2 triangles
 				else if ((row == 0 && column == 0) ||			//bottom left corner
-					(row == _length && column == _width))		//top right corner
+					(row == _length+2 && column == _width+2))		//top right corner
 				{
 					verticesNormal[vertexId] = verticesNormal[vertexId] / 2;
 				}
 				//case where a vertex is shared by 3 triangles
-				else if (row == 0 || row == _length || column == 0 || column == _width)			//border
+				else if (row == 0 || row == _length+2 || column == 0 || column == _width+2)	//border
 				{
 					verticesNormal[vertexId] = verticesNormal[vertexId] / 3;
 				}

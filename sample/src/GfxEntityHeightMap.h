@@ -72,11 +72,13 @@ namespace Devil
 		BasicEffect* m_effect;
 
 	public:
-		//Construct the height map. It initializes the entire mesh (vertex buffer + index buffer)
+		//Construct the height map. It initializes the entire mesh (vertex buffer + index buffer). The first and last row/column will
+		// be considered as borders and won't be displayed. They need to be provided in order to have a continuity in normal vertices.
+		// As a consequence, the number of float to pass is (_width + 2) * (_length + 2)
 		// _lowerLeftcorner : the coordinate of the lower left corner. The y axis wll be ignored to take the value from the height map.
 		// _quadSize : size of a quad.
-		// _width : number of quads per row (along the x axis).
-		// _length : number of quads per column (along the z axis).
+		// _width : number of quads per row (along the x axis). It doesn't take into account the border.
+		// _length : number of quads per column (along the z axis). It doesn't take into account the border.
 		// _heights : array containing the height of each vertex.
 		GfxEntityHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length, float* heights);
 

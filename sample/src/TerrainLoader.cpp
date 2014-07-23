@@ -201,25 +201,32 @@ namespace Devil
 			BITMAPFILEHEADER* bmpHeader = (BITMAPFILEHEADER*)datBuff;
 
 			//Allocate enough memory to load a scanline
-			unsigned char* pixels = new unsigned char[_desc.getVertexPerTileRow()];
+			unsigned char* pixels = new unsigned char[_desc.getVertexPerTileRow() + 2];
 
 			//Allocate memory to load the height map
-			_data.m_heights = new float[_desc.getVertexPerTileColumn() * _desc.getVertexPerTileRow()];
+			_data.m_heights = new float[(_desc.getVertexPerTileColumn() + 2) * (_desc.getVertexPerTileRow() + 2)];
+
+			//Number of vertex to consider as the border
+			const int BORDER = 1;
+
+			unsigned int tileSizeInQuads = _desc.getQuadsPerTileRow();
+			unsigned int realVertexCountPerLine = _desc.getVertexPerRow() + BORDER * 2;
 
 			//Compute the padding added at the end of each scanline (could be cached)
-			unsigned int padding = 4 - (_desc.getVertexPerRow() % 4);
+			unsigned int padding = 4 - (realVertexCountPerLine % 4);
 
 			//The size in bytes of an entire line of the texture including the padding (could be cached)
-			unsigned int terrainScanlineSize = _desc.getVertexPerRow() + padding;
+			unsigned int terrainScanlineSize = realVertexCountPerLine + padding;
 
 			//Offset in bytes from the start of line to the first vertex of the tile
-			unsigned int offsetFromStartOfLine = _tile.m_columnId * _desc.getQuadsPerTileRow();
+			unsigned int offsetFromStartOfLine = _tile.m_columnId * tileSizeInQuads;
 
 			//Offset in bytes from the start of the file to the first vertex of the tile
-			unsigned int offsetFromStartOfFile = (_tile.m_rowId * _desc.getQuadsPerTileColumn()) * terrainScanlineSize + offsetFromStartOfLine;
+			unsigned int offsetFromStartOfFile = _tile.m_rowId * tileSizeInQuads * terrainScanlineSize + offsetFromStartOfLine;
 			
 			//Offset in bytes from the last vertex of a line to the first vertex of the next line. (could be cached)
-			unsigned int offsetNextScanLine = _desc.getVertexPerRow() - _desc.getVertexPerTileRow() + padding;
+			unsigned int offsetNextScanLine = terrainScanlineSize - (_desc.getVertexPerTileRow() + 2);
+			//_desc.getVertexPerRow() - _desc.getVertexPerTileRow() + padding + BORDER * 2;
 
 			//Compute the scale (could be cached)
 			const float UNSIGNED_CHAR_MAX_VALUE = 255.f;
@@ -230,12 +237,12 @@ namespace Devil
 
 			//Loop through each scanline
 			unsigned int heightId = 0;
-			for (unsigned int scanline = 0; scanline < _desc.getVertexPerTileColumn(); ++scanline)
+			for (unsigned int scanline = 0; scanline < _desc.getVertexPerTileColumn() + 2; ++scanline)
 			{
-				file.read((char*)pixels, _desc.getVertexPerTileRow());
+				file.read((char*)pixels, _desc.getVertexPerTileRow() + 2);
 
 				//Loop through each vertex
-				for (unsigned int pixelId = 0; pixelId < _desc.getVertexPerTileRow(); pixelId++)
+				for (unsigned int pixelId = 0; pixelId < _desc.getVertexPerTileRow() + 2; pixelId++)
 				{
 					_data.m_heights[heightId] = (deltaScale * (float)pixels[pixelId]) + _desc.getMinScale();
 					if (_data.m_heights[heightId] < _data.m_min) _data.m_min = _data.m_heights[heightId];

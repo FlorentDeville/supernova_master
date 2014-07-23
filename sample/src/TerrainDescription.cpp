@@ -115,7 +115,7 @@ namespace Devil
 
 			float tileSizeRow = m_quadSize * m_quadsPerTileRow;
 			float tileSizeColumn = m_quadSize * m_quadsPerTileColumn;
-			return terrainLowerLeftCorner + snVec4Set(_tileId.m_columnId * tileSizeRow, 0, _tileId.m_rowId * tileSizeColumn, 0);
+			return terrainLowerLeftCorner + snVec4Set(_tileId.m_columnId * tileSizeRow - m_quadSize, 0, _tileId.m_rowId * tileSizeColumn - m_quadSize, 0);
 		}
 
 		bool TerrainDescription::initFromBitmap8(const string& _filename, unsigned int _tilesPerRow, unsigned int _tilesPerColumn, 
@@ -159,8 +159,8 @@ namespace Devil
 
 			file.close();
 
-			m_vertexPerRow = bmpInfo->biWidth;
-			m_vertexPerColumn = bmpInfo->biHeight;
+			m_vertexPerRow = bmpInfo->biWidth - 2;
+			m_vertexPerColumn = bmpInfo->biHeight - 2;
 			m_quadsPerRow = m_vertexPerRow - 1;
 			m_quadsPerColumn = m_vertexPerColumn - 1;
 			delete[] datBuff[0];

@@ -122,7 +122,8 @@ namespace Devil
 
 			snVec computeTileLowerLeftCorner(const TileId& _tileId) const;
 
-			//Initialize the terrain description.
+			//Initialize the terrain description. This class will considered the first and last row/column of the height map
+			// as a border. All the sizes do not take into account the borders.
 			// _filename : filename (path + filename) of the 8 bits bitmap file to use as heightmap.
 			// _tilesPerRow : number of tiles in a row of the terrain.
 			// _tilesPerColumn : number of tiles in a column of the terrain.

@@ -70,7 +70,9 @@ namespace Devil
 			// return : True if the file was loaded. False if an error occurred.
 			bool loadBitmap8(const string& _filename, float _minScale, float _maxScale, TerrainData& _data) const;
 
-			//Load a tile using information provided by a terrain description and a tile id.
+			//Load a tile using information provided by a terrain description and a tile id. The loaded tile contains
+			// a border of one vertex around it in order to compute the normal correctly. So the real size of the tile
+			// in vertex count is the one provided in the terrain description + 2.
 			// _desc : Must be a initialized TerrainDescription object.
 			// _tile : The id if the tile to load.
 			// _data : Reference to a TerrainData object. The function will fill it with information from the file.
