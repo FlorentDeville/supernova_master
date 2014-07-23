@@ -118,6 +118,8 @@ namespace Devil
 
 			float getMaxScale() const;
 
+			float getQuadSize() const;
+
 			snVec computeTileLowerLeftCorner(const TileId& _tileId) const;
 
 			//Initialize the terrain description.

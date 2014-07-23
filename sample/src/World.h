@@ -40,6 +40,9 @@
 
 #include "ComponentFloatingText.h"
 
+#include <string>
+using std::string;
+
 namespace Supernova
 {
 	class snFixedConstraint;
@@ -63,8 +66,16 @@ namespace Devil
 	class EntityComposite;
 	class EntitySkybox;
 	class EntityStaticMesh;
-
 	class IComponent;
+
+	namespace Worlds
+	{
+		namespace Entities
+		{
+			class EntityTerrain;
+		}
+	}
+	using Worlds::Entities::EntityTerrain;
 
 	class World
 	{
@@ -104,6 +115,18 @@ namespace Devil
 		EntityComposite* createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color);
 		EntitySkybox* createSkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);
 		EntityStaticMesh* createStaticMesh(IGfxEntity* _gfx);
+
+		//Create a terrain entity.
+		// _filename : filename (path + filename) of the 8 bits bitmap file to use as heightmap.
+		// _tilesPerRow : number of tiles in a row of the terrain.
+		// _tilesPerColumn : number of tiles in a column of the terrain.
+		// _quadSize : size of a single quad of the terrain.
+		// _minScale : minimum value of the height.
+		// _maxScale : maximum value of the height.
+		// _target : The entity to follow.
+		// return : a pointer to the terrain entity.
+		EntityTerrain* createTerrain(const string& _filename, unsigned int _tilesPerRow, unsigned int _tilesPerColumn, float quadSize,
+			float _minScale, float _maxScale, IWorldEntity* _target);
 
 		//Delete all entities from the world.
 		void clearWorld();

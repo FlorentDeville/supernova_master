@@ -43,6 +43,8 @@
 #include "EntityComposite.h"
 #include "EntitySkybox.h"
 #include "EntityStaticMesh.h"
+#include "EntityTerrain.h"
+using namespace Devil::Worlds::Entities;
 
 #include "WorldHUD.h"
 #include "Input.h"
@@ -196,6 +198,15 @@ namespace Devil
 		EntityStaticMesh* staticMesh = new EntityStaticMesh(_gfx);
 		m_EntityList.push_back(staticMesh);
 		return staticMesh;
+	}
+
+	EntityTerrain* World::createTerrain(const string& _filename, unsigned int _tilesPerRow, unsigned int _tilesPerColumn, float _quadSize,
+		float _minScale, float _maxScale, IWorldEntity* _target)
+	{
+		EntityTerrain* terrain = new EntityTerrain();
+		terrain->initialize(_filename, _tilesPerRow, _tilesPerColumn, _quadSize, _minScale, _maxScale, _target);
+		m_EntityList.push_back(terrain);
+		return terrain;
 	}
 
 	void World::clearWorld()

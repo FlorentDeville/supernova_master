@@ -119,6 +119,7 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     <ClCompile Include="..\src\EntitySkybox.cpp" />
     <ClCompile Include="..\src\EntitySphere.cpp" />
     <ClCompile Include="..\src\EntityStaticMesh.cpp" />
+    <ClCompile Include="..\src\EntityTerrain.cpp" />
     <ClCompile Include="..\src\FSMRunner.cpp" />
     <ClCompile Include="..\src\GfxEntityBox.cpp" />
     <ClCompile Include="..\src\GfxEntityCylinder.cpp" />
@@ -167,6 +168,7 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     <ClInclude Include="..\src\EntitySkybox.h" />
     <ClInclude Include="..\src\EntitySphere.h" />
     <ClInclude Include="..\src\EntityStaticMesh.h" />
+    <ClInclude Include="..\src\EntityTerrain.h" />
     <ClInclude Include="..\src\FSMRunner.h" />
     <ClInclude Include="..\src\GfxEntityBox.h" />
     <ClInclude Include="..\src\GfxEntityCylinder.h" />

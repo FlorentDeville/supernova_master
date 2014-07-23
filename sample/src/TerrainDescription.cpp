@@ -104,9 +104,13 @@ namespace Devil
 			return m_maxScale;
 		}
 
-		snVec TerrainDescription::computeTileLowerLeftCorner(const TileId& _tileId) const
+		float TerrainDescription::getQuadSize() const
 		{
-			
+			return m_quadSize;
+		}
+
+		snVec TerrainDescription::computeTileLowerLeftCorner(const TileId& _tileId) const
+		{	
 			snVec terrainLowerLeftCorner = snVec4Set(-(float)m_quadsPerRow * 0.5f * m_quadSize, 0, -(float)m_quadsPerColumn * 0.5f * m_quadSize, 0);
 
 			float tileSizeRow = m_quadSize * m_quadsPerTileRow;
@@ -176,17 +180,15 @@ namespace Devil
 			float rowSize = m_quadSize * m_quadsPerRow;
 			float rowTileSize = m_quadSize * m_quadsPerTileRow;
 
-			float positionX = snVec4GetX(_position);
-
-			TileId res;
-			res.m_rowId = (unsigned int)((positionX + (rowSize * 0.5f)) / rowTileSize);
-
-			float columnSize = m_quadSize * m_quadsPerRow;
+			float columnSize = m_quadSize * m_quadsPerColumn;
 			float columnTileSize = m_quadSize * m_quadsPerTileColumn;
 
+			float positionX = snVec4GetX(_position);
 			float positionZ = snVec4GetZ(_position);
 
-			res.m_columnId = (unsigned int)((positionZ + (columnSize * 0.5f)) / columnTileSize);
+			TileId res;
+			res.m_rowId = (unsigned int)((positionZ + (columnSize * 0.5f)) / rowTileSize);
+			res.m_columnId = (unsigned int)((positionX + (rowSize * 0.5f)) / columnTileSize);
 
 			return res;
 		}

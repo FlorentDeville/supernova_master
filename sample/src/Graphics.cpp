@@ -168,6 +168,15 @@ namespace Devil
 		m_textures.clear();
 	}
 
+	void Graphics::releaseEntity(unsigned int _id)
+	{
+		if (m_entityList[_id] == 0)
+			return;
+
+		m_entityList[_id]->shutdown();
+		m_entityList[_id] = 0;
+	}
+
 	IGfxEntity* Graphics::getBox()
 	{
 		return m_entityList[m_idBox];
@@ -183,6 +192,11 @@ namespace Devil
 		return m_entityList[m_idCylinder];
 	}
 
+	IGfxEntity* Graphics::getEntity(unsigned int _id) const
+	{
+		return m_entityList[_id];
+	}
+
 	Texture* Graphics::getTexture(unsigned int _id)
 	{
 		return m_textures[_id];
@@ -191,6 +205,16 @@ namespace Devil
 	Texture* Graphics::getTexChecker()
 	{
 		return m_textures[m_IdTexChecker];
+	}
+
+	void* Graphics::operator new(size_t _count)
+	{
+		return _aligned_malloc(_count, 16);
+	}
+
+	void Graphics::operator delete(void* _p)
+	{
+		_aligned_free(_p);
 	}
 
 	bool Graphics::initialize(int screenWidth, int screenHeight, HWND hwnd, bool _fullScreen, bool _vsync)
@@ -321,11 +345,13 @@ namespace Devil
 		return NewPlan;
 	}
 
-	GfxEntityHeightMap* Graphics::createHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length,
+	unsigned int Graphics::createHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length,
 		float* heights)
 	{
 		GfxEntityHeightMap* heightMap = new GfxEntityHeightMap(_lowerLeftCorner, _quadSize, _width, _length, heights);
+
+		unsigned int id = m_entityList.size();
 		m_entityList.push_back(heightMap);
-		return heightMap;
+		return id;
 	}
 }

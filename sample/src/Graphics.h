@@ -123,7 +123,15 @@ namespace Devil
 
 		GfxEntityPlan* createPlan(const XMFLOAT2&, const XMFLOAT4&);
 
-		GfxEntityHeightMap* createHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length, 
+		//Create an heightmap.
+		// _lowerLeftcorner : position of the lower left corner of the terrain. The height is ignored. It is used to position the terrain
+		//						in the world.
+		// _quadSize : size of a quad.
+		// _width : number of quads per row.
+		// _length : number of quads per column.
+		// _heights : array of float representing the heights of each vertex.
+		// return : the id of the graphic entity.
+		unsigned int createHeightMap(const XMVECTOR& _lowerLeftCorner, float _quadSize, unsigned int _width, unsigned int _length, 
 			float* heights);
 
 		D3D* getDirectXWrapper();
@@ -144,15 +152,33 @@ namespace Devil
 		//Delete all the graphics entity created
 		void clear();
 
+		//Delete an entity and clean its memory.
+		// _id : id of the entity to release.
+		void releaseEntity(unsigned int _id);
+
 		IGfxEntity* getBox();
 
 		IGfxEntity* getSphere();
 
 		IGfxEntity* getCylinder();
 
+		//Return a pointer to an entity. If the id does not correspond to an existing entity, an exception is thrown.
+		// _id : id of the entity to return.
+		// return : a pointer ot the entity.
+		IGfxEntity* getEntity(unsigned int _id) const;
+
 		Texture* getTexture(unsigned int _id);
 
 		Texture* getTexChecker();
+
+		//Overidde of the new operator to align this class to 16 bytes.
+		// _count : the amount of memory to allocate in bytes.
+		// return : a pointer to the allocated memory.
+		void* operator new(size_t _count);
+
+		//Override the delete operator. This class uses a 16 bytes alignment.
+		// _p : a pointer to the memory to delete.
+		void operator delete(void* _p);
 
 	private:
 		Graphics();

@@ -187,6 +187,9 @@
     <ClCompile Include="..\src\TerrainDescription.cpp">
       <Filter>Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\EntityTerrain.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -335,6 +338,9 @@
     </ClInclude>
     <ClInclude Include="..\src\TerrainDescription.h">
       <Filter>Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityTerrain.h">
+      <Filter>World\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
