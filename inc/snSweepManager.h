@@ -98,6 +98,10 @@ namespace Supernova
 		//Add the actor to the list of actors to use in the sweep and prune process.
 		void addActor(snIActor* _actor);
 
+		//Remove an actor from the list of actor to use in the sweep and prune.
+		// _actor : pointer to the actor to delete.
+		void removeActor(snIActor* _actor);
+
 		//Sort the list using actor's aabbs.
 		void preBroadPhase();
 

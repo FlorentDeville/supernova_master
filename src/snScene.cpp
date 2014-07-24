@@ -118,6 +118,7 @@ namespace Supernova
 			return;
 
 		//delete actor
+		m_sweepAndPrune.removeActor(m_actors[_actorId]);
 		delete m_actors[_actorId];
 		m_actors[_actorId] = 0;
 
@@ -126,20 +127,29 @@ namespace Supernova
 	int snScene::attachActor(snIActor* _actor)
 	{
 		//try to add it to the vector
+		unsigned int id = 0;
+		bool actorAdded = false;
 		for (unsigned int i = 0; i < m_actors.size(); ++i)
 		{
 			if (m_actors[i] != 0)
 				continue;
 
 			m_actors[i] = _actor;
-			return i;
+			id = i;
+			actorAdded = true;
+			break;
 		}
 
 		//no existing spot found so push back
-		int actorId = m_actors.size();
-		m_actors.push_back(_actor);
+		if (!actorAdded)
+		{
+			id = m_actors.size();
+			m_actors.push_back(_actor);
+		}
+		
+		//Add the actor to the broad phase.
 		m_sweepAndPrune.addActor(_actor);
-		return actorId;
+		return id;
 	}
 
 	void snScene::removeActor(unsigned int _actorId)
@@ -379,7 +389,7 @@ namespace Supernova
 	{
 		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
-			if (!(*i)->getIsActive())
+			if ((*i) == 0 || !(*i)->getIsActive())
 				continue;
 
 			//apply gravity only if the inverse of the mass is not zero.
@@ -393,7 +403,7 @@ namespace Supernova
 	{
 		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
-			if (!(*i)->getIsActive())
+			if ((*i) == 0 || !(*i)->getIsActive())
 				continue;
 
 			(*i)->integrate(_dt, m_linearSquaredSpeedThreshold, m_angularSquaredSpeedThreshold);
@@ -438,12 +448,12 @@ namespace Supernova
 
 		for (std::vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
 		{
-			if (!(*i)->getIsActive())
+			if ((*i) == 0 || !(*i)->getIsActive())
 				continue;
 
 			for (std::vector<snIActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
 			{
-				if (!(*j)->getIsActive())
+				if ((*j) == 0 || !(*j)->getIsActive())
 					continue;
 
 				//check if the collision detection is enabled between the two actors
