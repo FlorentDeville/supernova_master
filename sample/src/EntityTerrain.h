@@ -57,7 +57,11 @@ namespace Devil
 	{
 		namespace Entities
 		{
-			typedef tuple<TileId, unsigned int> TileContainer;
+			//Definition of a tile container. 
+			//The first element is the TileId.
+			//The second element is the graphic id.
+			//The third element is the physic id.
+			typedef tuple<TileId, unsigned int, unsigned int> TileContainer;
 
 			//Responsible of the terrain. It updates, streams, displays the terrain.
 			class EntityTerrain : public IWorldEntity

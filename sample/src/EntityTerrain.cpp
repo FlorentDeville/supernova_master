@@ -31,6 +31,9 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
+#ifdef _DEBUG
+	#include "snLogger.h"
+#endif //ifdef _DEBUG
 
 #include "EntityTerrain.h"
 #include "Graphics.h"
@@ -39,6 +42,15 @@
 
 #include "TerrainLoader.h"
 #include "TerrainData.h"
+
+#include "TerrainCollider.h"
+
+#include "snAABB.h"
+#include "snFactory.h"
+#include "snScene.h"
+#include "snActorStatic.h"
+using namespace Supernova;
+using namespace Supernova::Vector;
 
 namespace Devil
 {
@@ -65,6 +77,10 @@ namespace Devil
 
 			void EntityTerrain::update()
 			{
+#ifdef _DEBUG
+				bool log = false;
+#endif //ifdef _DEBUG
+
 				snVec position = m_target->getPosition();
 
 				TileId tiles[9];
@@ -96,6 +112,10 @@ namespace Devil
 
 					if (!tileAlreadyLoaded)
 					{
+#ifdef _DEBUG
+						LOGGER->logInfo("Loading tile : c=" + LOGGER->toString(tiles[foundTileId].m_columnId) + " r=" + LOGGER->toString(tiles[foundTileId].m_rowId));
+						log = true;
+#endif //ifdef _DEBUG
 						//the found tiles is not loaded so load it
 						loadTile(tiles[foundTileId]);
 					}
@@ -123,12 +143,27 @@ namespace Devil
 
 					if (loadedTileObsolete)
 					{
+#ifdef _DEBUG
+						TileId id = std::get<0>(m_loadedTiles[loadedTileId]);
+						LOGGER->logInfo("Deleting tile : c=" + LOGGER->toString(id.m_columnId) + " r=" + LOGGER->toString(id.m_rowId));
+						log = true;
+#endif //ifdef _DEBUG
 						//delete the loaded tile
 						unsigned int gfxId = std::get<1>(m_loadedTiles[loadedTileId]);
 						GRAPHICS->releaseEntity(gfxId);
+						unsigned int physicId = std::get<2>(m_loadedTiles[loadedTileId]);
+						SUPERNOVA->getScene(0)->deleteActor(physicId);
 						m_loadedTiles.erase(m_loadedTiles.begin() + loadedTileId);
 					}
 				}
+
+#ifdef _DEBUG
+				if (log)
+				{
+					LOGGER->logInfo("Current tile : c=" + LOGGER->toString(tiles[0].m_columnId) + " r=" + LOGGER->toString(tiles[0].m_rowId));
+					LOGGER->logInfo("============OVER============");
+				}
+#endif //ifdef _DEBUG
 			}
 
 			void EntityTerrain::render()
@@ -152,16 +187,42 @@ namespace Devil
 
 			void EntityTerrain::loadTile(const TileId& _tile)
 			{
+				//Load the tile
 				TerrainLoader loader;
 				TerrainData data;
 				if (!loader.loadTile(m_description, _tile, data))
 					throw;
 
+				//Create the graphic entity
 				snVec lowerLeftCorner = m_description.computeTileLowerLeftCorner(_tile);
 				unsigned int gfxId = GRAPHICS->createHeightMap(lowerLeftCorner, m_description.getQuadSize(), data.m_quadsPerRow,
 					data.m_quadsPerColumn, data.m_heights);
 
-				m_loadedTiles.push_back(TileContainer(_tile, gfxId));
+				//Create the physic entity
+				snAABB boundingVolume;
+				boundingVolume.m_min = lowerLeftCorner;
+				snVec4SetY(boundingVolume.m_min, data.m_min);
+
+				float tileSizeInUnits = m_description.getQuadSize() * data.m_quadsPerRow;
+				boundingVolume.m_max = boundingVolume.m_min + snVec4Set(tileSizeInUnits, 0, tileSizeInUnits, 0);
+				snVec4SetY(boundingVolume.m_max, data.m_max);
+
+				//create the physic height map
+				snActorStatic* snMap;
+				int id = -1;
+				snScene* scene = SUPERNOVA->getScene(0);
+				scene->createActorStatic(&snMap, id, snVec4Set(0), snVec4Set(0));
+				TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, m_description.getQuadSize(),
+					data.m_quadsPerRow, data.m_quadsPerRow, data.m_heights);
+				snMap->addCollider(collider);
+				snMap->getPhysicMaterial().m_friction = 1;
+#ifdef _DEBUG
+				snMap->setName("tile c=" + LOGGER->toString(_tile.m_columnId) + " r=" + LOGGER->toString(_tile.m_rowId));
+#endif //ifdef _DEBUG
+				snMap->initialize();
+
+				//Save information about the tile
+				m_loadedTiles.push_back(TileContainer(_tile, gfxId, id));
 			}
 		}
 	}
