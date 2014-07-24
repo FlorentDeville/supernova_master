@@ -86,10 +86,15 @@ namespace Supernova
 		log4cpp::Category::getRoot().warn(_msg);
 	}
 
-	string snLogger::toString(const snVec& _v)
+	string snLogger::toString(const snVec& _v) const
 	{
 		return std::to_string(snVec4GetX(_v)) + ", " + std::to_string(snVec4GetY(_v)) + ", " + std::to_string(snVec4GetZ(_v)) +
 			", " + std::to_string(snVec4GetW(_v));
+	}
+
+	string snLogger::toString(unsigned int _u) const
+	{
+		return std::to_string(_u);
 	}
 
 	snLogger::snLogger()

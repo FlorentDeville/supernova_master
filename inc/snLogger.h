@@ -63,7 +63,9 @@ namespace Supernova
 
 		void logWarn(string _msg);
 		
-		string toString(const snVec& _v);
+		string toString(const snVec& _v) const;
+
+		string toString(unsigned int _u) const;
 
 	private:
 		snLogger();
