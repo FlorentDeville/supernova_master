@@ -255,37 +255,36 @@ namespace Supernova
 
 	snCollisionResult snCollision::queryTestCollisionCapsuleVersusSphere(const snICollider* const _c1, const snICollider* const _c2)
 	{
-		const snCapsule* _capsule = static_cast<const snCapsule*>(_c1);
-		const snSphere* _sphere = static_cast<const snSphere*>(_c2);
+		const snCapsule* capsule = static_cast<const snCapsule*>(_c1);
+		const snSphere* sphere = static_cast<const snSphere*>(_c2);
 	
-		//Get the closest point on the capsule
-		snVec center = _sphere->getCenter() - _capsule->getSecondEndPoint(); //vector from the second endpoint to the sphere's center
-		snVec dir = _capsule->getFirstEndPoint() - _capsule->getSecondEndPoint(); //vector from the second endpoint to the first endpoint.
-		float length = snVec3Norme(dir); //compute the distance between the two endpoints !!!!!!!!!!!!!COULD BE CACHED
-		snVec3Normalize(dir); //normalized the direction
+		//Get the closest point on the capsule axis
+		snVec closestPointOnCapsuleAxis = snClosestPoint::PointLineSegment(sphere->getCenter(), capsule->getFirstEndPoint(), capsule->getSecondEndPoint());
 
-		//Compute the distance of the closest point along the capsule axis and clamp it.
-		snVec dot = snVec3Dot(dir, center);
-		snVec closestPointLength = clampComponents(dot, 0, length);
-
-		//Closest point is the closest point to the sphere on the capsule's axis.
-		snVec closestPoint = _capsule->getSecondEndPoint() + (dir * closestPointLength);
-
-		//Check the distance between the sphere's center and the closest point
-		float sqDistance = snVec3SquaredNorme(closestPoint - _sphere->getCenter());
-		float sqMinDistance = _sphere->getRadius() + _capsule->getRadius();
-		sqMinDistance *= sqMinDistance;
+		//Compute the sphere squared radius
+		float sumRadius = sphere->getRadius() + capsule->getRadius();
+		float sqSumRadius = sumRadius * sumRadius;
+		
+		//Compute the distance between the closest point and the sphere
+		snVec normal = closestPointOnCapsuleAxis - sphere->getCenter();
+		float sqDistance = snVec3SquaredNorme(normal);
 
 		snCollisionResult res;
-		if (sqDistance <= sqMinDistance)
+		if (sqDistance < sqSumRadius) //collision
 		{
 			res.m_collision = true;
-			res.m_normal = _sphere->getCenter() - closestPoint;
-			snVec3Normalize(res.m_normal);
-			res.m_contacts.push_back(closestPoint + res.m_normal * _capsule->getRadius());
-			res.m_penetrations.push_back(sqrt(sqMinDistance) - sqrt(sqDistance)); //TODO : figure out how to avoid two sqrt!
+
+			//Compute the normal
+			res.m_normal = normal * (1.f / sqrtf(sqDistance));
+
+			//Compute the contact point on the sphere and the capsule.
+			snVec contactCapsule = closestPointOnCapsuleAxis - (res.m_normal * capsule->getRadius());
+			snVec contactSphere = sphere->getCenter() + (res.m_normal * sphere->getRadius());
+			res.m_contacts.push_back(contactCapsule);
+
+			//Compute the penetration depth as the difference between the two contact points.
+			res.m_penetrations.push_back(abs(snVec3Norme(contactCapsule - contactSphere)));
 		}
-		
 
 		return res;
 	}
