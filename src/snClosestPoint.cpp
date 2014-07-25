@@ -166,4 +166,18 @@ namespace Supernova
 		float w = vc * denom;
 		return _a + ab * v + ac * w;
 	}
+
+	snVec snClosestPoint::PointLineSegment(const snVec& _p, const snVec& _a, const snVec& _b)
+	{
+		snVec ab = _b - _a;
+
+		snVec vecT = snVec3Dot(_p - _a, ab) / snVec3Dot(ab, ab);
+		float t = snVec4GetX(vecT);
+
+		if (t < 0.f) t = 0;
+		else if (t > 1.f) t = 1;
+
+		return _a + ab * t;
+		
+	}
 }

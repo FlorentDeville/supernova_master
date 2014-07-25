@@ -108,6 +108,8 @@ namespace Supernova
 
 		static snCollisionResult queryTestCollisionOBBVersusHeightMap(const snICollider* const _c1, const snICollider* const _c2);
 
+		static snCollisionResult queryTestCollisionCapsuleVersusHeightMap(const snICollider* const _c1, const snICollider* const _c2);
+
 		static snCollisionResult queryTestCollisionGJK(const snICollider* const _c1, const snICollider* const _c2);
 	};
 }

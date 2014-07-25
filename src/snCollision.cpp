@@ -71,6 +71,7 @@ namespace Supernova
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderSphere), &Supernova::snCollision::queryTestCollisionCapsuleVersusSphere));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionSphereVersusHeightMap));
 		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionOBBVersusHeightMap));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionCapsuleVersusHeightMap));
 	}
 
 	snCollision::~snCollision(){}
@@ -440,6 +441,136 @@ namespace Supernova
 		res.m_normal = res.m_normal * (1.f / patchCount);
 		return res;
 
+	}
+
+	snCollisionResult snCollision::queryTestCollisionCapsuleVersusHeightMap(const snICollider* const _c1, const snICollider* const _c2)
+	{
+		snCollisionResult res;
+		res.m_normal = snVec4Set(0, 0, 0, 0);
+
+		//Cast colliders
+		const snCapsule* const capsule = static_cast<const snCapsule* const>(_c1);
+		const snHeightMap* const heightMap = static_cast<const snHeightMap* const>(_c2);
+
+		//find triangles ids overlapping the sphere
+		const unsigned int MAX_TRIANGLE_COUNT = 10;
+		unsigned int triangleId[MAX_TRIANGLE_COUNT];
+
+		//Get the triangles ids
+		snAABB capsuleBB;
+		capsule->computeAABB(&capsuleBB);
+		unsigned int triangleCount = heightMap->getOverlapTriangles(capsuleBB, triangleId, MAX_TRIANGLE_COUNT);
+		if (triangleCount == -1)
+			return res;
+
+		float sqRadius = capsule->getRadius() * capsule->getRadius();
+		unsigned int patchCount = 0;
+
+		//For each triangle, find the closest point
+		for (unsigned int i = 0; i < triangleCount; ++i)
+		{
+			//get the triangle information
+			snVec triangle[3];
+			heightMap->getTriangle(triangleId[i], triangle);
+
+			//Check if the cylinder overlap the triangle on the Y axis
+			float minY;
+			float maxY;
+			minY = snVec4GetY(triangle[0]);
+			maxY = snVec4GetY(triangle[0]);
+			for (unsigned int t = 1; t < 3; ++t)
+			{
+				float y = snVec4GetY(triangle[t]);
+				if (y < minY) minY = y;
+				if (y > maxY) maxY = y;
+			}
+
+			if (snVec4GetY(capsuleBB.m_max) <= minY || snVec4GetY(capsuleBB.m_min) >= maxY)
+				continue;
+
+			//store results
+			snVecVector patch;
+			std::vector<float> penetration;
+			snVec collisionNormal = heightMap->getNormal(triangleId[i]);
+
+			//Look for the closest point between the first end point and the triangle
+			snVec closestPointOnTriangle = snClosestPoint::PointTriangle(capsule->getFirstEndPoint(), triangle[0], triangle[1], triangle[2]);
+
+			//Look for the closest point to the line segment
+			snVec closestPointOnCapsuleAxis = snClosestPoint::PointLineSegment(closestPointOnTriangle, capsule->getFirstEndPoint(), capsule->getSecondEndPoint());
+
+			//Compute the length between those two points
+			snVec diff = closestPointOnCapsuleAxis - closestPointOnTriangle;
+			bool collisionFound = false;
+			if (snVec3SquaredNorme(diff) < sqRadius) //Collision!!!
+			{
+				patch.push_back(closestPointOnTriangle);
+				float length = snVec3Norme(diff);
+				penetration.push_back(capsule->getRadius() - length);
+				collisionFound = true;
+			}
+
+			//Look for the closest pont between the second end point and the triangle
+			closestPointOnTriangle = snClosestPoint::PointTriangle(capsule->getSecondEndPoint(), triangle[0], triangle[1], triangle[2]);
+
+			//Look for the closest point to the line segment
+			closestPointOnCapsuleAxis = snClosestPoint::PointLineSegment(closestPointOnTriangle, capsule->getFirstEndPoint(), capsule->getSecondEndPoint());
+
+			//Compute the length between those two points
+			diff = closestPointOnCapsuleAxis - closestPointOnTriangle;
+			if (snVec3SquaredNorme(diff) < sqRadius) //Collision!!!
+			{
+				patch.push_back(closestPointOnTriangle);
+				float length = snVec3Norme(diff);
+				penetration.push_back(capsule->getRadius() - length);
+
+				collisionFound = true;
+			}
+
+			if (!collisionFound)
+				continue;
+
+			//save result
+			++patchCount;
+			res.m_collision = true;
+			res.m_normal = res.m_normal + collisionNormal;
+
+			//reserve enough space
+			res.m_contacts.reserve(res.m_contacts.size() + patch.size());
+			res.m_penetrations.reserve(res.m_penetrations.size() + penetration.size());
+
+			for (unsigned int j = 0; j < patch.size(); ++j)
+			{
+				//check if the points we try to add already exists
+				bool add = true;
+				for (unsigned int k = 0; k < res.m_contacts.size(); ++k)
+				{
+					float delta = snVec3SquaredNorme(patch[j] - res.m_contacts[k]);
+					const float EPSILON = 0.01f;
+					if (delta <= EPSILON)
+					{
+						add = false;
+						break;
+					}
+				}
+
+				if (add)
+				{
+					res.m_contacts.push_back(patch[j]);
+					res.m_penetrations.push_back(penetration[j]);
+				}
+
+			}
+		}
+
+		if (!res.m_collision)
+		{
+			return res;
+		}
+
+		res.m_normal = res.m_normal * (1.f / patchCount);
+
+		return res;
 	}
 
 	snCollisionResult snCollision::queryTestCollisionGJK(const snICollider* const _c1, const snICollider* const _c2)

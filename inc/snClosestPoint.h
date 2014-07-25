@@ -49,6 +49,13 @@ namespace Supernova
 
 		//Find the closest point on a triangle using voronoi region
 		static snVec PointTriangle(const snVec& _p, const snVec& _a, const snVec& _b, const snVec& _c);
+
+		//Find the closest between a point and a line segment.
+		// _p : a point.
+		// _a : start point of the line segment.
+		// _b : end point of the line segment.
+		// return : the closest point on the line segment between the point _p and the line segment.
+		static snVec PointLineSegment(const snVec& _p, const snVec& _a, const snVec& _b);
 	};
 }
 #endif //ifndef SN_CLOSEST_POINT_H
