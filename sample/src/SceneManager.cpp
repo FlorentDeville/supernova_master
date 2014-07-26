@@ -69,10 +69,10 @@
 #include "snMath.h"
 
 #include "TerrainData.h"
-using Devil::Terrain::TerrainData;
-
 #include "TerrainLoader.h"
-using Devil::Terrain::TerrainLoader;
+#include "TerrainDescription.h"
+#include "TileId.h"
+using namespace Devil::Terrain;
 
 using namespace Supernova;
 using namespace Supernova::Vector;
@@ -1472,90 +1472,94 @@ namespace Devil
 		snVec gravity = snVec4Set(0, -9.81f, 0, 0);
 		scene->setGravity(gravity * 4);
 
-		/*
-		float size = 15;
-		unsigned int width = 256;
-		unsigned int length = 256;
-		snVec lowerLeftCorner = snVec4Set(-(float)width * 0.5f * size, 0, -(float)length * 0.5f * size, 0);
-
-		unsigned int vertexCount = (width + 1) * (length + 1);
-		float* heightMap = new float[vertexCount];
-
-		float amplitude = 4;
-		snAABB boundingVolume;
-		float min = SN_FLOAT_MAX;
-		float max = -SN_FLOAT_MAX;
-		for (unsigned int i = 0; i < vertexCount; ++i)
-		{
-			heightMap[i] = amplitude * cosf((float)i);
-			if (heightMap[i] > max) max = heightMap[i];
-			if (heightMap[i] < min) min = heightMap[i];
-		}*/
+		
+		//snVec spawnPosition = snVec4Set(-61470, 800, -61470, 1);
+		//snVec spawnPosition = snVec4Set(-61470, 80, -30750, 1);
+		snVec spawnPosition = snVec4Set(0, 500, -400, 1);
+		EntityCamera* camera = WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
+		WORLD->getCamera()->setPosition(spawnPosition);
+		WORLD->getCamera()->setLookAt(snVec4Set(0, 400, 0, 1));
+		
+		/*float size = 30;
+		unsigned int tileResolution = 1;
+		string bitmapFilename = "C:\\Users\\Florent\\Desktop\\terrain_slope_8bits_256_256.bmp";*/
 
 		float size = 30;
-		TerrainLoader loader;
-		TerrainData data;
-		loader.loadRaw8("raw_8_bits.raw", -200, 800, data);
-		//loader.loadBitmap8("C:\\Users\\Florent\\Desktop\\terrain_8bits_256_256.bmp", -200, 800, data);
-		
-		unsigned int width = data.m_quadsPerColumn;
-		unsigned int length = data.m_quadsPerRow;
-		float max = data.m_max;
-		float min = data.m_min;
-		snVec lowerLeftCorner = snVec4Set(-(float)width * 0.5f * size, 0, -(float)length * 0.5f * size, 0);
-		snAABB boundingVolume;
-		boundingVolume.m_max = snVec4Set((float)width * 0.5f * size, max, (float)length * 0.5f * size, 1);
-		boundingVolume.m_min = snVec4Set(-(float)width * 0.5f * size, min, -(float)length * 0.5f * size, 1);
-		float* heightMap = data.m_heights;
+		unsigned int tileResolution = 16;
+		string bitmapFilename = "data\\terrain_8bits_4098_4098.bmp";
 
-		GfxEntityHeightMap* gfx = GRAPHICS->createHeightMap(lowerLeftCorner, size, width, length, heightMap);
 
-		EntityStaticMesh* entity = WORLD->createStaticMesh(static_cast<IGfxEntity*>(gfx));
+		IWorldEntity* entity = (IWorldEntity*)WORLD->createTerrain(bitmapFilename, tileResolution, tileResolution, size, -200, 800, camera);
 		entity->setWireframe(true);
 
-		{
-			//create the physic height map
-			snActorStatic* snMap;
-			int id = -1;
-			scene->createActorStatic(&snMap, id, snVec4Set(0), snVec4Set(0));
-			TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, size, width, length, heightMap);
-			snMap->addCollider(collider);
-			snMap->getPhysicMaterial().m_friction = 1;
-			snMap->setName("terrain");
-			snMap->initialize();
-		}
-		//delete[] heightMap;
+		//TerrainDescription desc;
+		//if (!desc.initFromBitmap8(bitmapFilename, tileResolution, tileResolution, size, -200, 800))
+		//	throw;
+
+		//TileId tileToLoad;// = desc.getCurrentTile(spawnPosition);
+		//tileToLoad.m_columnId = 0;
+		//tileToLoad.m_rowId = 0;
+		//TerrainLoader loader;
+		//TerrainData data;
+		//{
+		//	if (!loader.loadTile(desc, tileToLoad, data))
+		//		throw;
+
+		//	snVec lowerLeftCorner = desc.computeTileLowerLeftCorner(tileToLoad);
+		//	unsigned int gfxId = GRAPHICS->createHeightMap(lowerLeftCorner, size, desc.getQuadsPerTileRow(), desc.getQuadsPerTileColumn(), data.m_heights);
+		//	IGfxEntity* gfx = GRAPHICS->getEntity(gfxId);
+		//	EntityStaticMesh* entity = WORLD->createStaticMesh(gfx);
+		//	entity->setWireframe(true);
+
+		//	snAABB boundingVolume;
+		//	boundingVolume.m_min = lowerLeftCorner;
+		//	snVec4SetY(boundingVolume.m_min, data.m_min);
+
+		//	boundingVolume.m_max = boundingVolume.m_min + snVec4Set(data.m_quadsPerRow * size, 0, data.m_quadsPerRow * size, 0);
+		//	snVec4SetY(boundingVolume.m_max, data.m_max);
+
+		//	//create the physic height map
+		//	snActorStatic* snMap;
+		//	int id = -1;
+		//	scene->createActorStatic(&snMap, id, snVec4Set(0), snVec4Set(0));
+		//	TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, size, data.m_quadsPerRow, data.m_quadsPerRow, data.m_heights);
+		//	snMap->addCollider(collider);
+		//	snMap->getPhysicMaterial().m_friction = 1;
+		//	snMap->setName("terrain");
+		//	snMap->initialize();
+		//}
 
 		const unsigned int SPHERE_COUNT = 20;
-		snVec offset = snVec4Set(0, 11, 0, 0);
+		float radius = 10;
+		snVec offset = snVec4Set(0, 40, 0, 0);
 		for (int i = 0; i < SPHERE_COUNT; ++i)
 		{
 			//create a dynamic sphere
 			snActorDynamic* sphere;
 			int id = -1;
-			float radius = 5;
+			
 			scene->createActorDynamic(&sphere, id);
 			snICollider* collider = 0;
-			if (i % 2 == 0)
+			int mod = i % 3;
+			if (mod == 0)
 				collider = new snSphere(radius);
-			else
+			else if (mod == 1)
 				collider = new snOBB(snVec4Set(radius, radius, radius, 0));
+			else
+				collider = new snCapsule(radius * 2, radius);
 			sphere->addCollider(collider);
-			sphere->setPosition(snVec4Set(-10, 400, 0, 1) + offset * (float)i);
-			sphere->setOrientation(snVec4Set(0, 0, 0, 1));
+			sphere->setPosition(snVec4Set(0, 500, -5, 1) + offset * (float)i);
+			//sphere->setOrientation(snVec4Set(0, 0, 0, 1));
+			sphere->setOrientation(snQuaternionFromEuler(0, 0.1f, 3.14f));
+			//sphere->setAngularVelocity(snVec4Set(10, 0, 0, 0));
 			sphere->updateMassAndInertia(10);
+			sphere->setAngularDampingCoeff(0.1f);
 			sphere->getPhysicMaterial().m_friction = 1;
 			sphere->initialize();
 
 			EntityComposite* entity = WORLD->createComposite(sphere, m_colors[i % 4]);
-			entity->setWireframe(false);
+			entity->setWireframe(true);
 		}
-
-		WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
-		//WORLD->getCamera()->setPosition(snVec4Set(snVec4GetX(boundingVolume.m_max), 500, snVec4GetZ(boundingVolume.m_min), 1));
-		WORLD->getCamera()->setPosition(snVec4Set(0, 400, -400, 1));
-		//WORLD->getCamera()->setPosition(snVec4Set(0, 8000, -400, 1));
-		WORLD->getCamera()->setLookAt(snVec4Set(0, 350, 0, 1));
 
 		//create the box launcher
 		WORLD->createEntityBoxLauncher(1);

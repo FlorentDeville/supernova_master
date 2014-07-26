@@ -238,7 +238,7 @@ namespace Devil
 
 		//Create the sprite batch
 		m_spriteBatch = new SpriteBatch(m_D3D->getDeviceContext());
-		m_spriteFontConsolas = new SpriteFont(m_D3D->getDevice(), L"consolas.spritefont");
+		m_spriteFontConsolas = new SpriteFont(m_D3D->getDevice(), L"data\\consolas.spritefont");
 
 		m_screenWidth = screenWidth;
 		m_screenHeight = screenHeight;
@@ -259,7 +259,7 @@ namespace Devil
 		createCylinder();
 
 		Texture* myTexture = new Texture();
-		if (!myTexture->loadWIC(L"check.png"))
+		if (!myTexture->loadWIC(L"data\\check.png"))
 		{
 			MessageBox(hwnd, L"Could not load check.png", L"Error", MB_OK);
 			return false;

@@ -41,13 +41,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)\bin\</OutDir>
     <IntDir>$(ProjectDir)\temp\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)\bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)\bin\</OutDir>
     <IntDir>$(ProjectDir)\temp\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

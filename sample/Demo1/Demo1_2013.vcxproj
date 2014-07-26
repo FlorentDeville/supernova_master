@@ -41,13 +41,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)bin\</OutDir>
     <IntDir>$(ProjectDir)temp\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)bin\</OutDir>
     <IntDir>$(ProjectDir)temp\$(VisualStudioVersion)\$(PlatformName)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_$(PlatformName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -63,11 +65,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\..\extern\DirectXTK\Bin\Desktop_2013\Win32\Debug;$(WindowsSDK_LibraryPath_x86);..\..\bin\$(VisualStudioVersion)\$(PlatformName)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Supernova_2013.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
-xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y
-xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -93,9 +95,8 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
       <AdditionalDependencies>Supernova_2013.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
-xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y
-xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
