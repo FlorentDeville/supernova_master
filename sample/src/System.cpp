@@ -268,6 +268,10 @@ namespace Devil
 					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
 					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
 				}
+				else if (key == 'R')
+				{
+					WORLD->toggleRenderMode();
+				}
 				return 0;
 			}
 

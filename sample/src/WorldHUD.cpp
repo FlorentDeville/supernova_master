@@ -128,6 +128,8 @@ namespace Devil
 		GRAPHICS->writeText(L"1, 2 to switch collision mode", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
 		GRAPHICS->writeText(L"W to show/hide watcher", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
+		height += LINE_HEIGHT;
+		GRAPHICS->writeText(L"R to toggle wireframe/solid mode", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 	}
 
 	void WorldHUD::setSceneName(const wstring _sceneName)

@@ -298,6 +298,15 @@ namespace Devil
 		m_collisionPoint->setIsActive(false);
 	}
 
+	void World::toggleRenderMode()
+	{
+		m_wireframe = !m_wireframe;
+		for (vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
+		{
+			(*i)->setWireframe(m_wireframe);
+		}
+	}
+
 	void World::setPhysicsFPS(int _physicsFPS) const
 	{
 		if (m_hud != 0)

@@ -95,6 +95,9 @@ namespace Devil
 		//time elapsed since the last update
 		float m_dt;
 
+		//Flag to indicate if we are rendering in wireframe of in solid mode.
+		bool m_wireframe;
+
 	public:
 		virtual ~World();
 
@@ -143,6 +146,9 @@ namespace Devil
 		void toggleCollisionPointActivation();
 		void activateCollisionPoint();
 		void deactivateCollisionPoint();
+
+		//Switch between solid mode and wireframe mode
+		void toggleRenderMode();
 
 		void setPhysicsFPS(int _physicsFPS) const;
 		void setGraphicsFPS(int _graphicsFPS) const;
