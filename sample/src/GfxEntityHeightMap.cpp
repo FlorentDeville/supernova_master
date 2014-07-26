@@ -51,13 +51,11 @@ namespace Devil
 		XMVECTOR* verticesNormal = (XMVECTOR*)_aligned_malloc(sizeof(XMVECTOR)* m_vertexCount, 16);//new XMVECTOR[vertexCount];
 
 		//fill in the array of vertices
-		int vertexId = 0;
-		XMFLOAT4 color(0, 1, 0, 1);
+		int vertexId = 0;	
 		for (unsigned int row = 0; row <= _length+2; ++row) //loop through each row
 		{
 			int borderedRow = row - 1;
-			XMVECTOR q = XMVectorSet(0, 0, _quadSize * (row - 1), 0);
-			XMVECTOR offsetZ = _lowerLeftCorner + (XMVectorSet(0, 0, _quadSize, 0) * borderedRow);
+			XMVECTOR offsetZ = _lowerLeftCorner + (XMVectorSet(0, 0, _quadSize, 0) * (float)borderedRow);
 			for (unsigned int column = 0; column <= _width+2; ++column) //loop through each column
 			{
 				int borderedColumn = column - 1;
@@ -172,7 +170,13 @@ namespace Devil
 		{
 			XMStoreFloat3(&vertices[i].position, verticesPosition[i]);
 			XMStoreFloat3(&vertices[i].normal, verticesNormal[i]);
-			vertices[i].color = color;
+
+			XMFLOAT4 myColor;
+			myColor.x = 0.4f;
+			myColor.y = 0.4f;
+			myColor.z = abs((vertices[i].position.y + 200) / 1000.f)+0.1f;
+			myColor.w = 1.f;
+			vertices[i].color = myColor;
 		}
 
 
@@ -267,6 +271,7 @@ namespace Devil
 		m_effect->SetView(_view);
 		m_effect->SetProjection(_projection);
 		m_effect->DisableSpecular();
+		m_effect->SetAmbientLightColor(XMVectorSet(1, 1, 1, 1));
 		m_effect->Apply(context);
 		
 		context->IASetInputLayout(m_inputLayout);

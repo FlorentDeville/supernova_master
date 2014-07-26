@@ -1490,7 +1490,7 @@ namespace Devil
 
 
 		IWorldEntity* entity = (IWorldEntity*)WORLD->createTerrain(bitmapFilename, tileResolution, tileResolution, size, -200, 800, camera);
-		entity->setWireframe(true);
+		//entity->setWireframe(true);
 
 		//TerrainDescription desc;
 		//if (!desc.initFromBitmap8(bitmapFilename, tileResolution, tileResolution, size, -200, 800))
@@ -1558,7 +1558,7 @@ namespace Devil
 			sphere->initialize();
 
 			EntityComposite* entity = WORLD->createComposite(sphere, m_colors[i % 4]);
-			entity->setWireframe(true);
+			//entity->setWireframe(true);
 		}
 
 		//create the box launcher
