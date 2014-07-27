@@ -32,104 +32,57 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "EntityBoxLauncher.h"
+#ifndef KEYBOARD_MOUSE_H
+#define KEYBOARD_MOUSE_H
 
-#include "snFactory.h"
-#include "snScene.h"
-#include "snVec.h"
-#include "snActorDynamic.h"
-#include "snOBB.h"
-
-#include "World.h"
-#include "EntityCamera.h"
-#include "EntityBox.h"
-
-#include "Input.h"
-
-using namespace Supernova::Vector;
+#include "IDevice.h"
+#include "CooldownManager.h"
 
 namespace Devil
 {
-	//Default constructor
-	EntityBoxLauncher::EntityBoxLauncher() : m_boxes(), m_count(0){}
-
-	//Default destructor
-	EntityBoxLauncher::~EntityBoxLauncher(){}
-
-	//Initialize the launcher.
-	void EntityBoxLauncher::initialize(unsigned int _count)
+	namespace Input
 	{
-		m_count = _count;
-
-		for (unsigned int i = 0; i < _count; ++i)
+		namespace Device
 		{
-			float width = 5;
-			float height = 5;
-			float depth = 5;
-			
-			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
+			class KeyboardMouse : public IDevice
+			{
+			private:
+				//Flag to indicate if the mouse left button is down
+				bool m_mouseLeftButtonDown;
 
-			snScene* myScene = SUPERNOVA->getScene(0);
-			myScene->createActorDynamic(&act, actorId);
+				//The position of the mouse on the x axis the first time the left button was down.
+				int m_mouseLeftButtonDownX;
 
-			act->setName("projectile");
-			
-			act->getPhysicMaterial().m_restitution = 1;
-			act->getPhysicMaterial().m_friction = 0;
+				//The position of the mouse on the y axis the first time the left button was down.
+				int m_mouseLeftButtonDownY;
 
-			//create collider
-			snOBB* collider = new snOBB(Supernova::Vector::snVec4Set(width, height, depth, 0) * 0.5f);
-			act->addCollider(collider);
-			act->updateMassAndInertia(50);
-			act->initialize();
+				//The state of the mouse wheel.
+				float m_mouseWheelState;
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
-			box->setActor(act);
+				//Handle the cooldown for the toggle collision point message
+				CooldownManager m_cooldownToggleCollisionPoint;
 
-			//deactive the entity
-			box->setIsActive(false);
-			act->setIsActive(false);
+				//Handle the cooldown for shooting message
+				CooldownManager m_cooldownShoot;
 
-			//store a pointer to the entity
-			m_boxes.push_back(box);
+				//Handle the cooldown for toggling the render mode.
+				CooldownManager m_cooldownRenderMode;
 
+				//Handle the cooldown for toggling the watch window.
+				CooldownManager m_cooldownToggleWatchWindow;
+
+			public:
+				KeyboardMouse();
+
+				virtual ~KeyboardMouse();
+
+				//Update the current state of the device.
+				void update();
+
+				//Set the state of the mouse wheel
+				void setMouseWheelState(float _state);
+			};
 		}
 	}
-
-	void EntityBoxLauncher::update()
-	{
-		if (INPUT->getMessage(Devil::Input::InputMessage::SHOOT) != 1)
-			return;
-
-		//get the box
-		EntityBox* box = m_boxes[0];
-		snActorDynamic* act = static_cast<snActorDynamic*>(box->getActor());
-
-		//set its position
-		snVec pos;
-		pos = WORLD->getCamera()->getPosition();
-		act->setPosition(pos);
-
-		//set its linear velocity
-		snVec linVel;
-		linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
-		Supernova::Vector::snVec3Normalize(linVel);
-		linVel = linVel * 300;
-		Supernova::Vector::snVec4SetW(linVel, 0);
-		act->setLinearVelocity(linVel);
-
-		//set its orientation
-		act->setOrientation(Supernova::Vector::snVec4Set(0, 0, 0, 1));
-
-		//set its angular velocity
-		act->setAngularVelocity(Supernova::Vector::snVec4Set(0, 0, 0, 0));
-		act->initialize();
-
-		box->setIsActive(true);
-		act->setIsActive(true);
-	}
-
-	void EntityBoxLauncher::render(){}
 }
+#endif //ifndef KEYBOARD_MOUSE_H

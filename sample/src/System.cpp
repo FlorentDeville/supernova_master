@@ -1,6 +1,9 @@
 #include "System.h"
 
 #include "Input.h"
+#include "KeyboardMouse.h"
+using namespace Devil::Input::Device;
+
 #include "Graphics.h"
 #include "Camera.h"
 #include "World.h"
@@ -192,15 +195,6 @@ namespace Devil
 					{
 						done = true;
 					}
-
-					if (INPUT->isKeyDown('C'))
-					{
-						WORLD->activateCollisionPoint();
-					}
-					if (INPUT->isKeyDown('V'))
-					{
-						WORLD->deactivateCollisionPoint();
-					}
 				}
 
 				// Do the frame processing for the graphics object.
@@ -234,7 +228,7 @@ namespace Devil
 			case WM_MOUSEWHEEL:
 			{
 				int ds = (int)wparam;
-				INPUT->setMouseWheel((float)ds);
+				INPUT->getKeyBoardMouseDevice()->setMouseWheelState((float)ds);
 				return 0;
 			}
 
@@ -267,10 +261,6 @@ namespace Devil
 				{
 					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
 					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
-				}
-				else if (key == 'R')
-				{
-					WORLD->toggleRenderMode();
 				}
 				return 0;
 			}
@@ -357,9 +347,6 @@ namespace Devil
 		ShowWindow(m_hwnd, SW_SHOW);
 		SetForegroundWindow(m_hwnd);
 		SetFocus(m_hwnd);
-
-		// Hide the mouse cursor.
-		ShowCursor(false);
 
 		return;
 	}

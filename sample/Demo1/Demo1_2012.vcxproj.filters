@@ -58,6 +58,9 @@
     <Filter Include="Terrain">
       <UniqueIdentifier>{48510fdc-67a8-4f97-a092-74a8bee72952}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Input\Device">
+      <UniqueIdentifier>{8ac39bd2-dc52-4b80-a520-4089a31a9ca3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Camera.cpp">
@@ -189,6 +192,18 @@
     </ClCompile>
     <ClCompile Include="..\src\EntityTerrain.cpp">
       <Filter>World\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\IDevice.cpp">
+      <Filter>Input\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\KeyboardMouse.cpp">
+      <Filter>Input\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\X360Controller.cpp">
+      <Filter>Input\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CooldownManager.cpp">
+      <Filter>Input\Device</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -341,6 +356,21 @@
     </ClInclude>
     <ClInclude Include="..\src\EntityTerrain.h">
       <Filter>World\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\IDevice.h">
+      <Filter>Input\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\KeyboardMouse.h">
+      <Filter>Input\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\X360Controller.h">
+      <Filter>Input\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\InputMessage.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CooldownManager.h">
+      <Filter>Input\Device</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

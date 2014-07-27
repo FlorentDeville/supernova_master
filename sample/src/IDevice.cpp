@@ -32,104 +32,42 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "EntityBoxLauncher.h"
-
-#include "snFactory.h"
-#include "snScene.h"
-#include "snVec.h"
-#include "snActorDynamic.h"
-#include "snOBB.h"
-
-#include "World.h"
-#include "EntityCamera.h"
-#include "EntityBox.h"
-
-#include "Input.h"
-
-using namespace Supernova::Vector;
+#include "IDevice.h"
 
 namespace Devil
 {
-	//Default constructor
-	EntityBoxLauncher::EntityBoxLauncher() : m_boxes(), m_count(0){}
-
-	//Default destructor
-	EntityBoxLauncher::~EntityBoxLauncher(){}
-
-	//Initialize the launcher.
-	void EntityBoxLauncher::initialize(unsigned int _count)
+	namespace Input
 	{
-		m_count = _count;
-
-		for (unsigned int i = 0; i < _count; ++i)
+		namespace Device
 		{
-			float width = 5;
-			float height = 5;
-			float depth = 5;
-			
-			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
+			IDevice::IDevice()
+			{
+				m_isConnected = false;
+				m_messageCount = 0;
+			}
 
-			snScene* myScene = SUPERNOVA->getScene(0);
-			myScene->createActorDynamic(&act, actorId);
+			IDevice::~IDevice(){}
 
-			act->setName("projectile");
-			
-			act->getPhysicMaterial().m_restitution = 1;
-			act->getPhysicMaterial().m_friction = 0;
+			bool IDevice::isConnected() const
+			{
+				return m_isConnected;
+			}
 
-			//create collider
-			snOBB* collider = new snOBB(Supernova::Vector::snVec4Set(width, height, depth, 0) * 0.5f);
-			act->addCollider(collider);
-			act->updateMassAndInertia(50);
-			act->initialize();
+			float IDevice::getMessage(InputMessage _message) const
+			{
+				if (!m_isConnected)
+					return false;
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
-			box->setActor(act);
+				return m_messages[_message];
+			}
 
-			//deactive the entity
-			box->setIsActive(false);
-			act->setIsActive(false);
+			bool IDevice::anyMessageAvailable() const
+			{
+				if (m_messageCount != 0)
+					return true;
 
-			//store a pointer to the entity
-			m_boxes.push_back(box);
-
+				return false;
+			}
 		}
 	}
-
-	void EntityBoxLauncher::update()
-	{
-		if (INPUT->getMessage(Devil::Input::InputMessage::SHOOT) != 1)
-			return;
-
-		//get the box
-		EntityBox* box = m_boxes[0];
-		snActorDynamic* act = static_cast<snActorDynamic*>(box->getActor());
-
-		//set its position
-		snVec pos;
-		pos = WORLD->getCamera()->getPosition();
-		act->setPosition(pos);
-
-		//set its linear velocity
-		snVec linVel;
-		linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
-		Supernova::Vector::snVec3Normalize(linVel);
-		linVel = linVel * 300;
-		Supernova::Vector::snVec4SetW(linVel, 0);
-		act->setLinearVelocity(linVel);
-
-		//set its orientation
-		act->setOrientation(Supernova::Vector::snVec4Set(0, 0, 0, 1));
-
-		//set its angular velocity
-		act->setAngularVelocity(Supernova::Vector::snVec4Set(0, 0, 0, 0));
-		act->initialize();
-
-		box->setIsActive(true);
-		act->setIsActive(true);
-	}
-
-	void EntityBoxLauncher::render(){}
 }

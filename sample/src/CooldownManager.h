@@ -32,104 +32,39 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "EntityBoxLauncher.h"
+#ifndef COOLDOWN_MANAGER_H
+#define COOLDOWN_MANAGER_H
 
-#include "snFactory.h"
-#include "snScene.h"
-#include "snVec.h"
-#include "snActorDynamic.h"
-#include "snOBB.h"
-
-#include "World.h"
-#include "EntityCamera.h"
-#include "EntityBox.h"
-
-#include "Input.h"
-
-using namespace Supernova::Vector;
+#include "InputMessage.h"
+#include <vector>
+using std::vector;
 
 namespace Devil
 {
-	//Default constructor
-	EntityBoxLauncher::EntityBoxLauncher() : m_boxes(), m_count(0){}
-
-	//Default destructor
-	EntityBoxLauncher::~EntityBoxLauncher(){}
-
-	//Initialize the launcher.
-	void EntityBoxLauncher::initialize(unsigned int _count)
+	namespace Input
 	{
-		m_count = _count;
-
-		for (unsigned int i = 0; i < _count; ++i)
+		namespace Device
 		{
-			float width = 5;
-			float height = 5;
-			float depth = 5;
-			
-			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
+			//Handle cooldown for messages.
+			class CooldownManager
+			{
+			private:
+				//Duration of the cooldown. This is the time in milliseconds between two sending of the event of the message..
+				int m_cooldown;
 
-			snScene* myScene = SUPERNOVA->getScene(0);
-			myScene->createActorDynamic(&act, actorId);
+				//Time in tick the last message was sent.
+				long long m_lastTimeMessageSent;
 
-			act->setName("projectile");
-			
-			act->getPhysicMaterial().m_restitution = 1;
-			act->getPhysicMaterial().m_friction = 0;
+			public:
+				CooldownManager(int _cooldown);
 
-			//create collider
-			snOBB* collider = new snOBB(Supernova::Vector::snVec4Set(width, height, depth, 0) * 0.5f);
-			act->addCollider(collider);
-			act->updateMassAndInertia(50);
-			act->initialize();
+				~CooldownManager();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
-			box->setActor(act);
-
-			//deactive the entity
-			box->setIsActive(false);
-			act->setIsActive(false);
-
-			//store a pointer to the entity
-			m_boxes.push_back(box);
-
+				//Check if the cooldown is elapsed.
+				// return : true if the cooldown elapsed. False otherwise.
+				bool cooldownElapsed();
+			};
 		}
 	}
-
-	void EntityBoxLauncher::update()
-	{
-		if (INPUT->getMessage(Devil::Input::InputMessage::SHOOT) != 1)
-			return;
-
-		//get the box
-		EntityBox* box = m_boxes[0];
-		snActorDynamic* act = static_cast<snActorDynamic*>(box->getActor());
-
-		//set its position
-		snVec pos;
-		pos = WORLD->getCamera()->getPosition();
-		act->setPosition(pos);
-
-		//set its linear velocity
-		snVec linVel;
-		linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
-		Supernova::Vector::snVec3Normalize(linVel);
-		linVel = linVel * 300;
-		Supernova::Vector::snVec4SetW(linVel, 0);
-		act->setLinearVelocity(linVel);
-
-		//set its orientation
-		act->setOrientation(Supernova::Vector::snVec4Set(0, 0, 0, 1));
-
-		//set its angular velocity
-		act->setAngularVelocity(Supernova::Vector::snVec4Set(0, 0, 0, 0));
-		act->initialize();
-
-		box->setIsActive(true);
-		act->setIsActive(true);
-	}
-
-	void EntityBoxLauncher::render(){}
 }
+#endif //ifndef COOLDOWN_MANAGER_H

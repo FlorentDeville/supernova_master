@@ -66,80 +66,48 @@ namespace Devil
 
 
 		const int WHEEL_SPEED = 4;
-		if (INPUT->getMouseWheel() > 0) //move forward
+		float amount = INPUT->getMessage(Devil::Input::InputMessage::MOVE_FORWARD);
+		if (amount != 0)
 		{
-			forward = forward * linearCameraSpeed * WHEEL_SPEED;
-
+			forward = forward * linearCameraSpeed * WHEEL_SPEED * amount;
 			m_camera->setPosition(m_camera->getPosition() + forward);
 			m_camera->setLookAt(m_camera->getLookAt() + forward);
-			INPUT->setMouseWheel(0);
-		}
-		else if (INPUT->getMouseWheel() < 0) //move backward
-		{
-			forward = forward * linearCameraSpeed * WHEEL_SPEED;
-
-			m_camera->setPosition(m_camera->getPosition() - forward);
-			m_camera->setLookAt(m_camera->getLookAt() - forward);
-			INPUT->setMouseWheel(0);
 		}
 
-		if (INPUT->isKeyDown('Z'))//move up
+		amount = INPUT->getMessage(Devil::Input::InputMessage::MOVE_UP_AND_DOWN);
+		if (amount != 0)
 		{
-			XMVECTOR offset = up * linearCameraSpeed;
+			XMVECTOR offset = up * linearCameraSpeed * amount;
 			m_camera->setPosition(m_camera->getPosition() + offset);
 			m_camera->setLookAt(m_camera->getLookAt() + offset);
 		}
-		else if (INPUT->isKeyDown('S')) //move down
-		{
-			XMVECTOR offset = up * linearCameraSpeed;
-			m_camera->setPosition(m_camera->getPosition() - offset);
-			m_camera->setLookAt(m_camera->getLookAt() - offset);
-		}
 
-		if (INPUT->isKeyDown('Q')) //move to the left
+		amount = INPUT->getMessage(Devil::Input::InputMessage::MOVE_SIDEWAY);
+		if (amount != 0)
 		{
-			left = left * linearCameraSpeed;
-			m_camera->setPosition(m_camera->getPosition() + left);
-			m_camera->setLookAt(m_camera->getLookAt() + left);
-		}
-		else if (INPUT->isKeyDown('D')) //move to the right
-		{
-			left = left * linearCameraSpeed;
+			left = left * linearCameraSpeed * amount;
 			m_camera->setPosition(m_camera->getPosition() - left);
 			m_camera->setLookAt(m_camera->getLookAt() - left);
 		}
 
-		//mouse movement since last update
-		XMFLOAT2 mouseOffset = INPUT->getMouseDelta();
-
-
-		if (mouseOffset.x < 0)
+		amount = INPUT->getMessage(Devil::Input::InputMessage::TURN_SIDEWAYS);
+		if (amount != 0)
 		{
-			XMMATRIX rotation = XMMatrixRotationAxis(up, -angularCameraSpeed);
+			XMMATRIX rotation = XMMatrixRotationAxis(up, angularCameraSpeed * amount);
 			forward = XMVector3Transform(forward, rotation);
 			m_camera->setLookAt(m_camera->getPosition() + forward);
 		}
-		else if (mouseOffset.x > 0)
-		{
-			XMMATRIX rotation = XMMatrixRotationAxis(up, angularCameraSpeed);
-			forward = XMVector3Transform(forward, rotation);
-			m_camera->setLookAt(m_camera->getPosition() + forward);
-		}
-		//left vector
+
 		left = XMVector3Cross(forward, m_camera->getUp());
 
-		if (mouseOffset.y < 0)
+		amount = INPUT->getMessage(Devil::Input::InputMessage::TURN_UP_AND_DOWN);
+		if (amount != 0)
 		{
-			XMMATRIX rotation = XMMatrixRotationAxis(left, angularCameraSpeed);
+			XMMATRIX rotation = XMMatrixRotationAxis(left, angularCameraSpeed * amount);
 			forward = XMVector3Transform(forward, rotation);
 			m_camera->setLookAt(m_camera->getPosition() + forward);
 		}
-		else if (mouseOffset.y > 0)
-		{
-			XMMATRIX rotation = XMMatrixRotationAxis(left, -angularCameraSpeed);
-			forward = XMVector3Transform(forward, rotation);
-			m_camera->setLookAt(m_camera->getPosition() + forward);
-		}
+
 		XMVECTOR l = m_camera->getLookAt();
 		XMVectorSetW(l, 1);
 		m_camera->setLookAt(l);

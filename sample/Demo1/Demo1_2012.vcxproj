@@ -107,6 +107,7 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     <ClCompile Include="..\src\ComponentBackground.cpp" />
     <ClCompile Include="..\src\ComponentFollowPath.cpp" />
     <ClCompile Include="..\src\ComponentPathInterpolate.cpp" />
+    <ClCompile Include="..\src\CooldownManager.cpp" />
     <ClCompile Include="..\src\D3D.cpp" />
     <ClCompile Include="..\src\EffectProvider.cpp" />
     <ClCompile Include="..\src\EntityBox.cpp" />
@@ -127,8 +128,10 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     <ClCompile Include="..\src\GfxEntityPlan.cpp" />
     <ClCompile Include="..\src\GfxEntitySphere.cpp" />
     <ClCompile Include="..\src\Graphics.cpp" />
+    <ClCompile Include="..\src\IDevice.cpp" />
     <ClCompile Include="..\src\Input.cpp" />
     <ClCompile Include="..\src\IState.cpp" />
+    <ClCompile Include="..\src\KeyboardMouse.cpp" />
     <ClCompile Include="..\src\Light.cpp" />
     <ClCompile Include="..\src\LightShader.cpp" />
     <ClCompile Include="..\src\main.cpp" />
@@ -144,6 +147,7 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     <ClCompile Include="..\src\VecLinearDamper.cpp" />
     <ClCompile Include="..\src\World.cpp" />
     <ClCompile Include="..\src\WorldHUD.cpp" />
+    <ClCompile Include="..\src\X360Controller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h" />
@@ -155,6 +159,7 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     <ClInclude Include="..\src\ComponentFloatingText.h" />
     <ClInclude Include="..\src\ComponentFollowPath.h" />
     <ClInclude Include="..\src\ComponentPathInterpolate.h" />
+    <ClInclude Include="..\src\CooldownManager.h" />
     <ClInclude Include="..\src\D3D.h" />
     <ClInclude Include="..\src\Damper.h" />
     <ClInclude Include="..\src\EffectProvider.h" />
@@ -177,10 +182,13 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     <ClInclude Include="..\src\GfxEntitySphere.h" />
     <ClInclude Include="..\src\Graphics.h" />
     <ClInclude Include="..\src\IComponent.h" />
+    <ClInclude Include="..\src\IDevice.h" />
     <ClInclude Include="..\src\IGfxEntity.h" />
     <ClInclude Include="..\src\Input.h" />
+    <ClInclude Include="..\src\InputMessage.h" />
     <ClInclude Include="..\src\IState.h" />
     <ClInclude Include="..\src\IWorldEntity.h" />
+    <ClInclude Include="..\src\KeyboardMouse.h" />
     <ClInclude Include="..\src\Light.h" />
     <ClInclude Include="..\src\LightShader.h" />
     <ClInclude Include="..\src\Model.h" />
@@ -196,6 +204,7 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
     <ClInclude Include="..\src\VecLinearDamper.h" />
     <ClInclude Include="..\src\World.h" />
     <ClInclude Include="..\src\WorldHUD.h" />
+    <ClInclude Include="..\src\X360Controller.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\consolas.spritefont" />

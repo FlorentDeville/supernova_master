@@ -75,10 +75,9 @@ namespace Devil
 		//display debugging information
 #ifdef SN_DEBUGGER
 
-		if (INPUT->isKeyDown('W'))
+		if (INPUT->getMessage(Input::InputMessage::TOGGLE_WATCH_WINDOW))
 		{
 			m_showWatcher = !m_showWatcher;
-			INPUT->keyUp('W');
 		}
 		
 		if (m_showWatcher)
@@ -123,7 +122,7 @@ namespace Devil
 		height += LINE_HEIGHT;
 		GRAPHICS->writeText(L"SPACE to shoot a cube", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
-		GRAPHICS->writeText(L"C, V to show/hide collision points", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
+		GRAPHICS->writeText(L"C to show/hide collision points", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
 		GRAPHICS->writeText(L"1, 2 to switch collision mode", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;

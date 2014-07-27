@@ -5,13 +5,26 @@
 #include <DirectXMath.h>
 using DirectX::XMFLOAT2;
 
+#include "IDevice.h"
+using namespace Devil::Input;
+using namespace Devil::Input::Device;
+
 namespace Devil
 {
-	class Input
+	namespace Input
+	{
+		namespace Device
+		{
+			class KeyboardMouse;
+		}
+	}
+	using Input::Device::KeyboardMouse;
+
+	class InputManager
 	{
 	private:
 		//singleton instance
-		static Input* m_instance;
+		static InputManager* m_instance;
 
 		//Array containing state of each key of keyboard
 		bool m_keys[256];
@@ -28,12 +41,18 @@ namespace Devil
 		//Handle to the window
 		HWND m_windowHandle;
 
+		//List of devices.
+		vector<IDevice*> m_devices;
+
+		//Pointer to the device for the keyboard and mouse.
+		KeyboardMouse* m_keyboardMouseDevice;
+
 	private:
-		Input();
-		virtual ~Input();
+		InputManager();
+		virtual ~InputManager();
 
 	public:
-		static Input* getInstance();
+		static InputManager* getInstance();
 		bool initialize(HWND _hwnd);
 		void shutdown();
 
@@ -43,23 +62,19 @@ namespace Devil
 		void keyDown(unsigned int);
 		void keyUp(unsigned int);
 
-		//Set the mouse wheel displacement
-		void setMouseWheel(float _displacement);
+		bool isKeyDown(unsigned int) const;
 
-		bool isKeyDown(unsigned int);
+		//Return whether or not an InputMessage was received.
+		// _message : what message to check.
+		// return : 0 if no message. A float between -1 and 1 otherwise.
+		float getMessage(InputMessage _message) const;
 
-		//Return the mouse displacement since the last frame.
-		const XMFLOAT2& getMouseDelta() const;
-
-		//Get the mouse wheel displacement
-		float getMouseWheel() const;
-
-		//Reset the mouse position to the center of the window.
-		void resetMousePosition();
+		//Return a pointer to the keyboard mouse device.
+		KeyboardMouse* getKeyBoardMouseDevice() const;
 	};
 
 	//get the Input singleton
-#define INPUT Input::getInstance()
+#define INPUT InputManager::getInstance()
 
 }
 

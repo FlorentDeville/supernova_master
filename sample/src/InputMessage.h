@@ -32,104 +32,47 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "EntityBoxLauncher.h"
-
-#include "snFactory.h"
-#include "snScene.h"
-#include "snVec.h"
-#include "snActorDynamic.h"
-#include "snOBB.h"
-
-#include "World.h"
-#include "EntityCamera.h"
-#include "EntityBox.h"
-
-#include "Input.h"
-
-using namespace Supernova::Vector;
+#ifndef INPUT_MESSAGE_H
+#define INPUT_MESSAGE_H
 
 namespace Devil
 {
-	//Default constructor
-	EntityBoxLauncher::EntityBoxLauncher() : m_boxes(), m_count(0){}
-
-	//Default destructor
-	EntityBoxLauncher::~EntityBoxLauncher(){}
-
-	//Initialize the launcher.
-	void EntityBoxLauncher::initialize(unsigned int _count)
+	namespace Input
 	{
-		m_count = _count;
-
-		for (unsigned int i = 0; i < _count; ++i)
+		//List of the message the input component is able to handle.
+		enum InputMessage
 		{
-			float width = 5;
-			float height = 5;
-			float depth = 5;
-			
-			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
+			//Order to move the camera forward. A parameter between -1 and 1 is sent with it.
+			MOVE_FORWARD,
 
-			snScene* myScene = SUPERNOVA->getScene(0);
-			myScene->createActorDynamic(&act, actorId);
+			//Strafe to the left or to the right. A parameter between -1 and 1 is sent with it.
+			MOVE_SIDEWAY,
 
-			act->setName("projectile");
-			
-			act->getPhysicMaterial().m_restitution = 1;
-			act->getPhysicMaterial().m_friction = 0;
+			//Move the camera along the Y axis (up and down). A parameter between -1 and 1 is sent with it.
+			MOVE_UP_AND_DOWN,
 
-			//create collider
-			snOBB* collider = new snOBB(Supernova::Vector::snVec4Set(width, height, depth, 0) * 0.5f);
-			act->addCollider(collider);
-			act->updateMassAndInertia(50);
-			act->initialize();
+			//Rotate the camera around the local X axis. A parameter between -1 and 1 is sent.
+			TURN_UP_AND_DOWN,
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
-			box->setActor(act);
+			//Rotate the camera around the local Y axis. A parameter between -1 and 1 is sent.
+			TURN_SIDEWAYS,
 
-			//deactive the entity
-			box->setIsActive(false);
-			act->setIsActive(false);
+			//Shox/hode collision points
+			TOGGLE_COLLISION_POINTS,
 
-			//store a pointer to the entity
-			m_boxes.push_back(box);
+			//Shoot a rigid body
+			SHOOT,
 
-		}
+			//Change the rendering mode.
+			TOGGLE_RENDER_MODE,
+
+			//Show/Hide the watch window
+			TOGGLE_WATCH_WINDOW,
+
+			//Number of messages available
+			MESSAGE_COUNT
+		};
 	}
-
-	void EntityBoxLauncher::update()
-	{
-		if (INPUT->getMessage(Devil::Input::InputMessage::SHOOT) != 1)
-			return;
-
-		//get the box
-		EntityBox* box = m_boxes[0];
-		snActorDynamic* act = static_cast<snActorDynamic*>(box->getActor());
-
-		//set its position
-		snVec pos;
-		pos = WORLD->getCamera()->getPosition();
-		act->setPosition(pos);
-
-		//set its linear velocity
-		snVec linVel;
-		linVel = WORLD->getCamera()->getLookAt() - WORLD->getCamera()->getPosition();
-		Supernova::Vector::snVec3Normalize(linVel);
-		linVel = linVel * 300;
-		Supernova::Vector::snVec4SetW(linVel, 0);
-		act->setLinearVelocity(linVel);
-
-		//set its orientation
-		act->setOrientation(Supernova::Vector::snVec4Set(0, 0, 0, 1));
-
-		//set its angular velocity
-		act->setAngularVelocity(Supernova::Vector::snVec4Set(0, 0, 0, 0));
-		act->initialize();
-
-		box->setIsActive(true);
-		act->setIsActive(true);
-	}
-
-	void EntityBoxLauncher::render(){}
 }
+
+#endif //ifndef INPUT_MESSAGE_H

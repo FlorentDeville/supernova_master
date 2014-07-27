@@ -223,6 +223,16 @@ namespace Devil
 	void World::update(float _dt)
 	{
 		m_dt = _dt;
+
+		if (INPUT->getMessage(Input::InputMessage::TOGGLE_COLLISION_POINTS))
+		{
+			toggleCollisionPointActivation();
+		}
+		if (INPUT->getMessage(Input::InputMessage::TOGGLE_RENDER_MODE))
+		{
+			toggleRenderMode();
+		}
+
 		//update world
 		for (std::vector<IWorldEntity*>::iterator i = m_EntityList.begin(); i != m_EntityList.end(); ++i)
 		{

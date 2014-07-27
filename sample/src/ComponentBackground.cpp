@@ -63,26 +63,28 @@ namespace Devil
 		
 		float realRotation = ROTATION_SPEED * _dt;
 
-		if (INPUT->isKeyDown('Z'))
+		float amountUpAndDown = INPUT->getMessage(Input::InputMessage::MOVE_UP_AND_DOWN);
+		float amountLeftandRight = INPUT->getMessage(Input::InputMessage::MOVE_SIDEWAY);
+		if (amountUpAndDown != 0)
 		{
 			computeOriginFrame(m_origin, m_forward, m_left);
-			backgroundNewRotation.createRotation(m_left, realRotation);
+			backgroundNewRotation.createRotation(m_left, realRotation * amountUpAndDown);
 		}
-		else if (INPUT->isKeyDown('S'))
+		/*else if (INPUT->isKeyDown('S'))
 		{
 			computeOriginFrame(m_origin, m_forward, m_left);
 			backgroundNewRotation.createRotation(m_left, -realRotation);
-		}
-		else if (INPUT->isKeyDown('D'))
+		}*/
+		else if (amountLeftandRight != 0)
 		{
 			computeOriginFrame(m_origin, m_forward, m_left);
-			backgroundNewRotation.createRotation(m_forward, realRotation);
+			backgroundNewRotation.createRotation(m_forward, realRotation * amountLeftandRight);
 		}
-		else if (INPUT->isKeyDown('Q'))
+		/*else if (INPUT->isKeyDown('Q'))
 		{
 			computeOriginFrame(m_origin, m_forward, m_left);
 			backgroundNewRotation.createRotation(m_forward, -realRotation);
-		}
+		}*/
 		else
 			return;
 
