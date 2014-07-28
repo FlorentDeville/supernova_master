@@ -67,9 +67,8 @@
       <AdditionalDependencies>Supernova_2012.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
-xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y
-xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,9 +93,8 @@ xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
       <AdditionalDependencies>Supernova_2012.lib;dxgi.lib;d3d11.lib;D3dcompiler.lib;DirectXTK.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(ProjectDir)..\src\consolas.spritefont $(OutputPath) /y
-xcopy $(ProjectDir)..\src\check.png $(OutputPath) /y
-xcopy $(ProjectDir)..\src\raw_8_bits_256_256.raw $(OutputPath) /y</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
