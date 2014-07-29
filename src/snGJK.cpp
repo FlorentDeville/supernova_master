@@ -57,7 +57,7 @@ namespace Supernova
 
 	snGJK::~snGJK(){}
 
-	bool snGJK::gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* _simplex, unsigned int& _simplexSize)
+	bool snGJK::gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* const _simplex, unsigned int& _simplexSize)
 	{
 		//Start with an arbitrary point in the Minkowski set shape.
 		_simplex[0] = _a.anyPoint() - _b.anyPoint();

@@ -59,7 +59,13 @@ namespace Supernova
 		//Default destructor
 		virtual ~snGJK();
 
-		static bool gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* _simplex, unsigned int& _simplexSize);
+		//Check if two collider intersects
+		// _a : first collider.
+		// _b : second collider.
+		// _simplex : (out parameter) array of 4 snVec containing the result simplex.
+		// _simplexSize : (out parameter) the number of vertices in the result simplex.
+		// result : True if the two colliders intersect. False otherwise.
+		static bool gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* const _simplex, unsigned int& _simplexSize);
 
 	private:
 
