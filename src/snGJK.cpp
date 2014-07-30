@@ -40,6 +40,7 @@
 #include "snCollisionResult.h"
 #include "snEPASimplex.h"
 #include "snICollider.h"
+#include "snClosestPoint.h"
 
 #include <assert.h>
 
@@ -57,7 +58,7 @@ namespace Supernova
 
 	snGJK::~snGJK(){}
 
-	bool snGJK::gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* const _simplex, unsigned int& _simplexSize)
+	bool snGJK::intersect(const snICollider& _a, const snICollider& _b, snVec* const _simplex, unsigned int& _simplexSize)
 	{
 		//Start with an arbitrary point in the Minkowski set shape.
 		_simplex[0] = _a.anyPoint() - _b.anyPoint();
@@ -95,6 +96,61 @@ namespace Supernova
 
 		//We reached the maximum number of iteration so exit and report no intersection.
 		return false;
+	}
+
+	bool snGJK::distance(const snICollider& _a, const snICollider& _b, float& _distance)
+	{
+		snVec simplex[3];
+
+		//Compute the first two points to add to the simplex.
+		snVec direction = _b.anyPoint() - _a.anyPoint();
+		snVec3Normalize(direction);
+		simplex[0] = _a.support(direction) - _b.support(-direction);
+		simplex[1] = _a.support(-direction) - _b.support(direction);
+
+		//Compute the third point. Use the closest point on the simplex 2 as direction
+		direction = snClosestPoint::PointLineSegment(VEC_ZERO, simplex[0], simplex[1]);
+		snVec3Normalize(direction);
+		simplex[2] = _a.support(direction) - _b.support(-direction);
+
+		//Loop till we find the closest point
+		bool over = false;
+		while (!over)
+		{
+			//Find the closest point on the simplex
+			snVec closestPoint = snClosestPoint::PointTriangle(VEC_ZERO, simplex[0], simplex[1], simplex[2]);
+
+			//The closest point is the origin. The two colliders are in contact. 
+			if (closestPoint == VEC_ZERO)
+				return false;
+
+			//Compute the new direction
+			direction = -closestPoint;
+			snVec3Normalize(direction);
+
+			//Compute the next candidate point for the simplex
+			snVec candidate = _a.support(direction) - _b.support(-direction);
+
+			//Compute if the new point brings us closer
+			float aDotD = snVec4GetX(snVec3Dot(direction, simplex[0]));
+			float cDotD = snVec4GetX(snVec3Dot(direction, candidate));
+
+			const float TOLERANCE = 10e-2f;
+			if (cDotD - aDotD < TOLERANCE) //We didn't get closer with the candidate point so we found the closest points and distance
+			{
+				_distance = cDotD;
+				return true;
+			}
+			
+			//We got closer so replace the farthest point with the candidate
+			unsigned int farthestVertexId = 0;
+			if (snVec3SquaredNorme(simplex[0]) > snVec3SquaredNorme(simplex[1]))
+				farthestVertexId = 1;
+			if (snVec3SquaredNorme(simplex[1]) > snVec3SquaredNorme(simplex[2]))
+				farthestVertexId = 2;
+
+			simplex[farthestVertexId] = candidate;
+		}
 	}
 
 	snVec snGJK::updateSimplex(snVec* _s, int& _n)

@@ -580,7 +580,7 @@ namespace Supernova
 		//GJK to check for collision
 		snVec gjkSimplex[4];
 		unsigned int simplexSize = 0;
-		if (!snGJK::gjkIntersect(*_c1, *_c2, gjkSimplex, simplexSize))
+		if (!snGJK::intersect(*_c1, *_c2, gjkSimplex, simplexSize))
 			return res;
 
 		//EPa to get the collision normal

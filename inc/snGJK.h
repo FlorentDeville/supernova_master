@@ -65,7 +65,14 @@ namespace Supernova
 		// _simplex : (out parameter) array of 4 snVec containing the result simplex.
 		// _simplexSize : (out parameter) the number of vertices in the result simplex.
 		// result : True if the two colliders intersect. False otherwise.
-		static bool gjkIntersect(const snICollider& _a, const snICollider& _b, snVec* const _simplex, unsigned int& _simplexSize);
+		static bool intersect(const snICollider& _a, const snICollider& _b, snVec* const _simplex, unsigned int& _simplexSize);
+
+		//Compute the closest points between two colliders.
+		// _a : first collider.
+		// _b : second collider.
+		// _distance : the distance between the two colliders. It's the distance between the two closest points.
+		// return : true if the distance was found. False otherwise.
+		static bool distance(const snICollider& _a, const snICollider& _b, float& _distance);
 
 	private:
 
