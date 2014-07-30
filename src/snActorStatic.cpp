@@ -131,7 +131,6 @@ namespace Supernova
 		m_transform.setOrientation(_orientation);
 
 		m_R.createRotationFromQuaternion(_orientation);
-		m_invR = m_R.inverse();
 
 		m_skinDepth = 0.025f;
 		m_typeOfActor = snActorType::snActorTypeStatic;

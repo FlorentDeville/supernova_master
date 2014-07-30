@@ -54,7 +54,6 @@ namespace Supernova
 
 		m_skinDepth = 0.025f;
 		m_R.identity();
-		m_invR.identity();
 
 		m_w = snVec4Set(0, 0, 0, 0);
 		m_v = snVec4Set(0, 0, 0, 0);
@@ -145,7 +144,6 @@ namespace Supernova
 	{
 		m_transform.setOrientation(_orientation);
 		m_R.createRotationFromQuaternion(_orientation);
-		m_invR = m_R.inverse();
 	}
 
 	//Set if the actor is kinematic

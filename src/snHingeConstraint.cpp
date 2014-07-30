@@ -42,8 +42,8 @@ namespace Supernova
 	snHingeConstraint::snHingeConstraint(snIActor* _actor, const snVec& _axis, const snVec& _anchor) : m_actor(_actor), m_axis(_axis),
 		m_anchor(_anchor)
 	{
-		m_localAxis = snMatrixTransform3(m_axis, m_actor->getInverseOrientationMatrix());
-		//m_initialDistanceToAnchor = snVec3Norme(m_anchor - m_actor->getPosition());
+		snMatrix44f invTransform = m_actor->getTransform().getLocalToWorld().inverse();
+		m_localAxis = snMatrixTransform3(m_axis, invTransform);
 	}
 
 	snHingeConstraint::~snHingeConstraint(){}

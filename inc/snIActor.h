@@ -92,9 +92,6 @@ namespace Supernova
 		//orientation represented as a matrix
 		snMatrix44f m_R;
 
-		//Inverse of the orientation matrix
-		snMatrix44f m_invR;
-
 		//Defines the behavior of the object : friction and restitution
 		snPhysicMaterial m_material;
 
@@ -154,6 +151,9 @@ namespace Supernova
 		//Return the position of the actor.
 		snVec getPosition() const;
 
+		//Return the transform of the current actor.
+		const snTransform& getTransform() const;
+
 		//Return the linear velocity
 		virtual snVec getLinearVelocity() const = 0;
 
@@ -165,9 +165,6 @@ namespace Supernova
 
 		//Return the orientation represented as a matrix.
 		const snMatrix44f& getOrientationMatrix() const;
-
-		//Return the inverse of orientation matrix.
-		const snMatrix44f& getInverseOrientationMatrix() const;
 
 		//Get the maximum depth another actor can penetrate into this actor
 		float getSkinDepth() const;

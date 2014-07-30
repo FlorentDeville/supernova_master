@@ -97,6 +97,11 @@ namespace Supernova
 		return m_transform.getPosition();
 	}
 
+	const snTransform& snIActor::getTransform() const
+	{
+		return m_transform;
+	}
+
 	snVec snIActor::getOrientationQuaternion()
 	{
 		return m_transform.getOrientation();
@@ -105,12 +110,6 @@ namespace Supernova
 	const snMatrix44f& snIActor::getOrientationMatrix() const
 	{
 		return m_R;
-	}
-
-	//Return the inverse of orientation matrix.
-	const snMatrix44f& snIActor::getInverseOrientationMatrix() const
-	{
-		return m_invR;
 	}
 
 	//Get the maximum depth another actor can penetrate into this actor
