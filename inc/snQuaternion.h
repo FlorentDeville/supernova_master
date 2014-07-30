@@ -47,6 +47,9 @@ namespace Supernova
 	//Compute a quaternion representing a rotation from euler angles in radians.
 	snVec snQuaternionFromEuler(float _x, float _y, float _z);
 
+	//Compute a quaternion representing a rotation from euler angles in radians.
+	snVec snQuaternionFromEuler(const snVec& _euler);
+
 	//Normalize a quaternion. 
 	void snQuaternionNormalize(const snVec& _q, snVec& _n);
 

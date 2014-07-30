@@ -51,6 +51,7 @@ namespace Supernova
 
 	snVec snQuaternionFromEuler(float _x, float _y, float _z)
 	{
+		//This sucks and could be improved incredibly calculating the cos and sin with simd but I don't have time right now.
 		float halfX = _x * 0.5f;
 		float halfY = _y * 0.5f;
 		float halfZ = _z * 0.5f;
@@ -64,6 +65,12 @@ namespace Supernova
 		snQuaternionMultiply(res, rotationZ, res);
 
 		return res;
+	}
+
+	snVec snQuaternionFromEuler(const snVec& _euler)
+	{
+		//Ok this is really bad but right now I don't have the time to make a real version.
+		return snQuaternionFromEuler(snVec4GetX(_euler), snVec4GetY(_euler), snVec4GetZ(_euler));
 	}
 
 	void snQuaternionNormalize(const snVec& _q, snVec& _n)
