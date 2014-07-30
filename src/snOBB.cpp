@@ -121,43 +121,6 @@ namespace Supernova
 		m_idFaces[21] = 2;
 		m_idFaces[22] = 3;
 		m_idFaces[23] = 7;
-
-		//adjacent of the front face
-		m_facesAdjacent[0][0] = 1;
-		m_facesAdjacent[0][1] = 2;
-		m_facesAdjacent[0][2] = 3;
-		m_facesAdjacent[0][3] = 5;
-
-		//adjacent of the right face
-		m_facesAdjacent[1][0] = 0;
-		m_facesAdjacent[1][1] = 2;
-		m_facesAdjacent[1][2] = 4;
-		m_facesAdjacent[1][3] = 3;
-
-		//adjacent of the up face
-		m_facesAdjacent[2][0] = 0;
-		m_facesAdjacent[2][1] = 1;
-		m_facesAdjacent[2][2] = 4;
-		m_facesAdjacent[2][3] = 5;
-
-		//adjacent of the bottom face
-		m_facesAdjacent[3][0] = 0;
-		m_facesAdjacent[3][1] = 1;
-		m_facesAdjacent[3][2] = 4;
-		m_facesAdjacent[3][3] = 5;
-
-		//adjacent of the back face
-		m_facesAdjacent[4][0] = 1;
-		m_facesAdjacent[4][1] = 2;
-		m_facesAdjacent[4][2] = 3;
-		m_facesAdjacent[4][3] = 5;
-
-		//adjacent of the left face
-		m_facesAdjacent[5][0] = 0;
-		m_facesAdjacent[5][1] = 2;
-		m_facesAdjacent[5][2] = 4;
-		m_facesAdjacent[5][3] = 3;
-
 	}
 
 	void snOBB::setTransform(const snMatrix44f& _transform)

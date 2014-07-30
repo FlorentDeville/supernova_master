@@ -62,9 +62,6 @@ namespace Supernova
 		/*List of indices of vertices making each face of the box. Widing is anticlockwise.*/
 		int m_idFaces[INDEX_COUNT];
 
-		//Store for each face the id of adjacent faces.
-		int m_facesAdjacent[FACE_COUNT][4];
-
 		//Vertices composing the box in world coordinates.
 		snVec m_worldBox[VERTEX_COUNT];
 
