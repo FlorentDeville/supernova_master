@@ -92,19 +92,16 @@ namespace Supernova
 		return m_worldCenterOfMass;
 	}
 
-	//Return the position of the actor.
 	snVec snIActor::getPosition() const
 	{
-		return m_x;
+		return m_transform.getPosition();
 	}
-	//Return the orientation represented as a quaternion
+
 	snVec snIActor::getOrientationQuaternion()
 	{
-		return m_q;
+		return m_transform.getOrientation();
 	}
 
-
-	//Return the orientation represented as a matrix.
 	const snMatrix44f& snIActor::getOrientationMatrix() const
 	{
 		return m_R;

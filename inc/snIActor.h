@@ -71,8 +71,6 @@ namespace Supernova
 	
 #pragma region Protected Variables
 
-		snTransform m_transform;
-
 		//name of the actor
 		string m_name;
 
@@ -88,11 +86,8 @@ namespace Supernova
 		//Position of the center of mass expressed in world coordinate system.
 		snVec m_worldCenterOfMass;
 
-		//position of the actor
-		snVec m_x;
-
-		//orientation represented as a quaternion
-		snVec m_q;
+		//Position, orientation and scaling of the current actor.
+		snTransform m_transform;
 
 		//orientation represented as a matrix
 		snMatrix44f m_R;

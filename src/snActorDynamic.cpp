@@ -48,8 +48,10 @@ namespace Supernova
 		m_name = "default";
 		m_centerOfMass = snVec4Set(0, 0, 0, 1);
 		m_worldCenterOfMass = snVec4Set(0, 0, 0, 1);
-		m_x = snVec4Set(0, 0, 0, 1);
-		m_q = snVec4Set(0, 0, 0, 1);
+
+		m_transform.setPosition(snVec4Set(0, 0, 0, 1));
+		m_transform.setOrientation(snVec4Set(0, 0, 0, 1));
+
 		m_skinDepth = 0.025f;
 		m_R.identity();
 		m_invR.identity();
@@ -135,14 +137,14 @@ namespace Supernova
 	//Set the position of the actor
 	void snActorDynamic::setPosition(const snVec& _position)
 	{
-		m_x = _position;
+		m_transform.setPosition(_position);
 	}
 
 	//Set the orientation of the actor
 	void snActorDynamic::setOrientation(const snVec& _orientation)
 	{
-		m_q = _orientation;
-		m_R.createRotationFromQuaternion(m_q);
+		m_transform.setOrientation(_orientation);
+		m_R.createRotationFromQuaternion(_orientation);
 		m_invR = m_R.inverse();
 	}
 
@@ -250,19 +252,12 @@ namespace Supernova
 
 	void snActorDynamic::computeWorldCenterOfMass()
 	{
-		//create the transform matrix for the actor
-		snMatrix44f transform = m_R;
-		transform.m_r[3] = m_x;
-
-		m_worldCenterOfMass = snMatrixTransform4(m_centerOfMass, transform);
+		m_worldCenterOfMass = snMatrixTransform4(m_centerOfMass, m_transform.getLocalToWorld());
 	}
 
 	//Update the colliders based on the current position and orientation
 	void snActorDynamic::updateCollidersAndAABB()
 	{
-		m_transform.setPosition(m_x);
-		m_transform.setOrientation(m_q);
-
 		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
 			snTransform result;
@@ -292,18 +287,21 @@ namespace Supernova
 			m_w = snVec4Set(0);
 
 		//calculate position using euler integration
-		m_x = m_x + m_v * _dt;
+		snVec previousPosition = m_transform.getPosition();
+		m_transform.setPosition(previousPosition + m_v * _dt);
 
 		//calculate velocity as quaternion using dq/dt = 0.5 * w * q
-		snVec qw = snQuaternionMultiply(m_w, m_q);
+		snVec q = m_transform.getOrientation();
+		snVec qw = snQuaternionMultiply(m_w, q);
 		qw = qw * 0.5f;
 
 		//calculate orientation using euler integration
-		m_q = m_q + (qw * _dt);
-		snQuaternionNormalize(m_q, m_q);
+		q = q + (qw * _dt);
+		snQuaternionNormalize(q, q);
+		m_transform.setOrientation(q);
 
 		//compute orientation as a matrix
-		m_R.createRotationFromQuaternion(m_q);
+		m_R.createRotationFromQuaternion(q);
 
 		//set new state
 		computeInvWorldInertia();

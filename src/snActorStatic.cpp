@@ -112,9 +112,6 @@ namespace Supernova
 
 	void snActorStatic::initialize()
 	{
-		m_transform.setPosition(m_x);
-		m_transform.setOrientation(m_q);
-
 		//loop through each colliders to initialize them
 		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
@@ -130,10 +127,10 @@ namespace Supernova
 	{
 		m_name = "default";
 
-		m_x = _position;
+		m_transform.setPosition(_position);
+		m_transform.setOrientation(_orientation);
 
-		m_q = _orientation;
-		m_R.createRotationFromQuaternion(m_q);
+		m_R.createRotationFromQuaternion(_orientation);
 		m_invR = m_R.inverse();
 
 		m_skinDepth = 0.025f;
