@@ -80,7 +80,7 @@ namespace Supernova
 		//Rotation constraints
 
 		//expressed the local axis in world coordinate
-		snVec worldAxis = snMatrixTransform3(m_localAxis, m_actor->getOrientationMatrix());
+		snVec worldAxis = snMatrixTransform3(m_localAxis, m_actor->getTransform().getLocalToWorld());
 
 		//compute a base from the world axis
 		snVec b, c;

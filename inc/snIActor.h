@@ -89,9 +89,6 @@ namespace Supernova
 		//Position, orientation and scaling of the current actor.
 		snTransform m_transform;
 
-		//orientation represented as a matrix
-		snMatrix44f m_R;
-
 		//Defines the behavior of the object : friction and restitution
 		snPhysicMaterial m_material;
 
@@ -162,9 +159,6 @@ namespace Supernova
 
 		//Return the orientation represented as a quaternion
 		snVec getOrientationQuaternion();
-
-		//Return the orientation represented as a matrix.
-		const snMatrix44f& getOrientationMatrix() const;
 
 		//Get the maximum depth another actor can penetrate into this actor
 		float getSkinDepth() const;

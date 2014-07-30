@@ -107,11 +107,6 @@ namespace Supernova
 		return m_transform.getOrientation();
 	}
 
-	const snMatrix44f& snIActor::getOrientationMatrix() const
-	{
-		return m_R;
-	}
-
 	//Get the maximum depth another actor can penetrate into this actor
 	float snIActor::getSkinDepth() const
 	{

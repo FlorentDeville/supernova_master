@@ -65,25 +65,22 @@ namespace Devil
 
 	void EntityBox::update()
 	{
+		m_position = m_actor->getTransform().getPosition();
 	}
 
 	void EntityBox::render()
 	{
-		snVec newPosition = m_actor->getPosition();
-		m_position = XMVectorSet(snVec4GetX(newPosition), snVec4GetY(newPosition), snVec4GetZ(newPosition), 1);
-
-		XMMATRIX translation = XMMatrixTranslationFromVector(m_position);
-		XMMATRIX orientation;
-		orientation.r[0] = m_actor->getOrientationMatrix().m_r[0];
-		orientation.r[1] = m_actor->getOrientationMatrix().m_r[1];
-		orientation.r[2] = m_actor->getOrientationMatrix().m_r[2];
-		orientation.r[3] = m_actor->getOrientationMatrix().m_r[3];
-
 		XMMATRIX scaling = XMMatrixScaling(m_size.x, m_size.y, m_size.z);
 
-		XMMATRIX viewMatrix, projectionMatrix, transform;
-		transform = scaling * (orientation * translation);
-
+		const snMatrix44f& physicTransform = m_actor->getTransform().getLocalToWorld();
+		XMMATRIX dxPhysicTransform;
+		dxPhysicTransform.r[0] = physicTransform[0];
+		dxPhysicTransform.r[1] = physicTransform[1];
+		dxPhysicTransform.r[2] = physicTransform[2];
+		dxPhysicTransform.r[3] = physicTransform[3];
+		XMMATRIX transform = scaling * dxPhysicTransform;
+		
+		XMMATRIX viewMatrix, projectionMatrix;
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 

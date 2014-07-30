@@ -82,9 +82,7 @@ namespace Devil
 		//compute position and orientation of the actor
 		vector<snColliderContainer*> colliders = m_actor->getColliders();
 
-		snMatrix44f globalTransform;
-		snMatrixCreateTransform(m_actor->getOrientationMatrix(), m_actor->getPosition(), globalTransform);
-
+		const snMatrix44f& globalTransform = m_actor->getTransform().getLocalToWorld();
 
 		for (vector<snColliderContainer*>::const_iterator i = colliders.cbegin(); i != colliders.cend(); ++i)
 		{

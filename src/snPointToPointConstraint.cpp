@@ -64,7 +64,7 @@ namespace Supernova
 		for (int i = 0; i < ACTOR_COUNT; ++i)
 		{
 			//compute the offset in world coordinates.
-			snMatrix44f transform = m_actors[i]->getOrientationMatrix();
+			snMatrix44f transform = m_actors[i]->getTransform().getLocalToWorld();
 			transform[3] = m_actors[i]->getWorldCenterOfMass();
 			m_worldPivot[i] = snMatrixTransform4(m_pivot[i], transform);
 

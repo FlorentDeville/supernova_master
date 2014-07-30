@@ -130,8 +130,6 @@ namespace Supernova
 		m_transform.setPosition(_position);
 		m_transform.setOrientation(_orientation);
 
-		m_R.createRotationFromQuaternion(_orientation);
-
 		m_skinDepth = 0.025f;
 		m_typeOfActor = snActorType::snActorTypeStatic;
 		m_collisionFlag = snCollisionFlag::CF_NO_FLAG;

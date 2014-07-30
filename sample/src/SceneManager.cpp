@@ -730,7 +730,7 @@ namespace Devil
 			float width = 5;
 			float height = 5;
 			float depth = 5;
-			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 1);
+			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 0);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -776,7 +776,7 @@ namespace Devil
 			float width = 5;
 			float height = 5;
 			float depth = 5;
-			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 1);
+			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 0);
 
 			//create actor
 			snActorDynamic* act = 0;
@@ -1061,7 +1061,7 @@ namespace Devil
 		{
 			snVec constraintOrigin = snVec4Set(0, snVec4GetY(dominoSize) * 1.9f, -120, 1);
 			snVec hammerOffset = snVec4Set(0, snVec4GetY(dominoSize) * 0.9f, -snVec4GetY(dominoSize) * 0.9f, 1);
-			snVec hammerPosition = snVec4Set(0, snVec4GetY(dominoSize), -120, 1) + hammerOffset;
+			snVec hammerPosition = snVec4Set(0, snVec4GetY(dominoSize), -120, 0) + hammerOffset;
 			float constraintDistance = snVec3Norme(constraintOrigin - hammerPosition);
 
 			snActorDynamic* actor = 0;

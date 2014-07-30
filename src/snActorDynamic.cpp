@@ -53,7 +53,6 @@ namespace Supernova
 		m_transform.setOrientation(snVec4Set(0, 0, 0, 1));
 
 		m_skinDepth = 0.025f;
-		m_R.identity();
 
 		m_w = snVec4Set(0, 0, 0, 0);
 		m_v = snVec4Set(0, 0, 0, 0);
@@ -143,7 +142,6 @@ namespace Supernova
 	void snActorDynamic::setOrientation(const snVec& _orientation)
 	{
 		m_transform.setOrientation(_orientation);
-		m_R.createRotationFromQuaternion(_orientation);
 	}
 
 	//Set if the actor is kinematic
@@ -240,12 +238,17 @@ namespace Supernova
 	//Compute the inverse of the inertia tensor expressed in world coordinates
 	void snActorDynamic::computeInvWorldInertia()
 	{
-		snMatrix44f RT;
-		m_R.transpose(RT);
+		//The inverse world inertia tensor is R * I-1 * RT with R being the orientation matrix this is why
+		// the last row is set to (0, 0, 0, 1).
+		snMatrix44f localToWorld = m_transform.getLocalToWorld();
+		localToWorld.m_r[3] = snVec4Set(0, 0, 0, 1);
+
+		snMatrix44f localToWorldTranspose;
+		localToWorld.transpose(localToWorldTranspose);
 
 		snMatrix44f WInvJ;
-		snMatrixMultiply3(m_R, m_invInertia, WInvJ);
-		snMatrixMultiply3(WInvJ, RT, m_invWorldInertia);
+		snMatrixMultiply3(localToWorld, m_invInertia, WInvJ);
+		snMatrixMultiply3(WInvJ, localToWorldTranspose, m_invWorldInertia);
 	}
 
 	void snActorDynamic::computeWorldCenterOfMass()
@@ -297,9 +300,6 @@ namespace Supernova
 		q = q + (qw * _dt);
 		snQuaternionNormalize(q, q);
 		m_transform.setOrientation(q);
-
-		//compute orientation as a matrix
-		m_R.createRotationFromQuaternion(q);
 
 		//set new state
 		computeInvWorldInertia();
