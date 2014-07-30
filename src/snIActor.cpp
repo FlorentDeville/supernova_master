@@ -53,13 +53,13 @@ namespace Supernova
 	//Add a collider to the actor
 	void snIActor::addCollider(snICollider* _collider)
 	{
-		snMatrix44f identity;
-		identity.identity();
-
+		//snMatrix44f identity;
+		//identity.identity();
+		snTransform identity;
 		addCollider(_collider, identity);
 	}
 
-	void snIActor::addCollider(snICollider* _collider, const snMatrix44f& _localTransform)
+	void snIActor::addCollider(snICollider* _collider, const snTransform& _localTransform)
 	{
 		snColliderContainer* newContainer = new snColliderContainer(_collider, _localTransform);
 		m_colliders.push_back(newContainer);

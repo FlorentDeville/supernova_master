@@ -132,6 +132,9 @@ namespace Supernova
 
 		//Compute the rotation matrix from a quaternion
 		void createRotationFromQuaternion(const snVec& _q);
+
+		//Return a vector containing the scaling factor of the matrix
+		snVec getScale() const;
 	};
 
 	snVec& snMatrix44f::operator[](int _id)

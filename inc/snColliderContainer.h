@@ -35,7 +35,7 @@
 #ifndef SN_COLLIDER_CONTAINER_H
 #define SN_COLLIDER_CONTAINER_H
 
-#include "snMatrix44f.h"
+#include "snTransform.h"
 
 namespace Supernova
 {
@@ -47,9 +47,9 @@ namespace Supernova
 		snICollider* m_collider;
 
 		//Transform matrix to express the position and orientation of the colider in the actor's coordinate system.
-		snMatrix44f m_localTransform;
+		snTransform m_localTransform;
 
-		snColliderContainer(snICollider* _collider, const snMatrix44f& _localTransform);
+		snColliderContainer(snICollider* _collider, const snTransform& _localTransform);
 
 		~snColliderContainer();
 

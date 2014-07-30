@@ -42,6 +42,7 @@
 #include "snMath.h"
 #include "snAABB.h"
 #include "snMatrix44f.h"
+#include "snTransform.h"
 
 using namespace Supernova::Vector;
 
@@ -123,18 +124,18 @@ namespace Supernova
 		m_idFaces[23] = 7;
 	}
 
-	void snOBB::setTransform(const snMatrix44f& _transform)
+	void snOBB::setTransform(const snTransform& _transform)
 	{
 		for (int i = 0; i < 8; ++i)
-			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform);
+			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform.getLocalToWorld());
 
 		//world origin is the last row.
-		m_pos = _transform[3];
+		m_pos = _transform.getPosition();
 
 		//world normals are just the rows of the transform matrix
-		m_normals[0] = _transform[0];
-		m_normals[1] = _transform[1];
-		m_normals[2] = _transform[2];
+		m_normals[0] = _transform.getRight();
+		m_normals[1] = _transform.getUp();
+		m_normals[2] = _transform.getForward();
 	}
 
 	void snOBB::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const

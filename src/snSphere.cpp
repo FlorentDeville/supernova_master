@@ -35,6 +35,7 @@
 #include "snSphere.h"
 #include "snAABB.h"
 #include "snMatrix44f.h"
+#include "snTransform.h"
 
 using namespace Supernova::Vector;
 
@@ -55,9 +56,9 @@ namespace Supernova
 		return m_radius;
 	}
 
-	void snSphere::setTransform(const snMatrix44f& _transform)
+	void snSphere::setTransform(const snTransform& _transform)
 	{
-		m_center = _transform[3];
+		m_center = _transform.getPosition();
 	}
 
 	void snSphere::initialize()

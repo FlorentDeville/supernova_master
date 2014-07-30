@@ -306,7 +306,7 @@ namespace Devil
 
 			blockThreeHeight = snVec4GetY(pos) + height * 0.5f;
 		}
-		
+//float platformHeight = 10;
 		//dynamic
 		{
 			float width = 3;
@@ -318,8 +318,9 @@ namespace Devil
 			snActorDynamic* act = 0;
 			int actorId = -1;
 			scene->createActorDynamic(&act, actorId);
-			act->setName("dymnamic");
+			act->setName("dynamic");
 			act->setPosition(pos);
+			float rot = 3.14f * 0.25f;
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = 0.f;
 			act->getPhysicMaterial().m_friction = 1.f;
@@ -1233,16 +1234,20 @@ namespace Devil
 			snMatrix44f localRotation;
 			localRotation.createRotationZ(angle * pinId);
 
-			snMatrix44f localTransform;
-			snMatrixMultiply4(localTranslation, localRotation, localTransform);
-			act->addCollider(xBox, localTransform);
+			//snMatrix44f localTransform;
+			//snMatrixMultiply4(localTranslation, localRotation, localTransform);
+			//act->addCollider(xBox, localTransform);
+			snTransform transform(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(0, 0, angle * pinId));
+			act->addCollider(xBox, transform);
 
 			//fill in the space between the pins
 			snOBB* fill = new snOBB(snVec4Set(length * 0.7f, 4, depth, 0) * 0.5f);
 
-			localRotation.createRotationZ(angle * (pinId + 0.5f));
-			snMatrixMultiply4(localTranslation, localRotation, localTransform);
-			act->addCollider(fill, localTransform);
+			//localRotation.createRotationZ(angle * (pinId + 0.5f));
+			//snMatrixMultiply4(localTranslation, localRotation, localTransform);
+			//act->addCollider(fill, localTransform);
+			transform.setOrientation(snQuaternionFromEuler(0, 0, angle * (pinId + 0.5f)));
+			act->addCollider(fill, transform);
 		}
 
 		act->initialize();
@@ -1317,28 +1322,27 @@ namespace Devil
 		actEnvironment->addCollider(levelOne);
 
 		levelOne = new snOBB(snVec4Set(200, THICKNESS, 50, 0) * 0.5f);
-		snMatrix44f transform;
-		transform.createTranslation(snVec4Set(200, 0, 0, 1));
+		snTransform transform(snVec4Set(200, 0, 0, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
 		levelOne = new snOBB(snVec4Set(50, THICKNESS, 200, 0) * 0.5f);
-		transform.createTranslation(snVec4Set(325, 0, 75, 1));
+		transform.setPosition(snVec4Set(325, 0, 75, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
 		levelOne = new snOBB(snVec4Set(200, THICKNESS, 50, 0) * 0.5f);
-		transform.createTranslation(snVec4Set(450, 0, 150, 1));
+		transform.setPosition(snVec4Set(450, 0, 150, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
 		levelOne = new snOBB(snVec4Set(50, THICKNESS, 200, 0) * 0.5f);
-		transform.createTranslation(snVec4Set(575, 0, 75, 1));
+		transform.setPosition(snVec4Set(575, 0, 75, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
 		levelOne = new snOBB(snVec4Set(200, THICKNESS, 50, 0) * 0.5f);
-		transform.createTranslation(snVec4Set(700, 0, 0, 1));
+		transform.setPosition(snVec4Set(700, 0, 0, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
 		levelOne = new snOBB(snVec4Set(200, THICKNESS, 200, 0) * 0.5f);
-		transform.createTranslation(snVec4Set(900, 0, 0, 1));
+		transform.setPosition(snVec4Set(900, 0, 0, 1));
 		actEnvironment->addCollider(levelOne, transform);
 
 		
@@ -1892,9 +1896,6 @@ namespace Devil
 		act->getPhysicMaterial().m_restitution = 0;
 		act->setAngularDampingCoeff(0.5f);
 
-		//snMatrix44f localTranslation;
-		//localTranslation.createTranslation(snVec4Set(0, 0, 0, 1));
-
 		const int PIN_COUNT = 6;
 		float angle = SN_PI / PIN_COUNT;
 		for (int pinId = 0; pinId < PIN_COUNT; ++pinId)
@@ -1904,15 +1905,13 @@ namespace Devil
 			snMatrix44f localRotation;
 			localRotation.createRotationZ(angle * pinId);
 
-			snMatrix44f localTransform;
-			//snMatrixMultiply4(localTranslation, localRotation, localTransform);
-			act->addCollider(xBox, localRotation);
+			snTransform transform(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(0, 0, angle * pinId));
+			act->addCollider(xBox, transform);
 
 			//fill in the space between the pins
 			snOBB* fill = new snOBB(snVec4Set(_length * 0.7f, 4, DEPTH, 0) * 0.5f);
-
-			localRotation.createRotationZ(angle * (pinId + 0.5f));
-			act->addCollider(fill, localRotation);
+			transform.setEulerAngles(snVec4Set(0, 0, angle * (pinId + 0.5f), 0));
+			act->addCollider(fill, transform);
 		}
 
 		act->updateMassAndInertia(10);

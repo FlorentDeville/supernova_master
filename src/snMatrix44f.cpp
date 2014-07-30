@@ -445,6 +445,11 @@ namespace Supernova
 		m_r[3] = snVec4Set(0, 0, 0, 1);
 	}
 
+	snVec snMatrix44f::getScale() const
+	{
+		return snVec4Set(snVec3Norme(m_r[0]), snVec3Norme(m_r[1]), snVec3Norme(m_r[2]), 0);
+	}
+
 	snVec snMatrixTransform3(const snVec& _v, const snMatrix44f& _m)
 	{
 		//compute v.[i] * m[i] = r[i] the res = sum(r[i])

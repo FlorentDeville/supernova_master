@@ -35,6 +35,7 @@
 #include "snCapsule.h"
 #include "snAABB.h"
 #include "snMatrix44f.h"
+#include "snTransform.h"
 using namespace Supernova::Vector;
 
 namespace Supernova
@@ -82,10 +83,10 @@ namespace Supernova
 
 	}
 
-	void snCapsule::setTransform(const snMatrix44f& _transform)
+	void snCapsule::setTransform(const snTransform& _transform)
 	{
-		m_a = snMatrixTransform4(m_localA, _transform);
-		m_b = snMatrixTransform4(m_localB, _transform);
+		m_a = snMatrixTransform4(m_localA, _transform.getLocalToWorld());
+		m_b = snMatrixTransform4(m_localB, _transform.getLocalToWorld());
 	}
 
 	void snCapsule::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const

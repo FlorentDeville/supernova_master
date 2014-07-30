@@ -55,6 +55,7 @@
     <ClInclude Include="inc\snEPASimplex.h" />
     <ClInclude Include="inc\snSweepManager.h" />
     <ClInclude Include="inc\snTimer.h" />
+    <ClInclude Include="inc\snTransform.h" />
     <ClInclude Include="inc\snTypes.h" />
     <ClInclude Include="inc\snVec.h" />
   </ItemGroup>
@@ -93,6 +94,7 @@
     <ClCompile Include="src\snEPASimplex.cpp" />
     <ClCompile Include="src\snSweepManager.cpp" />
     <ClCompile Include="src\snTimer.cpp" />
+    <ClCompile Include="src\snTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="inc\snVec.inl">

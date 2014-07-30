@@ -214,7 +214,7 @@ namespace Supernova
 		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
 			(*i)->m_collider->initialize();
-			m_centerOfMass = m_centerOfMass + snMatrixGetTranslation((*i)->m_localTransform);
+			m_centerOfMass = m_centerOfMass + (*i)->m_localTransform.getPosition();//snMatrixGetTranslation((*i)->m_localTransform);
 		}
 
 		snVec4SetW(m_centerOfMass, 1);
@@ -260,14 +260,14 @@ namespace Supernova
 	//Update the colliders based on the current position and orientation
 	void snActorDynamic::updateCollidersAndAABB()
 	{
-		snMatrix44f globalTransform;
-		snMatrixCreateTransform(m_R, m_x, globalTransform);
+		m_transform.setPosition(m_x);
+		m_transform.setOrientation(m_q);
 
 		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
-			snMatrix44f worldTransform;
-			snMatrixMultiply4((*i)->m_localTransform, globalTransform, worldTransform);
-			(*i)->m_collider->setTransform(worldTransform);
+			snTransform result;
+			snTransformMultiply((*i)->m_localTransform, m_transform, result);
+			(*i)->m_collider->setTransform(result);
 		}
 
 		computeBoundingVolume();
@@ -295,8 +295,7 @@ namespace Supernova
 		m_x = m_x + m_v * _dt;
 
 		//calculate velocity as quaternion using dq/dt = 0.5 * w * q
-		snVec qw;
-		snQuaternionMultiply(m_w, m_q, qw);
+		snVec qw = snQuaternionMultiply(m_w, m_q);
 		qw = qw * 0.5f;
 
 		//calculate orientation using euler integration

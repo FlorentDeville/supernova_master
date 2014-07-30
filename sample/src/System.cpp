@@ -89,7 +89,7 @@ namespace Devil
 		}
 
 		//Start with the first scene
-		//SCENEMGR->createBasicTest();
+		SCENEMGR->createBasicTest();
 		//SCENEMGR->createStacking();
 		//SCENEMGR->createSceneActorsType();
 		//SCENEMGR->createSceneDomino();
@@ -97,7 +97,7 @@ namespace Devil
 		//SCENEMGR->createSceneComposite();
 		//SCENEMGR->createSceneMonkeyBall();
 		//SCENEMGR->createSceneGJK();
-		SCENEMGR->createSceneTerrain();
+		//SCENEMGR->createSceneTerrain();
 
 		return true;
 	}

@@ -89,7 +89,7 @@ namespace Devil
 		for (vector<snColliderContainer*>::const_iterator i = colliders.cbegin(); i != colliders.cend(); ++i)
 		{
 			snMatrix44f worldTransform, temp;
-			snMatrixMultiply4((*i)->m_localTransform, globalTransform, temp);
+			snMatrixMultiply4((*i)->m_localTransform.getLocalToWorld(), globalTransform, temp);
 
 			snMatrix44f scale;
 			IGfxEntity* gfx = 0;
@@ -140,7 +140,7 @@ namespace Devil
 					gfx->render(dxWorldMatrix, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 
 					//prepare the capsule
-					snMatrixMultiply4((*i)->m_localTransform, globalTransform, temp);
+					snMatrixMultiply4((*i)->m_localTransform.getLocalToWorld(), globalTransform, temp);
 					float length = Supernova::Vector::snVec3Norme(capsule->getFirstEndPoint() - capsule->getSecondEndPoint());
 					scale.createScale(Supernova::Vector::snVec4Set(capsule->getRadius(), length, capsule->getRadius(), 1));
 					gfx = GRAPHICS->getCylinder();

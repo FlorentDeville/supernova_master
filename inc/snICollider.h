@@ -48,6 +48,7 @@ namespace Supernova
 	class snColliderPlan;
 	struct snAABB;
 	class snMatrix44f;
+	class snTransform;
 
 	//Type enum to identify the kind of collider
 	enum snEColliderType : unsigned char
@@ -76,7 +77,7 @@ namespace Supernova
 		virtual void initialize() = 0;
 
 		//Move the collider using the given transform matrix.
-		virtual void setTransform(const snMatrix44f& _transform) = 0;
+		virtual void setTransform(const snTransform& _transform) = 0;
 
 		//Compute the inertia tensor in a local frame.
 		virtual void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const = 0;

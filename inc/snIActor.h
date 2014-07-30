@@ -45,6 +45,7 @@ using std::vector;
 #include "snPhysicMaterial.h"
 #include "snAABB.h"
 #include "snCollisionFlag.h"
+#include "snTransform.h"
 
 namespace Supernova
 {
@@ -69,6 +70,8 @@ namespace Supernova
 	protected:
 	
 #pragma region Protected Variables
+
+		snTransform m_transform;
 
 		//name of the actor
 		string m_name;
@@ -125,7 +128,7 @@ namespace Supernova
 		//Add a collider to the actor
 		void addCollider(snICollider* _collider);
 
-		void addCollider(snICollider* _collider, const snMatrix44f& _localTransform);
+		void addCollider(snICollider* _collider, const snTransform& _localTransform);
 
 #pragma region Getter
 

@@ -112,17 +112,14 @@ namespace Supernova
 
 	void snActorStatic::initialize()
 	{
-		//create the transform matrix
-		snMatrix44f translation;
-		translation.createTranslation(m_x);
-		snMatrix44f transform;
-		snMatrixMultiply4(m_R, translation, transform);
+		m_transform.setPosition(m_x);
+		m_transform.setOrientation(m_q);
 
 		//loop through each colliders to initialize them
 		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
 			(*i)->m_collider->initialize();
-			(*i)->m_collider->setTransform(transform);				
+			(*i)->m_collider->setTransform(m_transform);				
 		}
 
 		//compute the AABB

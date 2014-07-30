@@ -39,14 +39,16 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	void snQuaternionMultiply(const snVec& _q1, const snVec& _q2, snVec& _result)
+	snVec snQuaternionMultiply(const snVec& _q1, const snVec& _q2)
 	{
 		snVec q1Crossq2 = snVec3Cross(_q1, _q2);
 		float q1Dotq2 = snVec4GetX(snVec3Dot(_q1, _q2));
 		float resultW = snVec4GetW(_q1) * snVec4GetW(_q2) - q1Dotq2;
 
-		_result = (_q2 * snVec4GetW(_q1)) + (_q1 * snVec4GetW(_q2)) + q1Crossq2;
-		snVec4SetW(_result, resultW);
+		snVec res = (_q2 * snVec4GetW(_q1)) + (_q1 * snVec4GetW(_q2)) + q1Crossq2;
+		snVec4SetW(res, resultW);
+
+		return res;
 	}
 
 	snVec snQuaternionFromEuler(float _x, float _y, float _z)
@@ -61,8 +63,8 @@ namespace Supernova
 		snVec rotationZ = snVec4Set(0, 0, sinf(halfZ), cosf(halfZ));
 
 		snVec res;
-		snQuaternionMultiply(rotationX, rotationY, res);
-		snQuaternionMultiply(res, rotationZ, res);
+		res = snQuaternionMultiply(rotationX, rotationY);
+		res = snQuaternionMultiply(res, rotationZ);
 
 		return res;
 	}

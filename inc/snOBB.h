@@ -44,7 +44,6 @@ namespace Supernova
 	private:
 		static const int VERTEX_COUNT = 8;
 		static const int INDEX_COUNT = 24;
-		static const int FACE_COUNT = 6;
 
 		//Position of the center of the obb.
 		snVec m_pos;
@@ -80,7 +79,7 @@ namespace Supernova
 		//Initialize the collider. Should be called once all the parameters of the collider are set.
 		void initialize();
 
-		void setTransform(const snMatrix44f& _transform);
+		void setTransform(const snTransform& _transform);
 
 		//Compute the inertia tensor in a local frame.
 		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const;

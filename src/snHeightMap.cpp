@@ -36,6 +36,7 @@
 using namespace Supernova::Vector;
 
 #include "snMatrix44f.h"
+#include "snTransform.h"
 
 namespace Supernova
 {
@@ -53,7 +54,7 @@ namespace Supernova
 
 	void snHeightMap::initialize(){}
 
-	void snHeightMap::setTransform(const snMatrix44f& _transform)
+	void snHeightMap::setTransform(const snTransform& _transform)
 	{
 		SN_UNREFERENCED_PARAMETER(_transform);
 	}

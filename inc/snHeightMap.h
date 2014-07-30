@@ -83,7 +83,7 @@ namespace Supernova
 
 		//Move the collider using the given transform matrix.
 		//The height map is only static so this method doesn't do anything.
-		void setTransform(const snMatrix44f& _transform);
+		void setTransform(const snTransform& _transform);
 
 		//Compute the inertia tensor in a local frame.
 		//The height map can only be used in a static actor so this method return a zero matrix.

@@ -41,8 +41,11 @@ namespace Supernova
 {
 	class snMatrix44f;
 
-	//Compute the hamiltonian multiplication of two quaternions : _q1 * _q2
-	void snQuaternionMultiply(const snVec& _q1, const snVec& _q2, snVec& _result);
+	//Compute the hamiltonian multiplication of two quaternions : _q1 * _q2.
+	// _q1 : the first quaternion in the multiplication.
+	// _q2 : the second quaternion of the multiplication.
+	// return : the result of _q1 * _q2.
+	snVec snQuaternionMultiply(const snVec& _q1, const snVec& _q2);
 
 	//Compute a quaternion representing a rotation from euler angles in radians.
 	snVec snQuaternionFromEuler(float _x, float _y, float _z);

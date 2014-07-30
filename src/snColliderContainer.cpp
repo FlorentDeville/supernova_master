@@ -38,7 +38,7 @@
 namespace Supernova
 {
 
-	snColliderContainer::snColliderContainer(snICollider* _collider, const snMatrix44f& _localTransform) : 
+	snColliderContainer::snColliderContainer(snICollider* _collider, const snTransform& _localTransform) :
 		m_collider(_collider), m_localTransform(_localTransform){}
 
 	snColliderContainer::~snColliderContainer()
