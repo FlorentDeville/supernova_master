@@ -36,7 +36,6 @@
 #define SN_HEIGHT_MAP_H
 
 #include "snICollider.h"
-#include "snVec.h"
 #include "snAABB.h"
 
 namespace Supernova

@@ -39,10 +39,9 @@
 
 #include <assert.h>
 
-#include "snCollisionResult.h"
 #include "snMath.h"
-#include "snCollision.h"
 #include "snAABB.h"
+#include "snMatrix44f.h"
 
 using namespace Supernova::Vector;
 

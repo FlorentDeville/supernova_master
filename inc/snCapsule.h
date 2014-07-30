@@ -36,7 +36,6 @@
 
 #include "snICollider.h"
 
-#include "snVec.h"
 namespace Supernova
 {
 	class SN_ALIGN snCapsule : public snICollider

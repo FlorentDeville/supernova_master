@@ -35,6 +35,8 @@
 #include "snHeightMap.h"
 using namespace Supernova::Vector;
 
+#include "snMatrix44f.h"
+
 namespace Supernova
 {
 	snHeightMap::snHeightMap(const snVec& _min, const snVec& _max, float _quadSize, unsigned int _width, unsigned int _length)
@@ -51,9 +53,16 @@ namespace Supernova
 
 	void snHeightMap::initialize(){}
 
-	void snHeightMap::setTransform(const snMatrix44f& _transform){}
+	void snHeightMap::setTransform(const snMatrix44f& _transform)
+	{
+		SN_UNREFERENCED_PARAMETER(_transform);
+	}
 
-	void snHeightMap::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const{}
+	void snHeightMap::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
+	{
+		SN_UNREFERENCED_PARAMETER(_mass);
+		SN_UNREFERENCED_PARAMETER(_inertiaTensor);
+	}
 
 	void snHeightMap::computeAABB(snAABB * const _boundingVolume) const
 	{

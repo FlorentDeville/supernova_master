@@ -34,6 +34,8 @@
 
 #include "snSphere.h"
 #include "snAABB.h"
+#include "snMatrix44f.h"
+
 using namespace Supernova::Vector;
 
 namespace Supernova

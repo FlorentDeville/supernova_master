@@ -35,11 +35,12 @@
 
 #include "snEPASimplex.h"
 #include "snICollider.h"
-using namespace Supernova::Vector;
-
+#include "snMatrix44f.h"
 #include "snClosestPoint.h"
 
 #include <assert.h>
+
+using namespace Supernova::Vector;
 
 namespace Supernova
 {

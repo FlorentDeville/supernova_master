@@ -35,7 +35,8 @@
 #ifndef SN_ICOLLIDER_H
 #define SN_ICOLLIDER_H
 
-#include "snMatrix44f.h"
+
+#include "snVec.h"
 #include "snGlobals.h"
 
 namespace Supernova
@@ -46,6 +47,7 @@ namespace Supernova
 	class snColliderSphere;
 	class snColliderPlan;
 	struct snAABB;
+	class snMatrix44f;
 
 	//Type enum to identify the kind of collider
 	enum snEColliderType : unsigned char
