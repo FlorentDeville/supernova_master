@@ -101,10 +101,9 @@ namespace Supernova
 
 	}
 
-	bool snCollision::queryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const
+	snCollisionResult snCollision::queryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const
 	{
-		snCollisionResult res = invokeQueryTestCollision(_c1, _c2);
-		return res.m_collision;
+		return invokeQueryTestCollision(_c1, _c2);
 	}
 
 	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const
