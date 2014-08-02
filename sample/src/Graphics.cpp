@@ -174,6 +174,7 @@ namespace Devil
 			return;
 
 		m_entityList[_id]->shutdown();
+		delete m_entityList[_id];
 		m_entityList[_id] = 0;
 	}
 
