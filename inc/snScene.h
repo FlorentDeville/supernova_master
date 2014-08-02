@@ -201,6 +201,8 @@ namespace Supernova
 		//Make a sphere cast test
 		bool sphereCast(const snVec& _center, float _radius, const snVec& _direction, float _length);
 
+		bool shapeCast(snICollider& _collider, const snTransform& _origin, const snVec& _direction, float _length, float& _distance) const;
+
 	private:
 		//Apply forces and compute linear and angular velocities
 		void applyForces(float _dt);

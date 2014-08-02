@@ -370,10 +370,10 @@ namespace Supernova
 			for (vector<snColliderContainer*>::iterator c = colliders.begin(); c != colliders.end(); ++c)
 			{
 				//make collision test
-				bool res = m_collisionService.queryTestCollision(&capsule, (*c)->m_collider);
+				snCollisionResult res = m_collisionService.queryTestCollision(&capsule, (*c)->m_collider);
 
 				//If a collision is detected, return true.
-				if (res)
+				if (res.m_collision)
 				{
 					collision = true;
 					break;
@@ -383,6 +383,65 @@ namespace Supernova
 		
 		return collision;
 		
+	}
+
+	bool snScene::shapeCast(snICollider& _collider, const snTransform& _origin, const snVec& _direction, float _length, float& _distance) const
+	{
+		bool result = false;
+		_distance = _length;
+
+		snVec _startPosition = _origin.getPosition();
+		snTransform castTransform = _origin;
+
+		/*while (true)
+		{*/
+			//Move the collider to the correct position.
+			_collider.setTransform(castTransform);
+
+			//Get the bounding volume
+			snAABB bb;
+			_collider.computeAABB(&bb);
+
+			//Make the list of possibly colliding actors using the sweep and prune list
+			vector<snIActor*> pca;
+			m_sweepAndPrune.getPossiblyCollidingActor(bb, pca);
+
+			//Loop through the possibly colliding actor
+			for (vector<snIActor*>::const_iterator i = pca.begin(); i != pca.end(); ++i)
+			{
+				if ((*i)->getName() == "ball")
+					continue;
+
+				vector<snColliderContainer*>& colliders = (*i)->getColliders();
+				for (vector<snColliderContainer*>::const_iterator c = colliders.begin(); c != colliders.end(); ++c)
+				{
+					//make collision test
+					snCollisionResult collisionTestResult = m_collisionService.queryTestCollision(&_collider, (*c)->m_collider);
+					if (collisionTestResult.m_collision) //ignore colliding shapes
+					{
+						continue;
+					}
+
+					//Make distance test
+					snGJK gjk;
+					float currentDistance = -1;
+					bool distanceResult = gjk.distance(_collider, *(*c)->m_collider, currentDistance);
+					if (!distanceResult) //The distance could not be found
+					{
+						continue;
+					}
+
+					if (currentDistance < _distance)
+					{
+						result = true;
+						_distance = currentDistance;
+					}
+					
+				}
+			}
+		//}
+			return result;
+
 	}
 
 	void snScene::applyForces(float _dt)
