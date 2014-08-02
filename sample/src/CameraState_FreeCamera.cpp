@@ -57,13 +57,15 @@ namespace Devil
 		//forward vector
 		XMVECTOR forward = m_camera->getLookAt() - m_camera->getPosition();
 		forward = XMVector3Normalize(forward);
+		forward = XMVectorSetW(forward, 0);
 
 		//left vector
 		XMVECTOR left = XMVector3Cross(forward, m_camera->getUp());
+		left = XMVectorSetW(left, 0);
 
 		//up vector
 		XMVECTOR up = XMVector3Cross(left, forward);
-
+		up = XMVectorSetW(up, 0);
 
 		const int WHEEL_SPEED = 4;
 		float amount = INPUT->getMessage(Devil::Input::InputMessage::MOVE_FORWARD);
@@ -109,7 +111,7 @@ namespace Devil
 		}
 
 		XMVECTOR l = m_camera->getLookAt();
-		XMVectorSetW(l, 1);
+		l = XMVectorSetW(l, 1);
 		m_camera->setLookAt(l);
 	}
 
