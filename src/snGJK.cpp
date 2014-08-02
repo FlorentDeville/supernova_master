@@ -136,17 +136,17 @@ namespace Supernova
 			float cDotD = snVec4GetX(snVec3Dot(direction, candidate));
 
 			const float TOLERANCE = 10e-2f;
-			if (cDotD - aDotD < TOLERANCE) //We didn't get closer with the candidate point so we found the closest points and distance
+			if (cDotD - aDotD < TOLERANCE) //We didn't get closer with the candidate point so we found the closest point and distance
 			{
-				_distance = cDotD;
+				_distance = fabsf(cDotD);
 				return true;
 			}
 			
 			//We got closer so replace the farthest point with the candidate
 			unsigned int farthestVertexId = 0;
-			if (snVec3SquaredNorme(simplex[0]) > snVec3SquaredNorme(simplex[1]))
+			if (snVec3SquaredNorme(simplex[1]) > snVec3SquaredNorme(simplex[0]))
 				farthestVertexId = 1;
-			if (snVec3SquaredNorme(simplex[1]) > snVec3SquaredNorme(simplex[2]))
+			if (snVec3SquaredNorme(simplex[2]) > snVec3SquaredNorme(simplex[1]))
 				farthestVertexId = 2;
 
 			simplex[farthestVertexId] = candidate;
