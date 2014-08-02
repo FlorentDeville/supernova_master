@@ -37,7 +37,7 @@
     <ClInclude Include="inc\snHingeConstraint.h" />
     <ClInclude Include="inc\snIActor.h" />
     <ClInclude Include="inc\snPointToPointConstraint.h" />
-    <ClInclude Include="inc\snFactory.h" />
+    <ClInclude Include="inc\snWorld.h" />
     <ClInclude Include="inc\snFeatureClipping.h" />
     <ClInclude Include="inc\snFixedConstraint.h" />
     <ClInclude Include="inc\snFrictionConstraint.h" />
@@ -81,7 +81,7 @@
     <ClCompile Include="src\snHingeConstraint.cpp" />
     <ClCompile Include="src\snIActor.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
-    <ClCompile Include="src\snFactory.cpp" />
+    <ClCompile Include="src\snWorld.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />
     <ClCompile Include="src\snFixedConstraint.cpp" />
     <ClCompile Include="src\snFrictionConstraint.cpp" />

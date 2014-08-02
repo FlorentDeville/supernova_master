@@ -43,9 +43,10 @@ using namespace DirectX;
 #include "snIActor.h"
 using Supernova::snIActor;
 
-#include "snFactory.h"
+#include "snWorld.h"
 #include "snScene.h"
 #include "snDebugger.h"
+#include "snSphere.h"
 using namespace Supernova;
 
 namespace Devil
@@ -104,10 +105,14 @@ namespace Devil
 		snVec dir = cameraPosition - targetPosition;
 		float length = Vector::snVec3Norme(dir);
 		Vector::snVec3Normalize(dir);
-		bool res = SUPERNOVA->getScene(0)->sphereCast(targetPosition, 0.5f, dir, length);
+
+		snSphere s(1);
+		snTransform sphereOrigin(targetPosition);
+		float distance = 0;
+		bool res = false;//SUPERNOVA->getScene(0)->shapeCast(s, sphereOrigin, dir, length, distance);//SUPERNOVA->getScene(0)->sphereCast(targetPosition, 0.5f, dir, length);
 		if (res)
 		{
-			DEBUGGER->setWatchExpression(L"Sphere Cast", L"true");
+			DEBUGGER->setWatchExpression(L"Sphere Cast", std::to_wstring(distance));
 		}
 		else
 		{

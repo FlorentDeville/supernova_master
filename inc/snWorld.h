@@ -32,8 +32,8 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_FACTORY_H
-#define SN_FACTORY_H
+#ifndef SN_WORLD_H
+#define SN_WORLD_H
 
 #include "snGlobals.h"
 
@@ -46,26 +46,26 @@ namespace Supernova
 	class snScene;
 
 	//Main entry point of Supernova.
-	class SN_ALIGN snFactory
+	class SN_ALIGN snWorld
 	{
 	private:
 
 		//Singleton
-		static snFactory* m_instance;
+		static snWorld* m_instance;
 
 		//List of scenes.
 		vector<snScene*> m_scenes;
 
 	private:
 		//Constructor
-		snFactory();
+		snWorld();
 
 		//Destructor
-		virtual ~snFactory();
+		virtual ~snWorld();
 
 	public:
 		//Return the unique instance of the snFactory.
-		static snFactory* getInstance();
+		static snWorld* getInstance();
 
 		//Initialize the factory
 		bool initialize();
@@ -96,7 +96,7 @@ namespace Supernova
 	};
 
 //Provide quick access to the factory.
-#define SUPERNOVA ::Supernova::snFactory::getInstance()
+#define SUPERNOVA ::Supernova::snWorld::getInstance()
 
 }
-#endif //SN_FACTORY_H
+#endif //ifndef SN_WORLD_H

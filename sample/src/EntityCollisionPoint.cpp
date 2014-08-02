@@ -6,7 +6,7 @@
 #include "GfxEntitySphere.h"
 
 #include "snScene.h"
-#include "snFactory.h"
+#include "snWorld.h"
 
 using namespace DirectX;
 

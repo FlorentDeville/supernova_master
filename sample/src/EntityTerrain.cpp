@@ -46,7 +46,7 @@
 #include "TerrainCollider.h"
 
 #include "snAABB.h"
-#include "snFactory.h"
+#include "snWorld.h"
 #include "snScene.h"
 #include "snActorStatic.h"
 using namespace Supernova;

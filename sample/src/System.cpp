@@ -22,7 +22,7 @@ using namespace Devil::Input::Device;
 
 #include "snScene.h"
 #include "snActorDynamic.h"
-#include "snFactory.h"
+#include "snWorld.h"
 #include "snQuaternion.h"
 #include "snFixedConstraint.h"
 #include "snDebugger.h"

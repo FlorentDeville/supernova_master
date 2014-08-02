@@ -34,7 +34,7 @@
 
 #include "EntityBoxLauncher.h"
 
-#include "snFactory.h"
+#include "snWorld.h"
 #include "snScene.h"
 #include "snVec.h"
 #include "snActorDynamic.h"

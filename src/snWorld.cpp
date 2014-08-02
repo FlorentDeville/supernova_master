@@ -31,7 +31,7 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#include "snFactory.h"
+#include "snWorld.h"
 #include "snScene.h"
 
 #ifdef SN_DEBUGGER
@@ -40,32 +40,32 @@
 
 namespace Supernova
 {
-	snFactory* snFactory::m_instance = 0;
+	snWorld* snWorld::m_instance = 0;
 
-	snFactory::snFactory()
+	snWorld::snWorld()
 	{
 
 	}
 
-	snFactory::~snFactory()
+	snWorld::~snWorld()
 	{
 		deleteAllScenes();
 	}
 
-	snFactory* snFactory::getInstance()
+	snWorld* snWorld::getInstance()
 	{
 		if (m_instance == 0)
-			m_instance = new snFactory();
+			m_instance = new snWorld();
 
 		return m_instance;
 	}
 
-	bool snFactory::initialize()
+	bool snWorld::initialize()
 	{
 		return true;
 	}
 
-	bool snFactory::clean()
+	bool snWorld::clean()
 	{
 		if (m_instance != 0)
 		{
@@ -81,7 +81,7 @@ namespace Supernova
 		return true;
 	}
 
-	void snFactory::createScene(snScene** _newScene, int& _sceneId)
+	void snWorld::createScene(snScene** _newScene, int& _sceneId)
 	{
 		//create the new scene
 		*_newScene = new snScene();
@@ -104,7 +104,7 @@ namespace Supernova
 		return;
 	}
 
-	void snFactory::deleteScene(unsigned int _sceneId)
+	void snWorld::deleteScene(unsigned int _sceneId)
 	{
 		//the id is out of range
 		if (_sceneId >= m_scenes.size())
@@ -122,7 +122,7 @@ namespace Supernova
 		m_scenes[_sceneId] = 0;
 	}
 
-	void snFactory::deleteAllScenes()
+	void snWorld::deleteAllScenes()
 	{
 		for (vector<snScene*>::iterator i = m_scenes.begin(); i != m_scenes.end(); ++i)
 		{
@@ -136,7 +136,7 @@ namespace Supernova
 		m_scenes.clear();
 	}
 
-	void snFactory::updateAllScenes(float _dt)
+	void snWorld::updateAllScenes(float _dt)
 	{
 		for (vector<snScene*>::iterator i = m_scenes.begin(); i != m_scenes.end(); ++i)
 		{
@@ -147,7 +147,7 @@ namespace Supernova
 		}
 	}
 
-	snScene* snFactory::getScene(unsigned int _sceneId)
+	snScene* snWorld::getScene(unsigned int _sceneId)
 	{
 		if (_sceneId >= m_scenes.size())
 			return 0;
@@ -155,12 +155,12 @@ namespace Supernova
 		return m_scenes[_sceneId];
 	}
 
-	void* snFactory::operator new(size_t _count)
+	void* snWorld::operator new(size_t _count)
 	{
 		return _aligned_malloc(_count, SN_ALIGN_SIZE);
 	}
 
-	void snFactory::operator delete(void* _p)
+	void snWorld::operator delete(void* _p)
 	{
 		_aligned_free(_p);
 	}

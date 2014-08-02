@@ -39,7 +39,6 @@
     <ClInclude Include="inc\snICollider.h">
       <Filter>Collision\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snFactory.h" />
     <ClInclude Include="inc\snGlobals.h">
       <Filter>Tools</Filter>
     </ClInclude>
@@ -172,9 +171,9 @@
     <ClInclude Include="inc\snTransform.h">
       <Filter>Tools</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snWorld.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snMath.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
@@ -280,6 +279,7 @@
     <ClCompile Include="src\snTransform.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
+    <ClCompile Include="src\snWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="inc\snVec.inl">

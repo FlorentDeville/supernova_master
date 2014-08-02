@@ -31,7 +31,6 @@
     <ClInclude Include="inc\snEPAEdge.h" />
     <ClInclude Include="inc\snEPASimplex.h" />
     <ClInclude Include="inc\snEPATriangle.h" />
-    <ClInclude Include="inc\snFactory.h" />
     <ClInclude Include="inc\snFeatureClipping.h" />
     <ClInclude Include="inc\snFixedConstraint.h" />
     <ClInclude Include="inc\snFrictionConstraint.h" />
@@ -56,6 +55,7 @@
     <ClInclude Include="inc\snTimer.h" />
     <ClInclude Include="inc\snTypes.h" />
     <ClInclude Include="inc\snVec.h" />
+    <ClInclude Include="inc\snWorld.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snAABB.cpp" />
@@ -74,7 +74,6 @@
     <ClCompile Include="src\snEPAEdge.cpp" />
     <ClCompile Include="src\snEPASimplex.cpp" />
     <ClCompile Include="src\snEPATriangle.cpp" />
-    <ClCompile Include="src\snFactory.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />
     <ClCompile Include="src\snFixedConstraint.cpp" />
     <ClCompile Include="src\snFrictionConstraint.cpp" />
@@ -93,6 +92,7 @@
     <ClCompile Include="src\snSphere.cpp" />
     <ClCompile Include="src\snSweepManager.cpp" />
     <ClCompile Include="src\snTimer.cpp" />
+    <ClCompile Include="src\snWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="inc\snVec.inl">

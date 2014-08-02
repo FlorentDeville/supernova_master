@@ -34,7 +34,7 @@
 
 #include "WorldHUD.h"
 #include "Graphics.h"
-#include "snFactory.h"
+#include "snWorld.h"
 #include "snScene.h"
 #include "Input.h"
 
