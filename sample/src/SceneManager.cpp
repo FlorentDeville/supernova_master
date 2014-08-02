@@ -195,9 +195,7 @@ namespace Devil
 			snVec pos = snVec4Set(0, groundHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			_ASSERTE(_CrtCheckMemory());
 			act->setName("base");
 			act->setPosition(pos);
@@ -226,9 +224,7 @@ namespace Devil
 			snVec pos = snVec4Set(width * 0.5f, blockOneHeight + height * 0.5f + 0, 0, 1);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("platform");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -256,9 +252,7 @@ namespace Devil
 			snVec pos = snVec4Set(2, platformHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("two");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -285,9 +279,7 @@ namespace Devil
 			snVec pos = snVec4Set(2, blockTwoHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("three");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -315,9 +307,7 @@ namespace Devil
 			snVec pos = snVec4Set(11, platformHeight + height * 0.5f + 25, 0, 1);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("dynamic");
 			act->setPosition(pos);
 			float rot = 3.14f * 0.25f;
@@ -360,10 +350,8 @@ namespace Devil
 			float depth = 5;
 
 			//create actor
-			snActorStatic* act = 0;
-			int actorId = -1;
 			snVec position = snVec4Set(0, 101, -80, 1);
-			scene->createActorStatic(&act, actorId, position, snVec4Set(0, 0, 0, 1));
+			snActorStatic* act = scene->createActorStatic(position, snVec4Set(0, 0, 0, 1));
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
@@ -393,9 +381,7 @@ namespace Devil
 				snVec pos = snVec4Set((MAX_ROW - row) * width * 0.5f + (width + space) * i + xOffset, groundHeight + height * 0.5f + height * (MAX_ROW - row), 0, 1);
 
 				//create actor
-				snActorDynamic* act = 0;
-				int actorId = -1;
-				scene->createActorDynamic(&act, actorId);
+				snActorDynamic* act = scene->createActorDynamic();
 
 				string strRow = std::to_string(row);
 				string strI = std::to_string(i);
@@ -440,9 +426,7 @@ namespace Devil
 			float depth = 5;
 
 			//create actor
-			snActorStatic* act = 0;
-			int actorId = -1;
-			scene->createActorStatic(&act, actorId, snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			snActorStatic* act = scene->createActorStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
 
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
@@ -469,9 +453,7 @@ namespace Devil
 			snVec pos = snVec4Set(10, top, 0, 1);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("d0");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -507,9 +489,7 @@ namespace Devil
 			snVec pos = snVec4Set(10, top, 0, 1);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("d1");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -556,12 +536,8 @@ namespace Devil
 			float height = 200;
 			float depth = 2;
 
-			//create actor			
-			snActorStatic* 	act = 0;
-			
-			int actorId = -1;
-			
-			scene->createActorStatic(&act, actorId, snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			//create actor
+			snActorStatic* act = scene->createActorStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
@@ -605,9 +581,7 @@ namespace Devil
 			float depth = 100;
 
 			//create actor
-			snActorStatic* act = 0;
-			int actorId = -1;
-			scene->createActorStatic(&act, actorId, snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
+			snActorStatic* act = scene->createActorStatic(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
 			act->setName("slope");
 			act->getPhysicMaterial().m_restitution = 1.f;
 			act->getPhysicMaterial().m_friction = 1.f;
@@ -637,9 +611,7 @@ namespace Devil
 		//full friction, no restitution
 		{
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("full friction");
 			act->setPosition(snVec4Set(-10, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
@@ -663,9 +635,7 @@ namespace Devil
 		//no friction, no restitution
 		{
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("no friction");
 			act->setPosition(snVec4Set(10, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
@@ -689,9 +659,7 @@ namespace Devil
 		//half friction, no restitution
 		{
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("half friction");
 			act->setPosition(snVec4Set(0, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
@@ -733,9 +701,7 @@ namespace Devil
 			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 0);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("d0");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -779,9 +745,7 @@ namespace Devil
 			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 0);
 
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = scene->createActorDynamic();
 			act->setName("d0");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -833,9 +797,7 @@ namespace Devil
 			float depth = 40;
 
 			//create the actor
-			snActorDynamic* kin = 0;
-			int actId = -1;
-			scene->createActorDynamic(&kin, actId);
+			snActorDynamic* kin = scene->createActorDynamic();
 			kin->setIsKinematic(true);
 			kin->setName("kinematic");
 			kin->setPosition(snVec4Set(-15, 100, 0, 1));
@@ -877,9 +839,7 @@ namespace Devil
 			float depth = 5;
 
 			//create the actor
-			snActorDynamic* dyn = 0;
-			int actId = -1;
-			scene->createActorDynamic(&dyn, actId);
+			snActorDynamic* dyn = scene->createActorDynamic();
 			dyn->setName("dynamic");
 			dyn->setPosition(snVec4Set(-2, 103.5, 0, 1));
 			dyn->getPhysicMaterial().m_friction = 1.f;
@@ -910,9 +870,7 @@ namespace Devil
 			float depth = 25;
 
 			//create the actor
-			snActorStatic* sta = 0;
-			int actId = -1;
-			scene->createActorStatic(&sta, actId, snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			snActorStatic* sta = scene->createActorStatic(snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
 			sta->setName("static right wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
@@ -941,9 +899,7 @@ namespace Devil
 			float depth = 25;
 
 			//create the actor
-			snActorStatic* sta = 0;
-			int actId = -1;
-			scene->createActorStatic(&sta, actId, snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			snActorStatic* sta = scene->createActorStatic(snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
 			sta->setName("static left wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
@@ -1015,9 +971,7 @@ namespace Devil
 		{
 			//create actor
 			snVec dominoSize = snVec4Set(5, 10, 1, 0);
-			snActorDynamic* actor = 0;
-			int actorId = -1;
-			SUPERNOVA->getScene(0)->createActorDynamic(&actor, actorId);
+			snActorDynamic* actor = SUPERNOVA->getScene(0)->createActorDynamic();
 			actor->setPosition(_frenet[3]);
 
 			//compute its orientation
@@ -1051,7 +1005,7 @@ namespace Devil
 			colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
 
 			//create entity
-			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(dominoSize), snVec4GetY(dominoSize), snVec4GetZ(dominoSize)), colors[actorId % COLOR_COUNT]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(dominoSize), snVec4GetY(dominoSize), snVec4GetZ(dominoSize)), colors[(int)actor % COLOR_COUNT]);
 			box->setActor(actor);
 		});
 
@@ -1064,9 +1018,7 @@ namespace Devil
 			snVec hammerPosition = snVec4Set(0, snVec4GetY(dominoSize), -120, 0) + hammerOffset;
 			float constraintDistance = snVec3Norme(constraintOrigin - hammerPosition);
 
-			snActorDynamic* actor = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&actor, actorId);
+			snActorDynamic* actor = scene->createActorDynamic();
 			actor->setPosition(hammerPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
@@ -1090,11 +1042,9 @@ namespace Devil
 
 		//create kinematic component holding the hammer
 		{
-			snActorDynamic* actor = 0;
-			int actorId = -1;
 			snVec startPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -130, 1);
 			snVec endPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -150, 1);
-			scene->createActorDynamic(&actor, actorId);
+			snActorDynamic* actor = scene->createActorDynamic();
 			actor->setPosition(startPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
@@ -1127,9 +1077,7 @@ namespace Devil
 
 		//create trigger
 		{
-			snActorDynamic* actor = 0;
-			int actorId = -1;
-			scene->createActorDynamic(&actor, actorId);
+			snActorDynamic* actor = scene->createActorDynamic();
 			actor->setPosition(snVec4Set(0, 100, -130, 1));
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
@@ -1207,10 +1155,7 @@ namespace Devil
 
 		position = position + snVec4Set(0, distance, 0, 0);
 
-		snActorDynamic* act = 0;
-		int actorId = -1;
-
-		scene->createActorDynamic(&act, actorId);
+		snActorDynamic* act = scene->createActorDynamic();
 
 		act->setName("composite");
 		//act->setPosition(snVec4Set(0, 20, 0, 1));
@@ -1312,9 +1257,7 @@ namespace Devil
 		WORLD->getCamera()->setPosition(snVec4Set(10, 120, -180, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(10, 30, 0, 1));
 
-		snActorDynamic* actEnvironment = 0;
-		int actEnvironmentId = -1;
-		scene->createActorDynamic(&actEnvironment, actEnvironmentId);
+		snActorDynamic* actEnvironment = scene->createActorDynamic();
 		actEnvironment->setName("level");
 
 		const float THICKNESS = 20;
@@ -1358,9 +1301,7 @@ namespace Devil
 		entity->setTexture(GRAPHICS->getTexChecker());
 
 		//Create ball
-		snActorDynamic* ball = 0;
-		int actorBallId = -1;
-		scene->createActorDynamic(&ball, actorBallId);
+		snActorDynamic* ball = scene->createActorDynamic();
 		float sphereRadius = 10;
 		snSphere* sphere = new snSphere(sphereRadius);
 		ball->addCollider(sphere);
@@ -1404,15 +1345,13 @@ namespace Devil
 		//entityBox->setWireframe(true);
 
 		//create cylinder
-		snActorDynamic* actCapsule = 0;
-		int cylinderId = 0;
 
 		const unsigned int SHAPE_COUNT = 10;
 		snVec offsetPosition = snVec4Set(0, 20, 0, 0);
 		float orientationOffset = 2 * 3.14f * (1.f / SHAPE_COUNT);
 		for (unsigned int i = 0; i < SHAPE_COUNT; ++i)
 		{
-			scene->createActorDynamic(&actCapsule, cylinderId);
+			snActorDynamic* actCapsule = scene->createActorDynamic();
 			snCapsule* colCapsule = new snCapsule(10, 5);
 			/*actCapsule->setPosition(snVec4Set(0, 15, 0, 1));
 			actCapsule->setOrientation(snQuaternionFromEuler( 0, 0.f, 0));*/
@@ -1539,10 +1478,7 @@ namespace Devil
 		for (int i = 0; i < SPHERE_COUNT; ++i)
 		{
 			//create a dynamic sphere
-			snActorDynamic* sphere;
-			int id = -1;
-			
-			scene->createActorDynamic(&sphere, id);
+			snActorDynamic* sphere = scene->createActorDynamic();
 			snICollider* collider = 0;
 			int mod = i % 3;
 			if (mod == 0)
@@ -1578,10 +1514,8 @@ namespace Devil
 		float depth = 500;
 
 		//create actor
-		snActorStatic* act = 0;
-		int actorId = -1;
 		snVec position = snVec4Set(0, -1, 0, 1);
-		_scene->createActorStatic(&act, actorId, position, snVec4Set(0, 0, 0, 1));
+		snActorStatic* act = _scene->createActorStatic(position, snVec4Set(0, 0, 0, 1));
 		act->setName("ground");
 		act->getPhysicMaterial().m_restitution = _restitution;
 		act->getPhysicMaterial().m_friction = _friction;
@@ -1656,9 +1590,7 @@ namespace Devil
 		for (int i = 0; i < pillarCount; ++i)
 		{
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			_scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = _scene->createActorDynamic();
 
 			snVec pos = pillarPosition[i] + _origin;
 			act->setName("pillar1");
@@ -1676,7 +1608,7 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(pillarWidth, pillarHeight, pillarDepth), colors[actorId % colorCount]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(pillarWidth, pillarHeight, pillarDepth), colors[(int)act % colorCount]);
 			box->setActor(act);
 		}
 
@@ -1703,9 +1635,7 @@ namespace Devil
 		for (int i = 0; i < pillarCount; ++i)
 		{
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-			_scene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = _scene->createActorDynamic();
 
 			snVec pos = bedPosition[i] + _origin;
 			act->setName("bed");
@@ -1722,7 +1652,7 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(bedSize[i]), snVec4GetY(bedSize[i]), snVec4GetZ(bedSize[i])), colors[actorId % colorCount]);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(bedSize[i]), snVec4GetY(bedSize[i]), snVec4GetZ(bedSize[i])), colors[(int)act % colorCount]);
 			box->setActor(act);
 		}
 
@@ -1760,9 +1690,7 @@ namespace Devil
 
 		//create left wall 
 		{
-			snActorStatic* stat = 0;
-			int actorId = -1;
-			scene->createActorStatic(&stat, actorId, snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+			snActorStatic* stat = scene->createActorStatic(snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(10, 500, 500, 0) * 0.5f);
@@ -1790,9 +1718,7 @@ namespace Devil
 
 		//create right wall 
 		{
-			snActorStatic* stat = 0;
-			int actorId = -1;
-			scene->createActorStatic(&stat, actorId, snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+			snActorStatic* stat = scene->createActorStatic(snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(10, 500, 500, 0) * 0.5f);
@@ -1820,9 +1746,7 @@ namespace Devil
 
 		//create front wall 
 		{
-			snActorStatic* stat = 0;
-			int actorId = -1;
-			scene->createActorStatic(&stat, actorId, snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
+			snActorStatic* stat = scene->createActorStatic(snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(500, 500, 10, 0) * 0.5f);
@@ -1850,9 +1774,7 @@ namespace Devil
 
 		//create back wall 
 		{
-			snActorStatic* stat = 0;
-			int actorId = -1;
-			scene->createActorStatic(&stat, actorId, snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
+			snActorStatic* stat = scene->createActorStatic(snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(500, 500, 10, 0) * 0.5f);
@@ -1884,11 +1806,8 @@ namespace Devil
 		const float DEPTH = 5;
 		const float THICKNESS = 2.8f;
 
-		snActorDynamic* act = 0;
-		int actorId = -1;
-
 		snScene* scene = SUPERNOVA->getScene(0);
-		scene->createActorDynamic(&act, actorId);
+		snActorDynamic* act = scene->createActorDynamic();
 
 		act->setName("composite");
 		act->setPosition(_position);

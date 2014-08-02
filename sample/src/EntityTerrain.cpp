@@ -151,8 +151,8 @@ namespace Devil
 						//delete the loaded tile
 						unsigned int gfxId = std::get<1>(m_loadedTiles[loadedTileId]);
 						GRAPHICS->releaseEntity(gfxId);
-						unsigned int physicId = std::get<2>(m_loadedTiles[loadedTileId]);
-						SUPERNOVA->getScene(0)->deleteActor(physicId);
+						snActorStatic* actor = std::get<2>(m_loadedTiles[loadedTileId]);
+						SUPERNOVA->getScene(0)->deleteActor(actor);
 						m_loadedTiles.erase(m_loadedTiles.begin() + loadedTileId);
 					}
 				}
@@ -208,10 +208,8 @@ namespace Devil
 				snVec4SetY(boundingVolume.m_max, data.m_max);
 
 				//create the physic height map
-				snActorStatic* snMap;
-				int id = -1;
 				snScene* scene = SUPERNOVA->getScene(0);
-				scene->createActorStatic(&snMap, id, snVec4Set(0), snVec4Set(0));
+				snActorStatic* snMap = scene->createActorStatic(snVec4Set(0), snVec4Set(0));
 				TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, m_description.getQuadSize(),
 					data.m_quadsPerRow, data.m_quadsPerRow, data.m_heights);
 				snMap->addCollider(collider);
@@ -222,7 +220,7 @@ namespace Devil
 				snMap->initialize();
 
 				//Save information about the tile
-				m_loadedTiles.push_back(TileContainer(_tile, gfxId, id));
+				m_loadedTiles.push_back(TileContainer(_tile, gfxId, snMap));
 			}
 		}
 	}

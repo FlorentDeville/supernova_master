@@ -68,11 +68,8 @@ namespace Devil
 			float depth = 5;
 			
 			//create actor
-			snActorDynamic* act = 0;
-			int actorId = -1;
-
 			snScene* myScene = SUPERNOVA->getScene(0);
-			myScene->createActorDynamic(&act, actorId);
+			snActorDynamic* act = myScene->createActorDynamic();
 
 			act->setName("projectile");
 			

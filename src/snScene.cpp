@@ -90,41 +90,42 @@ namespace Supernova
 		clearScene();
 	}
 
-	void snScene::createActorDynamic(snActorDynamic** _newActor, int& _actorId)
+	snActorDynamic* snScene::createActorDynamic()
 	{
 		//create the actor
-		*_newActor = new snActorDynamic();
+		snActorDynamic* newActor = new snActorDynamic();
 
-		_actorId = attachActor(*_newActor);
+		attachActor(newActor);
+		return newActor;
 	}
 
-	void snScene::createActorStatic(snActorStatic** _newActor, int& _actorId, const snVec& _position, const snVec& _orientation)
+	snActorStatic* snScene::createActorStatic(const snVec& _position, const snVec& _orientation)
 	{
 		//create the actor
-		*_newActor = new snActorStatic(_position, _orientation);
+		snActorStatic* newActor = new snActorStatic(_position, _orientation);
 
 		//attach the actor to the current scene
-		_actorId = attachActor(*_newActor);
+		attachActor(newActor);
+		return newActor;
 	}
 
-	void snScene::deleteActor(unsigned int _actorId)
+	void snScene::deleteActor(snIActor* const _actor)
 	{
-		//id out of range
-		if (_actorId >= m_actors.size())
-			return;
+		//remove actor from the broad phase
+		m_sweepAndPrune.removeActor(_actor);
 
-		//actor already deleted
-		if (m_actors[_actorId] == 0)
-			return;
-
-		//delete actor
-		m_sweepAndPrune.removeActor(m_actors[_actorId]);
-		delete m_actors[_actorId];
-		m_actors[_actorId] = 0;
-
+		//delete actor from the scene
+		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		{
+			if ((*i) == _actor)
+			{
+				delete *i;
+				*i = 0;
+			}
+		}
 	}
 
-	int snScene::attachActor(snIActor* _actor)
+	int snScene::attachActor(snIActor* const _actor)
 	{
 		//try to add it to the vector
 		unsigned int id = 0;
@@ -152,21 +153,15 @@ namespace Supernova
 		return id;
 	}
 
-	void snScene::removeActor(unsigned int _actorId)
+	void snScene::removeActor(snIActor const * const _actor)
 	{
-		if (m_actors.size() <= _actorId)
-			return;
-
-		m_actors[_actorId] = 0;
-	}
-
-	snIActor* snScene::getActor(unsigned int _actorId)
-	{
-		//id out of range
-		if (_actorId >= m_actors.size())
-			return 0;
-
-		return m_actors[_actorId];
+		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		{
+			if ((*i) == _actor)
+			{
+				(*i) = 0;
+			}
+		}
 	}
 
 	snIConstraint* snScene::getConstraint(unsigned int _constraintId)

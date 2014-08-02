@@ -131,22 +131,23 @@ namespace Supernova
 		virtual ~snScene();
 
 		//Create a new actor and add it to the scene.
-		void createActorDynamic(snActorDynamic** _newActor, int& _actorId);
+		// return : a pointer to the newly created dynamic actor.
+		snActorDynamic* createActorDynamic();
 
-		//Create a new static actor.
-		void createActorStatic(snActorStatic** _newActor, int& _actorId, const snVec& _position, const snVec& _orientation);
+		//Create a new static actor and add it to the scene.
+		// _position : the position of the static actor.
+		// _orientation : the orientation as a quaternion of the static actor.
+		// return : a pointer to the newly created static actor.
+		snActorStatic* createActorStatic(const snVec& _position, const snVec& _orientation);
 
 		//Delete an actor
-		void deleteActor(unsigned int _actorId);
+		void deleteActor(snIActor* const _actor);
 
 		//Add the actor to the scene.
-		int attachActor(snIActor* _actor);
+		int attachActor(snIActor* const _actor);
 
 		//Remove the actor from the scene
-		void removeActor(unsigned int _actorId);
-
-		//Get an actor from its id. Returns 0 if the actor can't be found.
-		snIActor* getActor(unsigned int _actorId);
+		void removeActor(snIActor const * const _actor);
 
 		//Get a constraint from its id.
 		snIConstraint* getConstraint(unsigned int _constraintId);

@@ -50,6 +50,12 @@ using std::vector;
 #include "TileId.h"
 using namespace Devil::Terrain;
 
+namespace Supernova
+{
+	class snActorStatic;
+}
+using Supernova::snActorStatic;
+
 namespace Devil
 {
 	class IGfxEntity;
@@ -61,7 +67,7 @@ namespace Devil
 			//The first element is the TileId.
 			//The second element is the graphic id.
 			//The third element is the physic id.
-			typedef tuple<TileId, unsigned int, unsigned int> TileContainer;
+			typedef tuple<TileId, unsigned int, snActorStatic*> TileContainer;
 
 			//Responsible of the terrain. It updates, streams, displays the terrain.
 			class EntityTerrain : public IWorldEntity
