@@ -43,9 +43,6 @@ namespace Supernova
 {
 	//forward declarations of derived types.
 	class snCollisionResult;
-	class snColliderBox;
-	class snColliderSphere;
-	class snColliderPlan;
 	struct snAABB;
 	class snMatrix44f;
 	class snTransform;

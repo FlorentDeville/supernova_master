@@ -175,10 +175,10 @@ namespace Supernova
 	}
 
 	//Find all the possibly colliding actors for a given aabb.
-	void snSweepManager::getPossiblyCollidingActor(const snAABB& _aabb, vector<snIActor*>& _pca)
+	void snSweepManager::getPossiblyCollidingActor(const snAABB& _aabb, vector<snIActor*>& _pca) const
 	{
 		//loop through each actor in the scene using the sweep list
-		for (list<snIActor*>::iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
+		for (list<snIActor*>::const_iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
 		{
 			//ignore inactive actors
 			if (!(*i)->getIsActive())

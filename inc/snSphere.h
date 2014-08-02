@@ -67,6 +67,16 @@ namespace Supernova
 		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const;
 
 		void computeAABB(snAABB * const _boundingVolume) const;
+
+		//////////////////////////////////////////////////////////////////////
+		// Interface for GJK algorithm										//
+		//////////////////////////////////////////////////////////////////////
+
+		//Return the farthest point in the direction provided as parameter.
+		snVec support(const snVec& _direction) const;
+
+		//Return any point making the collider
+		snVec anyPoint() const;
 	};
 }
 

@@ -81,4 +81,14 @@ namespace Supernova
 		_boundingVolume->m_max = m_center + vecRadius;
 		_boundingVolume->m_min = m_center - vecRadius;
 	}
+
+	snVec snSphere::support(const snVec& _direction) const
+	{
+		return m_center + _direction * m_radius;
+	}
+
+	snVec snSphere::anyPoint() const
+	{
+		return m_center;
+	}
 }

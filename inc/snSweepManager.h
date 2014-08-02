@@ -112,7 +112,7 @@ namespace Supernova
 		void postBroadPhase();
 
 		//For a given aabb, use the seep list to find all the possibly colliding actors
-		void getPossiblyCollidingActor(const snAABB& _aabb, vector<snIActor*>& _pca);
+		void getPossiblyCollidingActor(const snAABB& _aabb, vector<snIActor*>& _pca) const;
 	};
 }
 #endif //ifndef SN_SWEEP_MANAGER_H
