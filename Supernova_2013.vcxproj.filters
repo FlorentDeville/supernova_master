@@ -172,6 +172,7 @@
       <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="inc\snWorld.h" />
+    <ClInclude Include="inc\snObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">
@@ -280,6 +281,7 @@
       <Filter>Tools</Filter>
     </ClCompile>
     <ClCompile Include="src\snWorld.cpp" />
+    <ClCompile Include="src\snObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="inc\snVec.inl">

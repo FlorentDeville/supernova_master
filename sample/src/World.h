@@ -43,6 +43,9 @@
 #include <string>
 using std::string;
 
+#include "snWorld.h"
+using Supernova::snhScene;
+
 namespace Supernova
 {
 	class snFixedConstraint;
@@ -97,6 +100,9 @@ namespace Devil
 
 		//Flag to indicate if we are rendering in wireframe of in solid mode.
 		bool m_wireframe;
+
+		//handle to the physics scene.
+		snhScene m_physicsScene;
 
 	public:
 		virtual ~World();
@@ -153,8 +159,14 @@ namespace Devil
 		void setPhysicsFPS(int _physicsFPS) const;
 		void setGraphicsFPS(int _graphicsFPS) const;
 
+		//Set the physic scene
+		void setPhysicsScene(snhScene _hScene);
+
 		//Return the time elapsed since the last update
 		float getDeltaTime() const;
+
+		//Return a handle to the physic scene.
+		snhScene getPhysicsScene() const;
 
 	private:
 		World();

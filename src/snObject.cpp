@@ -31,101 +31,15 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-
-#ifndef SCENE_MANAGER_H
-#define SCENE_MANAGER_H
-
-#include <malloc.h>
-
+#include "snObject.h"
 #include "snWorld.h"
-#include "snCollisionMode.h"
-#include "snVec.h"
-using namespace Supernova;
 
-
-#include <DirectXMath.h>
-using DirectX::XMFLOAT4;
-
-#include <string>
-using std::wstring;
-
-namespace Devil
+namespace Supernova
 {
-	class IComponent;
-	class EntityComposite;
+	snObject::snObject(snObjectId _id) : m_id(_id){}
 
-	class SceneManager
-	{
-	private:
-		static SceneManager* m_instance;
-
-		//The collision mode to use when creating a scene.
-		snCollisionMode m_collisionMode;
-
-		//Array of colors
-		XMFLOAT4 m_colors[5];
-
-		IComponent* m_dominoHammerBlockerPath;
-
-	public:
-		static SceneManager* getInstance();
-
-		bool initialize();
-		void shutdown();
-
-		void update();
-
-		//Scene with simple boxes interactions.
-		void createBasicTest();
-
-		//Box Stacking
-		void createStacking();
-
-		//Constraints (rope)
-		void createConstraints();
-
-		//Stack
-		void createTower();
-
-		void createSceneFriction();
-
-		void createSceneDamping();
-
-		//Show difference between static, dynamic and kinematic
-		void createSceneActorsType();
-
-		void createSceneDomino();
-
-		void createSceneComposite();
-
-		void createSceneMonkeyBall();
-
-		void createSceneGJK();
-
-		void createSceneTerrain();
-
-		void setCollisionMode(snCollisionMode _collisionMode);
-		
-		void createGround(snhScene const _scene, float _restitution, float _friction);
-
-		void activateDominoSceneHammerBlocker();
-
-	private:
-		SceneManager();
-		virtual ~SceneManager();
-
-		void clearScene() const;
-
-		snVec createTowerLevel(snhScene const _scene, const snVec& _origin) const;
-
-		//Create the bisic actor of the world.
-		snhScene createSandbox(const std::wstring& _sceneName);
-
-		EntityComposite* createWheel(const snVec& _position, const snVec& _orientation, const XMFLOAT4& _color, float _length);
-	};
-
-#define SCENEMGR SceneManager::getInstance()
-
+	snObject::~snObject()
+	{ 
+		SUPERNOVA->removeObject(m_id); 
+	}
 }
-
-#endif //ifndef SCENE_MANAGER_H

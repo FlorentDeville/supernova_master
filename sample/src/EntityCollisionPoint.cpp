@@ -1,4 +1,5 @@
 #include "EntityCollisionPoint.h"
+#include "World.h"
 
 #include "Graphics.h"
 #include "D3D.h"
@@ -38,7 +39,7 @@ namespace Devil
 		GRAPHICS->getCamera()->GetViewMatrix(viewMatrix);
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
-		const snVecVector& contacts = SUPERNOVA->getScene(0)->getCollisionPoints();
+		const snVecVector& contacts = WORLD->getPhysicsScene()->getCollisionPoints();
 		for (snVecVectorConstIterator i = contacts.cbegin(); i != contacts.cend(); ++i)
 		{
 			XMMATRIX transform = XMMatrixScaling(m_diameter, m_diameter, m_diameter) *  XMMatrixTranslationFromVector(*i);

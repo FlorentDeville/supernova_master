@@ -329,9 +329,19 @@ namespace Devil
 			m_hud->setGraphicsFPS(_graphicsFPS);
 	}
 
+	void World::setPhysicsScene(snhScene _hScene)
+	{
+		m_physicsScene = _hScene;
+	}
+
 	float World::getDeltaTime() const
 	{
 		return m_dt;
+	}
+
+	snhScene World::getPhysicsScene() const
+	{
+		return m_physicsScene;
 	}
 
 }

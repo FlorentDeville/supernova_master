@@ -36,14 +36,45 @@
 #define SN_WORLD_H
 
 #include "snGlobals.h"
+#include "snObject.h"
 
 #include <vector>
 using std::vector;
 
+#include <map>
+using std::map;
+
+
+
 namespace Supernova
 {
-
 	class snScene;
+
+
+	template<class C> class snHandle
+	{
+	protected:
+
+		//The id of the object in the look up table of Supernova.
+		snObjectId m_id;
+
+	public:
+		snHandle(){ m_id = 0; }
+
+		snHandle(snObjectId _id) { m_id = _id; }
+
+		virtual ~snHandle(){}
+
+		C* const getPtr() const { return static_cast<C* const>(snWorld::getInstance()->getObject(m_id)); }
+
+		snObjectId getId() const { return m_id; }
+
+		C* const operator->() const { return getPtr(); }
+	};
+
+	typedef snHandle<snScene> snhScene;
+
+	class snObject;
 
 	//Main entry point of Supernova.
 	class SN_ALIGN snWorld
@@ -53,8 +84,12 @@ namespace Supernova
 		//Singleton
 		static snWorld* m_instance;
 
-		//List of scenes.
-		vector<snScene*> m_scenes;
+		//Store the next key to use to identify uniquely an object created by the World.
+		//It goes from 0 to 2^32 = 4 294 967 295.
+		unsigned int m_key;
+
+		//Map to store pointers to the created objects with their keys.
+		map<snObjectId, snObject*> m_lookUpTable;
 
 	private:
 		//Constructor
@@ -73,20 +108,28 @@ namespace Supernova
 		//Delete all allocations made by the physics engine.
 		bool clean();
 
-		//Create an empty scene.
-		void createScene(snScene** _newScene, int& _sceneId);
+		//Return a pointer to an object based on its id. Returns 0 if the id is invalid.
+		// _id : id of an object.
+		void* getObject(snObjectId _id) const;
 
-		//Delete a scene and all its actors.
-		void deleteScene(unsigned int _sceneId);
+		//Create an empty scene and return an handle to it.
+		// remarks : not thread safe.
+		snhScene createScene();
 
-		//Delete all scenes and all its actors
-		void deleteAllScenes();
+		//Remove an object from the world.
+		// _id : id of the object to remove from the world.
+		// remarks : this method won't delete any data and the object will still exists in the engine.
+		//           Any handle on the object will become invalid.
+		void removeObject(snObjectId _id);
 
-		//Update all the scenes using _dt as a time step.
-		void updateAllScenes(float _dt);
+		//Delete a scene identifed by a handle.
+		// _scene : handle of the scene to delete.
+		// remarks : every actors and colliders from the scene will be deleted as well.
+		void deleteScene(snhScene _scene);
 
-		//Get a scene from its id. Return null if the scene can't be found.
-		snScene* getScene(unsigned int _sceneId);
+		//Delete a scene identified by an object id.
+		// _id : id of the object to delete.
+		void deleteScene(snObjectId _id);
 
 		//Overridden new operator to create scene with correct alignement.
 		void* operator new(size_t _count);

@@ -77,7 +77,7 @@ namespace Supernova
 
 	snCollision snScene::m_collisionService;
 
-	snScene::snScene() :m_linearSquaredSpeedThreshold(0.005f),
+	snScene::snScene(snObjectId _id) : snObject(_id), m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
 		m_collisionMode(snECollisionMode_ST_SweepAndPrune), m_contactConstraintBeta(0.25f), m_sweepAndPrune()
 	{

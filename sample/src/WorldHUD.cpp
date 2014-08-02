@@ -32,6 +32,7 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
+#include "World.h"
 #include "WorldHUD.h"
 #include "Graphics.h"
 #include "snWorld.h"
@@ -92,7 +93,7 @@ namespace Devil
 				height += LINE_HEIGHT;
 			}
 
-			switch (SUPERNOVA->getScene(0)->getCollisionMode())
+			switch (WORLD->getPhysicsScene()->getCollisionMode())
 			{
 			case snCollisionMode::snECollisionModeBruteForce:
 				GRAPHICS->writeText(L"Collision Mode : Brute Force", XMFLOAT2(1, height), SCALE);

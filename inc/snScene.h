@@ -43,6 +43,7 @@ using std::string;
 using std::list;
 
 #include "AlignmentAllocator.h"
+#include "snObject.h"
 #include "snTypes.h"
 #include "snGJK.h"
 #include "snCollision.h"
@@ -71,7 +72,7 @@ namespace Supernova
 	class snHingeConstraint;
 
 	//The physic scene to simulate. HUGE WIP.
-	class SN_ALIGN snScene
+	class SN_ALIGN snScene : public snObject
 	{
 	private:
 
@@ -125,7 +126,7 @@ namespace Supernova
 	public:
 		//Constructor. Scenes should be created using snFactory::createScene. If you create a scene yourself it is your responsability
 		//to delete it.
-		snScene();
+		snScene(snObjectId _id);
 
 		//Destructor
 		virtual ~snScene();

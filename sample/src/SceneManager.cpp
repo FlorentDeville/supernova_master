@@ -175,8 +175,7 @@ namespace Devil
 
 	void SceneManager::createBasicTest()
 	{
-		createSandbox(L"Basic Test");
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Basic Test");
 		scene->setSolverIterationCount(5);
 		scene->setLinearSquaredSpeedThreshold(0.005f);
 		scene->setGravity(snVec4Set(0, -9.81f * 2, 0, 0));
@@ -331,8 +330,7 @@ namespace Devil
 
 	void SceneManager::createStacking()
 	{
-		createSandbox(L"Stacking");
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Stacking");
 		scene->setSolverIterationCount(60);
 		scene->setLinearSquaredSpeedThreshold(0.006f);
 		scene->setAngularSquaredSpeedThreshold(0.0005f);
@@ -409,8 +407,7 @@ namespace Devil
 
 	void SceneManager::createConstraints()
 	{
-		createSandbox(L"Constraints");
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Constraints");
 		scene->setSolverIterationCount(4);
 		scene->setLinearSquaredSpeedThreshold(0.006f);
 		scene->setAngularSquaredSpeedThreshold(0.001f);
@@ -520,8 +517,7 @@ namespace Devil
 
 	void SceneManager::createTower()
 	{
-		createSandbox(L"Tower");
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Tower");
 		scene->setSolverIterationCount(120); //Wooooooooo that's a lot!!!!!!
 		//scene->setContactConstraintBeta(0.005f);
 		scene->setAngularSquaredSpeedThreshold(0.f);
@@ -566,8 +562,7 @@ namespace Devil
 
 	void SceneManager::createSceneFriction()
 	{
-		createSandbox(L"Friction");
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Friction");
 		scene->setSolverIterationCount(4);
 		WORLD->getCamera()->setPosition(snVec4Set(80, 50, 0, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 7, 0, 1));
@@ -683,8 +678,7 @@ namespace Devil
 
 	void SceneManager::createSceneDamping()
 	{
-		createSandbox(L"Damping");
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Damping");
 		scene->setSolverIterationCount(4);
 		WORLD->getCamera()->setPosition(snVec4Set(50, 90, 80, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(50, 60, 0, 1));
@@ -782,8 +776,7 @@ namespace Devil
 
 	void SceneManager::createSceneActorsType()
 	{
-		createSandbox(L"Static, Dynamic, Kineatic");
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Static, Dynamic, Kineatic");
 		scene->setSolverIterationCount(4);
 
 		WORLD->getCamera()->setPosition(snVec4Set(0, 110, 50, 1));
@@ -938,9 +931,7 @@ namespace Devil
 
 	void SceneManager::createSceneDomino()
 	{
-		createSandbox(L"Domino");
-
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Domino");
 		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
 		scene->setContactConstraintBeta(0.01f);
 		scene->setSolverIterationCount(30);
@@ -971,7 +962,7 @@ namespace Devil
 		{
 			//create actor
 			snVec dominoSize = snVec4Set(5, 10, 1, 0);
-			snActorDynamic* actor = SUPERNOVA->getScene(0)->createActorDynamic();
+			snActorDynamic* actor = WORLD->getPhysicsScene()->createActorDynamic();
 			actor->setPosition(_frenet[3]);
 
 			//compute its orientation
@@ -1117,9 +1108,7 @@ namespace Devil
 
 	void SceneManager::createSceneComposite()
 	{
-		createSandbox(L"Gears");
-
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"Gears");
 		scene->setGravity(snVec4Set(0, -9.81f * 5, 0, 0));
 		scene->setContactConstraintBeta(0.05f);
 		scene->setSolverIterationCount(30);
@@ -1233,8 +1222,7 @@ namespace Devil
 
 		//create the physics scene
 		int sceneId = -1;
-		snScene* scene = 0;
-		SUPERNOVA->createScene(&scene, sceneId);
+		snhScene scene = SUPERNOVA->createScene();
 		scene->setCollisionMode(m_collisionMode);
 
 		//scene->setLinearSquaredSpeedThreshold(0.000001f);
@@ -1323,9 +1311,7 @@ namespace Devil
 
 	void SceneManager::createSceneGJK()
 	{
-		createSandbox(L"GJK");
-
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = createSandbox(L"GJK");
 		scene->setContactConstraintBeta(0.005f);
 
 		////create box reference
@@ -1406,8 +1392,8 @@ namespace Devil
 
 		//create the physics scene
 		int sceneId = -1;
-		snScene* scene = 0;
-		SUPERNOVA->createScene(&scene, sceneId);
+		snhScene scene = SUPERNOVA->createScene();
+		WORLD->setPhysicsScene(scene);
 		scene->setCollisionMode(m_collisionMode);
 
 		scene->setLinearSquaredSpeedThreshold(0.000001f);
@@ -1507,7 +1493,7 @@ namespace Devil
 		WORLD->deactivateCollisionPoint();
 	}
 
-	void SceneManager::createGround(snScene* const _scene, float _restitution, float _friction)
+	void SceneManager::createGround(snhScene const _scene, float _restitution, float _friction)
 	{
 		float width = 500;
 		float height = 2;
@@ -1556,11 +1542,11 @@ namespace Devil
 
 	void SceneManager::clearScene() const
 	{
-		SUPERNOVA->deleteAllScenes();
+		SUPERNOVA->deleteScene(WORLD->getPhysicsScene());
 		WORLD->clearWorld();
 	}
 
-	snVec SceneManager::createTowerLevel(snScene* const _scene, const snVec& _origin) const
+	snVec SceneManager::createTowerLevel(snhScene const _scene, const snVec& _origin) const
 	{
 		//colors
 		const int colorCount = 5;
@@ -1659,7 +1645,7 @@ namespace Devil
 		return _origin + snVec4Set(0, pillarHeight + 2 * bedHeight, 0, 0);
 	}
 
-	void SceneManager::createSandbox(const wstring& _sceneName)
+	snhScene SceneManager::createSandbox(const wstring& _sceneName)
 	{
 		//initialize the world
 		WORLD->initialize();
@@ -1669,10 +1655,9 @@ namespace Devil
 
 		GRAPHICS->setClearScreenColor(DirectX::Colors::DarkGray);
 
-		//create the physics scene
-		int sceneId = -1;
-		snScene* scene = 0;
-		SUPERNOVA->createScene(&scene, sceneId);
+		//create the physics scene;
+		snhScene scene = SUPERNOVA->createScene();
+		WORLD->setPhysicsScene(scene);
 		scene->setCollisionMode(m_collisionMode);
 
 		scene->setLinearSquaredSpeedThreshold(0.000001f);
@@ -1799,6 +1784,8 @@ namespace Devil
 			kinematicBox->setActor(stat);
 			kinematicBox->setWireframe(true);
 		}
+
+		return scene;
 	}
 
 	EntityComposite* SceneManager::createWheel(const snVec& _position, const snVec& _orientation, const XMFLOAT4& _color, float _length)
@@ -1806,7 +1793,7 @@ namespace Devil
 		const float DEPTH = 5;
 		const float THICKNESS = 2.8f;
 
-		snScene* scene = SUPERNOVA->getScene(0);
+		snhScene scene = WORLD->getPhysicsScene();
 		snActorDynamic* act = scene->createActorDynamic();
 
 		act->setName("composite");

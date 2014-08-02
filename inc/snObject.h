@@ -32,100 +32,28 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SCENE_MANAGER_H
-#define SCENE_MANAGER_H
+#ifndef SN_OBJECT_H
+#define SN_OBJECT_H
 
-#include <malloc.h>
-
-#include "snWorld.h"
-#include "snCollisionMode.h"
-#include "snVec.h"
-using namespace Supernova;
-
-
-#include <DirectXMath.h>
-using DirectX::XMFLOAT4;
-
-#include <string>
-using std::wstring;
-
-namespace Devil
+namespace Supernova
 {
-	class IComponent;
-	class EntityComposite;
+	//Id to identify a snObject.
+	typedef unsigned int snObjectId;
 
-	class SceneManager
+	//Base class of all the objects handled by Supernova. Supernova stores internaly a pointer to 
+	//all the objects created so it can delete them when needed or asked. All snObject are identified 
+	//by a unique id. During the lifetime of the engine, two objects can't be given the same id
+	//even if the the id is the one of a destructed object.
+	//When this object is deleted, it is also automatically deleted from the look up table of the snWorld.
+	class snObject
 	{
-	private:
-		static SceneManager* m_instance;
-
-		//The collision mode to use when creating a scene.
-		snCollisionMode m_collisionMode;
-
-		//Array of colors
-		XMFLOAT4 m_colors[5];
-
-		IComponent* m_dominoHammerBlockerPath;
+	protected:
+		snObjectId m_id;
 
 	public:
-		static SceneManager* getInstance();
+		snObject(snObjectId _id);
 
-		bool initialize();
-		void shutdown();
-
-		void update();
-
-		//Scene with simple boxes interactions.
-		void createBasicTest();
-
-		//Box Stacking
-		void createStacking();
-
-		//Constraints (rope)
-		void createConstraints();
-
-		//Stack
-		void createTower();
-
-		void createSceneFriction();
-
-		void createSceneDamping();
-
-		//Show difference between static, dynamic and kinematic
-		void createSceneActorsType();
-
-		void createSceneDomino();
-
-		void createSceneComposite();
-
-		void createSceneMonkeyBall();
-
-		void createSceneGJK();
-
-		void createSceneTerrain();
-
-		void setCollisionMode(snCollisionMode _collisionMode);
-		
-		void createGround(snhScene const _scene, float _restitution, float _friction);
-
-		void activateDominoSceneHammerBlocker();
-
-	private:
-		SceneManager();
-		virtual ~SceneManager();
-
-		void clearScene() const;
-
-		snVec createTowerLevel(snhScene const _scene, const snVec& _origin) const;
-
-		//Create the bisic actor of the world.
-		snhScene createSandbox(const std::wstring& _sceneName);
-
-		EntityComposite* createWheel(const snVec& _position, const snVec& _orientation, const XMFLOAT4& _color, float _length);
+		virtual ~snObject();
 	};
-
-#define SCENEMGR SceneManager::getInstance()
-
 }
-
-#endif //ifndef SCENE_MANAGER_H
+#endif //ifndef SN_OBJECT_H

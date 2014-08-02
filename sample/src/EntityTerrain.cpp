@@ -35,6 +35,7 @@
 	#include "snLogger.h"
 #endif //ifdef _DEBUG
 
+#include "World.h"
 #include "EntityTerrain.h"
 #include "Graphics.h"
 #include "D3D.h"
@@ -152,7 +153,7 @@ namespace Devil
 						unsigned int gfxId = std::get<1>(m_loadedTiles[loadedTileId]);
 						GRAPHICS->releaseEntity(gfxId);
 						snActorStatic* actor = std::get<2>(m_loadedTiles[loadedTileId]);
-						SUPERNOVA->getScene(0)->deleteActor(actor);
+						WORLD->getPhysicsScene()->deleteActor(actor);
 						m_loadedTiles.erase(m_loadedTiles.begin() + loadedTileId);
 					}
 				}
@@ -208,7 +209,7 @@ namespace Devil
 				snVec4SetY(boundingVolume.m_max, data.m_max);
 
 				//create the physic height map
-				snScene* scene = SUPERNOVA->getScene(0);
+				snhScene scene = WORLD->getPhysicsScene();
 				snActorStatic* snMap = scene->createActorStatic(snVec4Set(0), snVec4Set(0));
 				TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, m_description.getQuadSize(),
 					data.m_quadsPerRow, data.m_quadsPerRow, data.m_heights);

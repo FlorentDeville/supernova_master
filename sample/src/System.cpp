@@ -178,8 +178,8 @@ namespace Devil
 #ifdef SN_DEBUGGER
 					long long startTimer = snTimer::getCurrentTick();
 #endif //ifdef SN_DEBUGGER
-					//update all the scenes (there is just one anyway)
-					SUPERNOVA->updateAllScenes(dt);
+					//update the physic scene
+					WORLD->getPhysicsScene()->update(dt);
 
 #ifdef SN_DEBUGGER
 					float durationMS = snTimer::convertElapsedTickCountInMilliSeconds(snTimer::getElapsedTickCount(startTimer));
@@ -250,17 +250,17 @@ namespace Devil
 				
 				if (key == '1')
 				{
-					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionModeBruteForce);
+					WORLD->getPhysicsScene()->setCollisionMode(snCollisionMode::snECollisionModeBruteForce);
 					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionModeBruteForce);
 				}
 				else if (key == '2')
 				{
-					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
+					WORLD->getPhysicsScene()->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
 					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionMode_ST_SweepAndPrune);
 				}
 				else if (key == '3')
 				{
-					SUPERNOVA->getScene(0)->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
+					WORLD->getPhysicsScene()->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
 					SCENEMGR->setCollisionMode(snCollisionMode::snECollisionMode_MT_SweepAndPrune);
 				}
 				return 0;

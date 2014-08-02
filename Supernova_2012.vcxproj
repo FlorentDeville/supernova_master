@@ -45,6 +45,7 @@
     <ClInclude Include="inc\snMath.h" />
     <ClInclude Include="inc\snMatrix44f.h" />
     <ClInclude Include="inc\snOBB.h" />
+    <ClInclude Include="inc\snObject.h" />
     <ClInclude Include="inc\snPhysicMaterial.h" />
     <ClInclude Include="inc\snPointToPointConstraint.h" />
     <ClInclude Include="inc\snQuaternion.h" />
@@ -85,6 +86,7 @@
     <ClCompile Include="src\snMath.cpp" />
     <ClCompile Include="src\snMatrix44f.cpp" />
     <ClCompile Include="src\snOBB.cpp" />
+    <ClCompile Include="src\snObject.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
     <ClCompile Include="src\snSAT.cpp" />

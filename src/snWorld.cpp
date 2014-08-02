@@ -44,12 +44,27 @@ namespace Supernova
 
 	snWorld::snWorld()
 	{
-
+		m_key = 0;
 	}
 
 	snWorld::~snWorld()
 	{
-		deleteAllScenes();
+		//Delete all the element in the look up table.
+		while (m_lookUpTable.size() != 0)
+		{
+			map<snObjectId, snObject*>::iterator firstElement = m_lookUpTable.begin();
+			if (firstElement->second != 0)
+			{
+				delete firstElement->second;
+			}
+			else 
+			{
+				//This is weird, all destructor of snObject should remove themselves from the look up table 
+				//so we shouldn't have a null element here. Remove anyway.
+
+				m_lookUpTable.erase(firstElement);
+			}
+		}
 	}
 
 	snWorld* snWorld::getInstance()
@@ -81,78 +96,59 @@ namespace Supernova
 		return true;
 	}
 
-	void snWorld::createScene(snScene** _newScene, int& _sceneId)
+	void* snWorld::getObject(snObjectId _id) const
 	{
-		//create the new scene
-		*_newScene = new snScene();
+		map<snObjectId, snObject*>::const_iterator i = m_lookUpTable.find(_id);
+		if (i == m_lookUpTable.end())
+			return 0;
 
-		//try to find an empty spot to store the pointer
-		for (unsigned int i = 0; i < m_scenes.size(); ++i)
-		{
-			if (m_scenes[i] != 0)
-				continue;
-
-			m_scenes[i] = *_newScene;
-			_sceneId = i;
-			return;
-		}
-
-		//no empty spot found so push back
-		_sceneId = m_scenes.size();
-		m_scenes.push_back(*_newScene);
-		
-		return;
+		return i->second;
 	}
 
-	void snWorld::deleteScene(unsigned int _sceneId)
+	snhScene snWorld::createScene()
 	{
-		//the id is out of range
-		if (_sceneId >= m_scenes.size())
-			return;
+		//Create the new scene.
+		snScene* newScene = new snScene(m_key);
 
-		//get the scene
-		snScene* scene = m_scenes[_sceneId];
+		//Add the scene to the look up table.
+		//Use the insert version. Its not as clear as the [] operator but its faster.
+		if (m_lookUpTable.size() == 0)
+			m_lookUpTable.insert(m_lookUpTable.begin(), std::pair<snObjectId, snObject*>(m_key, newScene));
+		else
+			m_lookUpTable.insert(--m_lookUpTable.end(), std::pair<snObjectId, snObject*>(m_key, newScene));
 
-		//the scene is already deleted
+		//Return the handle
+		snhScene handle(m_key);
+
+		//Increase the key. This is not thread safe!!!!!
+		++m_key;
+
+		return handle;
+	}
+
+	void snWorld::removeObject(snObjectId _id)
+	{
+		m_lookUpTable.erase(_id);
+	}
+
+	void snWorld::deleteScene(snhScene _hScene)
+	{
+		//Get the underlying pointer
+		snScene* scene = _hScene.getPtr();
 		if (scene == 0)
 			return;
 
-		//delete the scene
+		//Delete the object
 		delete scene;
-		m_scenes[_sceneId] = 0;
 	}
 
-	void snWorld::deleteAllScenes()
+	void snWorld::deleteScene(snObjectId _id)
 	{
-		for (vector<snScene*>::iterator i = m_scenes.begin(); i != m_scenes.end(); ++i)
-		{
-			if ((*i) == 0)
-				continue;
+		snScene* scene = static_cast<snScene*>(getObject(_id));
+		if (scene == 0)
+			return;
 
-			delete *i;
-			*i = 0;
-		}
-
-		m_scenes.clear();
-	}
-
-	void snWorld::updateAllScenes(float _dt)
-	{
-		for (vector<snScene*>::iterator i = m_scenes.begin(); i != m_scenes.end(); ++i)
-		{
-			if ((*i) == 0)
-				continue;
-
-			(*i)->update(_dt);
-		}
-	}
-
-	snScene* snWorld::getScene(unsigned int _sceneId)
-	{
-		if (_sceneId >= m_scenes.size())
-			return 0;
-
-		return m_scenes[_sceneId];
+		delete scene;
 	}
 
 	void* snWorld::operator new(size_t _count)

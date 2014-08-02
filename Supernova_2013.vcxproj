@@ -29,6 +29,7 @@
     <ClInclude Include="inc\snHeightMap.h" />
     <ClInclude Include="inc\snLogger.h" />
     <ClInclude Include="inc\snOBB.h" />
+    <ClInclude Include="inc\snObject.h" />
     <ClInclude Include="inc\snSphere.h" />
     <ClInclude Include="inc\snCollision.h" />
     <ClInclude Include="inc\snCollisionMode.h" />
@@ -72,6 +73,7 @@
     <ClCompile Include="src\snHeightMap.cpp" />
     <ClCompile Include="src\snLogger.cpp" />
     <ClCompile Include="src\snOBB.cpp" />
+    <ClCompile Include="src\snObject.cpp" />
     <ClCompile Include="src\snSphere.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
     <ClCompile Include="src\snColliderContainer.cpp" />
