@@ -36,7 +36,6 @@
 
 #include "snIActor.h"
 #include "snICollider.h"
-#include "snColliderContainer.h"
 #include "snOBB.h"
 #include "snSphere.h"
 #include "snCapsule.h"
@@ -54,7 +53,7 @@ namespace Devil
 	{
 		m_color = XMVectorSet(_color.x, _color.y, _color.z, _color.w);
 		m_actor = _actor;
-		vector<snColliderContainer*> colliders = m_actor->getColliders();
+		vector<snICollider*> colliders = m_actor->getColliders();
 
 		//create a sphere for the center of mass
 		m_gfxCenterOfMass = GRAPHICS->getSphere();
@@ -80,22 +79,18 @@ namespace Devil
 		GRAPHICS->getDirectXWrapper()->getProjectionMatrix(projectionMatrix);
 
 		//compute position and orientation of the actor
-		vector<snColliderContainer*> colliders = m_actor->getColliders();
-
-		const snMatrix44f& globalTransform = m_actor->getTransform().getLocalToWorld();
-
-		for (vector<snColliderContainer*>::const_iterator i = colliders.cbegin(); i != colliders.cend(); ++i)
+		vector<snICollider*> colliders = m_actor->getColliders();
+		for (vector<snICollider*>::const_iterator i = colliders.cbegin(); i != colliders.cend(); ++i)
 		{
-			snMatrix44f worldTransform, temp;
-			snMatrixMultiply4((*i)->m_localTransform.getLocalToWorld(), globalTransform, temp);
+			snMatrix44f temp = (*i)->getTransform().getLocalToWorld();
 
 			snMatrix44f scale;
 			IGfxEntity* gfx = 0;
-			switch ((*i)->m_collider->getTypeOfCollider())
+			switch ((*i)->getTypeOfCollider())
 			{
 				case snEColliderType::snEColliderBox:
 				{
-					snOBB* box = static_cast<snOBB*>((*i)->m_collider);
+					snOBB* box = static_cast<snOBB*>((*i));
 					scale.createScale(box->getExtends() * 2);
 					gfx = GRAPHICS->getBox();
 				}
@@ -103,7 +98,7 @@ namespace Devil
 
 				case snEColliderType::snEColliderSphere:
 				{
-					snSphere* sphere = static_cast<snSphere*>((*i)->m_collider);
+					snSphere* sphere = static_cast<snSphere*>((*i));
 					scale.createScale(sphere->getRadius() * 2);
 					gfx = GRAPHICS->getSphere();
 				}
@@ -111,13 +106,15 @@ namespace Devil
 
 				case snEColliderType::snEColliderCapsule:
 				{
-					snCapsule* capsule = static_cast<snCapsule*>((*i)->m_collider);
+					snCapsule* capsule = static_cast<snCapsule*>((*i));
 					float diameter = capsule->getRadius() * 2;
 
 					//draw the first sphere
 					scale.createScale(diameter);
 					snMatrix44f translate;
 					translate.createTranslation(capsule->getFirstEndPoint());
+
+					snMatrix44f worldTransform;
 					snMatrixMultiply4(scale, translate, worldTransform);
 					XMMATRIX dxWorldMatrix;
 					dxWorldMatrix.r[0] = worldTransform.m_r[0];
@@ -138,7 +135,6 @@ namespace Devil
 					gfx->render(dxWorldMatrix, viewMatrix, projectionMatrix, m_color, m_texture, m_wireframe);
 
 					//prepare the capsule
-					snMatrixMultiply4((*i)->m_localTransform.getLocalToWorld(), globalTransform, temp);
 					float length = Supernova::Vector::snVec3Norme(capsule->getFirstEndPoint() - capsule->getSecondEndPoint());
 					scale.createScale(Supernova::Vector::snVec4Set(capsule->getRadius(), length, capsule->getRadius(), 1));
 					gfx = GRAPHICS->getCylinder();
@@ -149,6 +145,7 @@ namespace Devil
 					continue;
 			}
 
+			snMatrix44f worldTransform;
 			snMatrixMultiply4(scale, temp, worldTransform);
 			XMMATRIX dxWorldMatrix;
 			dxWorldMatrix.r[0] = worldTransform.m_r[0];

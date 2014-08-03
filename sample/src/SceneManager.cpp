@@ -1198,24 +1198,13 @@ namespace Devil
 		{
 			//create the pin
 			snOBB* xBox = new snOBB(snVec4Set(length, thickness, depth, 0) * 0.5f);
-
-			snMatrix44f localRotation;
-			localRotation.createRotationZ(angle * pinId);
-
-			//snMatrix44f localTransform;
-			//snMatrixMultiply4(localTranslation, localRotation, localTransform);
-			//act->addCollider(xBox, localTransform);
-			snTransform transform(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(0, 0, angle * pinId));
-			act->addCollider(xBox, transform);
+			xBox->getTransform().setLocalEulerAngles(0, 0, angle * pinId);
+			act->addCollider(xBox);
 
 			//fill in the space between the pins
 			snOBB* fill = new snOBB(snVec4Set(length * 0.7f, 4, depth, 0) * 0.5f);
-
-			//localRotation.createRotationZ(angle * (pinId + 0.5f));
-			//snMatrixMultiply4(localTranslation, localRotation, localTransform);
-			//act->addCollider(fill, localTransform);
-			transform.setOrientation(snQuaternionFromEuler(0, 0, angle * (pinId + 0.5f)));
-			act->addCollider(fill, transform);
+			fill->getTransform().setLocalEulerAngles(0, 0, angle * (pinId + 0.5f));
+			act->addCollider(fill);
 		}
 
 		act->initialize();
@@ -1289,28 +1278,28 @@ namespace Devil
 		actEnvironment->addCollider(levelOne);
 
 		levelOne = new snOBB(snVec4Set(200, THICKNESS, 50, 0) * 0.5f);
-		snTransform transform(snVec4Set(200, 0, 0, 1));
-		actEnvironment->addCollider(levelOne, transform);
+		levelOne->getTransform().setLocalPosition(snVec4Set(200, 0, 0, 1));
+		actEnvironment->addCollider(levelOne);
 
 		levelOne = new snOBB(snVec4Set(50, THICKNESS, 200, 0) * 0.5f);
-		transform.setPosition(snVec4Set(325, 0, 75, 1));
-		actEnvironment->addCollider(levelOne, transform);
+		levelOne->getTransform().setLocalPosition(snVec4Set(325, 0, 75, 1));
+		actEnvironment->addCollider(levelOne);
 
 		levelOne = new snOBB(snVec4Set(200, THICKNESS, 50, 0) * 0.5f);
-		transform.setPosition(snVec4Set(450, 0, 150, 1));
-		actEnvironment->addCollider(levelOne, transform);
+		levelOne->getTransform().setLocalPosition(snVec4Set(450, 0, 150, 1));
+		actEnvironment->addCollider(levelOne);
 
 		levelOne = new snOBB(snVec4Set(50, THICKNESS, 200, 0) * 0.5f);
-		transform.setPosition(snVec4Set(575, 0, 75, 1));
-		actEnvironment->addCollider(levelOne, transform);
+		levelOne->getTransform().setLocalPosition(snVec4Set(575, 0, 75, 1));
+		actEnvironment->addCollider(levelOne);
 
 		levelOne = new snOBB(snVec4Set(200, THICKNESS, 50, 0) * 0.5f);
-		transform.setPosition(snVec4Set(700, 0, 0, 1));
-		actEnvironment->addCollider(levelOne, transform);
+		levelOne->getTransform().setLocalPosition(snVec4Set(700, 0, 0, 1));
+		actEnvironment->addCollider(levelOne);
 
 		levelOne = new snOBB(snVec4Set(200, THICKNESS, 200, 0) * 0.5f);
-		transform.setPosition(snVec4Set(900, 0, 0, 1));
-		actEnvironment->addCollider(levelOne, transform);
+		levelOne->getTransform().setLocalPosition(snVec4Set(900, 0, 0, 1));
+		actEnvironment->addCollider(levelOne);
 
 		
 		snVec initialPosition = snVec4Set(0, 50, 0, 1);
@@ -1854,17 +1843,13 @@ namespace Devil
 		for (int pinId = 0; pinId < PIN_COUNT; ++pinId)
 		{
 			snOBB* xBox = new snOBB(snVec4Set(_length, THICKNESS, DEPTH, 0) * 0.5f);
-
-			snMatrix44f localRotation;
-			localRotation.createRotationZ(angle * pinId);
-
-			snTransform transform(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(0, 0, angle * pinId));
-			act->addCollider(xBox, transform);
+			xBox->getTransform().setLocalEulerAngles(0, 0, angle * pinId);
+			act->addCollider(xBox);
 
 			//fill in the space between the pins
 			snOBB* fill = new snOBB(snVec4Set(_length * 0.7f, 4, DEPTH, 0) * 0.5f);
-			transform.setEulerAngles(snVec4Set(0, 0, angle * (pinId + 0.5f), 0));
-			act->addCollider(fill, transform);
+			fill->getTransform().setLocalEulerAngles(0, 0, angle * (pinId + 0.5f));
+			act->addCollider(fill);
 		}
 
 		act->updateMassAndInertia(10);

@@ -81,8 +81,8 @@ namespace Supernova
 		//Initialize the collider. Should be called once all the parameters of the collider are set.
 		void initialize();
 
-		//Move the collider using the given transform matrix.
-		void setTransform(const snTransform& _transform);
+		//Update the collider using the transform.
+		void updateFromTransform();
 
 		//Compute the inertia tensor in the local frame.
 		void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const;

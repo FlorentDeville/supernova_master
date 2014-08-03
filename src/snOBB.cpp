@@ -124,18 +124,18 @@ namespace Supernova
 		m_idFaces[23] = 7;
 	}
 
-	void snOBB::setTransform(const snTransform& _transform)
+	void snOBB::updateFromTransform()
 	{
 		for (int i = 0; i < 8; ++i)
-			m_worldBox[i] = snMatrixTransform4(m_box[i], _transform.getLocalToWorld());
+			m_worldBox[i] = snMatrixTransform4(m_box[i], m_transform.getLocalToWorld());
 
 		//world origin is the last row.
-		m_pos = _transform.getPosition();
+		m_pos = m_transform.getPosition();
 
 		//world normals are just the rows of the transform matrix
-		m_normals[0] = _transform.getRight();
-		m_normals[1] = _transform.getUp();
-		m_normals[2] = _transform.getForward();
+		m_normals[0] = m_transform.getRight();
+		m_normals[1] = m_transform.getUp();
+		m_normals[2] = m_transform.getForward();
 	}
 
 	void snOBB::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const

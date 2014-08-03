@@ -54,9 +54,8 @@ namespace Supernova
 
 	void snHeightMap::initialize(){}
 
-	void snHeightMap::setTransform(const snTransform& _transform)
+	void snHeightMap::updateFromTransform()
 	{
-		SN_UNREFERENCED_PARAMETER(_transform);
 	}
 
 	void snHeightMap::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const

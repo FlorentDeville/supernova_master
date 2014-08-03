@@ -56,9 +56,9 @@ namespace Supernova
 		return m_radius;
 	}
 
-	void snSphere::setTransform(const snTransform& _transform)
+	void snSphere::updateFromTransform()
 	{
-		m_center = _transform.getPosition();
+		m_center = m_transform.getPosition();
 	}
 
 	void snSphere::initialize()

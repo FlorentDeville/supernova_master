@@ -117,9 +117,6 @@
     <ClInclude Include="inc\snCollisionDispatcher.h">
       <Filter>Simulation</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snColliderContainer.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snHingeConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
@@ -225,9 +222,6 @@
     </ClCompile>
     <ClCompile Include="src\snCollisionDispatcher.cpp">
       <Filter>Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snColliderContainer.cpp">
-      <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\snHingeConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>

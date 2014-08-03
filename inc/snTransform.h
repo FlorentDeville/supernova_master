@@ -37,6 +37,9 @@
 
 #include "snMatrix44f.h"
 
+#include <vector>
+using std::vector;
+
 namespace Supernova
 {
 	//Store the position, orientation and scale of an object and let you manipulate those information.
@@ -44,19 +47,41 @@ namespace Supernova
 	{
 	private:
 		//Position of the transform in world space
-		snVec m_position;
+		mutable snVec m_position;
 
 		//Orientation of the transform in world space as a quaternion.
-		snVec m_orientation;
+		mutable snVec m_orientation;
 
 		//Global scale of the transform.
-		snVec m_scale;
+		mutable snVec m_scale;
+
+		//Position of the transform in the parent's space.
+		snVec m_localPosition;
+
+		//Orientation of the transform in the parent's space.
+		snVec m_localOrientation;
+
+		//Scale of the transform in the parent's space.
+		snVec m_localScale;
 
 		//Matrix to transform a point from local space into world space.
 		mutable snMatrix44f m_localToWorld;
 
-		//Flag to indicate if the localToWorld matrix as to be computed again.
-		mutable bool m_dirty;
+		//Matrix to transform a point from the local space into the parent space. 
+		// This matrix is computed with only the local position, local orientation and local scale.
+		mutable snMatrix44f m_localToParent;
+
+		//Flag to indicate if any of the local position, local orientation and local scale has changed.
+		mutable bool m_localDirty;
+
+		//Flag to indicate that the parent transform has changed.
+		mutable bool m_parentDirty;
+
+		//List of children transform.
+		vector<snTransform*> m_children;
+
+		//Parent children. Null if this transform has no parent.
+		snTransform* m_parent;
 
 	public:
 		//Default constructor initialized to the identity.
@@ -64,27 +89,36 @@ namespace Supernova
 
 		//Construction of a transform from a position.
 		// _position : the position of the transform in world space.
-		snTransform(const snVec& _position);
+		snTransform(const snVec& _localPosition);
 
 		//Construction of a transform from a positon and orientation.
 		// _position : the position of the transform in world space.
 		// _orientation : orientation as a quaternion in world space.
-		snTransform(const snVec& _position, const snVec& _orientation);
+		snTransform(const snVec& _localPosition, const snVec& _localOrientation);
 
 		//Construction of a transform from a a position, orientation and scale.
 		// _position : the position of the transform in world space.
 		// _orientation : orientation as a quaternion in world space.
 		// _scale : scale of the transform in world space.
-		snTransform(const snVec& _position, const snVec& _orientation, const snVec& _scale);
+		snTransform(const snVec& _localPosition, const snVec& _localOrientation, const snVec& _localScale);
 
 		//Construction of a transform from a a position, orientation and scale.
 		// _position : the position of the transform in world space.
 		// _orientation : orientation as a quaternion in world space.
 		// _scale : scale of the transform in world space.
 		// _localToWorld : matrix to transform a point from local space to world space.
-		snTransform(const snVec& _position, const snVec& _orientation, const snVec& _scale, const snMatrix44f& _localToWorld);
+		//snTransform(const snVec& _localPosition, const snVec& _localOrientation, const snVec& _localScale, const snMatrix44f& _localToWorld);
 
 		virtual ~snTransform();
+
+		//Return the local position of the transform.
+		snVec getLocalPosition() const;
+
+		//Return the local orientation of the transform.
+		snVec getLocalOrientation() const;
+
+		//Return the local scale of the transform.
+		snVec getLocalScale() const;
 
 		//Return the position of the transform in world space.
 		snVec getPosition() const;
@@ -107,19 +141,50 @@ namespace Supernova
 		//Return a matrix to transform a point from local space to world space.
 		const snMatrix44f& getLocalToWorld() const;
 
-		//Set the position of the transform.
-		void setPosition(const snVec& _position);
+		//Set the local position of the transform.
+		void setLocalPosition(const snVec& _localPosition);
 
-		//Set the orientation of the transform using a quaternion.
-		void setOrientation(const snVec& _orientation);
+		//Set the local orientation of the transform using a quaternion.
+		void setLocalOrientation(const snVec& _localOrientation);
 
-		//Set the orientation of the transform using euler angles.
-		void setEulerAngles(const snVec& _eulerAngles);
+		//Set the local orientation of the transform using euler angles.
+		void setLocalEulerAngles(const snVec& _localEulerAngles);
 
-		//Set the scale of the transform.
-		void setScale(const snVec& _scale);
+		//Set the local orientation of the transform using euler angles.
+		void setLocalEulerAngles(float _x, float _y, float _z);
+
+		//Set the local scale of the transform.
+		void setLocalScale(const snVec& _scale);
+
+		//Set the dirty parent flag to true;
+		void setDirtyParent() const;
+
+		//Set the parent of this transform.
+		void setParent(snTransform* const _parent);
+
+		//Add a child to transform.
+		void addChild(snTransform* const _child);
+
+		//Remove a child from the transform.
+		void removeChild(snTransform* const _child);
+
+	private:
+
+		//If the transform is dirty, recompute everything.
+		void computeTransform() const;
+
+		//Set all the children dirty
+		void dirtyAllChildren() const;
 	};
 
-	void snTransformMultiply(const snTransform& _first, const snTransform& _second, snTransform& result);
+	//Create a link between a parent transform and a child transform.
+	//_child will have _parent as a parent. _parent will have _child has a child transform.
+	void snTransformAddLink(snTransform* const _parent, snTransform* const _child);
+
+	//Remove a link between a parent transform and a child transform. 
+	//The child will have no parent. The parent won't have _child has a child transform.
+	void snTransformRemoveLink(snTransform* const _parent, snTransform* const _child);
+
+	//void snTransformMultiply(const snTransform& _first, const snTransform& _second, snTransform& result);
 }
 #endif //ifndef SN_TRANSFORM_H

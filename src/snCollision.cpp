@@ -44,7 +44,6 @@
 #include "snHeightMap.h"
 
 #include "snCollisionResult.h"
-#include "snColliderContainer.h"
 #include "snICollider.h"
 #include "snIActor.h"
 #include "snMath.h"
@@ -78,16 +77,16 @@ namespace Supernova
 
 	void snCollision::queryTestCollision(snIActor* _a1, snIActor* _a2, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const
 	{
-		std::vector<snColliderContainer*>& listColliders1 = _a1->getColliders();
-		std::vector<snColliderContainer*>& listColliders2 = _a2->getColliders();
+		std::vector<snICollider*>& listColliders1 = _a1->getColliders();
+		std::vector<snICollider*>& listColliders2 = _a2->getColliders();
 
 		*_resultsCount = 0;
-		for (vector<snColliderContainer*>::const_iterator c1 = listColliders1.cbegin(); c1 != listColliders1.cend(); ++c1)
+		for (vector<snICollider*>::const_iterator c1 = listColliders1.cbegin(); c1 != listColliders1.cend(); ++c1)
 		{
-			for (vector<snColliderContainer*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
+			for (vector<snICollider*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
 			{
 				//pouahhhh it's ugly!!!! let's check first the AABBs
-				_results[*_resultsCount] = invokeQueryTestCollision((*c1)->m_collider, (*c2)->m_collider);
+				_results[*_resultsCount] = invokeQueryTestCollision((*c1), (*c2));
 				if (_results[*_resultsCount].m_collision)
 				{
 					++(*_resultsCount);

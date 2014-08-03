@@ -35,7 +35,6 @@
 #include "snActorDynamic.h"
 #include "snICollider.h"
 #include "snQuaternion.h"
-#include "snColliderContainer.h"
 
 #include <assert.h>
 
@@ -49,8 +48,8 @@ namespace Supernova
 		m_centerOfMass = snVec4Set(0, 0, 0, 1);
 		m_worldCenterOfMass = snVec4Set(0, 0, 0, 1);
 
-		m_transform.setPosition(snVec4Set(0, 0, 0, 1));
-		m_transform.setOrientation(snVec4Set(0, 0, 0, 1));
+		m_transform.setLocalPosition(snVec4Set(0, 0, 0, 1));
+		m_transform.setLocalOrientation(snVec4Set(0, 0, 0, 1));
 
 		m_skinDepth = 0.025f;
 
@@ -135,13 +134,13 @@ namespace Supernova
 	//Set the position of the actor
 	void snActorDynamic::setPosition(const snVec& _position)
 	{
-		m_transform.setPosition(_position);
+		m_transform.setLocalPosition(_position);
 	}
 
 	//Set the orientation of the actor
 	void snActorDynamic::setOrientation(const snVec& _orientation)
 	{
-		m_transform.setOrientation(_orientation);
+		m_transform.setLocalOrientation(_orientation);
 	}
 
 	//Set if the actor is kinematic
@@ -189,10 +188,10 @@ namespace Supernova
 
 		//compute inertia of the collider
 		snMatrix44f globalIntertia;
-		for (vector<snColliderContainer*>::const_iterator i = m_colliders.cbegin(); i != m_colliders.cend(); ++i)
+		for (vector<snICollider*>::const_iterator i = m_colliders.cbegin(); i != m_colliders.cend(); ++i)
 		{
 			snMatrix44f inertia;
-			(*i)->m_collider->computeLocalInertiaTensor(m_mass, inertia);
+			(*i)->computeLocalInertiaTensor(m_mass, inertia);
 
 			//add the inertia of the collider to the global collider
 			globalIntertia = globalIntertia + inertia;
@@ -209,10 +208,10 @@ namespace Supernova
 	void snActorDynamic::initialize()
 	{
 		//initialize colliders
-		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
-			(*i)->m_collider->initialize();
-			m_centerOfMass = m_centerOfMass + (*i)->m_localTransform.getPosition();//snMatrixGetTranslation((*i)->m_localTransform);
+			(*i)->initialize();
+			m_centerOfMass = m_centerOfMass + (*i)->getTransform().getLocalPosition();
 		}
 
 		snVec4SetW(m_centerOfMass, 1);
@@ -259,11 +258,12 @@ namespace Supernova
 	//Update the colliders based on the current position and orientation
 	void snActorDynamic::updateCollidersAndAABB()
 	{
-		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
-			snTransform result;
-			snTransformMultiply((*i)->m_localTransform, m_transform, result);
-			(*i)->m_collider->setTransform(result);
+			(*i)->updateFromTransform();
+			//snTransform result;
+			//snTransformMultiply((*i)->m_localTransform, m_transform, result);
+			//(*i)->m_collider->setTransform(result);
 		}
 
 		computeBoundingVolume();
@@ -287,10 +287,11 @@ namespace Supernova
 		if (sqSpeed < _angularSpeed2Limit)
 			m_w = snVec4Set(0);
 
+		
 		//calculate position using euler integration
 		snVec previousPosition = m_transform.getPosition();
-		m_transform.setPosition(previousPosition + m_v * _dt);
-
+		m_transform.setLocalPosition(previousPosition + m_v * _dt);
+		
 		//calculate velocity as quaternion using dq/dt = 0.5 * w * q
 		snVec q = m_transform.getOrientation();
 		snVec qw = snQuaternionMultiply(m_w, q);
@@ -299,7 +300,7 @@ namespace Supernova
 		//calculate orientation using euler integration
 		q = q + (qw * _dt);
 		snQuaternionNormalize(q, q);
-		m_transform.setOrientation(q);
+		m_transform.setLocalOrientation(q);
 
 		//set new state
 		computeInvWorldInertia();

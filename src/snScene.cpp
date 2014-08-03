@@ -52,7 +52,6 @@
 
 #include "snSphere.h"
 #include "snCapsule.h"
-#include "snColliderContainer.h"
 
 #include "snTimer.h"
 
@@ -333,11 +332,11 @@ namespace Supernova
 			if ((*i)->getName() == "ball")
 				continue;
 
-			vector<snColliderContainer*>& colliders = (*i)->getColliders();
-			for (vector<snColliderContainer*>::iterator c = colliders.begin(); c != colliders.end(); ++c)
+			vector<snICollider*>& colliders = (*i)->getColliders();
+			for (vector<snICollider*>::iterator c = colliders.begin(); c != colliders.end(); ++c)
 			{
 				//make collision test
-				snCollisionResult res = m_collisionService.queryTestCollision(&capsule, (*c)->m_collider);
+				snCollisionResult res = m_collisionService.queryTestCollision(&capsule, (*c));
 
 				//If a collision is detected, return true.
 				if (res.m_collision)
@@ -363,7 +362,7 @@ namespace Supernova
 		/*while (true)
 		{*/
 			//Move the collider to the correct position.
-			_collider.setTransform(castTransform);
+		_collider.updateFromTransform();
 
 			//Get the bounding volume
 			snAABB bb;
@@ -379,11 +378,11 @@ namespace Supernova
 				if ((*i)->getName() == "ball")
 					continue;
 
-				vector<snColliderContainer*>& colliders = (*i)->getColliders();
-				for (vector<snColliderContainer*>::const_iterator c = colliders.begin(); c != colliders.end(); ++c)
+				vector<snICollider*>& colliders = (*i)->getColliders();
+				for (vector<snICollider*>::const_iterator c = colliders.begin(); c != colliders.end(); ++c)
 				{
 					//make collision test
-					snCollisionResult collisionTestResult = m_collisionService.queryTestCollision(&_collider, (*c)->m_collider);
+					snCollisionResult collisionTestResult = m_collisionService.queryTestCollision(&_collider, (*c));
 					if (collisionTestResult.m_collision) //ignore colliding shapes
 					{
 						continue;
@@ -392,7 +391,7 @@ namespace Supernova
 					//Make distance test
 					snGJK gjk;
 					float currentDistance = -1;
-					bool distanceResult = gjk.distance(_collider, *(*c)->m_collider, currentDistance);
+					bool distanceResult = gjk.distance(_collider, **c, currentDistance);
 					if (!distanceResult) //The distance could not be found
 					{
 						continue;

@@ -34,7 +34,6 @@
 
 #include "snActorStatic.h"
 #include "snICollider.h"
-#include "snColliderContainer.h"
 
 using namespace Supernova::Vector;
 
@@ -108,10 +107,10 @@ namespace Supernova
 	void snActorStatic::initialize()
 	{
 		//loop through each colliders to initialize them
-		for (vector<snColliderContainer*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
 		{
-			(*i)->m_collider->initialize();
-			(*i)->m_collider->setTransform(m_transform);				
+			(*i)->initialize();
+			(*i)->updateFromTransform();
 		}
 
 		//compute the AABB
@@ -122,8 +121,8 @@ namespace Supernova
 	{
 		m_name = "default";
 
-		m_transform.setPosition(_position);
-		m_transform.setOrientation(_orientation);
+		m_transform.setLocalPosition(_position);
+		m_transform.setLocalOrientation(_orientation);
 
 		m_skinDepth = 0.025f;
 		m_typeOfActor = snActorType::snActorTypeStatic;

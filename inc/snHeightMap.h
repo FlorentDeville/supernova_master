@@ -81,9 +81,9 @@ namespace Supernova
 		//Initialize the height map. Doesn't do anything
 		void initialize();
 
-		//Move the collider using the given transform matrix.
+		//Update the collider using the transform.
 		//The height map is only static so this method doesn't do anything.
-		void setTransform(const snTransform& _transform);
+		void updateFromTransform();
 
 		//Compute the inertia tensor in a local frame.
 		//The height map can only be used in a static actor so this method return a zero matrix.

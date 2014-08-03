@@ -35,9 +35,8 @@
 #ifndef SN_ICOLLIDER_H
 #define SN_ICOLLIDER_H
 
-
-#include "snVec.h"
 #include "snGlobals.h"
+#include "snTransform.h"
 
 namespace Supernova
 {
@@ -65,6 +64,9 @@ namespace Supernova
 		//The type of collider
 		snEColliderType m_typeOfCollider;
 
+		//Local transform of the collider.
+		snTransform m_transform;
+
 	public:
 		snICollider(){}
 
@@ -73,14 +75,17 @@ namespace Supernova
 		//Initialize the collider. Should be called once all the parameters of the collider are set.
 		virtual void initialize() = 0;
 
-		//Move the collider using the given transform matrix.
-		virtual void setTransform(const snTransform& _transform) = 0;
+		//Update the collider using the transform.
+		virtual void updateFromTransform() = 0;
 
 		//Compute the inertia tensor in a local frame.
 		virtual void computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const = 0;
 
 		//Compute the bounding volume for this collider
 		virtual void computeAABB(snAABB * const /*_boundingVolume*/) const = 0;
+
+		//Return a reference to the transform of the collider
+		snTransform& getTransform() { return m_transform; }
 
 		//Return the feature the farthest along the normal.
 		//_n : direction along which the search of the farthest feature has to be done.

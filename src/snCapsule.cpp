@@ -83,10 +83,10 @@ namespace Supernova
 
 	}
 
-	void snCapsule::setTransform(const snTransform& _transform)
+	void snCapsule::updateFromTransform()
 	{
-		m_a = snMatrixTransform4(m_localA, _transform.getLocalToWorld());
-		m_b = snMatrixTransform4(m_localB, _transform.getLocalToWorld());
+		m_a = snMatrixTransform4(m_localA, m_transform.getLocalToWorld());
+		m_b = snMatrixTransform4(m_localB, m_transform.getLocalToWorld());
 	}
 
 	void snCapsule::computeLocalInertiaTensor(float _mass, snMatrix44f& _inertiaTensor) const
