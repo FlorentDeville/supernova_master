@@ -43,7 +43,7 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snActorDynamic::snActorDynamic() : m_linearDamping(0.01f), m_angularDamping(0.f)
+	snActorDynamic::snActorDynamic(snObjectId _id) : snIActor(_id), m_linearDamping(0.01f), m_angularDamping(0.f)
 	{
 		m_name = "default";
 		m_centerOfMass = snVec4Set(0, 0, 0, 1);

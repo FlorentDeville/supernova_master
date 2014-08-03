@@ -47,7 +47,6 @@
 #include "TerrainCollider.h"
 
 #include "snAABB.h"
-#include "snWorld.h"
 #include "snScene.h"
 #include "snActorStatic.h"
 using namespace Supernova;
@@ -152,7 +151,7 @@ namespace Devil
 						//delete the loaded tile
 						unsigned int gfxId = std::get<1>(m_loadedTiles[loadedTileId]);
 						GRAPHICS->releaseEntity(gfxId);
-						snActorStatic* actor = std::get<2>(m_loadedTiles[loadedTileId]);
+						snhActorStatic actor = std::get<2>(m_loadedTiles[loadedTileId]);
 						WORLD->getPhysicsScene()->deleteActor(actor);
 						m_loadedTiles.erase(m_loadedTiles.begin() + loadedTileId);
 					}
@@ -210,7 +209,9 @@ namespace Devil
 
 				//create the physic height map
 				snhScene scene = WORLD->getPhysicsScene();
-				snActorStatic* snMap = scene->createActorStatic(snVec4Set(0), snVec4Set(0));
+				snhActorStatic snMap = SUPERNOVA->createActorStatic(snVec4Set(0), snVec4Set(0));
+				scene->attachActor(snMap);
+
 				TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, m_description.getQuadSize(),
 					data.m_quadsPerRow, data.m_quadsPerRow, data.m_heights);
 				snMap->addCollider(collider);

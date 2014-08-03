@@ -70,7 +70,7 @@ namespace Supernova
 		m_sortedActors.push_back(_actor);
 	}
 
-	void snSweepManager::removeActor(snIActor* _actor)
+	void snSweepManager::removeActor(snIActor const * const _actor)
 	{
 		for (list<snIActor*>::iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
 		{

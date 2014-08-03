@@ -90,78 +90,50 @@ namespace Supernova
 		clearScene();
 	}
 
-	snActorDynamic* snScene::createActorDynamic()
+	void snScene::attachActor(snhActorDynamic _actor)
 	{
-		//create the actor
-		snActorDynamic* newActor = new snActorDynamic();
-
-		attachActor(newActor);
-		return newActor;
+		attachActorByPointer(_actor.getPtr());
 	}
 
-	snActorStatic* snScene::createActorStatic(const snVec& _position, const snVec& _orientation)
+	void snScene::attachActor(snhActorStatic _actor)
 	{
-		//create the actor
-		snActorStatic* newActor = new snActorStatic(_position, _orientation);
-
-		//attach the actor to the current scene
-		attachActor(newActor);
-		return newActor;
+		attachActorByPointer(_actor.getPtr());
 	}
 
-	void snScene::deleteActor(snIActor* const _actor)
+	void snScene::removeActor(snhActorDynamic _actor)
 	{
-		//remove actor from the broad phase
-		m_sweepAndPrune.removeActor(_actor);
-
-		//delete actor from the scene
-		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
-		{
-			if ((*i) == _actor)
-			{
-				delete *i;
-				*i = 0;
-			}
-		}
+		removeActorByPointer(_actor.getPtr());
 	}
 
-	int snScene::attachActor(snIActor* const _actor)
+	void snScene::removeActor(snhActorStatic _actor)
 	{
-		//try to add it to the vector
-		unsigned int id = 0;
-		bool actorAdded = false;
-		for (unsigned int i = 0; i < m_actors.size(); ++i)
-		{
-			if (m_actors[i] != 0)
-				continue;
-
-			m_actors[i] = _actor;
-			id = i;
-			actorAdded = true;
-			break;
-		}
-
-		//no existing spot found so push back
-		if (!actorAdded)
-		{
-			id = m_actors.size();
-			m_actors.push_back(_actor);
-		}
-		
-		//Add the actor to the broad phase.
-		m_sweepAndPrune.addActor(_actor);
-		return id;
+		removeActorByPointer(_actor.getPtr());
 	}
 
-	void snScene::removeActor(snIActor const * const _actor)
+	void snScene::deleteActor(snhActorDynamic _actor)
 	{
-		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
-		{
-			if ((*i) == _actor)
-			{
-				(*i) = 0;
-			}
-		}
+		//Remove the actor
+		removeActor(_actor);
+
+		//delete the actor
+		snActorDynamic* ptr = _actor.getPtr();
+		if (ptr == 0)
+			return;
+
+		delete ptr;
+	}
+
+	void snScene::deleteActor(snhActorStatic _actor)
+	{
+		//Remove the actor
+		removeActor(_actor);
+
+		//delete the actor
+		snActorStatic* ptr = _actor.getPtr();
+		if (ptr == 0)
+			return;
+
+		delete ptr;
 	}
 
 	snIConstraint* snScene::getConstraint(unsigned int _constraintId)
@@ -626,5 +598,50 @@ namespace Supernova
 		snActorPair* pair = m_pcs.getAvailablePair();
 		pair->m_first = _a;
 		pair->m_second = _b;
+	}
+
+	void snScene::attachActorByPointer(snIActor* const _actor)
+	{
+		if (_actor == 0)
+			return;
+
+		//try to add it to the vector
+		bool actorAdded = false;
+		for (unsigned int i = 0; i < m_actors.size(); ++i)
+		{
+			if (m_actors[i] != 0)
+				continue;
+
+			m_actors[i] = _actor;
+			actorAdded = true;
+			break;
+		}
+
+		//no existing spot found so push back
+		if (!actorAdded)
+		{
+			m_actors.push_back(_actor);
+		}
+
+		//Add the actor to the broad phase.
+		m_sweepAndPrune.addActor(_actor);
+	}
+
+	void snScene::removeActorByPointer(snIActor const * const _actor)
+	{
+		if (_actor == 0)
+			return;
+
+		//Remove the actor from the broad phase
+		m_sweepAndPrune.removeActor(_actor);
+
+		//Remove the actor from the scene
+		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		{
+			if ((*i) == _actor)
+			{
+				(*i) = 0;
+			}
+		}
 	}
 }

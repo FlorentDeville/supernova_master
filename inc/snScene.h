@@ -42,6 +42,7 @@ using std::string;
 #include <list>
 using std::list;
 
+#include "snWorld.h"
 #include "AlignmentAllocator.h"
 #include "snObject.h"
 #include "snTypes.h"
@@ -124,31 +125,38 @@ namespace Supernova
 		float m_contactConstraintBeta;
 
 	public:
-		//Constructor. Scenes should be created using snFactory::createScene. If you create a scene yourself it is your responsability
-		//to delete it.
+		//Constructor. Scenes should be created using snWorld::createScene. This constructor should be hidden.
 		snScene(snObjectId _id);
 
-		//Destructor
+		//Delete everything inside the scene (actors, colliders and constraints) and delete the entry for that scene in the
+		//look up table.
 		virtual ~snScene();
 
-		//Create a new actor and add it to the scene.
-		// return : a pointer to the newly created dynamic actor.
-		snActorDynamic* createActorDynamic();
+		//Add a dynamic actor to the scene.
+		// _actor : handle to a dynamic actor.
+		void attachActor(snhActorDynamic _actor);
 
-		//Create a new static actor and add it to the scene.
-		// _position : the position of the static actor.
-		// _orientation : the orientation as a quaternion of the static actor.
-		// return : a pointer to the newly created static actor.
-		snActorStatic* createActorStatic(const snVec& _position, const snVec& _orientation);
+		//Add a static actor to the scene.
+		// _actor : handle to a static actor.
+		void attachActor(snhActorStatic _actor);
 
-		//Delete an actor
-		void deleteActor(snIActor* const _actor);
+		//Remove a dynamic actor from the scene.
+		// _actor : a handle to the dynamic actor to remove.
+		void removeActor(snhActorDynamic _actor);
 
-		//Add the actor to the scene.
-		int attachActor(snIActor* const _actor);
+		//Remove a static actor from the scene.
+		// _actor : a handle to the static actor to remove.
+		void removeActor(snhActorStatic _actor);
 
-		//Remove the actor from the scene
-		void removeActor(snIActor const * const _actor);
+		//Delete a dynamic actor and remove it from the scene.
+		// _actor : a handle to the dynamic actor to delete.
+		// remarks : all handle to the dynamic actor will become invalid.
+		void deleteActor(snhActorDynamic _actor);
+
+		//Delete static actor and remove it from the scene.
+		// _actor : a handle to the static actor to delete.
+		// remarks : all handle to the static actor will become invalid.
+		void deleteActor(snhActorStatic _actor);
 
 		//Get a constraint from its id.
 		snIConstraint* getConstraint(unsigned int _constraintId);
@@ -235,6 +243,14 @@ namespace Supernova
 
 		//Store a pair of actor into the PCS.
 		void storeActorPair(snIActor* _a, snIActor* _b);
+
+		//Add an actor to the scene.
+		// _actor : a pointer to an actor.
+		void attachActorByPointer(snIActor* const _actor);
+
+		//Remove an actor from the scene.
+		// _actor : a pointer to the actor to remove.
+		void removeActorByPointer(snIActor const * const _actor);
 	};
 }
 

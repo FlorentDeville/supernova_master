@@ -69,7 +69,8 @@ namespace Devil
 			
 			//create actor
 			snhScene myScene = WORLD->getPhysicsScene();
-			snActorDynamic* act = myScene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			myScene->attachActor(act);
 
 			act->setName("projectile");
 			
@@ -83,7 +84,7 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			//deactive the entity
 			box->setIsActive(false);

@@ -37,6 +37,7 @@
 
 #include "snGlobals.h"
 #include "snObject.h"
+#include "snVec.h"
 
 #include <vector>
 using std::vector;
@@ -44,12 +45,12 @@ using std::vector;
 #include <map>
 using std::map;
 
-
-
 namespace Supernova
 {
+	class snObject;
 	class snScene;
-
+	class snActorDynamic;
+	class snActorStatic;
 
 	template<class C> class snHandle
 	{
@@ -69,12 +70,14 @@ namespace Supernova
 
 		snObjectId getId() const { return m_id; }
 
+		bool isValid() const { return getPtr() == 0 ? false : true; }
+
 		C* const operator->() const { return getPtr(); }
 	};
 
-	typedef snHandle<snScene> snhScene;
-
-	class snObject;
+	typedef snHandle<snScene> snhScene;					//Handle for a scene.
+	typedef snHandle<snActorStatic> snhActorStatic;		//Handle for a static actor.
+	typedef snHandle<snActorDynamic> snhActorDynamic;	//Handle for a dynamic actor.
 
 	//Main entry point of Supernova.
 	class SN_ALIGN snWorld
@@ -115,6 +118,16 @@ namespace Supernova
 		//Create an empty scene and return an handle to it.
 		// remarks : not thread safe.
 		snhScene createScene();
+
+		//Create a new actor.
+		// return : a handle to the newly created dynamic actor.
+		snhActorDynamic createActorDynamic();
+
+		//Create a new static actor.
+		// _position : the position of the static actor.
+		// _orientation : the orientation as a quaternion of the static actor.
+		// return : a handle to the newly created static actor.
+		snhActorStatic createActorStatic(const snVec& _position, const snVec& _orientation);
 
 		//Remove an object from the world.
 		// _id : id of the object to remove from the world.

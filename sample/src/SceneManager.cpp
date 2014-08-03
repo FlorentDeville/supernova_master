@@ -194,8 +194,8 @@ namespace Devil
 			snVec pos = snVec4Set(0, groundHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
-			_ASSERTE(_CrtCheckMemory());
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
 			act->setName("base");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -209,7 +209,7 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[1]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			blockOneHeight = snVec4GetY(pos) + height * 0.5f;
 		}
@@ -223,7 +223,8 @@ namespace Devil
 			snVec pos = snVec4Set(width * 0.5f, blockOneHeight + height * 0.5f + 0, 0, 1);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
 			act->setName("platform");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -237,7 +238,7 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			platformHeight = snVec4GetY(pos) + height * 0.5f;
 		}
@@ -251,7 +252,8 @@ namespace Devil
 			snVec pos = snVec4Set(2, platformHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
 			act->setName("two");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -265,7 +267,7 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[3]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			blockTwoHeight = snVec4GetY(pos) + height * 0.5f;
 		}
@@ -278,7 +280,8 @@ namespace Devil
 			snVec pos = snVec4Set(2, blockTwoHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
 			act->setName("three");
 			act->setPosition(pos);
 			act->setIsKinematic(false);
@@ -293,7 +296,7 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			blockThreeHeight = snVec4GetY(pos) + height * 0.5f;
 		}
@@ -306,7 +309,8 @@ namespace Devil
 			snVec pos = snVec4Set(11, platformHeight + height * 0.5f + 25, 0, 1);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
 			act->setName("dynamic");
 			act->setPosition(pos);
 			float rot = 3.14f * 0.25f;
@@ -322,7 +326,7 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[0]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			blockTwoHeight = snVec4GetY(pos) + height * 0.5f;
 		}
@@ -349,7 +353,8 @@ namespace Devil
 
 			//create actor
 			snVec position = snVec4Set(0, 101, -80, 1);
-			snActorStatic* act = scene->createActorStatic(position, snVec4Set(0, 0, 0, 1));
+			snhActorStatic act = SUPERNOVA->createActorStatic(position, snVec4Set(0, 0, 0, 1));
+			scene->attachActor(act);
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
@@ -363,7 +368,7 @@ namespace Devil
 
 			//create world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-			kinematicBox->setActor(act);
+			kinematicBox->setActor(act.getPtr());
 		}
 
 		const int MAX_ROW = 14;
@@ -379,7 +384,8 @@ namespace Devil
 				snVec pos = snVec4Set((MAX_ROW - row) * width * 0.5f + (width + space) * i + xOffset, groundHeight + height * 0.5f + height * (MAX_ROW - row), 0, 1);
 
 				//create actor
-				snActorDynamic* act = scene->createActorDynamic();
+				snhActorDynamic act = SUPERNOVA->createActorDynamic();
+				scene->attachActor(act);
 
 				string strRow = std::to_string(row);
 				string strI = std::to_string(i);
@@ -400,7 +406,7 @@ namespace Devil
 				act->initialize();
 
 				EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[(i + row) % 5]);
-				box->setActor(act);
+				box->setActor(act.getPtr());
 			}
 		}
 	}
@@ -423,7 +429,8 @@ namespace Devil
 			float depth = 5;
 
 			//create actor
-			snActorStatic* act = scene->createActorStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			snhActorStatic act = SUPERNOVA->createActorStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			scene->attachActor(act);
 
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
@@ -438,7 +445,7 @@ namespace Devil
 
 			//create world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-			kinematicBox->setActor(act);
+			kinematicBox->setActor(act.getPtr());
 		}
 
 		float top = 100;
@@ -450,13 +457,15 @@ namespace Devil
 			snVec pos = snVec4Set(10, top, 0, 1);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
+
 			act->setName("d0");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
 			act->getPhysicMaterial().m_friction = 1;
 			act->setIsKinematic(false);
-			previousActor = act;
+			previousActor = act.getPtr();
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
@@ -467,10 +476,10 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			//create constraints
-			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVec4Set(0, 10, 0, 0), 10);
+			snFixedConstraint* constraint = scene->createFixedConstraint(act.getPtr(), pos + snVec4Set(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 
@@ -486,7 +495,9 @@ namespace Devil
 			snVec pos = snVec4Set(10, top, 0, 1);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
+
 			act->setName("d1");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -504,14 +515,14 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			//create p2p constraint
 			snPointToPointConstraint* p2pc = scene->createPointToPointConstraint(previousActor, snVec4Set(0, -LINK_LENGTH, 0, 1),
-				act, snVec4Set(0, LINK_LENGTH, 0, 1));
+				act.getPtr(), snVec4Set(0, LINK_LENGTH, 0, 1));
 			WORLD->createPointToPointConstraint(p2pc);
 
-			previousActor = act;
+			previousActor = act.getPtr();
 		}
 	}
 
@@ -533,7 +544,9 @@ namespace Devil
 			float depth = 2;
 
 			//create actor
-			snActorStatic* act = scene->createActorStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			snhActorStatic act = SUPERNOVA->createActorStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			scene->attachActor(act);
+
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
 			act->getPhysicMaterial().m_friction = 1;
@@ -547,7 +560,7 @@ namespace Devil
 			
 			//create 	world 	entity	
 			EntityBox* 	kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-			kinematicBox->setActor(act);
+			kinematicBox->setActor(act.getPtr());
 			
 		}
 
@@ -576,7 +589,9 @@ namespace Devil
 			float depth = 100;
 
 			//create actor
-			snActorStatic* act = scene->createActorStatic(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
+			snhActorStatic act = SUPERNOVA->createActorStatic(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
+			scene->attachActor(act);
+
 			act->setName("slope");
 			act->getPhysicMaterial().m_restitution = 1.f;
 			act->getPhysicMaterial().m_friction = 1.f;
@@ -590,7 +605,7 @@ namespace Devil
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-			kinematicBox->setActor(act);
+			kinematicBox->setActor(act.getPtr());
 		}
 
 		createGround(scene, 0, 0.8f);
@@ -606,7 +621,8 @@ namespace Devil
 		//full friction, no restitution
 		{
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
 			act->setName("full friction");
 			act->setPosition(snVec4Set(-10, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
@@ -624,13 +640,15 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[0]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 		}
 
 		//no friction, no restitution
 		{
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
+
 			act->setName("no friction");
 			act->setPosition(snVec4Set(10, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
@@ -648,13 +666,15 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[2]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 		}
 
 		//half friction, no restitution
 		{
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
+
 			act->setName("half friction");
 			act->setPosition(snVec4Set(0, height, -30, 1));
 			act->setOrientation(snQuaternionFromEuler(slopeAngle, 0, 0));
@@ -672,7 +692,7 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[1]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 		}
 	}
 
@@ -695,7 +715,9 @@ namespace Devil
 			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 0);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
+
 			act->setName("d0");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -714,18 +736,18 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[i]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			//create floating text component
 			ComponentFloatingText<snActorDynamic, float>* floatingText = new ComponentFloatingText<snActorDynamic, float>();
 			floatingText->setAnchor(box);
 			floatingText->setOffset(XMFLOAT2(-120, 50));
-			floatingText->addItem(L"Angular Damping", act, &snActorDynamic::getAngularDampingCoeff);
-			floatingText->addItem(L"Angular Speed", act, &snActorDynamic::computeAngularSpeed);
+			floatingText->addItem(L"Angular Damping", act.getPtr(), &snActorDynamic::getAngularDampingCoeff);
+			floatingText->addItem(L"Angular Speed", act.getPtr(), &snActorDynamic::computeAngularSpeed);
 			box->addPostUpdateComponent(floatingText);
 
 			//create constraints
-			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVec4Set(0, 10, 0, 0), 10);
+			snFixedConstraint* constraint = scene->createFixedConstraint(act.getPtr(), pos + snVec4Set(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 
@@ -739,7 +761,9 @@ namespace Devil
 			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 0);
 
 			//create actor
-			snActorDynamic* act = scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			scene->attachActor(act);
+
 			act->setName("d0");
 			act->setPosition(pos);
 			act->getPhysicMaterial().m_restitution = 0;
@@ -758,18 +782,18 @@ namespace Devil
 			act->initialize();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[i]);
-			box->setActor(act);
+			box->setActor(act.getPtr());
 
 			//create floating text component
 			ComponentFloatingText<snActorDynamic, float>* floatingText = new ComponentFloatingText<snActorDynamic, float>();
 			floatingText->setAnchor(box);
 			floatingText->setOffset(XMFLOAT2(-120, 50));
-			floatingText->addItem(L"Linear Damping", act, &snActorDynamic::getLinearDampingCoeff);
-			floatingText->addItem(L"Linear Speed", act, &snActorDynamic::computeLinearSpeed);
+			floatingText->addItem(L"Linear Damping", act.getPtr(), &snActorDynamic::getLinearDampingCoeff);
+			floatingText->addItem(L"Linear Speed", act.getPtr(), &snActorDynamic::computeLinearSpeed);
 			box->addPostUpdateComponent(floatingText);
 
 			//create constraints
-			snFixedConstraint* constraint = scene->createFixedConstraint(act, pos + snVec4Set(0, 10, 0, 0), 10);
+			snFixedConstraint* constraint = scene->createFixedConstraint(act.getPtr(), pos + snVec4Set(0, 10, 0, 0), 10);
 			WORLD->createFixedConstraint(constraint);
 		}
 	}
@@ -790,7 +814,8 @@ namespace Devil
 			float depth = 40;
 
 			//create the actor
-			snActorDynamic* kin = scene->createActorDynamic();
+			snhActorDynamic kin = SUPERNOVA->createActorDynamic();
+			scene->attachActor(kin);
 			kin->setIsKinematic(true);
 			kin->setName("kinematic");
 			kin->setPosition(snVec4Set(-15, 100, 0, 1));
@@ -805,10 +830,10 @@ namespace Devil
 
 			//create entity
 			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[0]);
-			entity->setActor(kin);
+			entity->setActor(kin.getPtr());
 
 			//create path component
-			ComponentFollowPath* path = new ComponentFollowPath(kin, true);
+			ComponentFollowPath* path = new ComponentFollowPath(kin.getPtr(), true);
 			float speed = 5.f;
 
 			path->addWaypoint(snVec4Set(-10, 100, 0, 1), speed);
@@ -832,7 +857,8 @@ namespace Devil
 			float depth = 5;
 
 			//create the actor
-			snActorDynamic* dyn = scene->createActorDynamic();
+			snhActorDynamic dyn = SUPERNOVA->createActorDynamic();
+			scene->attachActor(dyn);
 			dyn->setName("dynamic");
 			dyn->setPosition(snVec4Set(-2, 103.5, 0, 1));
 			dyn->getPhysicMaterial().m_friction = 1.f;
@@ -846,7 +872,7 @@ namespace Devil
 
 			//create entity
 			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[1]);
-			entity->setActor(dyn);
+			entity->setActor(dyn.getPtr());
 
 			//create text component
 			ComponentFloatingText<EntityBox, int>* text = new ComponentFloatingText<EntityBox, int>();
@@ -863,7 +889,8 @@ namespace Devil
 			float depth = 25;
 
 			//create the actor
-			snActorStatic* sta = scene->createActorStatic(snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhActorStatic sta = SUPERNOVA->createActorStatic(snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			scene->attachActor(sta);
 			sta->setName("static right wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
@@ -875,7 +902,7 @@ namespace Devil
 
 			//create entity
 			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
-			entity->setActor(sta);
+			entity->setActor(sta.getPtr());
 
 			//create text component
 			ComponentFloatingText<EntityBox, int>* text = new ComponentFloatingText<EntityBox, int>();
@@ -892,7 +919,8 @@ namespace Devil
 			float depth = 25;
 
 			//create the actor
-			snActorStatic* sta = scene->createActorStatic(snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhActorStatic sta = SUPERNOVA->createActorStatic(snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			scene->attachActor(sta);
 			sta->setName("static left wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
@@ -918,7 +946,7 @@ namespace Devil
 
 			//create entity
 			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
-			entity->setActor(sta);
+			entity->setActor(sta.getPtr());
 
 			//create text component
 			ComponentFloatingText<EntityBox, int>* text = new ComponentFloatingText<EntityBox, int>();
@@ -962,7 +990,9 @@ namespace Devil
 		{
 			//create actor
 			snVec dominoSize = snVec4Set(5, 10, 1, 0);
-			snActorDynamic* actor = WORLD->getPhysicsScene()->createActorDynamic();
+			snhActorDynamic actor = SUPERNOVA->createActorDynamic();
+			WORLD->getPhysicsScene()->attachActor(actor);
+
 			actor->setPosition(_frenet[3]);
 
 			//compute its orientation
@@ -996,8 +1026,8 @@ namespace Devil
 			colors[4] = XMFLOAT4(0.96f, 0.48f, 0.63f, 1);
 
 			//create entity
-			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(dominoSize), snVec4GetY(dominoSize), snVec4GetZ(dominoSize)), colors[(int)actor % COLOR_COUNT]);
-			box->setActor(actor);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(dominoSize), snVec4GetY(dominoSize), snVec4GetZ(dominoSize)), colors[actor.getId() % COLOR_COUNT]);
+			box->setActor(actor.getPtr());
 		});
 
 		explorer.run();
@@ -1009,7 +1039,8 @@ namespace Devil
 			snVec hammerPosition = snVec4Set(0, snVec4GetY(dominoSize), -120, 0) + hammerOffset;
 			float constraintDistance = snVec3Norme(constraintOrigin - hammerPosition);
 
-			snActorDynamic* actor = scene->createActorDynamic();
+			snhActorDynamic actor = SUPERNOVA->createActorDynamic();
+			scene->attachActor(actor);
 			actor->setPosition(hammerPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
@@ -1024,10 +1055,10 @@ namespace Devil
 
 			//create entity
 			EntityBox* box = WORLD->createBox(XMFLOAT3(size, size, size));
-			box->setActor(actor);
+			box->setActor(actor.getPtr());
 
 			//create the fixed constraint
-			snFixedConstraint* constraint = scene->createFixedConstraint(actor, constraintOrigin, constraintDistance);
+			snFixedConstraint* constraint = scene->createFixedConstraint(actor.getPtr(), constraintOrigin, constraintDistance);
 			WORLD->createFixedConstraint(constraint);
 		}
 
@@ -1035,7 +1066,8 @@ namespace Devil
 		{
 			snVec startPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -130, 1);
 			snVec endPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -150, 1);
-			snActorDynamic* actor = scene->createActorDynamic();
+			snhActorDynamic actor = SUPERNOVA->createActorDynamic();
+			scene->attachActor(actor);
 			actor->setPosition(startPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
@@ -1053,12 +1085,12 @@ namespace Devil
 
 			//create entity
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
-			box->setActor(actor);
+			box->setActor(actor.getPtr());
 			box->setWireframe(false);
 
 			//create component moving the entity
 			//ComponentPathInterpolate* path = new ComponentPathInterpolate(actor, false);
-			ComponentFollowPath* path = new ComponentFollowPath(actor, false);
+			ComponentFollowPath* path = new ComponentFollowPath(actor.getPtr(), false);
 			path->setIsActive(false);
 			path->addWaypoint(startPosition, 2);
 			path->addWaypoint(endPosition, 10);
@@ -1068,7 +1100,8 @@ namespace Devil
 
 		//create trigger
 		{
-			snActorDynamic* actor = scene->createActorDynamic();
+			snhActorDynamic actor = SUPERNOVA->createActorDynamic();
+			scene->attachActor(actor);
 			actor->setPosition(snVec4Set(0, 100, -130, 1));
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
@@ -1096,7 +1129,7 @@ namespace Devil
 
 			//create entity
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth));
-			box->setActor(actor);
+			box->setActor(actor.getPtr());
 			box->setWireframe(true);
 
 			ComponentFloatingText<EntityBox, float>* text = new ComponentFloatingText<EntityBox, float>();
@@ -1144,7 +1177,8 @@ namespace Devil
 
 		position = position + snVec4Set(0, distance, 0, 0);
 
-		snActorDynamic* act = scene->createActorDynamic();
+		snhActorDynamic act = SUPERNOVA->createActorDynamic();
+		scene->attachActor(act);
 
 		act->setName("composite");
 		//act->setPosition(snVec4Set(0, 20, 0, 1));
@@ -1186,7 +1220,7 @@ namespace Devil
 
 		act->initialize();
 
-		WORLD->createComposite(act, m_colors[3]);
+		WORLD->createComposite(act.getPtr(), m_colors[3]);
 
 		////Create a sphere
 		//int actSphereId = -1;
@@ -1223,6 +1257,7 @@ namespace Devil
 		//create the physics scene
 		int sceneId = -1;
 		snhScene scene = SUPERNOVA->createScene();
+		WORLD->setPhysicsScene(scene);
 		scene->setCollisionMode(m_collisionMode);
 
 		//scene->setLinearSquaredSpeedThreshold(0.000001f);
@@ -1245,7 +1280,8 @@ namespace Devil
 		WORLD->getCamera()->setPosition(snVec4Set(10, 120, -180, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(10, 30, 0, 1));
 
-		snActorDynamic* actEnvironment = scene->createActorDynamic();
+		snhActorDynamic actEnvironment = SUPERNOVA->createActorDynamic();
+		scene->attachActor(actEnvironment);
 		actEnvironment->setName("level");
 
 		const float THICKNESS = 20;
@@ -1285,11 +1321,12 @@ namespace Devil
 		actEnvironment->getPhysicMaterial().m_friction = 1;
 		actEnvironment->initialize();
 
-		EntityComposite* entity = WORLD->createComposite(actEnvironment, XMFLOAT4(1, 1, 1, 1));
+		EntityComposite* entity = WORLD->createComposite(actEnvironment.getPtr(), XMFLOAT4(1, 1, 1, 1));
 		entity->setTexture(GRAPHICS->getTexChecker());
 
 		//Create ball
-		snActorDynamic* ball = scene->createActorDynamic();
+		snhActorDynamic ball = SUPERNOVA->createActorDynamic();
+		scene->attachActor(ball);
 		float sphereRadius = 10;
 		snSphere* sphere = new snSphere(sphereRadius);
 		ball->addCollider(sphere);
@@ -1301,10 +1338,10 @@ namespace Devil
 		ball->initialize();
 
 		//WORLD->createComposite(ball, m_colors[3]);
-		EntityComposite* monkeyBall = WORLD->createMonkeyBall(ball, m_colors[4]);
+		EntityComposite* monkeyBall = WORLD->createMonkeyBall(ball.getPtr(), m_colors[4]);
 		WORLD->createSkybox(monkeyBall, 1000, m_colors[4]);
 
-		ComponentBackground* cBack = new ComponentBackground(actEnvironment, ball, initialPosition, initialOrientation);
+		ComponentBackground* cBack = new ComponentBackground(actEnvironment.getPtr(), ball.getPtr(), initialPosition, initialOrientation);
 		entity->addPreUpdateComponent(cBack);
 
 	}
@@ -1337,7 +1374,8 @@ namespace Devil
 		float orientationOffset = 2 * 3.14f * (1.f / SHAPE_COUNT);
 		for (unsigned int i = 0; i < SHAPE_COUNT; ++i)
 		{
-			snActorDynamic* actCapsule = scene->createActorDynamic();
+			snhActorDynamic actCapsule = SUPERNOVA->createActorDynamic();
+			scene->attachActor(actCapsule);
 			snCapsule* colCapsule = new snCapsule(10, 5);
 			/*actCapsule->setPosition(snVec4Set(0, 15, 0, 1));
 			actCapsule->setOrientation(snQuaternionFromEuler( 0, 0.f, 0));*/
@@ -1352,7 +1390,7 @@ namespace Devil
 			//actCapsule->setIsKinematic(true);
 			actCapsule->updateMassAndInertia(10);
 			actCapsule->initialize();
-			EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[i%4]);
+			EntityComposite* comp = WORLD->createComposite(actCapsule.getPtr(), m_colors[i%4]);
 			comp->setWireframe(true);
 		}
 
@@ -1464,7 +1502,8 @@ namespace Devil
 		for (int i = 0; i < SPHERE_COUNT; ++i)
 		{
 			//create a dynamic sphere
-			snActorDynamic* sphere = scene->createActorDynamic();
+			snhActorDynamic sphere = SUPERNOVA->createActorDynamic();
+			scene->attachActor(sphere);
 			snICollider* collider = 0;
 			int mod = i % 3;
 			if (mod == 0)
@@ -1483,7 +1522,7 @@ namespace Devil
 			sphere->getPhysicMaterial().m_friction = 1;
 			sphere->initialize();
 
-			EntityComposite* entity = WORLD->createComposite(sphere, m_colors[i % 4]);
+			EntityComposite* entity = WORLD->createComposite(sphere.getPtr(), m_colors[i % 4]);
 			//entity->setWireframe(true);
 		}
 
@@ -1501,7 +1540,8 @@ namespace Devil
 
 		//create actor
 		snVec position = snVec4Set(0, -1, 0, 1);
-		snActorStatic* act = _scene->createActorStatic(position, snVec4Set(0, 0, 0, 1));
+		snhActorStatic act = SUPERNOVA->createActorStatic(position, snVec4Set(0, 0, 0, 1));
+		_scene->attachActor(act);
 		act->setName("ground");
 		act->getPhysicMaterial().m_restitution = _restitution;
 		act->getPhysicMaterial().m_friction = _friction;
@@ -1515,7 +1555,7 @@ namespace Devil
 
 		//create the world entity
 		EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
-		kinematicBox->setActor(act);
+		kinematicBox->setActor(act.getPtr());
 	}
 
 	void SceneManager::activateDominoSceneHammerBlocker()
@@ -1576,7 +1616,8 @@ namespace Devil
 		for (int i = 0; i < pillarCount; ++i)
 		{
 			//create actor
-			snActorDynamic* act = _scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			_scene->attachActor(act);
 
 			snVec pos = pillarPosition[i] + _origin;
 			act->setName("pillar1");
@@ -1594,8 +1635,8 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(pillarWidth, pillarHeight, pillarDepth), colors[(int)act % colorCount]);
-			box->setActor(act);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(pillarWidth, pillarHeight, pillarDepth), colors[act.getId() % colorCount]);
+			box->setActor(act.getPtr());
 		}
 
 		float bedWidth = towerWidth + 2 * pillarWidth;
@@ -1621,7 +1662,8 @@ namespace Devil
 		for (int i = 0; i < pillarCount; ++i)
 		{
 			//create actor
-			snActorDynamic* act = _scene->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			_scene->attachActor(act);
 
 			snVec pos = bedPosition[i] + _origin;
 			act->setName("bed");
@@ -1638,8 +1680,8 @@ namespace Devil
 			act->updateMassAndInertia(50);
 			act->initialize();
 
-			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(bedSize[i]), snVec4GetY(bedSize[i]), snVec4GetZ(bedSize[i])), colors[(int)act % colorCount]);
-			box->setActor(act);
+			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(bedSize[i]), snVec4GetY(bedSize[i]), snVec4GetZ(bedSize[i])), colors[act.getId() % colorCount]);
+			box->setActor(act.getPtr());
 		}
 
 		return _origin + snVec4Set(0, pillarHeight + 2 * bedHeight, 0, 0);
@@ -1675,7 +1717,8 @@ namespace Devil
 
 		//create left wall 
 		{
-			snActorStatic* stat = scene->createActorStatic(snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhActorStatic stat = SUPERNOVA->createActorStatic(snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+			scene->attachActor(stat);
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(10, 500, 500, 0) * 0.5f);
@@ -1697,13 +1740,14 @@ namespace Devil
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(10, 500, 500));
-			kinematicBox->setActor(stat);
+			kinematicBox->setActor(stat.getPtr());
 			kinematicBox->setWireframe(true);
 		}
 
 		//create right wall 
 		{
-			snActorStatic* stat = scene->createActorStatic(snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhActorStatic stat = SUPERNOVA->createActorStatic(snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+			scene->attachActor(stat);
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(10, 500, 500, 0) * 0.5f);
@@ -1725,13 +1769,14 @@ namespace Devil
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(10, 500, 500));
-			kinematicBox->setActor(stat);
+			kinematicBox->setActor(stat.getPtr());
 			kinematicBox->setWireframe(true);
 		}
 
 		//create front wall 
 		{
-			snActorStatic* stat = scene->createActorStatic(snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
+			snhActorStatic stat = SUPERNOVA->createActorStatic(snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
+			scene->attachActor(stat);
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(500, 500, 10, 0) * 0.5f);
@@ -1753,13 +1798,14 @@ namespace Devil
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(500, 500, 10));
-			kinematicBox->setActor(stat);
+			kinematicBox->setActor(stat.getPtr());
 			kinematicBox->setWireframe(true);
 		}
 
 		//create back wall 
 		{
-			snActorStatic* stat = scene->createActorStatic(snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
+			snhActorStatic stat = SUPERNOVA->createActorStatic(snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
+			scene->attachActor(stat);
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(500, 500, 10, 0) * 0.5f);
@@ -1781,7 +1827,7 @@ namespace Devil
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(500, 500, 10));
-			kinematicBox->setActor(stat);
+			kinematicBox->setActor(stat.getPtr());
 			kinematicBox->setWireframe(true);
 		}
 
@@ -1794,7 +1840,8 @@ namespace Devil
 		const float THICKNESS = 2.8f;
 
 		snhScene scene = WORLD->getPhysicsScene();
-		snActorDynamic* act = scene->createActorDynamic();
+		snhActorDynamic act = SUPERNOVA->createActorDynamic();
+		scene->attachActor(act);
 
 		act->setName("composite");
 		act->setPosition(_position);
@@ -1823,6 +1870,6 @@ namespace Devil
 		act->updateMassAndInertia(10);
 		act->initialize();
 
-		return WORLD->createComposite(act, _color);
+		return WORLD->createComposite(act.getPtr(), _color);
 	}
 }

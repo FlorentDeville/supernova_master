@@ -41,6 +41,7 @@ using std::string;
 #include <vector>
 using std::vector;
 
+#include "snObject.h"
 #include "snMatrix44f.h"
 #include "snPhysicMaterial.h"
 #include "snAABB.h"
@@ -65,7 +66,7 @@ namespace Supernova
 	};
 
 	//Interface for static and dynamic actor
-	class snIActor
+	class snIActor : public snObject
 	{
 	protected:
 	
@@ -111,6 +112,7 @@ namespace Supernova
 #pragma endregion
 
 	public:
+		snIActor(snObjectId _id);
 
 		virtual ~snIActor();
 

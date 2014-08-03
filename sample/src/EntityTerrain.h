@@ -46,6 +46,7 @@ using std::tuple;
 #include <vector>
 using std::vector;
 
+#include "snWorld.h"
 #include "TerrainDescription.h"
 #include "TileId.h"
 using namespace Devil::Terrain;
@@ -67,7 +68,7 @@ namespace Devil
 			//The first element is the TileId.
 			//The second element is the graphic id.
 			//The third element is the physic id.
-			typedef tuple<TileId, unsigned int, snActorStatic*> TileContainer;
+			typedef tuple<TileId, unsigned int, snhActorStatic> TileContainer;
 
 			//Responsible of the terrain. It updates, streams, displays the terrain.
 			class EntityTerrain : public IWorldEntity
