@@ -114,9 +114,6 @@
     <ClInclude Include="inc\snHingeConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snColliderContainer.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snGJK.h">
       <Filter>Algorithms</Filter>
     </ClInclude>
@@ -164,6 +161,9 @@
     </ClInclude>
     <ClInclude Include="inc\snWorld.h" />
     <ClInclude Include="inc\snObject.h" />
+    <ClInclude Include="inc\snTransform.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">
@@ -220,9 +220,6 @@
     <ClCompile Include="src\snHingeConstraint.cpp">
       <Filter>Simulation\Constraints</Filter>
     </ClCompile>
-    <ClCompile Include="src\snColliderContainer.cpp">
-      <Filter>Collision</Filter>
-    </ClCompile>
     <ClCompile Include="src\snGJK.cpp">
       <Filter>Algorithms</Filter>
     </ClCompile>
@@ -270,6 +267,9 @@
     </ClCompile>
     <ClCompile Include="src\snWorld.cpp" />
     <ClCompile Include="src\snObject.cpp" />
+    <ClCompile Include="src\snTransform.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="inc\snVec.inl">
