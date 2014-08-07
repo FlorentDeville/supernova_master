@@ -108,50 +108,9 @@ namespace Supernova
 		return i->second;
 	}
 
-	snhScene snWorld::createScene()
-	{
-		//Create the new scene.
-		snScene* newScene = new snScene(m_key);
-
-		//Add the scene to the look up table.
-		//Use the insert version. Its not as clear as the [] operator but its faster.
-		if (m_lookUpTable.size() == 0)
-			m_lookUpTable.insert(m_lookUpTable.begin(), std::pair<snObjectId, snObject*>(m_key, newScene));
-		else
-			m_lookUpTable.insert(--m_lookUpTable.end(), std::pair<snObjectId, snObject*>(m_key, newScene));
-
-		//Return the handle
-		snhScene handle(m_key);
-
-		//Increase the key. This is not thread safe!!!!!
-		++m_key;
-
-		return handle;
-	}
-
 	void snWorld::removeObject(snObjectId _id)
 	{
 		m_lookUpTable.erase(_id);
-	}
-
-	void snWorld::deleteScene(snhScene _hScene)
-	{
-		//Get the underlying pointer
-		snScene* scene = _hScene.getPtr();
-		if (scene == 0)
-			return;
-
-		//Delete the object
-		delete scene;
-	}
-
-	void snWorld::deleteScene(snObjectId _id)
-	{
-		snScene* scene = static_cast<snScene*>(getObject(_id));
-		if (scene == 0)
-			return;
-
-		delete scene;
 	}
 
 	void* snWorld::operator new(size_t _count)

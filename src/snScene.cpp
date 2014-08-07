@@ -76,11 +76,11 @@ namespace Supernova
 
 	snCollision snScene::m_collisionService;
 
-	snScene::snScene(snObjectId _id) : snObject(_id), m_linearSquaredSpeedThreshold(0.005f),
+	snScene::snScene() : snObject(), m_linearSquaredSpeedThreshold(0.005f),
 		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
 		m_collisionMode(snECollisionMode_ST_SweepAndPrune), m_contactConstraintBeta(0.25f), m_sweepAndPrune()
 	{
-		m_gravity = snVec4Set(0, -9.81f, 0, 0),
+		m_gravity = snVec4Set(0, -9.81f, 0, 0);
 		m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
 	}
 
@@ -293,7 +293,6 @@ namespace Supernova
 
 		case snCollisionMode::snECollisionMode_MT_SweepAndPrune:
 			m_sweepAndPrune.setCallback(this, &snScene::storeActorPair);
-			m_dispatcher.initialize(this, &snScene::computeCollisionDetection, 4);
 			break;
 		}
 
@@ -540,7 +539,6 @@ namespace Supernova
 	void snScene::multiThreadedNarrowPhase()
 	{
 		//dispatch to threads which will run the collision detection.
-		m_dispatcher.dispatch(&m_pcs);
 	}
 
 	void snScene::computeCollisionDetection(snIActor* _a, snIActor* _b)

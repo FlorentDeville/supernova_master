@@ -1245,7 +1245,7 @@ namespace Devil
 
 		//create the physics scene
 		int sceneId = -1;
-		snhScene scene = SUPERNOVA->createScene();
+		snhScene scene = SUPERNOVA->registerObject(new snScene());
 		WORLD->setPhysicsScene(scene);
 		scene->setCollisionMode(m_collisionMode);
 
@@ -1419,7 +1419,7 @@ namespace Devil
 
 		//create the physics scene
 		int sceneId = -1;
-		snhScene scene = SUPERNOVA->createScene();
+		snhScene scene = SUPERNOVA->registerObject(new snScene());
 		WORLD->setPhysicsScene(scene);
 		scene->setCollisionMode(m_collisionMode);
 
@@ -1571,7 +1571,7 @@ namespace Devil
 
 	void SceneManager::clearScene() const
 	{
-		SUPERNOVA->deleteScene(WORLD->getPhysicsScene());
+		WORLD->getPhysicsScene().release();
 		WORLD->clearWorld();
 	}
 
@@ -1686,8 +1686,8 @@ namespace Devil
 
 		GRAPHICS->setClearScreenColor(DirectX::Colors::DarkGray);
 
-		//create the physics scene;
-		snhScene scene = SUPERNOVA->createScene();
+		//create the physics scene
+		snhScene scene = SUPERNOVA->registerObject(new snScene());
 		WORLD->setPhysicsScene(scene);
 		scene->setCollisionMode(m_collisionMode);
 

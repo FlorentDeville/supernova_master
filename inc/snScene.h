@@ -52,7 +52,6 @@ using std::list;
 #include "snCollisionMode.h"
 #include "snSweepManager.h"
 #include "snActorPairManager.h"
-#include "snCollisionDispatcher.h"
 
 #ifdef _DEBUG
 namespace Devil
@@ -115,9 +114,6 @@ namespace Supernova
 		//Manager storing pairs of actors representing the possibly coliding set (pcs).
 		snActorPairManager m_pcs;
 
-		//Collision dispatcher for multithreaded collision detection
-		snCollisionDispatcher m_dispatcher;
-
 		//The type of collision to use
 		snCollisionMode m_collisionMode;
 
@@ -126,7 +122,7 @@ namespace Supernova
 
 	public:
 		//Constructor. Scenes should be created using snWorld::createScene. This constructor should be hidden.
-		snScene(snObjectId _id);
+		snScene();
 
 		//Delete everything inside the scene (actors, colliders and constraints) and delete the entry for that scene in the
 		//look up table.

@@ -84,10 +84,6 @@ namespace Supernova
 		// _id : id of an object.
 		void* getObject(snObjectId _id) const;
 
-		//Create an empty scene and return an handle to it.
-		// remarks : not thread safe.
-		snhScene createScene();
-
 		//Register an object to Supernova and return a handle. A registered object is automatically cleaned
 		// by the engine when shutdown and can be used with handles.
 		// _obj : the object to register. It must be an object of a derivated class of snObject.
@@ -99,15 +95,6 @@ namespace Supernova
 		// remarks : this method won't delete any data and the object will still exists in the engine.
 		//           Any handle on the object will become invalid.
 		void removeObject(snObjectId _id);
-
-		//Delete a scene identifed by a handle.
-		// _scene : handle of the scene to delete.
-		// remarks : every actors and colliders from the scene will be deleted as well.
-		void deleteScene(snhScene _scene);
-
-		//Delete a scene identified by an object id.
-		// _id : id of the object to delete.
-		void deleteScene(snObjectId _id);
 
 		//Overridden new operator to create scene with correct alignement.
 		void* operator new(size_t _count);

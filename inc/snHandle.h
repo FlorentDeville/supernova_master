@@ -73,6 +73,17 @@ namespace Supernova
 		bool isValid() const { return getPtr() == 0 ? false : true; }
 
 		C* const operator->() const { return getPtr(); }
+
+		//Delete the object pointed by this handle and remove it from the snWorld. All
+		//the other handle to this object will become invalid after the call to release.
+		void release() const
+		{
+			C* const ptr = getPtr();
+			if (ptr == 0)
+				return;
+
+			delete ptr;
+		}
 	};
 
 	typedef snHandle<snScene> snhScene;					//Handle for a scene.
