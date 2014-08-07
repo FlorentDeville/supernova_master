@@ -170,6 +170,7 @@
     </ClInclude>
     <ClInclude Include="inc\snWorld.h" />
     <ClInclude Include="inc\snObject.h" />
+    <ClInclude Include="inc\snHandle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">

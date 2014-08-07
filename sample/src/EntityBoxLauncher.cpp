@@ -69,7 +69,7 @@ namespace Devil
 			
 			//create actor
 			snhScene myScene = WORLD->getPhysicsScene();
-			snhActorDynamic act = SUPERNOVA->createActorDynamic();
+			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
 			myScene->attachActor(act);
 
 			act->setName("projectile");

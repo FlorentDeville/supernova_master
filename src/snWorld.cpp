@@ -46,7 +46,8 @@ namespace Supernova
 
 	snWorld::snWorld()
 	{
-		m_key = 0;
+		//0 is considered as an invalid id so start from 1.
+		m_key = 1;
 	}
 
 	snWorld::~snWorld()
@@ -121,48 +122,6 @@ namespace Supernova
 
 		//Return the handle
 		snhScene handle(m_key);
-
-		//Increase the key. This is not thread safe!!!!!
-		++m_key;
-
-		return handle;
-	}
-
-	snhActorDynamic snWorld::createActorDynamic()
-	{
-		//Create the actor
-		snActorDynamic* act = new snActorDynamic(m_key);
-
-		//Add the scene to the look up table.
-		//Use the insert version. Its not as clear as the [] operator but its faster.
-		if (m_lookUpTable.size() == 0)
-			m_lookUpTable.insert(m_lookUpTable.begin(), std::pair<snObjectId, snObject*>(m_key, act));
-		else
-			m_lookUpTable.insert(--m_lookUpTable.end(), std::pair<snObjectId, snObject*>(m_key, act));
-
-		//Return the handle
-		snhActorDynamic handle(m_key);
-
-		//Increase the key. This is not thread safe!!!!!
-		++m_key;
-
-		return handle;
-	}
-
-	snhActorStatic snWorld::createActorStatic(const snVec& _position, const snVec& _orientation)
-	{
-		//Create the actor
-		snActorStatic* act = new snActorStatic(m_key, _position, _orientation);
-
-		//Add the scene to the look up table.
-		//Use the insert version. Its not as clear as the [] operator but its faster.
-		if (m_lookUpTable.size() == 0)
-			m_lookUpTable.insert(m_lookUpTable.begin(), std::pair<snObjectId, snObject*>(m_key, act));
-		else
-			m_lookUpTable.insert(--m_lookUpTable.end(), std::pair<snObjectId, snObject*>(m_key, act));
-
-		//Return the handle
-		snhActorStatic handle(m_key);
 
 		//Increase the key. This is not thread safe!!!!!
 		++m_key;

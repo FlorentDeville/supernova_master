@@ -40,7 +40,7 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snIActor::snIActor(snObjectId _id) : snObject(_id)
+	snIActor::snIActor() : snObject()
 	{
 
 	}

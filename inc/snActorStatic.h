@@ -42,9 +42,9 @@ namespace Supernova
 	class SN_ALIGN snActorStatic : public snIActor
 	{
 	public:
-		snActorStatic(snObjectId _id, const snVec& _position);
+		snActorStatic(const snVec& _position);
 
-		snActorStatic(snObjectId _id, const snVec& _position, const snVec& _orientation);
+		snActorStatic(const snVec& _position, const snVec& _orientation);
 
 		~snActorStatic();
 

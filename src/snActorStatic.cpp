@@ -40,12 +40,12 @@ using namespace Supernova::Vector;
 namespace Supernova
 {
 
-	snActorStatic::snActorStatic(snObjectId _id, const snVec& _position) : snIActor(_id)
+	snActorStatic::snActorStatic(const snVec& _position) : snIActor()
 	{
 		init(_position, snVec4Set(0, 0, 0, 1));
 	}
 
-	snActorStatic::snActorStatic(snObjectId _id, const snVec& _position, const snVec& _orientation) : snIActor(_id)
+	snActorStatic::snActorStatic(const snVec& _position, const snVec& _orientation) : snIActor()
 	{
 		init(_position, _orientation);
 	}

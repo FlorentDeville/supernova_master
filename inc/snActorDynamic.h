@@ -71,7 +71,7 @@ namespace Supernova
 
 	public:
 
-		snActorDynamic(snObjectId _id);
+		snActorDynamic();
 		~snActorDynamic();
 
 #pragma region Virtual Getter

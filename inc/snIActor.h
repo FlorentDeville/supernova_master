@@ -111,7 +111,7 @@ namespace Supernova
 #pragma endregion
 
 	public:
-		snIActor(snObjectId _id);
+		snIActor();
 
 		virtual ~snIActor();
 

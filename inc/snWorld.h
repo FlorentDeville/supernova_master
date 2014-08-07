@@ -38,6 +38,7 @@
 #include "snGlobals.h"
 #include "snObject.h"
 #include "snVec.h"
+#include "snHandle.h"
 
 #include <vector>
 using std::vector;
@@ -47,38 +48,6 @@ using std::map;
 
 namespace Supernova
 {
-	class snObject;
-	class snScene;
-	class snActorDynamic;
-	class snActorStatic;
-
-	template<class C> class snHandle
-	{
-	protected:
-
-		//The id of the object in the look up table of Supernova.
-		snObjectId m_id;
-
-	public:
-		snHandle(){ m_id = 0; }
-
-		snHandle(snObjectId _id) { m_id = _id; }
-
-		virtual ~snHandle(){}
-
-		C* const getPtr() const { return static_cast<C* const>(snWorld::getInstance()->getObject(m_id)); }
-
-		snObjectId getId() const { return m_id; }
-
-		bool isValid() const { return getPtr() == 0 ? false : true; }
-
-		C* const operator->() const { return getPtr(); }
-	};
-
-	typedef snHandle<snScene> snhScene;					//Handle for a scene.
-	typedef snHandle<snActorStatic> snhActorStatic;		//Handle for a static actor.
-	typedef snHandle<snActorDynamic> snhActorDynamic;	//Handle for a dynamic actor.
-
 	//Main entry point of Supernova.
 	class SN_ALIGN snWorld
 	{
@@ -88,7 +57,7 @@ namespace Supernova
 		static snWorld* m_instance;
 
 		//Store the next key to use to identify uniquely an object created by the World.
-		//It goes from 0 to 2^32 = 4 294 967 295.
+		//It goes from 1 to 2^32 = 4 294 967 295. 0 is an invalid id.
 		unsigned int m_key;
 
 		//Map to store pointers to the created objects with their keys.
@@ -119,15 +88,11 @@ namespace Supernova
 		// remarks : not thread safe.
 		snhScene createScene();
 
-		//Create a new actor.
-		// return : a handle to the newly created dynamic actor.
-		snhActorDynamic createActorDynamic();
-
-		//Create a new static actor.
-		// _position : the position of the static actor.
-		// _orientation : the orientation as a quaternion of the static actor.
-		// return : a handle to the newly created static actor.
-		snhActorStatic createActorStatic(const snVec& _position, const snVec& _orientation);
+		//Register an object to Supernova and return a handle. A registered object is automatically cleaned
+		// by the engine when shutdown and can be used with handles.
+		// _obj : the object to register. It must be an object of a derivated class of snObject.
+		// return : a handle to the registered object.
+		template<class T> snHandle<T> registerObject(T* const _obj);
 
 		//Remove an object from the world.
 		// _id : id of the object to remove from the world.
@@ -150,6 +115,25 @@ namespace Supernova
 		//Overridden delete operator to delete using the correct alignement.
 		void operator delete(void* _p);
 	};
+
+	template<class T> snHandle<T> snWorld::registerObject(T* const _obj)
+	{
+		//Add the scene to the look up table.
+		//Use the insert version. Its not as clear as the [] operator but its faster.
+		if (m_lookUpTable.size() == 0)
+			m_lookUpTable.insert(m_lookUpTable.begin(), std::pair<snObjectId, snObject*>(m_key, _obj));
+		else
+			m_lookUpTable.insert(--m_lookUpTable.end(), std::pair<snObjectId, snObject*>(m_key, _obj));
+
+		//Return the handle
+		snHandle<T> handle(m_key);
+		_obj->m_id = m_key;
+
+		//Increase the key. This is not thread safe!!!!!
+		++m_key;
+
+		return handle;
+	}
 
 //Provide quick access to the factory.
 #define SUPERNOVA ::Supernova::snWorld::getInstance()

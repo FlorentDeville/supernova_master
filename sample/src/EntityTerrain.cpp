@@ -209,7 +209,7 @@ namespace Devil
 
 				//create the physic height map
 				snhScene scene = WORLD->getPhysicsScene();
-				snhActorStatic snMap = SUPERNOVA->createActorStatic(snVec4Set(0), snVec4Set(0));
+				snhActorStatic snMap = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(0), snVec4Set(0)));
 				scene->attachActor(snMap);
 
 				TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, m_description.getQuadSize(),

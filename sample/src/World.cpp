@@ -52,6 +52,7 @@ using namespace Devil::Worlds::Entities;
 #include "IComponent.h"
 
 #include "snIActor.h"
+#include "snScene.h"
 using Supernova::snIActor;
 
 namespace Devil

@@ -31,20 +31,53 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#include "snObject.h"
+
+#ifndef SN_HANDLE_H
+#define SN_HANDLE_H
+
 #include "snWorld.h"
 
 namespace Supernova
 {
-	snObject::snObject() : m_id(SN_INVALID_OBJECT_ID){}
+	class snObject;
+	class snScene;
+	class snActorDynamic;
+	class snActorStatic;
 
-	snObject::snObject(snObjectId _id) : m_id(_id){}
+	template<class C> class snHandle
+	{
+	protected:
 
-	snObject::~snObject()
-	{ 
-		if (m_id != SN_INVALID_OBJECT_ID)
+		//The id of the object in the look up table of Supernova.
+		snObjectId m_id;
+
+	public:
+		snHandle()
 		{
-			SUPERNOVA->removeObject(m_id);
+			static_assert(std::is_base_of<snObject, C>::value, "The template parameter of class snHandle must be a derived class of snObject.");
+			m_id = 0;
 		}
-	}
+
+		snHandle(snObjectId _id)
+		{
+			static_assert(std::is_base_of<snObject, C>::value, "The template parameter of class snHandle must be a derived class of snObject.");
+			m_id = _id;
+		}
+
+		virtual ~snHandle(){}
+
+		C* const getPtr() const { return static_cast<C* const>(snWorld::getInstance()->getObject(m_id)); }
+
+		snObjectId getId() const { return m_id; }
+
+		bool isValid() const { return getPtr() == 0 ? false : true; }
+
+		C* const operator->() const { return getPtr(); }
+	};
+
+	typedef snHandle<snScene> snhScene;					//Handle for a scene.
+	typedef snHandle<snActorStatic> snhActorStatic;		//Handle for a static actor.
+	typedef snHandle<snActorDynamic> snhActorDynamic;	//Handle for a dynamic actor.
 }
+
+#endif //ifndef SN_HANDLE_H

@@ -25,6 +25,7 @@
     <ClInclude Include="inc\snCollisionFlag.h" />
     <ClInclude Include="inc\snDebugger.h" />
     <ClInclude Include="inc\snAABB.h" />
+    <ClInclude Include="inc\snHandle.h" />
     <ClInclude Include="inc\snHeightMap.h" />
     <ClInclude Include="inc\snLogger.h" />
     <ClInclude Include="inc\snOBB.h" />
