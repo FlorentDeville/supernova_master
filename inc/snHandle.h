@@ -43,6 +43,9 @@ namespace Supernova
 	class snScene;
 	class snActorDynamic;
 	class snActorStatic;
+	class snSphere;
+	class snOBB;
+	class snCapsule;
 
 	template<class C> class snHandle
 	{
@@ -89,6 +92,9 @@ namespace Supernova
 	typedef snHandle<snScene> snhScene;					//Handle for a scene.
 	typedef snHandle<snActorStatic> snhActorStatic;		//Handle for a static actor.
 	typedef snHandle<snActorDynamic> snhActorDynamic;	//Handle for a dynamic actor.
+	typedef snHandle<snSphere> snhSphere;				//Handle for a sphere.
+	typedef snHandle<snOBB> snhOBB;						//Handle for an OBB.
+	typedef snHandle<snCapsule> snhCapsule;				//Handle for a capsule.
 }
 
 #endif //ifndef SN_HANDLE_H

@@ -35,6 +35,7 @@
 #ifndef SN_ICOLLIDER_H
 #define SN_ICOLLIDER_H
 
+#include "snObject.h"
 #include "snGlobals.h"
 #include "snTransform.h"
 
@@ -56,7 +57,7 @@ namespace Supernova
 		snEColliderHeightMap
 	};
 
-	class snICollider
+	class snICollider : public snObject
 	{
 
 	protected:
@@ -68,7 +69,7 @@ namespace Supernova
 		snTransform m_transform;
 
 	public:
-		snICollider(){}
+		snICollider() : snObject(){}
 
 		virtual ~snICollider(){}
 
