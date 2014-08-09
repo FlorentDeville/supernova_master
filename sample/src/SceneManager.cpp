@@ -204,6 +204,7 @@ namespace Devil
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
+			SUPERNOVA->registerObject(collider);
 			act->addCollider(collider);
 			act->updateMassAndInertia(200);
 			act->initialize();
@@ -233,6 +234,7 @@ namespace Devil
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
+			SUPERNOVA->registerObject(collider);
 			act->addCollider(collider);
 			act->updateMassAndInertia(100);
 			act->initialize();
@@ -262,6 +264,7 @@ namespace Devil
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
+			SUPERNOVA->registerObject(collider);
 			act->addCollider(collider);
 			act->updateMassAndInertia(100);
 			act->initialize();
@@ -290,6 +293,7 @@ namespace Devil
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
+			SUPERNOVA->registerObject(collider);
 			act->addCollider(collider);
 
 			act->updateMassAndInertia(100);
@@ -320,6 +324,7 @@ namespace Devil
 
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
+			SUPERNOVA->registerObject(collider);
 			act->addCollider(collider);
 
 			act->updateMassAndInertia(500);
