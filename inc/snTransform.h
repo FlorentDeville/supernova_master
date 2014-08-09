@@ -71,17 +71,17 @@ namespace Supernova
 		// This matrix is computed with only the local position, local orientation and local scale.
 		mutable snMatrix44f m_localToParent;
 
-		//Flag to indicate if any of the local position, local orientation and local scale has changed.
-		mutable bool m_localDirty;
-
-		//Flag to indicate that the parent transform has changed.
-		mutable bool m_parentDirty;
-
 		//List of children transform.
 		vector<snTransform*> m_children;
 
 		//Parent children. Null if this transform has no parent.
 		snTransform* m_parent;
+
+		//Flag to indicate if any of the local position, local orientation and local scale has changed.
+		mutable bool m_localDirty;
+
+		//Flag to indicate that the parent transform has changed.
+		mutable bool m_parentDirty;
 
 	public:
 		//Default constructor initialized to the identity.

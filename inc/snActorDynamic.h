@@ -48,14 +48,17 @@ namespace Supernova
 		//Inverse of the total mass
 		float m_invMass;
 
+		//Linear damping coefficient
+		float m_linearDamping;
+
+		//Angular damping coefficient
+		float m_angularDamping;
+
 		//Inverse of the inertia tensor expressed in local coordiantes
 		snMatrix44f m_invInertia;
 
 		//Inverse of the inertia tensor expressed in world coordinates.
 		snMatrix44f m_invWorldInertia;
-
-		//Flag to indicate if this actor is kinematic or not.
-		bool m_isKinematic;
 
 		//Linear velocity
 		snVec m_v;
@@ -63,11 +66,8 @@ namespace Supernova
 		//angular velocity
 		snVec m_w;
 
-		//Linear damping coefficient
-		float m_linearDamping;
-
-		//Angular damping coefficient
-		float m_angularDamping;
+		//Flag to indicate if this actor is kinematic or not.
+		bool m_isKinematic;
 
 	public:
 
