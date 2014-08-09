@@ -125,6 +125,38 @@ namespace Supernova
 		//compute invI * (r x N)T
 		m_invI_rCrossN[0] = snMatrixTransform3(m_bodies[0]->getInvWorldInertia(), m_rCrossN[0]);
 		m_invI_rCrossN[1] = snMatrixTransform3(m_bodies[1]->getInvWorldInertia(), m_rCrossN[1]);
+
+		{
+			m_frictionAccumulatedImpulse[0] = snVec4Set(0);
+			m_frictionAccumulatedImpulse[1] = snVec4Set(0);
+
+			//Compute the friction coefficient as the average of frictions of the two objects.
+			m_frictionCoefficient = (m_bodies[0]->getPhysicMaterial().m_friction + m_bodies[1]->getPhysicMaterial().m_friction) * 0.5f;
+
+			//compute tangent vectors
+			computeBasis(m_normal, m_tangent[0], m_tangent[1]);
+
+			snVec sumInvMass = snVec3Set(m_bodies[0]->getInvMass() + m_bodies[1]->getInvMass());
+
+			//compute the effective mass along the first tangent vector
+			snVec tempA = snVec3Cross(m_radius[0], m_tangent[0]);
+			m_rCrossT0InvI[0] = snMatrixTransform3(tempA, m_bodies[0]->getInvWorldInertia());
+			snVec tempB = snVec3Cross(m_radius[1], m_tangent[0]);
+			m_rCrossT0InvI[1] = snMatrixTransform3(tempB, m_bodies[1]->getInvWorldInertia());
+			m_frictionEffectiveMass[0] = (sumInvMass +
+				snVec3Dot(snVec3Cross(m_rCrossT0InvI[0], m_radius[0]) + snVec3Cross(m_rCrossT0InvI[1], m_radius[1]), m_tangent[0]));
+			m_frictionEffectiveMass[0] = snVec4GetInverse(m_frictionEffectiveMass[0]);
+
+			//compute the effective mass along the second tangent vector
+			tempA = snVec3Cross(m_radius[0], m_tangent[1]);
+			m_rCrossT1InvI[0] = snMatrixTransform3(tempA, m_bodies[0]->getInvWorldInertia());
+			tempB = snVec3Cross(m_radius[1], m_tangent[1]);
+			m_rCrossT1InvI[1] = snMatrixTransform3(tempB, m_bodies[1]->getInvWorldInertia());
+
+			m_frictionEffectiveMass[1] = (sumInvMass +
+				snVec3Dot(snVec3Cross(m_rCrossT1InvI[0], m_radius[0]) + snVec3Cross(m_rCrossT1InvI[1], m_radius[1]), m_tangent[1]));
+			m_frictionEffectiveMass[1] = snVec4GetInverse(m_frictionEffectiveMass[1]);
+		}
 	}
 
 	/// <summary>
@@ -155,6 +187,59 @@ namespace Supernova
 		//compute the new angular velocity
 		m_bodies[0]->setAngularVelocity(m_bodies[0]->getAngularVelocity() - m_invI_rCrossN[0] * lagrangian);
 		m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_invI_rCrossN[1] * lagrangian);
+
+		{
+			snVec clampingValue = m_frictionCoefficient * m_accumulatedImpulseMagnitude;
+
+			//compute relative velocity
+			snVec linVel1 = m_bodies[1]->getLinearVelocity();
+			snVec angVel1 = snVec3Cross(m_bodies[1]->getAngularVelocity(), m_radius[1]);
+			snVec linVel0 = m_bodies[0]->getLinearVelocity();
+			snVec angVel0 = snVec3Cross(m_bodies[0]->getAngularVelocity(), m_radius[0]);
+
+			snVec dv = linVel1 + angVel1 - linVel0 - angVel0;
+
+			//compute lagrangian for the fist tangent
+			snVec lagrangian = -snVec3Dot(dv, m_tangent[0]) * m_frictionEffectiveMass[0];
+
+			//clamp the lagrangian
+			snVec tempLambda = m_frictionAccumulatedImpulse[0];
+			m_frictionAccumulatedImpulse[0] = snVec4Clamp(m_frictionAccumulatedImpulse[0] + lagrangian, clampingValue, -clampingValue);
+			lagrangian = m_frictionAccumulatedImpulse[0] - tempLambda;
+
+			snVec impulse = m_tangent[0] * lagrangian;
+
+			//apply the impulse
+			m_bodies[0]->setLinearVelocity(m_bodies[0]->getLinearVelocity() - impulse * m_bodies[0]->getInvMass());
+			m_bodies[1]->setLinearVelocity(m_bodies[1]->getLinearVelocity() + impulse * m_bodies[1]->getInvMass());
+
+			m_bodies[0]->setAngularVelocity(m_bodies[0]->getAngularVelocity() - m_rCrossT0InvI[0] * lagrangian);
+			m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossT0InvI[1] * lagrangian);
+
+			//compute the relative velocity
+			snVec vec1 = m_bodies[1]->getLinearVelocity();
+			snVec vec2 = snVec3Cross(m_bodies[1]->getAngularVelocity(), m_radius[1]);
+			snVec vec3 = m_bodies[0]->getLinearVelocity();
+			snVec vec4 = snVec3Cross(m_bodies[0]->getAngularVelocity(), m_radius[0]);
+
+			dv = vec1 + vec2 - vec3 - vec4;
+
+			//compute and clamp the impulse along the second tangent
+			lagrangian = -snVec3Dot(dv, m_tangent[1]) * m_frictionEffectiveMass[1];
+			tempLambda = m_frictionAccumulatedImpulse[1];
+			m_frictionAccumulatedImpulse[1] = snVec4Clamp(m_frictionAccumulatedImpulse[1] + lagrangian, clampingValue, -clampingValue);
+			lagrangian = m_frictionAccumulatedImpulse[1] - tempLambda;
+
+
+			impulse = m_tangent[1] * lagrangian;
+
+			//apply the impulse
+			m_bodies[0]->setLinearVelocity(m_bodies[0]->getLinearVelocity() - impulse * m_bodies[0]->getInvMass());
+			m_bodies[1]->setLinearVelocity(m_bodies[1]->getLinearVelocity() + impulse * m_bodies[1]->getInvMass());
+
+			m_bodies[0]->setAngularVelocity(m_bodies[0]->getAngularVelocity() - m_rCrossT1InvI[0] * lagrangian);
+			m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossT1InvI[1] * lagrangian);
+		}
 	}
 
 	/// <summary>

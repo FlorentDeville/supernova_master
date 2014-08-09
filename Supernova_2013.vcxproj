@@ -41,7 +41,6 @@
     <ClInclude Include="inc\snWorld.h" />
     <ClInclude Include="inc\snFeatureClipping.h" />
     <ClInclude Include="inc\snFixedConstraint.h" />
-    <ClInclude Include="inc\snFrictionConstraint.h" />
     <ClInclude Include="inc\snGJK.h" />
     <ClInclude Include="inc\snGlobals.h" />
     <ClInclude Include="inc\snICollider.h" />
@@ -85,7 +84,6 @@
     <ClCompile Include="src\snWorld.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />
     <ClCompile Include="src\snFixedConstraint.cpp" />
-    <ClCompile Include="src\snFrictionConstraint.cpp" />
     <ClCompile Include="src\snGJK.cpp" />
     <ClCompile Include="src\snMath.cpp" />
     <ClCompile Include="src\snMatrix44f.cpp" />

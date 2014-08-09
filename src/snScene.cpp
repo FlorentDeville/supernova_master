@@ -47,7 +47,6 @@
 #include "snFixedConstraint.h"
 #include "snPointToPointConstraint.h"
 #include "snContactConstraint.h"
-#include "snFrictionConstraint.h"
 #include "snHingeConstraint.h"
 
 #include "snSphere.h"
@@ -583,9 +582,7 @@ namespace Supernova
 
 				//initialize and activate the constraints
 				npConstraint->initialize(_a, _b, singleRes->m_normal, *point, *penetrationIterator, this);
-				fConstraint->initialize(_a, _b, npConstraint);
 				npConstraint->setIsActive(true);
-				fConstraint->setIsActive(true);
 			}
 		}
 	}

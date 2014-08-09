@@ -85,9 +85,6 @@ namespace Supernova
 		//The collision point between the two bodies expressed in world coordinates.
 		snVec m_collisionPoint;
 
-		//Penetration depth of the two actors.
-		float m_penetrationDepth;
-
 		//collision point - center of mass
 		snVec m_radius[2];
 
@@ -104,11 +101,32 @@ namespace Supernova
 		//The value is duplicated in each component. W = 0
 		snVec m_effectiveMass;
 
-		//Scene containing this constraints.
-		snScene const * m_scene;
-
 		//The accumulated impulse. The value is duplicated in each component.
 		snVec m_accumulatedImpulseMagnitude;
+
+		//The two tangent vector along which the friction is applied.
+		snVec m_tangent[2];
+
+		//(r X T0)I-1
+		snVec m_rCrossT0InvI[2];
+
+		//(r X T1)I-1
+		snVec m_rCrossT1InvI[2];
+
+		//The mass expressed in the constraint frame of reference. It is equal to 1 / (J * M-1 * JT).
+		snVec m_frictionEffectiveMass[2];
+
+		//The accumulated impulse for the tangent vectors.
+		snVec m_frictionAccumulatedImpulse[2];
+
+		//Penetration depth of the two actors.
+		float m_penetrationDepth;
+
+		//coefficient used to compute the friction.
+		float m_frictionCoefficient;
+
+		//Scene containing this constraints.
+		snScene const * m_scene;
 
 	public:
 		snContactConstraint();

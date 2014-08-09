@@ -35,7 +35,6 @@
 #include "snContactConstraintManager.h"
 #include "snICOnstraint.h"
 #include "snContactConstraint.h"
-#include "snFrictionConstraint.h"
 
 namespace Supernova
 {
@@ -65,8 +64,8 @@ namespace Supernova
 			snIConstraint* npConstraint = new snContactConstraint();
 			m_collisionConstraints.push_back(npConstraint);
 
-			snIConstraint* fConstraint = new snFrictionConstraint();
-			m_collisionConstraints.push_back(fConstraint);
+			//snIConstraint* fConstraint = new snFrictionConstraint();
+			//m_collisionConstraints.push_back(fConstraint);
 			++m_currentConstraintId;
 
 			return npConstraint;
@@ -78,7 +77,7 @@ namespace Supernova
 		std::lock_guard<mutex> lock(m_protect);
 
 		 *_contact = static_cast<snContactConstraint*>(getAvailableConstraint());
-		 *_friction = static_cast<snFrictionConstraint*>(getAvailableConstraint());
+		 //*_friction = static_cast<snFrictionConstraint*>(getAvailableConstraint());
 	}
 
 	void snContactConstraintManager::prepareActiveConstraint(float _dt)
