@@ -52,6 +52,7 @@ using std::list;
 #include "snCollisionMode.h"
 #include "snSweepManager.h"
 #include "snActorPairManager.h"
+#include "snFrictionMode.h"
 
 #ifdef _DEBUG
 namespace Devil
@@ -120,6 +121,9 @@ namespace Supernova
 		//The amount of correction (baumgarte stabilization) to apply per frame for every contact constraints.
 		float m_contactConstraintBeta;
 
+		//The friction mode to use.
+		snFrictionMode m_frictionMode;
+
 	public:
 		//Constructor. Scenes should be created using snWorld::createScene. This constructor should be hidden.
 		snScene();
@@ -179,6 +183,9 @@ namespace Supernova
 		//Return the beta factor for the contact constraints. It is the amount of correction applied per frame.
 		float getContactConstraintBeta() const;
 
+		//Return the friction mode to use in the scene.
+		snFrictionMode getFrictionMode() const;
+
 		//Set the gravity to apply in the scene.
 		void setGravity(const snVec& _gravity);
 
@@ -197,6 +204,9 @@ namespace Supernova
 		//Set the beta factor for contact constraints. It is the amount of correction to apply per frame. It should be between 0 and 1 and
 		//preferably low. The default value is 0.25.
 		void setContactConstraintBeta(float _beta);
+
+		//Set the friction mode. It can be changed dynamically.
+		void setFrictionMode(snFrictionMode _mode);
 
 		//Overridden new operator to create scene with correct alignement.
 		void* operator new(size_t _count);

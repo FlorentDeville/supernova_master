@@ -168,6 +168,9 @@
     <ClInclude Include="inc\snWorld.h" />
     <ClInclude Include="inc\snObject.h" />
     <ClInclude Include="inc\snHandle.h" />
+    <ClInclude Include="inc\snFrictionMode.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">
@@ -271,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="src\snWorld.cpp" />
     <ClCompile Include="src\snObject.cpp" />
+    <ClCompile Include="src\snGrowingArray.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="inc\snVec.inl">

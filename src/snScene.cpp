@@ -81,6 +81,7 @@ namespace Supernova
 	{
 		m_gravity = snVec4Set(0, -9.81f, 0, 0);
 		m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
+		m_frictionMode = snFrictionMode::SN_FRICTION_ONE_DIRECTION;
 	}
 
 	snScene::~snScene()
@@ -252,6 +253,11 @@ namespace Supernova
 		return m_contactConstraintBeta;
 	}
 
+	snFrictionMode snScene::getFrictionMode() const
+	{
+		return m_frictionMode;
+	}
+
 	void snScene::setGravity(const snVec& _gravity)
 	{
 		m_gravity = _gravity;
@@ -300,6 +306,11 @@ namespace Supernova
 	void snScene::setContactConstraintBeta(float _beta)
 	{
 		m_contactConstraintBeta = _beta;
+	}
+
+	void snScene::setFrictionMode(snFrictionMode _mode)
+	{
+		m_frictionMode = _mode;
 	}
 
 	void* snScene::operator new(size_t _count)
