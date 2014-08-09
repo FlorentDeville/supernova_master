@@ -45,22 +45,17 @@ using std::mutex;
 
 namespace Supernova
 {
-	class snIConstraint;
 	class snContactConstraint;
-	class snFrictionConstraint;
 
 	//Store and manage the contact constraints used in a scene.
 	class snContactConstraintManager
 	{
 	private:
 		//List of constraints created by the collision detection system.
-		vector<snIConstraint*> m_collisionConstraints;
+		vector<snContactConstraint*> m_collisionConstraints;
 
 		//Id of the next available constraint
 		unsigned int m_currentConstraintId;
-
-		//Protect access to the list of constraints
-		mutex m_protect;
 
 	public:
 		//Default constructor
@@ -69,8 +64,9 @@ namespace Supernova
 		//Destructor. Clean all the allocated constraints
 		~snContactConstraintManager();
 
-		//Return pointers to available contact and friction constraints.
-		void getAvailableConstraints(snContactConstraint** _contact, snFrictionConstraint** _friction);
+		//Return an available constraint. If no available constraint is found, it will be created.
+		// remarks : NOT THREAD SAFE!!!!
+		snContactConstraint* const getAvailableConstraint();
 
 		//Prepare all the currently active constraints.
 		void prepareActiveConstraint(float _dt);
@@ -85,9 +81,7 @@ namespace Supernova
 		void postBroadPhase();
 
 	private:
-		//Return an available constraint. If no available constraint is found, it will be created.
-		//This function is private and must not be called from the outside for thread safety reasons.
-		snIConstraint* getAvailableConstraint();
+		
 	};
 }
 

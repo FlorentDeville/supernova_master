@@ -33,7 +33,6 @@
 /****************************************************************************/
 
 #include "snContactConstraintManager.h"
-#include "snICOnstraint.h"
 #include "snContactConstraint.h"
 
 namespace Supernova
@@ -43,7 +42,7 @@ namespace Supernova
 
 	snContactConstraintManager::~snContactConstraintManager()
 	{
-		for (vector<snIConstraint*>::iterator i = m_collisionConstraints.begin(); i != m_collisionConstraints.end(); ++i)
+		for (vector<snContactConstraint*>::iterator i = m_collisionConstraints.begin(); i != m_collisionConstraints.end(); ++i)
 		{
 			if ((*i) == 0)
 				continue;
@@ -53,7 +52,7 @@ namespace Supernova
 		m_collisionConstraints.clear();
 	}
 
-	snIConstraint* snContactConstraintManager::getAvailableConstraint()
+	snContactConstraint* const snContactConstraintManager::getAvailableConstraint()
 	{
 		if (m_currentConstraintId < m_collisionConstraints.size())
 		{
@@ -61,41 +60,34 @@ namespace Supernova
 		}
 		else
 		{
-			snIConstraint* npConstraint = new snContactConstraint();
+			snContactConstraint* npConstraint = new snContactConstraint();
 			m_collisionConstraints.push_back(npConstraint);
-
-			//snIConstraint* fConstraint = new snFrictionConstraint();
-			//m_collisionConstraints.push_back(fConstraint);
 			++m_currentConstraintId;
 
 			return npConstraint;
 		}
 	}
 
-	void snContactConstraintManager::getAvailableConstraints(snContactConstraint** _contact, snFrictionConstraint** _friction)
-	{
-		std::lock_guard<mutex> lock(m_protect);
-
-		 *_contact = static_cast<snContactConstraint*>(getAvailableConstraint());
-		 //*_friction = static_cast<snFrictionConstraint*>(getAvailableConstraint());
-	}
-
 	void snContactConstraintManager::prepareActiveConstraint(float _dt)
 	{
-		for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
+		for (vector<snContactConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
 		{
 			if ((*constraint)->getIsActive())
+			{
 				(*constraint)->prepare(_dt);
+			}
 		}
 		
 	}
 
 	void snContactConstraintManager::resolveActiveConstraints()
 	{
-		for (vector<snIConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
+		for (vector<snContactConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
 		{
 			if ((*constraint)->getIsActive())
+			{
 				(*constraint)->resolve();
+			}
 		}
 	}
 
