@@ -63,9 +63,6 @@
     <ClInclude Include="inc\snIConstraint.h">
       <Filter>Simulation\Constraints</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snFrictionConstraint.h">
-      <Filter>Simulation\Constraints</Filter>
-    </ClInclude>
     <ClInclude Include="inc\snTimer.h">
       <Filter>Tools</Filter>
     </ClInclude>
@@ -164,6 +161,13 @@
     <ClInclude Include="inc\snTransform.h">
       <Filter>Tools</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snHandle.h" />
+    <ClInclude Include="inc\snCollisionMode.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snFrictionMode.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">
@@ -177,9 +181,6 @@
     </ClCompile>
     <ClCompile Include="src\snScene.cpp">
       <Filter>Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snFrictionConstraint.cpp">
-      <Filter>Simulation\Constraints</Filter>
     </ClCompile>
     <ClCompile Include="src\snTimer.cpp">
       <Filter>Tools</Filter>

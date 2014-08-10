@@ -22,6 +22,7 @@
     <ClInclude Include="inc\snCollision.h" />
     <ClInclude Include="inc\snCollisionDispatcher.h" />
     <ClInclude Include="inc\snCollisionFlag.h" />
+    <ClInclude Include="inc\snCollisionMode.h" />
     <ClInclude Include="inc\snCollisionResult.h" />
     <ClInclude Include="inc\snContactConstraint.h" />
     <ClInclude Include="inc\snContactConstraintManager.h" />
@@ -32,9 +33,10 @@
     <ClInclude Include="inc\snEPATriangle.h" />
     <ClInclude Include="inc\snFeatureClipping.h" />
     <ClInclude Include="inc\snFixedConstraint.h" />
-    <ClInclude Include="inc\snFrictionConstraint.h" />
+    <ClInclude Include="inc\snFrictionMode.h" />
     <ClInclude Include="inc\snGJK.h" />
     <ClInclude Include="inc\snGlobals.h" />
+    <ClInclude Include="inc\snHandle.h" />
     <ClInclude Include="inc\snHeightMap.h" />
     <ClInclude Include="inc\snHingeConstraint.h" />
     <ClInclude Include="inc\snIActor.h" />
@@ -76,7 +78,6 @@
     <ClCompile Include="src\snEPATriangle.cpp" />
     <ClCompile Include="src\snFeatureClipping.cpp" />
     <ClCompile Include="src\snFixedConstraint.cpp" />
-    <ClCompile Include="src\snFrictionConstraint.cpp" />
     <ClCompile Include="src\snGJK.cpp" />
     <ClCompile Include="src\snHeightMap.cpp" />
     <ClCompile Include="src\snHingeConstraint.cpp" />
