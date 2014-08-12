@@ -101,6 +101,8 @@ namespace Supernova
 
 	void* snWorld::getObject(snObjectId _id) const
 	{
+		lock_guard<mutex> lookUpTableProtection(m_lookUpTableLock);
+
 		map<snObjectId, snObject*>::const_iterator i = m_lookUpTable.find(_id);
 		if (i == m_lookUpTable.end())
 			return 0;
@@ -110,6 +112,7 @@ namespace Supernova
 
 	void snWorld::removeObject(snObjectId _id)
 	{
+		lock_guard<mutex> lookUpTableProtection(m_lookUpTableLock);
 		m_lookUpTable.erase(_id);
 	}
 

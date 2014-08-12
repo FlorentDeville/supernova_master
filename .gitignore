@@ -1,3 +1,8 @@
 *.suo
 *.sdf
 *.opensdf
+bin/*
+extern/*
+sample/Demo1/bin/*
+sample/Demo1/temp/*
+temp/*

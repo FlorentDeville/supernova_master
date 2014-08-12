@@ -46,6 +46,10 @@ using std::vector;
 #include <map>
 using std::map;
 
+#include <mutex>
+using std::mutex;
+using std::lock_guard;
+
 namespace Supernova
 {
 	//Main entry point of Supernova.
@@ -62,6 +66,9 @@ namespace Supernova
 
 		//Map to store pointers to the created objects with their keys.
 		map<snObjectId, snObject*> m_lookUpTable;
+
+		//Mutex to protect the look up table from concurrent accesses.
+		mutable mutex m_lookUpTableLock;
 
 	private:
 		//Constructor
@@ -105,6 +112,8 @@ namespace Supernova
 
 	template<class T> snHandle<T> snWorld::registerObject(T* const _obj)
 	{
+		lock_guard<mutex> lookUpTableProtection(m_lookUpTableLock);
+
 		//Add the scene to the look up table.
 		//Use the insert version. Its not as clear as the [] operator but its faster.
 		if (m_lookUpTable.size() == 0)
