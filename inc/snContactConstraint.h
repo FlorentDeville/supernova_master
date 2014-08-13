@@ -140,16 +140,6 @@ namespace Supernova
 		void prepare(float _dt);
 
 		void resolve();
-
-		//Return the collision normal
-		snVec const & getNormal() const;
-
-		//Return an array of two vector containing the radius of each actor.
-		snVec const * getRadius() const;
-
-		//Return a vector containing the accumulated impulse magnitude. It's value is duplicated in each component
-		// of the vector except w = 0.
-		snVec getAccumulatedImpulseMagnitude() const;
 	};
 }
 

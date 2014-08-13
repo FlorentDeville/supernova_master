@@ -303,28 +303,4 @@ namespace Supernova
 		}
 
 	}
-
-	/// <summary>
-	/// Gets the normal.
-	/// </summary>
-	/// <returns></returns>
-
-	snVec const & snContactConstraint::getNormal() const
-	{
-		return m_normal;
-	}
-
-	/// <summary>
-	/// Gets the radius.
-	/// </summary>
-	/// <returns></returns>
-	snVec const * snContactConstraint::getRadius() const
-	{
-		return m_radius;
-	}
-
-	snVec snContactConstraint::getAccumulatedImpulseMagnitude() const
-	{
-		return m_accumulatedImpulseMagnitude;
-	}
 }
