@@ -42,7 +42,7 @@ namespace Devil
 	class GfxEntityHeightMap;
 	class Texture;
 
-	const float SCREEN_DEPTH = 10000.0f;
+	const float SCREEN_DEPTH = 100000.0f;
 	const float SCREEN_NEAR = 0.1f;
 
 	class Graphics
