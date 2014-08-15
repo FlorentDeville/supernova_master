@@ -2,8 +2,10 @@
 *.sdf
 *.opensdf
 bin/*
-extern/*
 sample/Demo1/bin/*
 sample/Demo1/temp/*
 temp/*
 sample/Demo1/supernova_output.log
+extern/DirectXTK/*
+extern/log4cpp/bin/*
+extern/log4cpp/temp/*
