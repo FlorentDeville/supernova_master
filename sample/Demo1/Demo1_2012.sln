@@ -14,7 +14,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Supernova_2012", "..\..\Sup
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_Desktop_2012", "..\..\extern\DirectXTK\DirectXTK_Desktop_2012.vcxproj", "{E0B52AE7-E160-4D32-BF3F-910B785E5A8E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "log4cppLIB_2012", "..\..\extern\log4cpp\msvc10\log4cppLIB\log4cppLIB_2012.vcxproj", "{AFA856A0-2388-4673-9277-CE4061709569}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "log4cpp_2012", "..\..\extern\log4cpp\msvc10\log4cpp\log4cpp_2012.vcxproj", "{AFA856A0-2388-4673-9277-CE4061709569}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
