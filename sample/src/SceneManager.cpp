@@ -317,7 +317,6 @@ namespace Devil
 			scene->attachActor(act);
 			act->setName("dynamic");
 			act->setPosition(pos);
-			float rot = 3.14f * 0.25f;
 			act->setIsKinematic(false);
 			act->getPhysicMaterial().m_restitution = 0.f;
 			act->getPhysicMaterial().m_friction = 1.f;
@@ -1249,7 +1248,6 @@ namespace Devil
 		GRAPHICS->setClearScreenColor(DirectX::Colors::DarkGray);
 
 		//create the physics scene
-		int sceneId = -1;
 		snhScene scene = SUPERNOVA->registerObject(new snScene());
 		WORLD->setPhysicsScene(scene);
 		scene->setCollisionMode(m_collisionMode);
@@ -1423,7 +1421,6 @@ namespace Devil
 		GRAPHICS->setClearScreenColor(DirectX::Colors::DarkGray);
 
 		//create the physics scene
-		int sceneId = -1;
 		snhScene scene = SUPERNOVA->registerObject(new snScene());
 		WORLD->setPhysicsScene(scene);
 		scene->setCollisionMode(m_collisionMode);
@@ -1450,7 +1447,7 @@ namespace Devil
 		string bitmapFilename = "data\\terrain_8bits_4098_4098.bmp";
 
 
-		IWorldEntity* entity = (IWorldEntity*)WORLD->createTerrain(bitmapFilename, tileResolution, tileResolution, size, -200, 800, camera);
+		/*IWorldEntity* entity = (IWorldEntity*)*/ WORLD->createTerrain(bitmapFilename, tileResolution, tileResolution, size, -200, 800, camera);
 		//entity->setWireframe(true);
 
 		//TerrainDescription desc;
@@ -1516,7 +1513,7 @@ namespace Devil
 			sphere->getPhysicMaterial().m_friction = 1;
 			sphere->initialize();
 
-			EntityComposite* entity = WORLD->createComposite(sphere.getPtr(), m_colors[i % 4]);
+			/*EntityComposite* entity =*/ WORLD->createComposite(sphere.getPtr(), m_colors[i % 4]);
 			//entity->setWireframe(true);
 		}
 

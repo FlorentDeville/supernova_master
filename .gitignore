@@ -18,3 +18,6 @@ extern/DirectXTK/*
 extern/log4cpp/bin/*
 
 extern/log4cpp/temp/*
+extern/log4cpp/msvc10/log4cpp/Release/*
+extern/log4cpp/msvc10/log4cpp/Debug/*
+

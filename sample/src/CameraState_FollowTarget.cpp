@@ -103,7 +103,6 @@ namespace Devil
 		XMVECTOR cameraPosition = targetPosition - (m_forward * m_distance) + (up * m_height);
 
 		snVec dir = cameraPosition - targetPosition;
-		float length = Vector::snVec3Norme(dir);
 		Vector::snVec3Normalize(dir);
 
 		snSphere s(1);
