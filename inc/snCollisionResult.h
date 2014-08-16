@@ -45,10 +45,6 @@ namespace Supernova
 	{
 
 	public:
-
-		//Indicates if a collision was detected
-		bool m_collision;
-
 		//Normal of the collision point. Its direction is from the second body to the first one.
 		snVec m_normal;
 
@@ -57,6 +53,9 @@ namespace Supernova
 
 		//List of penetration depth.
 		vector<float> m_penetrations;
+
+		//Indicates if a collision was detected
+		bool m_collision;
 
 	public:
 

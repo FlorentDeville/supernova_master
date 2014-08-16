@@ -39,7 +39,7 @@
 
 namespace Supernova
 {
-	class SN_ALIGN snPhysicMaterial
+	class snPhysicMaterial
 	{
 	public:
 

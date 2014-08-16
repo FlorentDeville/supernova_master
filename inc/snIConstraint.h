@@ -48,6 +48,8 @@ namespace Supernova
 		//Indicate if this constraint is currently active.
 		bool m_active;
 
+		char m_padding[9];
+
 	public:
 
 		//Default constructor
