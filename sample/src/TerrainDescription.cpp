@@ -199,7 +199,7 @@ namespace Devil
 
 			for (int columnOffset = -1; columnOffset <= 1; columnOffset++)
 			{
-				int currentColumn = _tileId.m_columnId + columnOffset;
+				unsigned int currentColumn = _tileId.m_columnId + columnOffset;
 
 				//check if the column is out of bound
 				if (currentColumn < 0 || currentColumn >= m_tilesPerColumn)
@@ -207,7 +207,7 @@ namespace Devil
 
 				for (int rowOffset = -1; rowOffset <= 1; rowOffset++)
 				{
-					int currentRow = _tileId.m_rowId + rowOffset;
+					unsigned int currentRow = _tileId.m_rowId + rowOffset;
 
 					//check if the row is out of bound
 					if (currentRow < 0 || currentRow >= m_tilesPerRow)
