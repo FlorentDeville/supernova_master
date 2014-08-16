@@ -57,8 +57,25 @@ namespace Supernova
 	class SN_ALIGN snSweepManager
 	{
 	private:
+		//sum of AABB's centers used to compute the variance.
+		snVec m_sum;
+
+		//Squared sum of AABB's centers used to compute the variance.
+		snVec m_squaredSum;
+
+		//fnuction to call when a pair that might be colliding is found
+		snPairFoundCallback m_callback;
+
 		//List of actor sorted using their aabb
 		list<snRigidbody*> m_sortedActors;
+
+#ifdef SN_DEBUGGER
+		//Number of pair found 
+		unsigned int m_collisionPairFound;
+#endif //ifdef SN_DEBUGGER
+
+		//Scene object
+		snScene* m_scene;
 
 		//Axis to use to sort the actors
 		unsigned char m_axis;
@@ -66,22 +83,6 @@ namespace Supernova
 		//Axis to use to sort the actors for the next iteration
 		unsigned char m_deferredAxis;
 
-		//fnuction to call when a pair that might be colliding is found
-		snPairFoundCallback m_callback;
-
-		//Scene object
-		snScene* m_scene;
-
-		//sum of AABB's centers used to compute the variance.
-		snVec m_sum;
-
-		//Squared sum of AABB's centers used to compute the variance.
-		snVec m_squaredSum;
-
-#ifdef SN_DEBUGGER
-		//Number of pair found 
-		unsigned int m_collisionPairFound;
-#endif //ifdef SN_DEBUGGER
 	public:
 		//Default constructor
 		snSweepManager();
