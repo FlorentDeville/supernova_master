@@ -70,7 +70,7 @@ namespace Supernova
 	public:
 		snEPATriangle();
 
-		snEPATriangle(const snSimplex& _simplex, unsigned int _idVertex0, unsigned int _idVertex1, unsigned int _idVertex2);
+		snEPATriangle(unsigned int _idVertex0, unsigned int _idVertex1, unsigned int _idVertex2);
 
 		~snEPATriangle();
 

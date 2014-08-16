@@ -50,7 +50,7 @@ namespace Supernova
 		m_isObsolete = false;
 	}
 
-	snEPATriangle::snEPATriangle(const snSimplex& _simplex, unsigned int _idVertex0, unsigned int _idVertex1, unsigned int _idVertex2)
+	snEPATriangle::snEPATriangle(unsigned int _idVertex0, unsigned int _idVertex1, unsigned int _idVertex2)
 	{
 		m_verticesId[0] = _idVertex0;
 		m_verticesId[1] = _idVertex1;

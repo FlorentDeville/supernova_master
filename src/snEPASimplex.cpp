@@ -84,7 +84,7 @@ namespace Supernova
 
 		snEPATriangle* newTriangle = &m_triangles[m_trianglesCount++];
 
-		::new (newTriangle)snEPATriangle(*this, _vertexId0, _vertexId1, _vertexId2);
+		::new (newTriangle)snEPATriangle(_vertexId0, _vertexId1, _vertexId2);
 		if (!newTriangle->computeClosestPointToOrigin(*this))
 		{
 			--m_trianglesCount;
