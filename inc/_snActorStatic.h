@@ -32,18 +32,63 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_ACTOR_PAIR_H
-#define SN_ACTOR_PAIR_H
+#ifndef SN_ACTOR_STATIC_H
+#define SN_ACTOR_STATIC_H
+
+#include "_snIActor.h"
 
 namespace Supernova
 {
-	class snRigidbody;
-
-	struct snActorPair
+	class SN_ALIGN snActorStatic : public snIActor
 	{
-		snRigidbody* m_first;
-		snRigidbody* m_second;
+	public:
+		snActorStatic(const snVec& _position);
+
+		snActorStatic(const snVec& _position, const snVec& _orientation);
+
+		~snActorStatic();
+
+#pragma region Virtual Getter
+
+		//Return 0
+		float getMass() const;
+
+		//Return the inverse of the mass
+		float getInvMass() const;
+
+		//Return the inverse of the inertia expressed in world coordinate
+		const snMatrix44f& getInvWorldInertia() const;
+
+		//Return the linear velocity
+		snVec getLinearVelocity() const;
+
+		//Return the angular velocity
+		snVec getAngularVelocity() const;
+
+#pragma endregion
+
+#pragma region Virtual Setter
+
+		//Set the linear velocity
+		void setLinearVelocity(const snVec& _linearVelocity);
+
+		//Set the angular velocity
+		void setAngularVelocity(const snVec& _angularVelocity);
+
+#pragma endregion
+
+		//Move the actor forward in time using _dt as a time step.
+		//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
+		//A static actor cannot move so this function doesn't do anyhthing.
+		void integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit);
+
+		void initialize();
+
+	private:
+
+		//Initialize the actor with default values.
+		//This function must be called in the constructor.
+		void init(const snVec& _position, const snVec& _orientation);
 	};
 }
-
-#endif //ifndef SN_ACTOR_PAIR_H
+#endif //ifndef SN_ACTOR_STATIC_H

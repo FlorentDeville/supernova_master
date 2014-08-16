@@ -34,8 +34,7 @@
 
 #include "snScene.h"
 
-#include "snActorDynamic.h"
-#include "snActorStatic.h"
+#include "snRigidbody.h"
 #include "snActorPair.h"
 #include "snICollider.h"
 #include "snCollision.h"
@@ -89,46 +88,23 @@ namespace Supernova
 		clearScene();
 	}
 
-	void snScene::attachActor(snhActorDynamic _actor)
+	void snScene::attachActor(snhRigidbody _actor)
 	{
 		attachActorByPointer(_actor.getPtr());
 	}
 
-	void snScene::attachActor(snhActorStatic _actor)
-	{
-		attachActorByPointer(_actor.getPtr());
-	}
-
-	void snScene::removeActor(snhActorDynamic _actor)
+	void snScene::removeActor(snhRigidbody _actor)
 	{
 		removeActorByPointer(_actor.getPtr());
 	}
 
-	void snScene::removeActor(snhActorStatic _actor)
-	{
-		removeActorByPointer(_actor.getPtr());
-	}
-
-	void snScene::deleteActor(snhActorDynamic _actor)
+	void snScene::deleteActor(snhRigidbody _actor)
 	{
 		//Remove the actor
 		removeActor(_actor);
 
 		//delete the actor
-		snActorDynamic* ptr = _actor.getPtr();
-		if (ptr == 0)
-			return;
-
-		delete ptr;
-	}
-
-	void snScene::deleteActor(snhActorStatic _actor)
-	{
-		//Remove the actor
-		removeActor(_actor);
-
-		//delete the actor
-		snActorStatic* ptr = _actor.getPtr();
+		snRigidbody* ptr = _actor.getPtr();
 		if (ptr == 0)
 			return;
 
@@ -142,7 +118,7 @@ namespace Supernova
 		return m_constraints[_constraintId];
 	}
 
-	snPointToPointConstraint* snScene::createPointToPointConstraint(snIActor* const _body1, const snVec& _offset1, snIActor* const _body2, 
+	snPointToPointConstraint* snScene::createPointToPointConstraint(snRigidbody* const _body1, const snVec& _offset1, snRigidbody* const _body2, 
 		const snVec& _offset2)
 	{
 		snPointToPointConstraint* constraint = new snPointToPointConstraint(_body1, _offset1, _body2, _offset2);
@@ -150,14 +126,14 @@ namespace Supernova
 		return constraint;
 	}
 
-	snFixedConstraint* snScene::createFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance)
+	snFixedConstraint* snScene::createFixedConstraint(snRigidbody* const _actor, const snVec& _fixedPoint, float _distance)
 	{
 		snFixedConstraint* constraint = new snFixedConstraint(_actor, _fixedPoint, _distance);
 		m_constraints.push_back(constraint);
 		return constraint;
 	}
 
-	snHingeConstraint* snScene::createHingeConstraint(snIActor* _actor, const snVec& _axis, const snVec& _anchor)
+	snHingeConstraint* snScene::createHingeConstraint(snRigidbody* _actor, const snVec& _axis, const snVec& _anchor)
 	{
 		snHingeConstraint* constraint = new snHingeConstraint(_actor, _axis, _anchor);
 		m_constraints.push_back(constraint);
@@ -166,7 +142,7 @@ namespace Supernova
 
 	void snScene::clearScene()
 	{
-		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		for (vector<snRigidbody*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
 			if ((*i) == 0)
 				continue;
@@ -331,12 +307,12 @@ namespace Supernova
 		capsule.computeAABB(&bb);
 
 		//Make the list of possibly colliding actors using the sweep and prune list
-		vector<snIActor*> pca;
+		vector<snRigidbody*> pca;
 		m_sweepAndPrune.getPossiblyCollidingActor(bb, pca);
 
 		//For each pca, check for collision
 		bool collision = false;
-		for (vector<snIActor*>::iterator i = pca.begin(); i != pca.end(); ++i)
+		for (vector<snRigidbody*>::iterator i = pca.begin(); i != pca.end(); ++i)
 		{
 			if ((*i)->getName() == "ball")
 				continue;
@@ -378,11 +354,11 @@ namespace Supernova
 			_collider.computeAABB(&bb);
 
 			//Make the list of possibly colliding actors using the sweep and prune list
-			vector<snIActor*> pca;
+			vector<snRigidbody*> pca;
 			m_sweepAndPrune.getPossiblyCollidingActor(bb, pca);
 
 			//Loop through the possibly colliding actor
-			for (vector<snIActor*>::const_iterator i = pca.begin(); i != pca.end(); ++i)
+			for (vector<snRigidbody*>::const_iterator i = pca.begin(); i != pca.end(); ++i)
 			{
 				if ((*i)->getName() == "ball")
 					continue;
@@ -421,7 +397,7 @@ namespace Supernova
 
 	void snScene::applyForces(float _dt)
 	{
-		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		for (vector<snRigidbody*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
 			if ((*i) == 0 || !(*i)->getIsActive())
 				continue;
@@ -435,12 +411,12 @@ namespace Supernova
 
 	void snScene::updatePosition(float _dt)
 	{
-		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		for (vector<snRigidbody*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
 			if ((*i) == 0 || !(*i)->getIsActive())
 				continue;
 
-			(*i)->integrate(_dt, m_linearSquaredSpeedThreshold, m_angularSquaredSpeedThreshold);
+			integrate(*i, _dt);
 		}
 	}
 
@@ -480,18 +456,18 @@ namespace Supernova
 		int collisionQueriesCount = 0;
 #endif // ifdef SN_DEBUGGER
 
-		for (std::vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
+		for (std::vector<snRigidbody*>::iterator i = m_actors.begin(); i != m_actors.end() - 1; ++i)
 		{
 			if ((*i) == 0 || !(*i)->getIsActive())
 				continue;
 
-			for (std::vector<snIActor*>::iterator j = i + 1; j != m_actors.end(); ++j)
+			for (std::vector<snRigidbody*>::iterator j = i + 1; j != m_actors.end(); ++j)
 			{
 				if ((*j) == 0 || !(*j)->getIsActive())
 					continue;
 
 				//check if the collision detection is enabled between the two actors
-				if (!snIActor::isCollisionDetectionEnabled(*i, *j))
+				if (!snRigidbody::isCollisionDetectionEnabled(*i, *j))
 					continue;
 
 #ifdef SN_DEBUGGER
@@ -551,7 +527,7 @@ namespace Supernova
 		//dispatch to threads which will run the collision detection.
 	}
 
-	void snScene::computeCollisionDetection(snIActor* _a, snIActor* _b)
+	void snScene::computeCollisionDetection(snRigidbody* _a, snRigidbody* _b)
 	{
 		//query collision between actor _a and _b.
 		const unsigned int MAX_COL_RES = 10;
@@ -565,9 +541,9 @@ namespace Supernova
 
 		//check for collision callbacks
 		if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
-			_a->OnCollision(_b);
+			_a->onCollision(_b);
 		if (_b->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
-			_b->OnCollision(_a);
+			_b->onCollision(_a);
 
 		//check if a collision response is needed
 		if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE) ||
@@ -575,7 +551,7 @@ namespace Supernova
 		{
 			return;
 		}
-		
+
 		//make the collision constraints from the collision results
 		for (unsigned int colResId = 0; colResId < colResCount; ++colResId)
 		{
@@ -596,14 +572,14 @@ namespace Supernova
 		}
 	}
 
-	void snScene::storeActorPair(snIActor* _a, snIActor* _b)
+	void snScene::storeActorPair(snRigidbody* _a, snRigidbody* _b)
 	{
 		snActorPair* pair = m_pcs.getAvailablePair();
 		pair->m_first = _a;
 		pair->m_second = _b;
 	}
 
-	void snScene::attachActorByPointer(snIActor* const _actor)
+	void snScene::attachActorByPointer(snRigidbody* const _actor)
 	{
 		if (_actor == 0)
 			return;
@@ -630,7 +606,7 @@ namespace Supernova
 		m_sweepAndPrune.addActor(_actor);
 	}
 
-	void snScene::removeActorByPointer(snIActor const * const _actor)
+	void snScene::removeActorByPointer(snRigidbody const * const _actor)
 	{
 		if (_actor == 0)
 			return;
@@ -639,12 +615,59 @@ namespace Supernova
 		m_sweepAndPrune.removeActor(_actor);
 
 		//Remove the actor from the scene
-		for (vector<snIActor*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
+		for (vector<snRigidbody*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
 			if ((*i) == _actor)
 			{
 				(*i) = 0;
 			}
 		}
+	}
+
+	void snScene::integrate(snRigidbody* const _rb, float _dt) const
+	{
+		if(_rb->isStatic())
+			return;
+
+		//apply damping
+		snVec linVel = _rb->getLinearVelocity() * (1 - _rb->getLinearDampingCoeff() * _dt);
+		snVec angVel = _rb->getAngularVelocity() * (1 - _rb->getAngularDampingCoeff() * _dt);
+		
+		//if the linear speed is too small, set it to 0.
+		float sqSpeed = snVec3SquaredNorme(linVel);
+		if (sqSpeed < m_linearSquaredSpeedThreshold)
+			linVel = snVec4Set(0);
+
+		//if the angular speed is too small, set it to 0.
+		sqSpeed = snVec3SquaredNorme(angVel);
+		if (sqSpeed < m_angularSquaredSpeedThreshold)
+			angVel = snVec4Set(0);
+
+		
+		//calculate position using euler integration
+		snVec previousPosition = _rb->getTransform().getPosition();
+		_rb->getTransform().setLocalPosition(previousPosition + linVel * _dt);
+		
+		//calculate velocity as quaternion using dq/dt = 0.5 * w * q
+		snVec q = _rb->getTransform().getOrientation();
+		snVec qw = snQuaternionMultiply(angVel, q);
+		qw = qw * 0.5f;
+
+		//calculate orientation using euler integration
+		q = q + (qw * _dt);
+		snQuaternionNormalize(q, q);
+		_rb->getTransform().setLocalOrientation(q);
+
+		//Set the velocities.
+		_rb->setLinearVelocity(linVel);
+		_rb->setAngularVelocity(angVel);
+
+		//set new state
+		_rb->computeInvWorldInertia();
+		_rb->computeWorldCenterOfMass();
+
+		//compute colliders in world coordinate
+		_rb->updateCollidersAndAABB();
+		
 	}
 }

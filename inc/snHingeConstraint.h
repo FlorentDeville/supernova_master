@@ -40,7 +40,7 @@
 
 namespace Supernova
 {
-	class snIActor;
+	class snRigidbody;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -105,7 +105,7 @@ namespace Supernova
 	{
 	private:
 		//The actor constrained
-		snIActor* m_actor;
+		snRigidbody* m_actor;
 
 		//The rotation axis expressed in world coordinate
 		snVec m_axis;
@@ -144,7 +144,7 @@ namespace Supernova
 
 	public:
 
-		snHingeConstraint(snIActor* _actor, const snVec& _axis, const snVec& _anchor);
+		snHingeConstraint(snRigidbody* _actor, const snVec& _axis, const snVec& _anchor);
 
 		~snHingeConstraint();
 

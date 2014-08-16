@@ -42,9 +42,9 @@ using Supernova::snVec;
 
 namespace Supernova
 {
-	class snActorDynamic;
+	class snRigidbody;
 }
-using Supernova::snActorDynamic;
+using Supernova::snRigidbody;
 
 #include <vector>
 using std::vector;
@@ -78,7 +78,7 @@ namespace Devil
 	{
 	private:
 		//The actor to move
-		snActorDynamic* m_actor;
+		snRigidbody* m_actor;
 
 		//The list of waypoint making the path to follow
 		vector<WaypointTime*> m_path;
@@ -97,7 +97,7 @@ namespace Devil
 
 	public:
 		//Construct an instance of the class ComponentFollowPath
-		ComponentPathInterpolate(snActorDynamic* _actor, bool _loop);
+		ComponentPathInterpolate(snRigidbody* _actor, bool _loop);
 
 		//Clean allocation made by the class ComponentFollowPath
 		virtual ~ComponentPathInterpolate();

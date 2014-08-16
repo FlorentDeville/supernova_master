@@ -41,7 +41,7 @@
 
 #include "snFixedConstraint.h"
 #include "snMath.h"
-#include "snIActor.h"
+#include "snRigidbody.h"
 using namespace Supernova;
 
 using namespace DirectX;

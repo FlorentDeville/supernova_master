@@ -32,7 +32,7 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snActorStatic.h"
+#include "_snActorStatic.h"
 #include "snICollider.h"
 
 using namespace Supernova::Vector;

@@ -10,9 +10,10 @@ namespace Devil
 	_declspec(align(16)) class EntitySphere : public IWorldEntity
 	{
 	private:
+		XMVECTOR m_color;
 		float m_diameter;
 		IGfxEntity* m_gfx;
-		XMVECTOR m_color;
+		
 
 	public:
 		EntitySphere();

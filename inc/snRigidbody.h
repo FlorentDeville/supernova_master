@@ -31,16 +31,71 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
-#ifndef SN_ACTOR_DYNAMIC_H
-#define SN_ACTOR_DYNAMIC_H
 
-#include "snIActor.h"
+#ifndef SN_RIGIDBODY_H
+#define SN_RIGIDBODY_H
+
+#include <string>
+using std::string;
+
+#include <vector>
+using std::vector;
+
+#include "snObject.h"
+#include "snVec.h"
+#include "snPhysicMaterial.h"
+#include "snAABB.h"
+#include "snTransform.h"
+#include "snCollisionFlag.h"
 
 namespace Supernova
 {
-	class SN_ALIGN snActorDynamic : public snIActor
+	class snICollider;
+
+	class snRigidbody;
+
+	//Define the signature of a callback function called when a collision is detected
+	typedef void(*OnCollisionCallback)(snRigidbody* const, snRigidbody* const);
+
+	class snRigidbody : public snObject
 	{
 	private:
+	
+#pragma region Protected Variables
+
+		//name of the actor
+		string m_name;
+
+		//Flag to indicate if this actor is active or not.
+		bool m_isActive;
+
+		//list of collider defining collision geometry
+		vector<snICollider*> m_colliders;
+
+		//Position of the center of mass expressed in local coordinate system.
+		snVec m_centerOfMass;
+
+		//Position of the center of mass expressed in world coordinate system.
+		snVec m_worldCenterOfMass;
+
+		//Position, orientation and scaling of the current actor.
+		snTransform m_transform;
+
+		//Defines the behavior of the object : friction and restitution
+		snPhysicMaterial m_material;
+
+		//AABB bounding volume containing all colliders.
+		snAABB m_boundingVolume;
+
+		//Represent the maximum depth another actor can penetrate into the current actor.
+		float m_skinDepth;
+
+		//Flags defining behavior of the actor when a collision is detected
+		unsigned char m_collisionFlag;
+
+		//Function to call when a collision is detected on this actor. The collision flag CF_CONTACT_CALLBACK needs to be set in order
+		// to the callback to be called.
+		OnCollisionCallback m_collisionCallback;
 
 		//The total mass of the actor
 		float m_mass;
@@ -69,14 +124,35 @@ namespace Supernova
 		//Flag to indicate if this actor is kinematic or not.
 		bool m_isKinematic;
 
+#pragma endregion
+
 	public:
 
-		snActorDynamic();
-		~snActorDynamic();
+		snRigidbody();
 
-#pragma region Virtual Getter
+		virtual ~snRigidbody();
 
-		//Return the mass
+		//Add a collider to the actor
+		void addCollider(snICollider* _collider);
+
+		bool isStatic() const;
+
+		bool isKinematic() const;
+
+		bool isDynamic() const;
+
+#pragma region Getter
+
+		//Get the name of the actor
+		string getName() const;
+
+		//Return if the actor is active or not.
+		bool getIsActive() const;
+
+		//return the list of colliders
+		vector<snICollider*>& getColliders();
+
+		//Return the mass. It returns 0 in case of a static or kinematic body
 		float getMass() const;
 
 		//Return the inverse of the mass
@@ -85,25 +161,57 @@ namespace Supernova
 		//Return the inverse of the inertia expressed in world coordinate
 		const snMatrix44f& getInvWorldInertia() const;
 
+		//Return the center of mass expressed in local coordinate system.
+		snVec getCenterOfMass() const;
+
+		//Return the center of mass expressed in world coordinate system.
+		snVec getWorldCenterOfMass() const;
+
+		//Return the position of the actor.
+		snVec getPosition() const;
+
+		//Return the transform of the current actor.
+		const snTransform& getTransform() const;
+
+		//Return the transform of the current rigidbody.
+		snTransform& getTransform();
+
 		//Return the linear velocity
 		snVec getLinearVelocity() const;
 
 		//Return the angular velocity
 		snVec getAngularVelocity() const;
 
-#pragma endregion
+		//Return the orientation represented as a quaternion
+		snVec getOrientationQuaternion();
 
-#pragma region Getter
+		//Get the maximum depth another actor can penetrate into this actor
+		float getSkinDepth() const;
 
-		//Return the linear damping coefficient
+		//Return a pointer to the AABB.
+		const snAABB* getBoundingVolume() const;
+
+		//Return the physic material.
+		snPhysicMaterial& getPhysicMaterial();
+
+		//Return the linear damping.
 		float getLinearDampingCoeff() const;
 
-		//Return the angular damping coefficient
+		//Return the angular damping
 		float getAngularDampingCoeff() const;
 
 #pragma endregion
 
-#pragma region Virtual Setter
+#pragma region Setter
+
+		//Set the name of the actor
+		void setName(const string& _name);
+
+		//Set if the actor is active or not.
+		void setIsActive(bool _isActive);
+
+		//Set the maximum depth another actor can penetrate into this actor
+		void setSkinDepth(float _skinDepth);
 
 		//Set the linear velocity
 		void setLinearVelocity(const snVec& _linearVelocity);
@@ -111,24 +219,23 @@ namespace Supernova
 		//Set the angular velocity
 		void setAngularVelocity(const snVec& _angularVelocity);
 
-#pragma endregion
-
-#pragma region Setter
-
-		//Set the linear damping coefficient
-		void setLinearDampingCoeff(float _linearDamping);
-
-		//Set the angular damping coefficient
-		void setAngularDampingCoeff(float _angularDamping);
-
 		//Set the position of the actor
 		void setPosition(const snVec& _position);
 
 		//Set the orientation of the actor
 		void setOrientation(const snVec& _orientation);
 
+		//Set the collision callback
+		void setOnCollisionCallback(OnCollisionCallback _callback);
+
 		//Set if the actor is kinematic
 		void setIsKinematic(bool _isKinematic);
+
+		//Set the linear damping coefficient
+		void setLinearDampingCoeff(float _linearDamping);
+
+		//Set the angular damping coefficient
+		void setAngularDampingCoeff(float _angularDamping);
 
 		//Set the position of a kinematic actor
 		void setKinematicPosition(const snVec& _position);
@@ -138,20 +245,51 @@ namespace Supernova
 
 #pragma endregion
 
-		//Set the mass to the actor and update its inertia
-		void updateMassAndInertia(float _mass);
+#pragma region Allocation
+
+		//Allocate an actor with the correct alignement
+		void* operator new(size_t _count);
+
+		//Free the memory allocated for an actor
+		void operator delete(void* _p);
+
+#pragma endregion
+
+#pragma region Collision Flags
+
+		//Add a collision flag to the actor
+		void addCollisionFlag(snCollisionFlag _flag);
+
+		//Remove the collision flag of the actor
+		void removeCollisionFlag(snCollisionFlag _flag);
+
+		//Set the collision flag
+		void setCollisionFlag(snCollisionFlag _flag);
+
+		//Return the collision flag
+		unsigned char getCollisionFlag();
+
+		//Check if a collision flag is enabled.
+		bool isEnabledCollisionFlag(snCollisionFlag _flag);
+
+#pragma endregion
 
 		//Initialize the actor so it is ready to be used in the scene. It has to be called and must be called after all the parameters of
 		// the actor and its colliders are set.
 		void initialize();
+
+		void initializeStatic(const snVec& _p, const snVec& _q);
+
+		void onCollision(snRigidbody* const _other);
+
+		//Check if we can make a collision detection test based on the type of actors
+		static bool isCollisionDetectionEnabled(const snRigidbody* const _a, const snRigidbody* const _b);
 
 		//Compute the angular speed of the actor
 		float computeAngularSpeed() const;
 
 		//Compute the linear speed of the actor
 		float computeLinearSpeed() const;
-
-	private:
 
 		//Compute the inverse of the inertia tensor expressed in world coordinates
 		void computeInvWorldInertia();
@@ -162,9 +300,13 @@ namespace Supernova
 		//Update the colliders based on the current position and orientation
 		void updateCollidersAndAABB();
 
-		//Move the actor forward in time using _dt as a time step.
-		//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
-		void integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit);
+		//Set the mass to the actor and update its inertia
+		void updateMassAndInertia(float _mass);
+
+	protected :
+		//Compute the bounding volume based on the colliders
+		void computeBoundingVolume();
 	};
 }
-#endif //ifndef SN_ACTOR_DYNAMIC_H
+
+#endif //ifndef SN_RIGIDBODY_H

@@ -33,8 +33,6 @@
 /****************************************************************************/
 #include "snWorld.h"
 #include "snScene.h"
-#include "snActorDynamic.h"
-#include "snActorStatic.h"
 
 #ifdef SN_DEBUGGER
 #include "snDebugger.h"

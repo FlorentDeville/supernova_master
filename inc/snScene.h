@@ -63,9 +63,7 @@ namespace Devil
 
 namespace Supernova
 {
-	class snIActor;
-	class snActorStatic;
-	class snActorDynamic;
+	class snRigidbody;
 	class CollisionResult;
 	class snIConstraint;
 	class snPointToPointConstraint;
@@ -81,7 +79,7 @@ namespace Supernova
 		string m_name;
 
 		//List of actors in the scene.
-		vector<snIActor*> m_actors;
+		vector<snRigidbody*> m_actors;
 
 		//List of constraints in the scene.
 		vector<snIConstraint*> m_constraints;
@@ -132,41 +130,28 @@ namespace Supernova
 		//look up table.
 		virtual ~snScene();
 
-		//Add a dynamic actor to the scene.
-		// _actor : handle to a dynamic actor.
-		void attachActor(snhActorDynamic _actor);
+		//Add a rigidbody to the scene.
+		// _actor : handle to a rigidbody.
+		void attachActor(snhRigidbody _actor);
 
-		//Add a static actor to the scene.
-		// _actor : handle to a static actor.
-		void attachActor(snhActorStatic _actor);
+		//Remove a rigidbody from the scene.
+		// _actor : a handle to the rigidbody to remove.
+		void removeActor(snhRigidbody _actor);
 
-		//Remove a dynamic actor from the scene.
-		// _actor : a handle to the dynamic actor to remove.
-		void removeActor(snhActorDynamic _actor);
-
-		//Remove a static actor from the scene.
-		// _actor : a handle to the static actor to remove.
-		void removeActor(snhActorStatic _actor);
-
-		//Delete a dynamic actor and remove it from the scene.
-		// _actor : a handle to the dynamic actor to delete.
-		// remarks : all handle to the dynamic actor will become invalid.
-		void deleteActor(snhActorDynamic _actor);
-
-		//Delete static actor and remove it from the scene.
-		// _actor : a handle to the static actor to delete.
-		// remarks : all handle to the static actor will become invalid.
-		void deleteActor(snhActorStatic _actor);
+		//Delete a rigidbody and remove it from the scene.
+		// _actor : a handle to the rigidbody to delete.
+		// remarks : all handles to the rigidbody will become invalid.
+		void deleteActor(snhRigidbody _actor);
 
 		//Get a constraint from its id.
 		snIConstraint* getConstraint(unsigned int _constraintId);
 
 		//Create a distance constraint between two actors and return the id of the constraint
-		snPointToPointConstraint* createPointToPointConstraint(snIActor* const _body1, const snVec& _offset1, snIActor* const _body2, const snVec& _offset2);
+		snPointToPointConstraint* createPointToPointConstraint(snRigidbody* const _body1, const snVec& _offset1, snRigidbody* const _body2, const snVec& _offset2);
 
-		snFixedConstraint* createFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance);
+		snFixedConstraint* createFixedConstraint(snRigidbody* const _actor, const snVec& _fixedPoint, float _distance);
 
-		snHingeConstraint* createHingeConstraint(snIActor* _actor, const snVec& _axis, const snVec& _anchor);
+		snHingeConstraint* createHingeConstraint(snRigidbody* _actor, const snVec& _axis, const snVec& _anchor);
 
 		//Delete all actors from the physics scene.
 		void clearScene();
@@ -245,18 +230,20 @@ namespace Supernova
 		void multiThreadedNarrowPhase();
 
 		//Compute tcollision detection between two actors and create the corresponding collision constraints.
-		void computeCollisionDetection(snIActor* _a, snIActor* _b);
+		void computeCollisionDetection(snRigidbody* _a, snRigidbody* _b);
 
 		//Store a pair of actor into the PCS.
-		void storeActorPair(snIActor* _a, snIActor* _b);
+		void storeActorPair(snRigidbody* _a, snRigidbody* _b);
 
 		//Add an actor to the scene.
 		// _actor : a pointer to an actor.
-		void attachActorByPointer(snIActor* const _actor);
+		void attachActorByPointer(snRigidbody* const _actor);
 
 		//Remove an actor from the scene.
 		// _actor : a pointer to the actor to remove.
-		void removeActorByPointer(snIActor const * const _actor);
+		void removeActorByPointer(snRigidbody const * const _actor);
+
+		void integrate(snRigidbody* _rb, float _dt) const;
 	};
 }
 

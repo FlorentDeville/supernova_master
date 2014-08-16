@@ -51,7 +51,7 @@ namespace Supernova
 	class snFixedConstraint;
 	class snPointToPointConstraint;
 	class snActorDynamic;
-	class snIActor;
+	class snRigidbody;
 }
 
 using namespace Supernova;
@@ -115,13 +115,13 @@ namespace Devil
 		EntitySphere* createSphere(float _diameter, const XMVECTOR& _color);
 		EntityBox* createBox(const XMFLOAT3&);
 		EntityBox* createBox(const XMFLOAT3& _size, const XMFLOAT4& _color);
-		EntityComposite* createComposite(snIActor* _actor, const XMFLOAT4& _color);
+		EntityComposite* createComposite(snRigidbody* _actor, const XMFLOAT4& _color);
 		EntityCamera* createCamera(const XMVECTOR& _position, const XMVECTOR& _lookAt, const XMVECTOR& _up);
 		EntityFixedConstraint* createFixedConstraint(const snFixedConstraint* _constraint);
 		EntityPointToPointConstraint* createPointToPointConstraint(const snPointToPointConstraint* _constraint);
 		WorldHUD* createHUD();
 		EntityBoxLauncher* createEntityBoxLauncher(unsigned int _count);
-		EntityComposite* createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color);
+		EntityComposite* createMonkeyBall(snRigidbody* _actor, const XMFLOAT4& _color);
 		EntitySkybox* createSkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);
 		EntityStaticMesh* createStaticMesh(IGfxEntity* _gfx);
 
@@ -147,7 +147,7 @@ namespace Devil
 		EntityComposite* getMonkeyBall() const;
 
 		//Return the entity owner of the actor
-		IWorldEntity* getEntityFromActor(snIActor* const _actor) const;
+		IWorldEntity* getEntityFromActor(snRigidbody* const _actor) const;
 
 		void toggleCollisionPointActivation();
 		void activateCollisionPoint();

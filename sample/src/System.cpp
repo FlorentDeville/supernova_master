@@ -21,7 +21,7 @@ using namespace Devil::Input::Device;
 #include "snSphere.h"
 
 #include "snScene.h"
-#include "snActorDynamic.h"
+#include "snRigidbody.h"
 #include "snWorld.h"
 #include "snQuaternion.h"
 #include "snFixedConstraint.h"
@@ -89,7 +89,7 @@ namespace Devil
 		}
 
 		//Start with the first scene
-		SCENEMGR->createBasicTest();
+		//SCENEMGR->createBasicTest();
 		//SCENEMGR->createStacking();
 		//SCENEMGR->createSceneDamping();
 		//SCENEMGR->createSceneActorsType();
@@ -98,7 +98,7 @@ namespace Devil
 		//SCENEMGR->createSceneComposite();
 		//SCENEMGR->createSceneMonkeyBall();
 		//SCENEMGR->createSceneGJK();
-		//SCENEMGR->createSceneTerrain();
+		SCENEMGR->createSceneTerrain();
 
 		return true;
 	}

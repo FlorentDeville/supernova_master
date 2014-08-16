@@ -33,7 +33,7 @@
 /****************************************************************************/
 
 #include "snSweepManager.h"
-#include "snIActor.h"
+#include "snRigidbody.h"
 
 #ifdef SN_DEBUGGER
 #include "snDebugger.h"
@@ -65,14 +65,14 @@ namespace Supernova
 	}
 
 	//Add the actor to the list of actors to use in the sweep and prune process.
-	void snSweepManager::addActor(snIActor* _actor)
+	void snSweepManager::addActor(snRigidbody* _actor)
 	{
 		m_sortedActors.push_back(_actor);
 	}
 
-	void snSweepManager::removeActor(snIActor const * const _actor)
+	void snSweepManager::removeActor(snRigidbody const * const _actor)
 	{
-		for (list<snIActor*>::iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
+		for (list<snRigidbody*>::iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
 		{
 			if ((*i) == _actor)
 			{
@@ -87,7 +87,7 @@ namespace Supernova
 	{
 		m_axis = m_deferredAxis;
 		//sort the list in ascending order
-		m_sortedActors.sort([this](const snIActor* _a, const snIActor* _b)
+		m_sortedActors.sort([this](const snRigidbody* _a, const snRigidbody* _b)
 		{
 			return snVec4GetById(_a->getBoundingVolume()->m_min, m_axis) < snVec4GetById(_b->getBoundingVolume()->m_min, m_axis);
 		});
@@ -106,7 +106,7 @@ namespace Supernova
 	void snSweepManager::broadPhase()
 	{
 		//loop through each actor in the scene using the sweep list
-		for (list<snIActor*>::iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
+		for (list<snRigidbody*>::iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
 		{
 			if (!(*i)->getIsActive())
 				continue;
@@ -119,7 +119,7 @@ namespace Supernova
 			m_squaredSum = m_squaredSum + (center * center);
 
 			//test collision against all other actors
-			list<snIActor*>::iterator j = i;
+			list<snRigidbody*>::iterator j = i;
 			++j;
 			while (j != m_sortedActors.end())
 			{
@@ -131,7 +131,7 @@ namespace Supernova
 
 
 				//check if the collision detection is enabled between the two actors
-				if (!snIActor::isCollisionDetectionEnabled(*i, *j))
+				if (!snRigidbody::isCollisionDetectionEnabled(*i, *j))
 				{
 					++j;
 					continue;
@@ -175,10 +175,10 @@ namespace Supernova
 	}
 
 	//Find all the possibly colliding actors for a given aabb.
-	void snSweepManager::getPossiblyCollidingActor(const snAABB& _aabb, vector<snIActor*>& _pca) const
+	void snSweepManager::getPossiblyCollidingActor(const snAABB& _aabb, vector<snRigidbody*>& _pca) const
 	{
 		//loop through each actor in the scene using the sweep list
-		for (list<snIActor*>::const_iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
+		for (list<snRigidbody*>::const_iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
 		{
 			//ignore inactive actors
 			if (!(*i)->getIsActive())

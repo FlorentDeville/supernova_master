@@ -50,7 +50,7 @@ namespace Supernova
 {
 	/*Forward declaration*/
 	class snOBB;
-	class snIActor;
+	class snRigidbody;
 
 	//Make collision tests between all the different types of colliders available.
 	class SN_ALIGN snCollision
@@ -71,7 +71,7 @@ namespace Supernova
 		snCollision();
 		virtual ~snCollision();
 
-		void queryTestCollision(snIActor*, snIActor*, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const;
+		void queryTestCollision(snRigidbody*, snRigidbody*, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const;
 
 		snCollisionResult queryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
 

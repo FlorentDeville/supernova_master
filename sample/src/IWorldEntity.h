@@ -41,7 +41,7 @@ using DirectX::XMFLOAT3;
 //#include "snActor.h"
 namespace Supernova
 {
-	class snIActor;
+	class snRigidbody;
 }
 using namespace Supernova;
 
@@ -62,7 +62,7 @@ namespace Devil
 		XMFLOAT3 m_scale;
 
 		/*actor representing this entity in the physics engine*/
-		snIActor* m_actor;
+		snRigidbody* m_actor;
 
 		/*Indicates if the entity is active. A not active entity is not updated nor rendered.*/
 		bool m_isActive;
@@ -112,7 +112,7 @@ namespace Devil
 
 		void setScaling(const XMFLOAT3& _scaling){ m_scale = _scaling; }
 
-		void setActor(snIActor* _actor){ m_actor = _actor; }
+		void setActor(snRigidbody* _actor){ m_actor = _actor; }
 
 		void setIsActive(bool _isActive){ m_isActive = _isActive; }
 
@@ -122,7 +122,7 @@ namespace Devil
 
 		bool getIsActive() const { return m_isActive; }
 
-		snIActor* getActor() const { return m_actor; }
+		snRigidbody* getActor() const { return m_actor; }
 
 		//Return the list of components attached to this entity
 		vector<IComponent*> const & getPostUpdateComponents() { return m_postUpdateComponents; }

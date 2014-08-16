@@ -45,7 +45,7 @@
 
 #include "snCollisionResult.h"
 #include "snICollider.h"
-#include "snIActor.h"
+#include "snRigidbody.h"
 #include "snMath.h"
 #include "snFeatureClipping.h"
 #include <assert.h>
@@ -75,7 +75,7 @@ namespace Supernova
 
 	snCollision::~snCollision(){}
 
-	void snCollision::queryTestCollision(snIActor* _a1, snIActor* _a2, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const
+	void snCollision::queryTestCollision(snRigidbody* _a1, snRigidbody* _a2, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const
 	{
 		std::vector<snICollider*>& listColliders1 = _a1->getColliders();
 		std::vector<snICollider*>& listColliders2 = _a2->getColliders();

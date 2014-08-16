@@ -51,9 +51,9 @@ using namespace Devil::Worlds::Entities;
 #include "Graphics.h"
 #include "IComponent.h"
 
-#include "snIActor.h"
+#include "snRigidbody.h"
 #include "snScene.h"
-using Supernova::snIActor;
+using Supernova::snRigidbody;
 
 namespace Devil
 {
@@ -125,7 +125,7 @@ namespace Devil
 		return NewEntity;
 	}
 
-	EntityComposite* World::createComposite(snIActor* _actor, const XMFLOAT4& _color)
+	EntityComposite* World::createComposite(snRigidbody* _actor, const XMFLOAT4& _color)
 	{
 		EntityComposite* newEntity = new EntityComposite(_actor, _color);
 		m_EntityList.push_back(newEntity);
@@ -180,7 +180,7 @@ namespace Devil
 		return launcher;
 	}
 
-	EntityComposite* World::createMonkeyBall(snIActor* _actor, const XMFLOAT4& _color)
+	EntityComposite* World::createMonkeyBall(snRigidbody* _actor, const XMFLOAT4& _color)
 	{
 		m_monkeyBall = new EntityComposite(_actor, _color);
 		m_EntityList.push_back(m_monkeyBall);
@@ -283,7 +283,7 @@ namespace Devil
 		return m_monkeyBall;
 	}
 
-	IWorldEntity* World::getEntityFromActor(snIActor* const _actor) const
+	IWorldEntity* World::getEntityFromActor(snRigidbody* const _actor) const
 	{
 		for (std::vector<IWorldEntity*>::const_iterator i = m_EntityList.cbegin(); i != m_EntityList.cend(); ++i)
 		{

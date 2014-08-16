@@ -41,8 +41,7 @@ namespace Supernova
 {
 	class snObject;
 	class snScene;
-	class snActorDynamic;
-	class snActorStatic;
+	class snRigidbody;
 	class snSphere;
 	class snOBB;
 	class snCapsule;
@@ -90,8 +89,7 @@ namespace Supernova
 	};
 
 	typedef snHandle<snScene> snhScene;					//Handle for a scene.
-	typedef snHandle<snActorStatic> snhActorStatic;		//Handle for a static actor.
-	typedef snHandle<snActorDynamic> snhActorDynamic;	//Handle for a dynamic actor.
+	typedef snHandle<snRigidbody> snhRigidbody;			//Handle for a rigidbody.
 	typedef snHandle<snSphere> snhSphere;				//Handle for a sphere.
 	typedef snHandle<snOBB> snhOBB;						//Handle for an OBB.
 	typedef snHandle<snCapsule> snhCapsule;				//Handle for a capsule.

@@ -28,6 +28,9 @@
     <Filter Include="Algorithms\EPA">
       <UniqueIdentifier>{18e3804e-6ef4-49c1-8ebe-2bfca54c4f09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Simulation\Actors">
+      <UniqueIdentifier>{697986c5-8f4c-4269-95a1-e916d0c8f633}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\snCollisionResult.h">
@@ -79,15 +82,6 @@
       <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="inc\snContactConstraintManager.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snActorDynamic.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snActorStatic.h">
-      <Filter>Simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\snIActor.h">
       <Filter>Simulation</Filter>
     </ClInclude>
     <ClInclude Include="inc\snCollisionFlag.h">
@@ -168,6 +162,18 @@
     <ClInclude Include="inc\snFrictionMode.h">
       <Filter>Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snRigidbody.h">
+      <Filter>Simulation\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\_snIActor.h">
+      <Filter>Simulation\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\_snActorStatic.h">
+      <Filter>Simulation\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\_snActorDynamic.h">
+      <Filter>Simulation\Actors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">
@@ -198,15 +204,6 @@
       <Filter>Tools</Filter>
     </ClCompile>
     <ClCompile Include="src\snContactConstraintManager.cpp">
-      <Filter>Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snActorDynamic.cpp">
-      <Filter>Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snActorStatic.cpp">
-      <Filter>Simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="src\snIActor.cpp">
       <Filter>Simulation</Filter>
     </ClCompile>
     <ClCompile Include="src\snCollisionDispatcher.cpp">
@@ -270,6 +267,18 @@
     <ClCompile Include="src\snObject.cpp" />
     <ClCompile Include="src\snTransform.cpp">
       <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snRigidbody.cpp">
+      <Filter>Simulation\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_snIActor.cpp">
+      <Filter>Simulation\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_snActorStatic.cpp">
+      <Filter>Simulation\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_snActorDynamic.cpp">
+      <Filter>Simulation\Actors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

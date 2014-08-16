@@ -33,14 +33,14 @@
 /****************************************************************************/
 
 #include "snFixedConstraint.h"
-#include "snIActor.h"
+#include "snRigidbody.h"
 #include "snMath.h"
 
 using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snFixedConstraint::snFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance)
+	snFixedConstraint::snFixedConstraint(snRigidbody* const _actor, const snVec& _fixedPoint, float _distance)
 		: snIConstraint(), m_actor(_actor), m_fixedPoint(_fixedPoint), m_distance(_distance), m_accumulatedImpulseMagnitude(0)
 	{
 		
@@ -116,7 +116,7 @@ namespace Supernova
 		return m_distance;
 	}
 
-	const snIActor* snFixedConstraint::getActor() const
+	const snRigidbody* snFixedConstraint::getActor() const
 	{
 		return m_actor;
 	}

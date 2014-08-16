@@ -32,7 +32,7 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snActorDynamic.h"
+#include "_snActorDynamic.h"
 #include "snICollider.h"
 #include "snQuaternion.h"
 

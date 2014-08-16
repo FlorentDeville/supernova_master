@@ -34,7 +34,7 @@
 
 #include "EntityComposite.h"
 
-#include "snIActor.h"
+#include "snRigidbody.h"
 #include "snICollider.h"
 #include "snOBB.h"
 #include "snSphere.h"
@@ -49,7 +49,7 @@ using namespace DirectX;
 
 namespace Devil
 {
-	EntityComposite::EntityComposite(snIActor* _actor, const XMFLOAT4& _color)
+	EntityComposite::EntityComposite(snRigidbody* _actor, const XMFLOAT4& _color)
 	{
 		m_color = XMVectorSet(_color.x, _color.y, _color.z, _color.w);
 		m_actor = _actor;

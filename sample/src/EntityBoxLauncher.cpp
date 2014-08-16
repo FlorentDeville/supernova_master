@@ -37,7 +37,7 @@
 #include "snWorld.h"
 #include "snScene.h"
 #include "snVec.h"
-#include "snActorDynamic.h"
+#include "snRigidbody.h"
 #include "snOBB.h"
 
 #include "World.h"
@@ -69,7 +69,7 @@ namespace Devil
 			
 			//create actor
 			snhScene myScene = WORLD->getPhysicsScene();
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody());
 			myScene->attachActor(act);
 
 			act->setName("projectile");
@@ -103,7 +103,7 @@ namespace Devil
 
 		//get the box
 		EntityBox* box = m_boxes[0];
-		snActorDynamic* act = static_cast<snActorDynamic*>(box->getActor());
+		snRigidbody* act = box->getActor();
 
 		//set its position
 		snVec pos;

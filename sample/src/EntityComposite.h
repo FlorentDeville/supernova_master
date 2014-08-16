@@ -42,9 +42,9 @@ using std::vector;
 
 namespace Supernova
 {
-	class snIActor;
+	class snRigidbody;
 }
-using Supernova::snIActor;
+using Supernova::snRigidbody;
 
 namespace DirectX
 {
@@ -68,7 +68,7 @@ namespace Devil
 		XMVECTOR m_color;
 
 	public:
-		EntityComposite(snIActor* _actor, const XMFLOAT4& _color);
+		EntityComposite(snRigidbody* _actor, const XMFLOAT4& _color);
 		~EntityComposite();
 
 		void update();

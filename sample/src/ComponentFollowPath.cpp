@@ -33,7 +33,7 @@
 /****************************************************************************/
 
 #include "ComponentFollowPath.h"
-#include "snActorDynamic.h"
+#include "snRigidbody.h"
 
 using namespace Supernova;
 using namespace Supernova::Vector;
@@ -41,7 +41,7 @@ using namespace Supernova::Vector;
 namespace Devil
 {
 	//Construct an instance of the class ComponentFollowPath
-	ComponentFollowPath::ComponentFollowPath(snActorDynamic* _actor, bool _loop) : m_actor(_actor), m_loop(_loop), 
+	ComponentFollowPath::ComponentFollowPath(snRigidbody* _actor, bool _loop) : m_actor(_actor), m_loop(_loop), 
 		m_path(), m_nextWaypoint(1), m_previousWaypoint(0)
 	{
 		m_isActive = true;

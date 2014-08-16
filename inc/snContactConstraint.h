@@ -39,7 +39,7 @@
 
 namespace Supernova
 {
-	class snIActor;
+	class snRigidbody;
 	class snScene;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ namespace Supernova
 	protected:
 
 		//The two bodies who must repsect the constraint.
-		snIActor* m_bodies[2];
+		snRigidbody* m_bodies[2];
 
 		//Collision normal going from the second body to the first one.
 		snVec m_normal;
@@ -134,7 +134,7 @@ namespace Supernova
 		virtual ~snContactConstraint();
 
 		//Give to the constraints the basic information it needs.
-		void initialize(snIActor* const _body1, snIActor* const _body2, const snVec& _normal, const snVec& _collisionPoint, float _penetrationDepth,
+		void initialize(snRigidbody* const _body1, snRigidbody* const _body2, const snVec& _normal, const snVec& _collisionPoint, float _penetrationDepth,
 			snScene const * _scene);
 
 		void prepare(float _dt);

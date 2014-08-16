@@ -13,10 +13,10 @@
   <ItemGroup>
     <ClInclude Include="inc\AlignmentAllocator.h" />
     <ClInclude Include="inc\snAABB.h" />
-    <ClInclude Include="inc\snActorDynamic.h" />
+    <ClInclude Include="inc\_snActorDynamic.h" />
     <ClInclude Include="inc\snActorPair.h" />
     <ClInclude Include="inc\snActorPairManager.h" />
-    <ClInclude Include="inc\snActorStatic.h" />
+    <ClInclude Include="inc\_snActorStatic.h" />
     <ClInclude Include="inc\snCapsule.h" />
     <ClInclude Include="inc\snClosestPoint.h" />
     <ClInclude Include="inc\snCollision.h" />
@@ -39,7 +39,7 @@
     <ClInclude Include="inc\snHandle.h" />
     <ClInclude Include="inc\snHeightMap.h" />
     <ClInclude Include="inc\snHingeConstraint.h" />
-    <ClInclude Include="inc\snIActor.h" />
+    <ClInclude Include="inc\_snIActor.h" />
     <ClInclude Include="inc\snICollider.h" />
     <ClInclude Include="inc\snIConstraint.h" />
     <ClInclude Include="inc\snLogger.h" />
@@ -50,6 +50,7 @@
     <ClInclude Include="inc\snPhysicMaterial.h" />
     <ClInclude Include="inc\snPointToPointConstraint.h" />
     <ClInclude Include="inc\snQuaternion.h" />
+    <ClInclude Include="inc\snRigidbody.h" />
     <ClInclude Include="inc\snSAT.h" />
     <ClInclude Include="inc\snScene.h" />
     <ClInclude Include="inc\snSphere.h" />
@@ -62,9 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snAABB.cpp" />
-    <ClCompile Include="src\snActorDynamic.cpp" />
+    <ClCompile Include="src\_snActorDynamic.cpp" />
     <ClCompile Include="src\snActorPairManager.cpp" />
-    <ClCompile Include="src\snActorStatic.cpp" />
+    <ClCompile Include="src\_snActorStatic.cpp" />
     <ClCompile Include="src\snCapsule.cpp" />
     <ClCompile Include="src\snClosestPoint.cpp" />
     <ClCompile Include="src\snCollision.cpp" />
@@ -81,7 +82,7 @@
     <ClCompile Include="src\snGJK.cpp" />
     <ClCompile Include="src\snHeightMap.cpp" />
     <ClCompile Include="src\snHingeConstraint.cpp" />
-    <ClCompile Include="src\snIActor.cpp" />
+    <ClCompile Include="src\_snIActor.cpp" />
     <ClCompile Include="src\snLogger.cpp" />
     <ClCompile Include="src\snMath.cpp" />
     <ClCompile Include="src\snMatrix44f.cpp" />
@@ -89,6 +90,7 @@
     <ClCompile Include="src\snObject.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
+    <ClCompile Include="src\snRigidbody.cpp" />
     <ClCompile Include="src\snSAT.cpp" />
     <ClCompile Include="src\snScene.cpp" />
     <ClCompile Include="src\snSphere.cpp" />

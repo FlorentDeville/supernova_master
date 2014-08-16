@@ -40,8 +40,8 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
-#include "snIActor.h"
-using Supernova::snIActor;
+#include "snRigidbody.h"
+using Supernova::snRigidbody;
 
 #include "snWorld.h"
 #include "snScene.h"

@@ -32,7 +32,7 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#include "snIActor.h"
+#include "_snIActor.h"
 #include "snICollider.h"
 #include <assert.h>
 

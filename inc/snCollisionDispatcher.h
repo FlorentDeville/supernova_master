@@ -40,9 +40,9 @@ namespace Supernova
 {
 	class snActorPairManager;
 	class snScene;
-	class snIActor;
+	class snRigidbody;
 
-	typedef void (snScene::*snCollisionCallback)(snIActor*, snIActor*);
+	typedef void (snScene::*snCollisionCallback)(snRigidbody*, snRigidbody*);
 
 	class snCollisionDispatcher
 	{

@@ -40,7 +40,7 @@
 
 namespace Supernova
 {
-	class snIActor;
+	class snRigidbody;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -83,7 +83,7 @@ namespace Supernova
 	protected:
 
 		//Actor this constraint has to be applied to.
-		snIActor* m_actor;
+		snRigidbody* m_actor;
 
 		//Point in space. The actor has to stay at the same distance to this point.
 		snVec m_fixedPoint;
@@ -112,7 +112,7 @@ namespace Supernova
 		float m_accumulatedImpulseMagnitude;
 
 	public:
-		snFixedConstraint(snIActor* const _actor, const snVec& _fixedPoint, float _distance);
+		snFixedConstraint(snRigidbody* const _actor, const snVec& _fixedPoint, float _distance);
 		~snFixedConstraint();
 
 		void prepare(float _dt);
@@ -125,7 +125,7 @@ namespace Supernova
 		//Return the distance between the fixed point and the actor.
 		float getDistance() const;
 
-		const snIActor* getActor() const;
+		const snRigidbody* getActor() const;
 
 	};
 }

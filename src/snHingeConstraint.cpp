@@ -33,13 +33,13 @@
 /****************************************************************************/
 
 #include "snHingeConstraint.h"
-#include "snIActor.h"
+#include "snRigidbody.h"
 #include "snMath.h"
 using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snHingeConstraint::snHingeConstraint(snIActor* _actor, const snVec& _axis, const snVec& _anchor) : m_actor(_actor), m_axis(_axis),
+	snHingeConstraint::snHingeConstraint(snRigidbody* _actor, const snVec& _axis, const snVec& _anchor) : m_actor(_actor), m_axis(_axis),
 		m_anchor(_anchor)
 	{
 		snMatrix44f invTransform = m_actor->getTransform().getLocalToWorld().inverse();

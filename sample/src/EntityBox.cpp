@@ -39,7 +39,7 @@
 #include "GfxEntityBox.h"
 
 #include "snVec.h"
-#include "snIActor.h"
+#include "snRigidbody.h"
 
 using namespace Supernova::Vector;
 using namespace DirectX;

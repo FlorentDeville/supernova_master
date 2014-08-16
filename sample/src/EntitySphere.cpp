@@ -10,7 +10,7 @@
 
 #include "snScene.h"
 
-#include "snIActor.h"
+#include "snRigidbody.h"
 
 using namespace DirectX;
 
@@ -27,6 +27,7 @@ namespace Devil
 
 	bool EntitySphere::initialize(float _diameter, const XMVECTOR& _color)
 	{
+		m_diameter = _diameter;
 		m_color = _color;
 		m_gfx = GRAPHICS->getSphere();
 		return true;

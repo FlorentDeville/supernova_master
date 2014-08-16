@@ -31,26 +31,52 @@
 /*ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE           */
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
+#ifndef SN_ACTOR_DYNAMIC_H
+#define SN_ACTOR_DYNAMIC_H
 
-#ifndef SN_ACTOR_STATIC_H
-#define SN_ACTOR_STATIC_H
-
-#include "snIActor.h"
+#include "_snIActor.h"
 
 namespace Supernova
 {
-	class SN_ALIGN snActorStatic : public snIActor
+	class SN_ALIGN snActorDynamic : public snIActor
 	{
+	private:
+
+		//The total mass of the actor
+		float m_mass;
+
+		//Inverse of the total mass
+		float m_invMass;
+
+		//Linear damping coefficient
+		float m_linearDamping;
+
+		//Angular damping coefficient
+		float m_angularDamping;
+
+		//Inverse of the inertia tensor expressed in local coordiantes
+		snMatrix44f m_invInertia;
+
+		//Inverse of the inertia tensor expressed in world coordinates.
+		snMatrix44f m_invWorldInertia;
+
+		//Linear velocity
+		snVec m_v;
+
+		//angular velocity
+		snVec m_w;
+
+		//Flag to indicate if this actor is kinematic or not.
+		bool m_isKinematic;
+
 	public:
-		snActorStatic(const snVec& _position);
 
-		snActorStatic(const snVec& _position, const snVec& _orientation);
-
-		~snActorStatic();
+		snActorDynamic();
+		~snActorDynamic();
 
 #pragma region Virtual Getter
 
-		//Return 0
+		//Return the mass
 		float getMass() const;
 
 		//Return the inverse of the mass
@@ -67,6 +93,16 @@ namespace Supernova
 
 #pragma endregion
 
+#pragma region Getter
+
+		//Return the linear damping coefficient
+		float getLinearDampingCoeff() const;
+
+		//Return the angular damping coefficient
+		float getAngularDampingCoeff() const;
+
+#pragma endregion
+
 #pragma region Virtual Setter
 
 		//Set the linear velocity
@@ -77,18 +113,58 @@ namespace Supernova
 
 #pragma endregion
 
-		//Move the actor forward in time using _dt as a time step.
-		//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
-		//A static actor cannot move so this function doesn't do anyhthing.
-		void integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit);
+#pragma region Setter
 
+		//Set the linear damping coefficient
+		void setLinearDampingCoeff(float _linearDamping);
+
+		//Set the angular damping coefficient
+		void setAngularDampingCoeff(float _angularDamping);
+
+		//Set the position of the actor
+		void setPosition(const snVec& _position);
+
+		//Set the orientation of the actor
+		void setOrientation(const snVec& _orientation);
+
+		//Set if the actor is kinematic
+		void setIsKinematic(bool _isKinematic);
+
+		//Set the position of a kinematic actor
+		void setKinematicPosition(const snVec& _position);
+
+		//Set the position and orientation of a kinematic actor.
+		void setKinematicTransform(const snVec& _position, const snVec& _orientation);
+
+#pragma endregion
+
+		//Set the mass to the actor and update its inertia
+		void updateMassAndInertia(float _mass);
+
+		//Initialize the actor so it is ready to be used in the scene. It has to be called and must be called after all the parameters of
+		// the actor and its colliders are set.
 		void initialize();
+
+		//Compute the angular speed of the actor
+		float computeAngularSpeed() const;
+
+		//Compute the linear speed of the actor
+		float computeLinearSpeed() const;
 
 	private:
 
-		//Initialize the actor with default values.
-		//This function must be called in the constructor.
-		void init(const snVec& _position, const snVec& _orientation);
+		//Compute the inverse of the inertia tensor expressed in world coordinates
+		void computeInvWorldInertia();
+
+		//Compute the center of mass expressed in world coordinate.
+		void computeWorldCenterOfMass();
+
+		//Update the colliders based on the current position and orientation
+		void updateCollidersAndAABB();
+
+		//Move the actor forward in time using _dt as a time step.
+		//_linearSpeed2Limit and _angularSpeed2Limit are the squared speed below which the velocities will be set to 0.
+		void integrate(float _dt, float _linearSpeed2Limit, float _angularSpeed2Limit);
 	};
 }
-#endif //ifndef SN_ACTOR_STATIC_H
+#endif //ifndef SN_ACTOR_DYNAMIC_H

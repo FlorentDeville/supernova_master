@@ -45,8 +45,7 @@
 
 #include "snWorld.h"
 #include "snScene.h"
-#include "snActorDynamic.h"
-#include "snActorStatic.h"
+#include "snRigidbody.h"
 #include "snOBB.h"
 #include "snSphere.h"
 #include "snCapsule.h"
@@ -194,7 +193,7 @@ namespace Devil
 			snVec pos = snVec4Set(0, groundHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody());
 			scene->attachActor(act);
 			act->setName("base");
 			act->setPosition(pos);
@@ -224,7 +223,7 @@ namespace Devil
 			snVec pos = snVec4Set(width * 0.5f, blockOneHeight + height * 0.5f + 0, 0, 1);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody());
 			scene->attachActor(act);
 			act->setName("platform");
 			act->setPosition(pos);
@@ -254,7 +253,7 @@ namespace Devil
 			snVec pos = snVec4Set(2, platformHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 			act->setName("two");
 			act->setPosition(pos);
@@ -283,7 +282,7 @@ namespace Devil
 			snVec pos = snVec4Set(2, blockTwoHeight + height * 0.5f, 0, 1);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 			act->setName("three");
 			act->setPosition(pos);
@@ -313,7 +312,7 @@ namespace Devil
 			snVec pos = snVec4Set(11, platformHeight + height * 0.5f + 25, 0, 1);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 			act->setName("dynamic");
 			act->setPosition(pos);
@@ -357,7 +356,9 @@ namespace Devil
 
 			//create actor
 			snVec position = snVec4Set(0, 101, -80, 1);
-			snhActorStatic act = SUPERNOVA->registerObject(new snActorStatic(position, snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(position, snVec4Set(0, 0, 0, 1));
+			snhRigidbody act = SUPERNOVA->registerObject(rb);
 			scene->attachActor(act);
 			act->setName("back");
 			act->getPhysicMaterial().m_restitution = 1;
@@ -388,7 +389,7 @@ namespace Devil
 				snVec pos = snVec4Set((MAX_ROW - row) * width * 0.5f + (width + space) * i + xOffset, groundHeight + height * 0.5f + height * (MAX_ROW - row), 0, 1);
 
 				//create actor
-				snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+				snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 				scene->attachActor(act);
 
 				string strRow = std::to_string(row);
@@ -433,7 +434,9 @@ namespace Devil
 			float depth = 5;
 
 			//create actor
-			snhActorStatic act = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody act = SUPERNOVA->registerObject(rb);
 			scene->attachActor(act);
 
 			act->setName("back");
@@ -453,7 +456,7 @@ namespace Devil
 		}
 
 		float top = 100;
-		snActorDynamic* previousActor = 0;
+		snRigidbody* previousActor = 0;
 		{
 			float width = 2;
 			float height = 5;
@@ -461,7 +464,7 @@ namespace Devil
 			snVec pos = snVec4Set(10, top, 0, 1);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 
 			act->setName("d0");
@@ -499,7 +502,7 @@ namespace Devil
 			snVec pos = snVec4Set(10, top, 0, 1);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 
 			act->setName("d1");
@@ -548,7 +551,9 @@ namespace Devil
 			float depth = 2;
 
 			//create actor
-			snhActorStatic act = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody act = SUPERNOVA->registerObject(rb);
 			scene->attachActor(act);
 
 			act->setName("back");
@@ -593,7 +598,9 @@ namespace Devil
 			float depth = 100;
 
 			//create actor
-			snhActorStatic act = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
+			snhRigidbody act = SUPERNOVA->registerObject(rb);
 			scene->attachActor(act);
 
 			act->setName("slope");
@@ -625,7 +632,7 @@ namespace Devil
 		//full friction, no restitution
 		{
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 			act->setName("full friction");
 			act->setPosition(snVec4Set(-10, height, -30, 1));
@@ -650,7 +657,7 @@ namespace Devil
 		//no friction, no restitution
 		{
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 
 			act->setName("no friction");
@@ -676,7 +683,7 @@ namespace Devil
 		//half friction, no restitution
 		{
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 
 			act->setName("half friction");
@@ -719,7 +726,7 @@ namespace Devil
 			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 0);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 
 			act->setName("d0");
@@ -743,11 +750,11 @@ namespace Devil
 			box->setActor(act.getPtr());
 
 			//create floating text component
-			ComponentFloatingText<snActorDynamic, float>* floatingText = new ComponentFloatingText<snActorDynamic, float>();
+			ComponentFloatingText<snRigidbody, float>* floatingText = new ComponentFloatingText<snRigidbody, float>();
 			floatingText->setAnchor(box);
 			floatingText->setOffset(XMFLOAT2(-120, 50));
-			floatingText->addItem(L"Angular Damping", act.getPtr(), &snActorDynamic::getAngularDampingCoeff);
-			floatingText->addItem(L"Angular Speed", act.getPtr(), &snActorDynamic::computeAngularSpeed);
+			floatingText->addItem(L"Angular Damping", act.getPtr(), &snRigidbody::getAngularDampingCoeff);
+			floatingText->addItem(L"Angular Speed", act.getPtr(), &snRigidbody::computeAngularSpeed);
 			box->addPostUpdateComponent(floatingText);
 
 			//create constraints
@@ -765,7 +772,7 @@ namespace Devil
 			snVec pos = origin + snVec4Set(20.f * i, 0, 0, 0);
 
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(act);
 
 			act->setName("d0");
@@ -789,11 +796,11 @@ namespace Devil
 			box->setActor(act.getPtr());
 
 			//create floating text component
-			ComponentFloatingText<snActorDynamic, float>* floatingText = new ComponentFloatingText<snActorDynamic, float>();
+			ComponentFloatingText<snRigidbody, float>* floatingText = new ComponentFloatingText<snRigidbody, float>();
 			floatingText->setAnchor(box);
 			floatingText->setOffset(XMFLOAT2(-120, 50));
-			floatingText->addItem(L"Linear Damping", act.getPtr(), &snActorDynamic::getLinearDampingCoeff);
-			floatingText->addItem(L"Linear Speed", act.getPtr(), &snActorDynamic::computeLinearSpeed);
+			floatingText->addItem(L"Linear Damping", act.getPtr(), &snRigidbody::getLinearDampingCoeff);
+			floatingText->addItem(L"Linear Speed", act.getPtr(), &snRigidbody::computeLinearSpeed);
 			box->addPostUpdateComponent(floatingText);
 
 			//create constraints
@@ -818,7 +825,7 @@ namespace Devil
 			float depth = 40;
 
 			//create the actor
-			snhActorDynamic kin = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody kin = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(kin);
 			kin->setIsKinematic(true);
 			kin->setName("kinematic");
@@ -861,7 +868,7 @@ namespace Devil
 			float depth = 5;
 
 			//create the actor
-			snhActorDynamic dyn = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody dyn = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(dyn);
 			dyn->setName("dynamic");
 			dyn->setPosition(snVec4Set(-2, 103.5, 0, 1));
@@ -893,7 +900,9 @@ namespace Devil
 			float depth = 25;
 
 			//create the actor
-			snhActorStatic sta = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody sta = SUPERNOVA->registerObject(rb);
 			scene->attachActor(sta);
 			sta->setName("static right wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
@@ -923,14 +932,16 @@ namespace Devil
 			float depth = 25;
 
 			//create the actor
-			snhActorStatic sta = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody sta = SUPERNOVA->registerObject(rb);
 			scene->attachActor(sta);
 			sta->setName("static left wall");
 			sta->getPhysicMaterial().m_friction = 1.f;
 			sta->getPhysicMaterial().m_restitution = 1.f;
 			sta->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			sta->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			sta->setOnCollisionCallback([](snIActor* const _a, snIActor* const _b)
+			sta->setOnCollisionCallback([](snRigidbody* const _a, snRigidbody* const _b)
 			{
 				string strAName = _a->getName();
 				wstring _aName;
@@ -994,7 +1005,7 @@ namespace Devil
 		{
 			//create actor
 			snVec dominoSize = snVec4Set(5, 10, 1, 0);
-			snhActorDynamic actor = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody actor = SUPERNOVA->registerObject(new snRigidbody);
 			WORLD->getPhysicsScene()->attachActor(actor);
 
 			actor->setPosition(_frenet[3]);
@@ -1043,7 +1054,7 @@ namespace Devil
 			snVec hammerPosition = snVec4Set(0, snVec4GetY(dominoSize), -120, 0) + hammerOffset;
 			float constraintDistance = snVec3Norme(constraintOrigin - hammerPosition);
 
-			snhActorDynamic actor = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody actor = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(actor);
 			actor->setPosition(hammerPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
@@ -1070,7 +1081,7 @@ namespace Devil
 		{
 			snVec startPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -130, 1);
 			snVec endPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -150, 1);
-			snhActorDynamic actor = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody actor = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(actor);
 			actor->setPosition(startPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
@@ -1104,7 +1115,7 @@ namespace Devil
 
 		//create trigger
 		{
-			snhActorDynamic actor = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody actor = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(actor);
 			actor->setPosition(snVec4Set(0, 100, -130, 1));
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
@@ -1115,7 +1126,7 @@ namespace Devil
 			actor->setIsKinematic(true);
 			actor->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			actor->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			actor->setOnCollisionCallback([](snIActor * const _a, snIActor * const _b)
+			actor->setOnCollisionCallback([](snRigidbody * const _a, snRigidbody * const _b)
 			{
 				UNREFERENCED_PARAMETER(_a);
 				UNREFERENCED_PARAMETER(_b);
@@ -1181,7 +1192,7 @@ namespace Devil
 
 		position = position + snVec4Set(0, distance, 0, 0);
 
-		snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+		snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 		scene->attachActor(act);
 
 		act->setName("composite");
@@ -1217,7 +1228,7 @@ namespace Devil
 
 		////Create a sphere
 		//int actSphereId = -1;
-		//snActorDynamic* actSphere = 0;
+		//snRigidbody* actSphere = 0;
 		//scene->createActorDynamic(&actSphere, actSphereId);
 		//actSphere->setPosition(snVec4Set(0, 35, 0, 1));
 		//actSphere->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
@@ -1272,7 +1283,7 @@ namespace Devil
 		WORLD->getCamera()->setPosition(snVec4Set(10, 120, -180, 1));
 		WORLD->getCamera()->setLookAt(snVec4Set(10, 30, 0, 1));
 
-		snhActorDynamic actEnvironment = SUPERNOVA->registerObject(new snActorDynamic);
+		snhRigidbody actEnvironment = SUPERNOVA->registerObject(new snRigidbody);
 		scene->attachActor(actEnvironment);
 		actEnvironment->setName("level");
 
@@ -1317,7 +1328,7 @@ namespace Devil
 		entity->setTexture(GRAPHICS->getTexChecker());
 
 		//Create ball
-		snhActorDynamic ball = SUPERNOVA->registerObject(new snActorDynamic);
+		snhRigidbody ball = SUPERNOVA->registerObject(new snRigidbody);
 		scene->attachActor(ball);
 		float sphereRadius = 10;
 		snSphere* sphere = new snSphere(sphereRadius);
@@ -1344,7 +1355,7 @@ namespace Devil
 		scene->setContactConstraintBeta(0.005f);
 
 		////create box reference
-		//snActorDynamic* actBox = 0;
+		//snRigidbody* actBox = 0;
 		//int boxId = -1;
 		//scene->createActorDynamic(&actBox, boxId);
 
@@ -1366,7 +1377,7 @@ namespace Devil
 		float orientationOffset = 2 * 3.14f * (1.f / SHAPE_COUNT);
 		for (unsigned int i = 0; i < SHAPE_COUNT; ++i)
 		{
-			snhActorDynamic actCapsule = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody actCapsule = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(actCapsule);
 			snCapsule* colCapsule = new snCapsule(10, 5);
 			/*actCapsule->setPosition(snVec4Set(0, 15, 0, 1));
@@ -1477,7 +1488,7 @@ namespace Devil
 		//	snVec4SetY(boundingVolume.m_max, data.m_max);
 
 		//	//create the physic height map
-		//	snActorStatic* snMap;
+		//	snRigidbody* snMap;
 		//	int id = -1;
 		//	scene->createActorStatic(&snMap, id, snVec4Set(0), snVec4Set(0));
 		//	TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, size, data.m_quadsPerRow, data.m_quadsPerRow, data.m_heights);
@@ -1493,7 +1504,7 @@ namespace Devil
 		for (int i = 0; i < SPHERE_COUNT; ++i)
 		{
 			//create a dynamic sphere
-			snhActorDynamic sphere = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody sphere = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(sphere);
 			snICollider* collider = 0;
 			int mod = i % 3;
@@ -1531,7 +1542,9 @@ namespace Devil
 
 		//create actor
 		snVec position = snVec4Set(0, -1, 0, 1);
-		snhActorStatic act = SUPERNOVA->registerObject(new snActorStatic(position, snVec4Set(0, 0, 0, 1)));
+		snRigidbody* rb = new snRigidbody();
+		rb->initializeStatic(position, snVec4Set(0, 0, 0, 1));
+		snhRigidbody act = SUPERNOVA->registerObject(rb);
 		_scene->attachActor(act);
 		act->setName("ground");
 		act->getPhysicMaterial().m_restitution = _restitution;
@@ -1607,7 +1620,7 @@ namespace Devil
 		for (int i = 0; i < pillarCount; ++i)
 		{
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			_scene->attachActor(act);
 
 			snVec pos = pillarPosition[i] + _origin;
@@ -1653,7 +1666,7 @@ namespace Devil
 		for (int i = 0; i < pillarCount; ++i)
 		{
 			//create actor
-			snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+			snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 			_scene->attachActor(act);
 
 			snVec pos = bedPosition[i] + _origin;
@@ -1708,7 +1721,9 @@ namespace Devil
 
 		//create left wall 
 		{
-			snhActorStatic stat = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody stat = SUPERNOVA->registerObject(rb);
 			scene->attachActor(stat);
 
 			//create collider
@@ -1716,7 +1731,7 @@ namespace Devil
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			stat->setOnCollisionCallback([](snIActor* const _me, snIActor* const _other)
+			stat->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
 			{
 				UNREFERENCED_PARAMETER(_me);
 				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
@@ -1737,7 +1752,9 @@ namespace Devil
 
 		//create right wall 
 		{
-			snhActorStatic stat = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody stat = SUPERNOVA->registerObject(rb);
 			scene->attachActor(stat);
 
 			//create collider
@@ -1745,7 +1762,7 @@ namespace Devil
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			stat->setOnCollisionCallback([](snIActor* const _me, snIActor* const _other)
+			stat->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
 			{
 				UNREFERENCED_PARAMETER(_me);
 				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
@@ -1766,7 +1783,9 @@ namespace Devil
 
 		//create front wall 
 		{
-			snhActorStatic stat = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody stat = SUPERNOVA->registerObject(rb);
 			scene->attachActor(stat);
 
 			//create collider
@@ -1774,7 +1793,7 @@ namespace Devil
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			stat->setOnCollisionCallback([](snIActor* const _me, snIActor* const _other)
+			stat->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
 			{
 				UNREFERENCED_PARAMETER(_me);
 				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
@@ -1795,7 +1814,9 @@ namespace Devil
 
 		//create back wall 
 		{
-			snhActorStatic stat = SUPERNOVA->registerObject(new snActorStatic(snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1)));
+			snRigidbody* rb = new snRigidbody();
+			rb->initializeStatic(snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody stat = SUPERNOVA->registerObject(rb);
 			scene->attachActor(stat);
 
 			//create collider
@@ -1803,7 +1824,7 @@ namespace Devil
 			stat->addCollider(collider);
 			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
 			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			stat->setOnCollisionCallback([](snIActor* const _me, snIActor* const _other)
+			stat->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
 			{
 				UNREFERENCED_PARAMETER(_me);
 				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
@@ -1831,7 +1852,7 @@ namespace Devil
 		const float THICKNESS = 2.8f;
 
 		snhScene scene = WORLD->getPhysicsScene();
-		snhActorDynamic act = SUPERNOVA->registerObject(new snActorDynamic);
+		snhRigidbody act = SUPERNOVA->registerObject(new snRigidbody);
 		scene->attachActor(act);
 
 		act->setName("composite");

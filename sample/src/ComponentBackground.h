@@ -41,7 +41,7 @@
 
 namespace Supernova
 {
-	class snActorDynamic;
+	class snRigidbody;
 }
 using namespace Supernova;
 
@@ -51,10 +51,10 @@ namespace Devil
 	{
 	private:
 		//Actor representing the background
-		snActorDynamic* m_background;
+		snRigidbody* m_background;
 
 		//Actor representing the point which all rotation axis go through
-		snActorDynamic* m_origin;
+		snRigidbody* m_origin;
 
 		//Background transform
 		snMatrix44f m_transform;
@@ -64,7 +64,7 @@ namespace Devil
 		snVec m_left;
 	public:
 
-		ComponentBackground(snActorDynamic* _background, snActorDynamic* _origin, const snVec& _initialTranslation, const snVec& _initialOrientation);
+		ComponentBackground(snRigidbody* _background, snRigidbody* _origin, const snVec& _initialTranslation, const snVec& _initialOrientation);
 
 		~ComponentBackground();
 
@@ -78,7 +78,7 @@ namespace Devil
 
 	private:
 
-		void computeOriginFrame(const snActorDynamic* _origin, snVec& _forward, snVec& _left);
+		void computeOriginFrame(const snRigidbody* _origin, snVec& _forward, snVec& _left);
 	};
 }
 #endif //ifndef COMPONENT_BACKGROUND_H

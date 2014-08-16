@@ -47,18 +47,18 @@ using std::vector;
 
 namespace Supernova
 {
-	class snIActor;
+	class snRigidbody;
 	class snScene;
 	struct snAABB;
 
-	typedef void(snScene::*snPairFoundCallback)(snIActor* _a, snIActor* _b);
+	typedef void(snScene::*snPairFoundCallback)(snRigidbody* _a, snRigidbody* _b);
 
 	//Manager to handle and execute the sweep and prune broad phase algorithm.
 	class SN_ALIGN snSweepManager
 	{
 	private:
 		//List of actor sorted using their aabb
-		list<snIActor*> m_sortedActors;
+		list<snRigidbody*> m_sortedActors;
 
 		//Axis to use to sort the actors
 		unsigned char m_axis;
@@ -96,11 +96,11 @@ namespace Supernova
 		void setCallback(snScene* _scene, snPairFoundCallback _callback);
 
 		//Add the actor to the list of actors to use in the sweep and prune process.
-		void addActor(snIActor* _actor);
+		void addActor(snRigidbody* _actor);
 
 		//Remove an actor from the list of actor to use in the sweep and prune.
 		// _actor : pointer to the actor to delete.
-		void removeActor(snIActor const * const _actor);
+		void removeActor(snRigidbody const * const _actor);
 
 		//Sort the list using actor's aabbs.
 		void preBroadPhase();
@@ -112,7 +112,7 @@ namespace Supernova
 		void postBroadPhase();
 
 		//For a given aabb, use the seep list to find all the possibly colliding actors
-		void getPossiblyCollidingActor(const snAABB& _aabb, vector<snIActor*>& _pca) const;
+		void getPossiblyCollidingActor(const snAABB& _aabb, vector<snRigidbody*>& _pca) const;
 	};
 }
 #endif //ifndef SN_SWEEP_MANAGER_H

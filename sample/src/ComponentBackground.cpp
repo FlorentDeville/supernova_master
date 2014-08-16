@@ -33,7 +33,7 @@
 /****************************************************************************/
 
 #include "ComponentBackground.h"
-#include "snActorDynamic.h"
+#include "snRigidbody.h"
 #include "snQuaternion.h"
 
 #include "Input.h"
@@ -42,7 +42,7 @@ using namespace Supernova::Vector;
 
 namespace Devil
 {
-	ComponentBackground::ComponentBackground(snActorDynamic* _background, snActorDynamic* _origin, const snVec& _initialTranslation,
+	ComponentBackground::ComponentBackground(snRigidbody* _background, snRigidbody* _origin, const snVec& _initialTranslation,
 		const snVec& _initialOrientation) : 
 		m_background(_background), m_origin(_origin)
 	{
@@ -127,7 +127,7 @@ namespace Devil
 		_aligned_free(_p);
 	}
 
-	void ComponentBackground::computeOriginFrame(const snActorDynamic* _origin, snVec& _forward, snVec& _left)
+	void ComponentBackground::computeOriginFrame(const snRigidbody* _origin, snVec& _forward, snVec& _left)
 	{
 		snVec up = snVec4Set(0, 1, 0, 0);
 

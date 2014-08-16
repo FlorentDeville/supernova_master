@@ -33,7 +33,7 @@
 /****************************************************************************/
 
 #include "snContactConstraint.h"
-#include "snIActor.h"
+#include "snRigidbody.h"
 #include "snMath.h"
 #include "snScene.h"
 
@@ -67,7 +67,7 @@ namespace Supernova
 	/// <param name="_collisionPoint">The _collision point.</param>
 	/// <param name="_penetrationDepth">The _penetration depth.</param>
 	/// <param name="_scene">The _scene.</param>
-	void snContactConstraint::initialize(snIActor* const _body1, snIActor* const _body2, const snVec& _normal, const snVec& _collisionPoint, float _penetrationDepth,
+	void snContactConstraint::initialize(snRigidbody* const _body1, snRigidbody* const _body2, const snVec& _normal, const snVec& _collisionPoint, float _penetrationDepth,
 		snScene const * _scene)
 	{
 		m_bodies[0] = _body1;

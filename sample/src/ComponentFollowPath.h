@@ -47,10 +47,10 @@ using std::vector;
 
 namespace Supernova
 {
-	class snActorDynamic;
+	class snRigidbody;
 }
 
-using Supernova::snActorDynamic;
+using Supernova::snRigidbody;
 
 
 namespace Devil
@@ -83,7 +83,7 @@ namespace Devil
 	{
 	private:
 		//The actor to move
-		snActorDynamic* m_actor;
+		snRigidbody* m_actor;
 
 		//The list of waypoint making the path to follow
 		vector<Waypoint*> m_path;
@@ -99,7 +99,7 @@ namespace Devil
 
 	public:
 		//Construct an instance of the class ComponentFollowPath
-		ComponentFollowPath(snActorDynamic* _actor, bool _loop);
+		ComponentFollowPath(snRigidbody* _actor, bool _loop);
 
 		//Clean allocation made by the class ComponentFollowPath
 		virtual ~ComponentFollowPath();
