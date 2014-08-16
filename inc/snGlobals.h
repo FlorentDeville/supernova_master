@@ -42,6 +42,10 @@
 #define SN_ALIGN_SIZE 16
 #define SN_ALIGN __declspec(align(SN_ALIGN_SIZE))
 
+//Make a method inline.
+#define SN_INLINE __forceinline
+
+//Macro to avoid warning of unreferenced parameter.
 #define SN_UNREFERENCED_PARAMETER(P) (P)
 
 #endif //SN_GLOBALS_H

@@ -37,97 +37,99 @@
 
 union __m128;
 
+#include "snGlobals.h"
+
 namespace Supernova
 {
 	typedef __m128 snVec;
 
 	namespace Vector
 	{
-		inline snVec snVec4Set(float _x, float _y, float _z, float _w);
+		SN_INLINE snVec snVec4Set(float _x, float _y, float _z, float _w);
 
-		inline snVec snVec4Set(float _value);
+		SN_INLINE snVec snVec4Set(float _value);
 
 		//Set the x, y and z component to _value. Set to w component to 0.
-		inline snVec snVec3Set(float _value);
+		SN_INLINE snVec snVec3Set(float _value);
 
-		inline snVec operator*(const snVec& _a, const snVec& _b);
+		SN_INLINE snVec operator*(const snVec& _a, const snVec& _b);
 
-		inline snVec operator*(const snVec& _a, float _f);
+		SN_INLINE snVec operator*(const snVec& _a, float _f);
 
-		inline snVec operator*(float _f, const snVec& _a);
+		SN_INLINE snVec operator*(float _f, const snVec& _a);
 
-		inline snVec operator/(const snVec& _a, const snVec& _b);
+		SN_INLINE snVec operator/(const snVec& _a, const snVec& _b);
 
-		inline snVec operator+(const snVec& _a, const snVec& _b);
+		SN_INLINE snVec operator+(const snVec& _a, const snVec& _b);
 
-		inline snVec operator-(const snVec& _a, const snVec& _b);
+		SN_INLINE snVec operator-(const snVec& _a, const snVec& _b);
 
-		inline snVec operator-(const snVec& _a);
+		SN_INLINE snVec operator-(const snVec& _a);
 
-		inline bool operator == (const snVec& _a, const snVec& _b);
+		SN_INLINE bool operator == (const snVec& _a, const snVec& _b);
 
-		inline snVec snVec3Dot(const snVec& _a, const snVec& _b);
+		SN_INLINE snVec snVec3Dot(const snVec& _a, const snVec& _b);
 
-		inline float snVec4Dot(const snVec& _a, const snVec& _b);
+		SN_INLINE float snVec4Dot(const snVec& _a, const snVec& _b);
 
 		/*Cross product between _v1 and _v2. The W coordinate will be 0.*/
-		inline snVec snVec3Cross(const snVec& _v1, const snVec& _v2);
+		SN_INLINE snVec snVec3Cross(const snVec& _v1, const snVec& _v2);
 
 		/*Return the squared length of the vector.*/
-		inline float snVec3SquaredNorme(const snVec& _a);
+		SN_INLINE float snVec3SquaredNorme(const snVec& _a);
 
 		/*Calculate the length of the vector.*/
-		inline float snVec3Norme(const snVec& _a);
+		SN_INLINE float snVec3Norme(const snVec& _a);
 
 		/*Normalize the vector. Its direction remain the same but its length is set to 1.*/
-		inline void snVec3Normalize(snVec& _a);
+		SN_INLINE void snVec3Normalize(snVec& _a);
 
-		inline snVec snVec4GetInverse(const snVec& _v);
+		SN_INLINE snVec snVec4GetInverse(const snVec& _v);
 
-		inline snVec snVec4GetAbsolute(const snVec& _a);
+		SN_INLINE snVec snVec4GetAbsolute(const snVec& _a);
 
-		inline void snVec4Absolute(snVec& _a);
+		SN_INLINE void snVec4Absolute(snVec& _a);
 
-		inline float snVec4GetById(const snVec& _a, unsigned int _id);
+		SN_INLINE float snVec4GetById(const snVec& _a, unsigned int _id);
 
-		inline float snVec4GetX(const snVec& _v);
+		SN_INLINE float snVec4GetX(const snVec& _v);
 
-		inline float snVec4GetY(const snVec& _v);
+		SN_INLINE float snVec4GetY(const snVec& _v);
 
-		inline float snVec4GetZ(const snVec& _v);
+		SN_INLINE float snVec4GetZ(const snVec& _v);
 
-		inline float snVec4GetW(const snVec& _v);
+		SN_INLINE float snVec4GetW(const snVec& _v);
 
-		inline void snVec4SetX(snVec& _v, float _x);
+		SN_INLINE void snVec4SetX(snVec& _v, float _x);
 
-		inline void snVec4SetY(snVec& _v, float _y);
+		SN_INLINE void snVec4SetY(snVec& _v, float _y);
 
-		inline void snVec4SetZ(snVec& _v, float _z);
+		SN_INLINE void snVec4SetZ(snVec& _v, float _z);
 
-		inline void snVec4SetW(snVec& _v, float _w);
+		SN_INLINE void snVec4SetW(snVec& _v, float _w);
 
 		//Return a vector containing the maximum value of _v1 and _v2
-		inline snVec snVec4GetMax(const snVec& _v1, const snVec& _v2);
+		SN_INLINE snVec snVec4GetMax(const snVec& _v1, const snVec& _v2);
 
 		//Reurn a vector where all four values are equal to the maximum float of _v
-		inline snVec snVec4GetMax(const snVec& _v);
+		SN_INLINE snVec snVec4GetMax(const snVec& _v);
 
 		//Return a vector containing the minimum value of _v1 and _v2
-		inline snVec snVec4GetMin(const snVec& _v1, const snVec& _v2);
+		SN_INLINE snVec snVec4GetMin(const snVec& _v1, const snVec& _v2);
 
 		//Reurn a vector where all four values are equal to the minimum float of _v
-		inline snVec snVec4GetMin(const snVec& _v);
+		SN_INLINE snVec snVec4GetMin(const snVec& _v);
 
 		//Clamp each component of _v using each component of _min as minimum value and each component of _max as maximum value
-		inline snVec snVec4Clamp(const snVec& _v, const snVec& _min, const snVec& _max);
+		SN_INLINE snVec snVec4Clamp(const snVec& _v, const snVec& _min, const snVec& _max);
 
 		//Compare each member of _a to each member of _b and return true if all of them are inferiors.
-		inline bool snVec3Inferior(const snVec& _a, const snVec& _b);
+		SN_INLINE bool snVec3Inferior(const snVec& _a, const snVec& _b);
 
-		inline bool snVec3SuperiorOrEqual(const snVec& _a, const snVec& _b);
+		SN_INLINE bool snVec3SuperiorOrEqual(const snVec& _a, const snVec& _b);
 
 		//Return the id of the minimum axis
-		inline unsigned int snVec3GetMinAxis(const snVec& _v);
+		SN_INLINE unsigned int snVec3GetMinAxis(const snVec& _v);
 	}
 }
 
