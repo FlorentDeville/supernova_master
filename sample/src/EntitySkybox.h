@@ -52,14 +52,15 @@ namespace Devil
 	class EntitySkybox : public IWorldEntity
 	{
 	private:
+
+		XMVECTOR m_color;
+
+		float m_size;
+
 		IGfxEntity* m_gfx;
 
 		//The entity that must always be at the center of the skybox.
 		IWorldEntity* m_target;
-
-		float m_size;
-
-		XMVECTOR m_color;
 
 	public:
 		EntitySkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color);

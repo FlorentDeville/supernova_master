@@ -1342,7 +1342,7 @@ namespace Devil
 
 		//WORLD->createComposite(ball, m_colors[3]);
 		EntityComposite* monkeyBall = WORLD->createMonkeyBall(ball.getPtr(), m_colors[4]);
-		WORLD->createSkybox(monkeyBall, 1000, m_colors[4]);
+		WORLD->createSkybox(monkeyBall, 1000, XMFLOAT4(1, 1, 1, 1));
 
 		ComponentBackground* cBack = new ComponentBackground(actEnvironment.getPtr(), ball.getPtr(), initialPosition, initialOrientation);
 		entity->addPreUpdateComponent(cBack);

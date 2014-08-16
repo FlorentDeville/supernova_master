@@ -48,7 +48,7 @@ namespace Devil
 	EntitySkybox::EntitySkybox(IWorldEntity* _target, float _size, const XMFLOAT4& _color) : m_target(_target), m_size(_size)
 	{
 		m_gfx = GRAPHICS->getBox();
-		m_color = XMVectorSet(1, 1, 1, 1);//XMVectorSet(_color.x, _color.y, _color.z, _color.w);
+		m_color = XMVectorSet(_color.x, _color.y, _color.z, _color.w);
 		m_texture = GRAPHICS->getTexChecker();
 	}
 
