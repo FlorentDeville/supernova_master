@@ -50,21 +50,22 @@ namespace Supernova
 	class SN_ALIGN snEPATriangle
 	{
 	private:
-		//Array of ids of the three vertices making this triangle
-		unsigned int m_verticesId[3];
-
-		//Array of adjacent edges. Each adjacent edges belong to another triangle.
-		//The edge with id i links vertices i and (i+1)%3
-		snEPAEdge m_adjacentEdges[3];
-
-		//Flag to indicate if this triangle has to be considered a part of the simplex.
-		bool m_isObsolete;
 
 		//Closest point to the origin
 		snVec m_closestPoint;
 
 		//The squared distance to the origin
 		float m_sqDistance;
+
+		//Array of ids of the three vertices making this triangle
+		unsigned int m_verticesId[3];
+
+		//Array of adjacent edges. Each adjacent edges belong to another triangle.
+		//The edge with id i links vertices i and (i+1)%3
+		snEPAEdge m_adjacentEdges[3];
+		
+		//Flag to indicate if this triangle has to be considered a part of the simplex.
+		bool m_isObsolete;
 
 	public:
 		snEPATriangle();

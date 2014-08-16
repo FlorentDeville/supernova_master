@@ -45,12 +45,13 @@ namespace Supernova
 	class snEPAEdge
 	{
 	private:
-		//Owner of this edge
-		snEPATriangle* m_owner;
 
 		//Id of this edge in the owner triangle.
 		//The edge with id i linked the vertices i and (i+1)%3
 		unsigned int m_id;
+
+		//Owner of this edge
+		snEPATriangle* m_owner;
 
 	public:
 		snEPAEdge();
