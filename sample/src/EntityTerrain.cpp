@@ -211,19 +211,17 @@ namespace Devil
 				snhScene scene = WORLD->getPhysicsScene();
 
 				snRigidbody* rb = new snRigidbody();
+				TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, m_description.getQuadSize(),
+					data.m_quadsPerRow, data.m_quadsPerRow, data.m_heights);
+				rb->addCollider(collider);
+				rb->getPhysicMaterial().m_friction = 1;
+#ifdef _DEBUG
+				rb->setName("tile c=" + LOGGER->toString(_tile.m_columnId) + " r=" + LOGGER->toString(_tile.m_rowId));
+#endif //ifdef _DEBUG
 				rb->initializeStatic(Vector::VEC_ZERO, Vector::VEC_ZERO);
 
 				snhRigidbody snMap = SUPERNOVA->registerObject(rb);
 				scene->attachActor(snMap);
-
-				TerrainCollider* collider = new	TerrainCollider(boundingVolume.m_min, boundingVolume.m_max, m_description.getQuadSize(),
-					data.m_quadsPerRow, data.m_quadsPerRow, data.m_heights);
-				snMap->addCollider(collider);
-				snMap->getPhysicMaterial().m_friction = 1;
-#ifdef _DEBUG
-				snMap->setName("tile c=" + LOGGER->toString(_tile.m_columnId) + " r=" + LOGGER->toString(_tile.m_rowId));
-#endif //ifdef _DEBUG
-				snMap->initialize();
 
 				//Save information about the tile
 				m_loadedTiles.push_back(TileContainer(_tile, gfxId, snMap));

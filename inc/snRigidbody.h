@@ -274,10 +274,13 @@ namespace Supernova
 
 #pragma endregion
 
-		//Initialize the actor so it is ready to be used in the scene. It has to be called and must be called after all the parameters of
-		// the actor and its colliders are set.
-		void initialize();
+		//Initialize the rigidbody as a dynamic body. It has to be called once and must be called after all the parameters of
+		//the actor and its colliders are set.
+		void initializeDynamic();
 
+		//Initialize the rigidbody as  static body. It has to be called once after all the parameter of the body are set.
+		// _p : position of the body.
+		// _q : orientation of the body.
 		void initializeStatic(const snVec& _p, const snVec& _q);
 
 		void onCollision(snRigidbody* const _other);

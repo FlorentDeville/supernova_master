@@ -206,7 +206,7 @@ namespace Devil
 			SUPERNOVA->registerObject(collider);
 			act->addCollider(collider);
 			act->updateMassAndInertia(200);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[1]);
 			box->setActor(act.getPtr());
@@ -236,7 +236,7 @@ namespace Devil
 			SUPERNOVA->registerObject(collider);
 			act->addCollider(collider);
 			act->updateMassAndInertia(100);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
 			box->setActor(act.getPtr());
@@ -266,7 +266,7 @@ namespace Devil
 			SUPERNOVA->registerObject(collider);
 			act->addCollider(collider);
 			act->updateMassAndInertia(100);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[3]);
 			box->setActor(act.getPtr());
@@ -296,7 +296,7 @@ namespace Devil
 			act->addCollider(collider);
 
 			act->updateMassAndInertia(100);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
 			box->setActor(act.getPtr());
@@ -326,7 +326,7 @@ namespace Devil
 			act->addCollider(collider);
 
 			act->updateMassAndInertia(500);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[0]);
 			box->setActor(act.getPtr());
@@ -357,19 +357,20 @@ namespace Devil
 			//create actor
 			snVec position = snVec4Set(0, 101, -80, 1);
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(position, snVec4Set(0, 0, 0, 1));
-			snhRigidbody act = SUPERNOVA->registerObject(rb);
-			scene->attachActor(act);
-			act->setName("back");
-			act->getPhysicMaterial().m_restitution = 1;
-			act->getPhysicMaterial().m_friction = 1;
-
+			rb->setName("back");
+			rb->getPhysicMaterial().m_restitution = 1;
+			rb->getPhysicMaterial().m_friction = 1;
+			
+			
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
-			act->addCollider(collider);
+			rb->addCollider(collider);
 
-			//initialize
-			act->initialize();
+			//initialize the rigidbody
+			rb->initializeStatic(position, snVec4Set(0, 0, 0, 1));
+
+			snhRigidbody act = SUPERNOVA->registerObject(rb);
+			scene->attachActor(act);
 
 			//create world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
@@ -406,9 +407,9 @@ namespace Devil
 				snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
 				act->addCollider(collider);
 
-				//initialize
+				//initializeDynamic
 				act->updateMassAndInertia(50);
-				act->initialize();
+				act->initializeDynamic();
 
 				EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[(i + row) % 5]);
 				box->setActor(act.getPtr());
@@ -435,20 +436,18 @@ namespace Devil
 
 			//create actor
 			snRigidbody* rb = new snRigidbody();
+			rb->setName("back");
+			rb->getPhysicMaterial().m_restitution = 1;
+			rb->getPhysicMaterial().m_friction = 1;
+			
+			//create collider
+			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
+			rb->addCollider(collider);
+
+			//initialize the rigidbody
 			rb->initializeStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
 			snhRigidbody act = SUPERNOVA->registerObject(rb);
 			scene->attachActor(act);
-
-			act->setName("back");
-			act->getPhysicMaterial().m_restitution = 1;
-			act->getPhysicMaterial().m_friction = 1;
-
-			//create collider
-			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
-			act->addCollider(collider);
-
-			//initialize
-			act->initialize();
 
 			//create world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
@@ -478,9 +477,9 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
 			box->setActor(act.getPtr());
@@ -517,9 +516,9 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
 			box->setActor(act.getPtr());
@@ -552,20 +551,18 @@ namespace Devil
 
 			//create actor
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
-			snhRigidbody act = SUPERNOVA->registerObject(rb);
-			scene->attachActor(act);
-
-			act->setName("back");
-			act->getPhysicMaterial().m_restitution = 1;
-			act->getPhysicMaterial().m_friction = 1;
+			rb->setName("back");
+			rb->getPhysicMaterial().m_restitution = 1;
+			rb->getPhysicMaterial().m_friction = 1;
 
 			//create collider				
 			snOBB* 	collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
-			act->addCollider(collider);
+			rb->addCollider(collider);
 				
-			//initialize
-			act->initialize();
+			//initialize the rigidbody
+			rb->initializeStatic(snVec4Set(0, 101, -80, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody act = SUPERNOVA->registerObject(rb);
+			scene->attachActor(act);
 			
 			//create 	world 	entity	
 			EntityBox* 	kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
@@ -611,8 +608,8 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
 			act->addCollider(collider);
 
-			//initialize
-			act->initialize();
+			//initializeDynamic
+			act->initializeDynamic();
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
@@ -646,9 +643,9 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(cubeSize, cubeSize, cubeSize, 0) * 0.5f);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[0]);
 			box->setActor(act.getPtr());
@@ -672,9 +669,9 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(cubeSize, cubeSize, cubeSize, 0) * 0.5f);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[2]);
 			box->setActor(act.getPtr());
@@ -698,9 +695,9 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(cubeSize, cubeSize, cubeSize, 0) * 0.5f);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(cubeSize, cubeSize, cubeSize), colors[1]);
 			box->setActor(act.getPtr());
@@ -742,9 +739,9 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[i]);
 			box->setActor(act.getPtr());
@@ -788,9 +785,9 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[i]);
 			box->setActor(act.getPtr());
@@ -837,7 +834,7 @@ namespace Devil
 			//create collider
 			snOBB* box = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
 			kin->addCollider(box);
-			kin->initialize();
+			kin->initializeDynamic();
 
 			//create entity
 			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[0]);
@@ -879,7 +876,7 @@ namespace Devil
 			snOBB* box = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
 			dyn->addCollider(box);
 			dyn->updateMassAndInertia(100);
-			dyn->initialize();
+			dyn->initializeDynamic();
 
 			//create entity
 			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[1]);
@@ -901,17 +898,19 @@ namespace Devil
 
 			//create the actor
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
-			snhRigidbody sta = SUPERNOVA->registerObject(rb);
-			scene->attachActor(sta);
-			sta->setName("static right wall");
-			sta->getPhysicMaterial().m_friction = 1.f;
-			sta->getPhysicMaterial().m_restitution = 1.f;
+			
+			rb->setName("static right wall");
+			rb->getPhysicMaterial().m_friction = 1.f;
+			rb->getPhysicMaterial().m_restitution = 1.f;
 
 			//create collider
 			snOBB* box = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
-			sta->addCollider(box);
-			sta->initialize();
+			rb->addCollider(box);
+			rb->initializeDynamic();
+
+			rb->initializeStatic(snVec4Set(-15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody sta = SUPERNOVA->registerObject(rb);
+			scene->attachActor(sta);
 
 			//create entity
 			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
@@ -933,15 +932,12 @@ namespace Devil
 
 			//create the actor
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
-			snhRigidbody sta = SUPERNOVA->registerObject(rb);
-			scene->attachActor(sta);
-			sta->setName("static left wall");
-			sta->getPhysicMaterial().m_friction = 1.f;
-			sta->getPhysicMaterial().m_restitution = 1.f;
-			sta->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
-			sta->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			sta->setOnCollisionCallback([](snRigidbody* const _a, snRigidbody* const _b)
+			rb->setName("static left wall");
+			rb->getPhysicMaterial().m_friction = 1.f;
+			rb->getPhysicMaterial().m_restitution = 1.f;
+			rb->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			rb->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			rb->setOnCollisionCallback([](snRigidbody* const _a, snRigidbody* const _b)
 			{
 				string strAName = _a->getName();
 				wstring _aName;
@@ -956,8 +952,12 @@ namespace Devil
 
 			//create collider
 			snOBB* box = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
-			sta->addCollider(box);
-			sta->initialize();
+			rb->addCollider(box);
+			rb->initializeDynamic();
+
+			rb->initializeStatic(snVec4Set(15, 110, 0, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody sta = SUPERNOVA->registerObject(rb);
+			scene->attachActor(sta);
 
 			//create entity
 			EntityBox* entity = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[2]);
@@ -1028,7 +1028,7 @@ namespace Devil
 			snOBB* collider = new snOBB(dominoSize * 0.5f);
 			actor->addCollider(collider);
 			actor->updateMassAndInertia(2.f);
-			actor->initialize();
+			actor->initializeDynamic();
 
 
 			//ugly but it works
@@ -1066,7 +1066,7 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(size, size, size, 0) * 0.5f);
 			actor->addCollider(collider);
 			actor->updateMassAndInertia(10);
-			actor->initialize();
+			actor->initializeDynamic();
 
 			//create entity
 			EntityBox* box = WORLD->createBox(XMFLOAT3(size, size, size));
@@ -1096,7 +1096,7 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
 
 			actor->addCollider(collider);
-			actor->initialize();
+			actor->initializeDynamic();
 
 			//create entity
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), m_colors[4]);
@@ -1140,7 +1140,7 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5f);
 
 			actor->addCollider(collider);
-			actor->initialize();
+			actor->initializeDynamic();
 
 			//create entity
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth));
@@ -1222,7 +1222,7 @@ namespace Devil
 			act->addCollider(fill);
 		}
 
-		act->initialize();
+		act->initializeDynamic();
 
 		WORLD->createComposite(act.getPtr(), m_colors[3]);
 
@@ -1237,7 +1237,7 @@ namespace Devil
 
 		//actSphere->addCollider(collider);
 		//actSphere->updateMassAndInertia(10);
-		//actSphere->initialize();
+		//actSphere->initializeDynamic();
 
 		//actSphere->setOnCollisionCallback([](snIActor* _a1, snIActor* _a2)
 		//{
@@ -1250,7 +1250,7 @@ namespace Devil
 	void SceneManager::createSceneMonkeyBall()
 	{
 		//createSandbox(L"Monkey Ball");
-		//initialize the world
+		//initializeDynamic the world
 		WORLD->initialize();
 
 		WorldHUD* HUD = WORLD->createHUD();
@@ -1322,7 +1322,7 @@ namespace Devil
 		actEnvironment->setIsKinematic(true);
 		actEnvironment->getPhysicMaterial().m_restitution = 0;
 		actEnvironment->getPhysicMaterial().m_friction = 1;
-		actEnvironment->initialize();
+		actEnvironment->initializeDynamic();
 
 		EntityComposite* entity = WORLD->createComposite(actEnvironment.getPtr(), XMFLOAT4(1, 1, 1, 1));
 		entity->setTexture(GRAPHICS->getTexChecker());
@@ -1338,7 +1338,7 @@ namespace Devil
 		ball->getPhysicMaterial().m_restitution = 0;
 		ball->getPhysicMaterial().m_friction = 1;
 		ball->setName("ball");
-		ball->initialize();
+		ball->initializeDynamic();
 
 		//WORLD->createComposite(ball, m_colors[3]);
 		EntityComposite* monkeyBall = WORLD->createMonkeyBall(ball.getPtr(), m_colors[4]);
@@ -1365,7 +1365,7 @@ namespace Devil
 		//actBox->setOrientation(snQuaternionFromEuler(0, 0, -3.14f * 0.15f));
 		//actBox->addCollider(colBox);
 		//actBox->updateMassAndInertia(10);
-		//actBox->initialize();
+		//actBox->initializeDynamic();
 
 		//EntityComposite* entityBox = WORLD->createComposite(actBox, m_colors[2]);
 		//entityBox->setWireframe(true);
@@ -1392,7 +1392,7 @@ namespace Devil
 			actCapsule->getPhysicMaterial().m_restitution = 0.f;
 			//actCapsule->setIsKinematic(true);
 			actCapsule->updateMassAndInertia(10);
-			actCapsule->initialize();
+			actCapsule->initializeDynamic();
 			EntityComposite* comp = WORLD->createComposite(actCapsule.getPtr(), m_colors[i%4]);
 			comp->setWireframe(true);
 		}
@@ -1410,7 +1410,7 @@ namespace Devil
 		//	actCapsule->getPhysicMaterial().m_restitution = 0.f;
 		//	//actCapsule->setIsKinematic(true);
 		//	actCapsule->updateMassAndInertia(10);
-		//	actCapsule->initialize();
+		//	actCapsule->initializeDynamic();
 		//	EntityComposite* comp = WORLD->createComposite(actCapsule, m_colors[3]);
 		//	comp->setWireframe(true);
 		//}
@@ -1423,7 +1423,7 @@ namespace Devil
 
 	void SceneManager::createSceneTerrain()
 	{
-		//initialize the world
+		//initializeDynamic the world
 		WORLD->initialize();
 
 		WorldHUD* HUD = WORLD->createHUD();
@@ -1495,7 +1495,7 @@ namespace Devil
 		//	snMap->addCollider(collider);
 		//	snMap->getPhysicMaterial().m_friction = 1;
 		//	snMap->setName("terrain");
-		//	snMap->initialize();
+		//	snMap->initializeDynamic();
 		//}
 
 		const unsigned int SPHERE_COUNT = 20;
@@ -1522,7 +1522,7 @@ namespace Devil
 			sphere->updateMassAndInertia(10);
 			sphere->setAngularDampingCoeff(0.1f);
 			sphere->getPhysicMaterial().m_friction = 1;
-			sphere->initialize();
+			sphere->initializeDynamic();
 
 			/*EntityComposite* entity =*/ WORLD->createComposite(sphere.getPtr(), m_colors[i % 4]);
 			//entity->setWireframe(true);
@@ -1543,7 +1543,7 @@ namespace Devil
 		//create actor
 		snVec position = snVec4Set(0, -1, 0, 1);
 		snRigidbody* rb = new snRigidbody();
-		rb->initializeStatic(position, snVec4Set(0, 0, 0, 1));
+		
 		snhRigidbody act = SUPERNOVA->registerObject(rb);
 		_scene->attachActor(act);
 		act->setName("ground");
@@ -1555,7 +1555,7 @@ namespace Devil
 		act->addCollider(collider);
 
 		//initialize the actor
-		act->initialize();
+		act->initializeStatic(position, snVec4Set(0, 0, 0, 1));
 
 		//create the world entity
 		EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));
@@ -1635,9 +1635,9 @@ namespace Devil
 			snOBB* collider = new snOBB(snVec4Set(pillarWidth, pillarHeight, pillarDepth, 0) * 0.5f);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(pillarWidth, pillarHeight, pillarDepth), colors[act.getId() % colorCount]);
 			box->setActor(act.getPtr());
@@ -1680,9 +1680,9 @@ namespace Devil
 			snOBB* collider = new snOBB(bedSize[i] * 0.5f);
 			act->addCollider(collider);
 
-			//initialize
+			//initializeDynamic
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(snVec4GetX(bedSize[i]), snVec4GetY(bedSize[i]), snVec4GetZ(bedSize[i])), colors[act.getId() % colorCount]);
 			box->setActor(act.getPtr());
@@ -1693,7 +1693,7 @@ namespace Devil
 
 	snhScene SceneManager::createSandbox(const wstring& _sceneName)
 	{
-		//initialize the world
+		//initializeDynamic the world
 		WORLD->initialize();
 
 		WorldHUD* HUD = WORLD->createHUD();
@@ -1722,16 +1722,13 @@ namespace Devil
 		//create left wall 
 		{
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
-			snhRigidbody stat = SUPERNOVA->registerObject(rb);
-			scene->attachActor(stat);
-
+			
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(10, 500, 500, 0) * 0.5f);
-			stat->addCollider(collider);
-			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
-			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			stat->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
+			rb->addCollider(collider);
+			rb->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			rb->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			rb->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
 			{
 				UNREFERENCED_PARAMETER(_me);
 				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
@@ -1741,8 +1738,11 @@ namespace Devil
 				_other->setIsActive(false);
 			});
 
-			//initialize the actor
-			stat->initialize();
+			//initializethe rigidbody
+			rb->initializeStatic(snVec4Set(250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+
+			snhRigidbody stat = SUPERNOVA->registerObject(rb);
+			scene->attachActor(stat);
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(10, 500, 500));
@@ -1753,16 +1753,13 @@ namespace Devil
 		//create right wall 
 		{
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
-			snhRigidbody stat = SUPERNOVA->registerObject(rb);
-			scene->attachActor(stat);
-
+				
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(10, 500, 500, 0) * 0.5f);
-			stat->addCollider(collider);
-			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
-			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			stat->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
+			rb->addCollider(collider);
+			rb->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			rb->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			rb->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
 			{
 				UNREFERENCED_PARAMETER(_me);
 				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
@@ -1772,8 +1769,11 @@ namespace Devil
 				_other->setIsActive(false);
 			});
 
-			//initialize the actor
-			stat->initialize();
+			//initialize the rigidbody
+			rb->initializeStatic(snVec4Set(-250, 250, 0, 1), snVec4Set(0, 0, 0, 1));
+
+			snhRigidbody stat = SUPERNOVA->registerObject(rb);
+			scene->attachActor(stat);
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(10, 500, 500));
@@ -1784,16 +1784,13 @@ namespace Devil
 		//create front wall 
 		{
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
-			snhRigidbody stat = SUPERNOVA->registerObject(rb);
-			scene->attachActor(stat);
-
+			
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(500, 500, 10, 0) * 0.5f);
-			stat->addCollider(collider);
-			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
-			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			stat->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
+			rb->addCollider(collider);
+			rb->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			rb->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			rb->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
 			{
 				UNREFERENCED_PARAMETER(_me);
 				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
@@ -1803,8 +1800,10 @@ namespace Devil
 				_other->setIsActive(false);
 			});
 
-			//initialize the actor
-			stat->initialize();
+			//initialize the rigidbody
+			rb->initializeStatic(snVec4Set(0, 250, 250, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody stat = SUPERNOVA->registerObject(rb);
+			scene->attachActor(stat);
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(500, 500, 10));
@@ -1815,16 +1814,13 @@ namespace Devil
 		//create back wall 
 		{
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
-			snhRigidbody stat = SUPERNOVA->registerObject(rb);
-			scene->attachActor(stat);
-
+			
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(500, 500, 10, 0) * 0.5f);
-			stat->addCollider(collider);
-			stat->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
-			stat->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
-			stat->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
+			rb->addCollider(collider);
+			rb->addCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE);
+			rb->addCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK);
+			rb->setOnCollisionCallback([](snRigidbody* const _me, snRigidbody* const _other)
 			{
 				UNREFERENCED_PARAMETER(_me);
 				IWorldEntity* entity = WORLD->getEntityFromActor(_other);
@@ -1834,8 +1830,10 @@ namespace Devil
 				_other->setIsActive(false);
 			});
 
-			//initialize the actor
-			stat->initialize();
+			//initialize the rigidbody
+			rb->initializeStatic(snVec4Set(0, 250, -250, 1), snVec4Set(0, 0, 0, 1));
+			snhRigidbody stat = SUPERNOVA->registerObject(rb);
+			scene->attachActor(stat);
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(500, 500, 10));
@@ -1876,7 +1874,7 @@ namespace Devil
 		}
 
 		act->updateMassAndInertia(10);
-		act->initialize();
+		act->initializeDynamic();
 
 		return WORLD->createComposite(act.getPtr(), _color);
 	}

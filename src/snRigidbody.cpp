@@ -356,7 +356,7 @@ namespace Supernova
 
 	//Initialize the actor so it is ready to be used in the scene. It has to be called and must be called after all the parameters of
 	// the actor and its colliders are set.
-	void snRigidbody::initialize()
+	void snRigidbody::initializeDynamic()
 	{
 		//initialize colliders
 		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
@@ -376,15 +376,29 @@ namespace Supernova
 
 	void snRigidbody::initializeStatic(const snVec& _p, const snVec& _q)
 	{
+		//Set position and orientation
 		m_transform.setLocalPosition(_p);
 		m_transform.setLocalOrientation(_q);
 
-		m_skinDepth = 0.025f;
+		//Set the mass and inertia to 0
 		m_mass = 0;
 		m_invMass = 0;
 		m_invInertia = snMatrix44f::m_zero;
 
-		m_isActive = true;
+		//initialize colliders
+		for (vector<snICollider*>::iterator i = m_colliders.begin(); i != m_colliders.end(); ++i)
+		{
+			(*i)->initialize();
+			(*i)->updateFromTransform();
+			m_centerOfMass = m_centerOfMass + (*i)->getTransform().getLocalPosition();
+		}
+
+		snVec4SetW(m_centerOfMass, 1);
+
+		computeWorldCenterOfMass();
+
+		//compute colliders in world coordinate
+		updateCollidersAndAABB();
 	}
 
 	void snRigidbody::onCollision(snRigidbody* const _other)

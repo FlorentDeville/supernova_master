@@ -81,7 +81,7 @@ namespace Devil
 			snOBB* collider = new snOBB(Supernova::Vector::snVec4Set(width, height, depth, 0) * 0.5f);
 			act->addCollider(collider);
 			act->updateMassAndInertia(50);
-			act->initialize();
+			act->initializeDynamic();
 
 			EntityBox* box = WORLD->createBox(XMFLOAT3(width, height, depth), XMFLOAT4(0.8f, 1, 1, 1));
 			box->setActor(act.getPtr());
@@ -123,7 +123,7 @@ namespace Devil
 
 		//set its angular velocity
 		act->setAngularVelocity(Supernova::Vector::snVec4Set(0, 0, 0, 0));
-		act->initialize();
+		act->initializeDynamic();
 
 		box->setIsActive(true);
 		act->setIsActive(true);
