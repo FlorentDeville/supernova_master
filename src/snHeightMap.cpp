@@ -76,16 +76,16 @@ namespace Supernova
 		snVec originMin = _bounding.m_min - m_boundingVolume.m_min;
 		snVec originMax = _bounding.m_max - m_boundingVolume.m_min;
 
-		unsigned int startColumn = snVec4GetX(originMin) / m_quadSize;
-		unsigned int startRow = snVec4GetZ(originMin) / m_quadSize;
+		unsigned int startColumn = unsigned int(snVec4GetX(originMin) / m_quadSize);
+		unsigned int startRow = unsigned int(snVec4GetZ(originMin) / m_quadSize);
 
 		if (startRow < 0)
 			startRow = 0;
 		if (startColumn < 0)
 			startColumn = 0;
 
-		unsigned int endColumn = snVec4GetX(originMax) / m_quadSize;
-		unsigned int endRow = snVec4GetZ(originMax) / m_quadSize;
+		unsigned int endColumn = unsigned int(snVec4GetX(originMax) / m_quadSize);
+		unsigned int endRow = unsigned int(snVec4GetZ(originMax) / m_quadSize);
 		
 		if (endRow >= m_length)
 			endRow = m_length - 1;
