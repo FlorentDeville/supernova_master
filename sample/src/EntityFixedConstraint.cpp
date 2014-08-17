@@ -82,7 +82,7 @@ namespace Devil
 
 		//show the link between the fixed point and the actor
 		snVec up, left, forward;
-		up = m_constraint->getActor()->getPosition() - m_constraint->getFixedPosition();
+		up = m_constraint->getBodies()[0]->getPosition() - m_constraint->getFixedPosition();
 		Supernova::Vector::snVec3Normalize(up);
 		Supernova::Vector::snVec4SetW(up, 0);
 		computeBasis(up, left, forward);

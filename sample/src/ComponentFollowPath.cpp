@@ -34,6 +34,7 @@
 
 #include "ComponentFollowPath.h"
 #include "snRigidbody.h"
+#include "snScene.h"
 
 using namespace Supernova;
 using namespace Supernova::Vector;
@@ -41,8 +42,8 @@ using namespace Supernova::Vector;
 namespace Devil
 {
 	//Construct an instance of the class ComponentFollowPath
-	ComponentFollowPath::ComponentFollowPath(snRigidbody* _actor, bool _loop) : m_actor(_actor), m_loop(_loop), 
-		m_path(), m_nextWaypoint(1), m_previousWaypoint(0)
+	ComponentFollowPath::ComponentFollowPath(snScene* _scene, snRigidbody* _actor, bool _loop) : m_phScene(_scene), m_actor(_actor), 
+		m_loop(_loop), m_path(), m_nextWaypoint(1), m_previousWaypoint(0)
 	{
 		m_isActive = true;
 	}
@@ -65,7 +66,7 @@ namespace Devil
 		//The next waypoint does not exist
 		if (m_nextWaypoint >= m_path.size())
 		{
-			m_actor->setLinearVelocity(snVec4Set(0, 0, 0, 1));
+			m_phScene->setKinematicRigidbodyLinearVelocity(m_actor, snVec4Set(0, 0, 0, 1));
 			return;
 		}
 		
@@ -99,13 +100,14 @@ namespace Devil
 
 			if (m_nextWaypoint >= m_path.size())
 			{
-				m_actor->setLinearVelocity(snVec4Set(0, 0, 0, 1));
+				m_phScene->setKinematicRigidbodyLinearVelocity(m_actor, snVec4Set(0, 0, 0, 1));
 				return;
 			}
 		}
 
 		//set the position
-		m_actor->setLinearVelocity((nextPosition - m_actor->getPosition()) * (1.f / _dt));	
+		snVec linVel = (nextPosition - m_actor->getPosition()) * (1.f / _dt);	
+		m_phScene->setKinematicRigidbodyLinearVelocity(m_actor, linVel);
 	}
 
 	//Do nothing

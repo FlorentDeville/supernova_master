@@ -122,6 +122,9 @@ namespace Supernova
 		//The friction mode to use.
 		snFrictionMode m_frictionMode;
 
+		//Time to wait before an body can go into sleeping period.
+		float m_sleepingPeriod;
+
 	public:
 		//Constructor. Scenes should be created using snWorld::createScene. This constructor should be hidden.
 		snScene();
@@ -193,6 +196,10 @@ namespace Supernova
 		//Set the friction mode. It can be changed dynamically.
 		void setFrictionMode(snFrictionMode _mode);
 
+		//Set the time to wait before an object can go to sleep in seconds.
+		// _dt : the time to wait in seconds.
+		void setSleepingPeriod(float _dt);
+
 		//Overridden new operator to create scene with correct alignement.
 		void* operator new(size_t _count);
 
@@ -203,6 +210,11 @@ namespace Supernova
 		bool sphereCast(const snVec& _center, float _radius, const snVec& _direction, float _length);
 
 		bool shapeCast(snICollider& _collider, const snTransform& _origin, const snVec& _direction, float _length, float& _distance) const;
+
+		//Set the linear velocity of a kinematic rigidbody
+		// _rb : a kinematic rigidbody.
+		// _linVel : the new linear velocity of the kinematic rigidbody.
+		void setKinematicRigidbodyLinearVelocity(snRigidbody* _rb, const snVec& _linVel);
 
 	private:
 		//Apply forces and compute linear and angular velocities
@@ -243,7 +255,15 @@ namespace Supernova
 		// _actor : a pointer to the actor to remove.
 		void removeActorByPointer(snRigidbody const * const _actor);
 
-		void integrate(snRigidbody* _rb, float _dt) const;
+		//Compute the next position and orientation of a rigidbody base on the time elapsed since the previous state
+		// and the its current velocity.
+		// _rb : a pointer to a rigibdbody.
+		// _dt : time step for the integration.
+		void integrate(snRigidbody* _rb, float _dt);
+
+		//Awake the rigid bodies linked to the body _rg through a constraint and apply the same process
+		//recursively to the newly awaken rigid bodies.
+		void awakeRigidbodiesLinkedByConstraints(snRigidbody* _rb) const;
 	};
 }
 

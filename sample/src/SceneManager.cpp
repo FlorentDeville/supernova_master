@@ -213,7 +213,7 @@ namespace Devil
 
 			blockOneHeight = snVec4GetY(pos) + height * 0.5f;
 		}
-
+	
 		//platform
 		float platformHeight = 0;
 		{
@@ -303,6 +303,7 @@ namespace Devil
 
 			blockThreeHeight = snVec4GetY(pos) + height * 0.5f;
 		}
+		
 //float platformHeight = 10;
 		//dynamic
 		{
@@ -338,7 +339,7 @@ namespace Devil
 	void SceneManager::createStacking()
 	{
 		snhScene scene = createSandbox(L"Stacking");
-		scene->setSolverIterationCount(60);
+		scene->setSolverIterationCount(84);
 		scene->setLinearSquaredSpeedThreshold(0.006f);
 		scene->setAngularSquaredSpeedThreshold(0.0005f);
 		scene->setGravity(snVec4Set(0, -9.81f * 2, 0, 0));
@@ -841,7 +842,7 @@ namespace Devil
 			entity->setActor(kin.getPtr());
 
 			//create path component
-			ComponentFollowPath* path = new ComponentFollowPath(kin.getPtr(), true);
+			ComponentFollowPath* path = new ComponentFollowPath(scene.getPtr(), kin.getPtr(), true);
 			float speed = 5.f;
 
 			path->addWaypoint(snVec4Set(-10, 100, 0, 1), speed);
@@ -1003,6 +1004,7 @@ namespace Devil
 
 		explorer.setCallback([](const snMatrix44f& _frenet)
 		{
+			//return;
 			//create actor
 			snVec dominoSize = snVec4Set(5, 10, 1, 0);
 			snhRigidbody actor = SUPERNOVA->registerObject(new snRigidbody);
@@ -1056,6 +1058,7 @@ namespace Devil
 
 			snhRigidbody actor = SUPERNOVA->registerObject(new snRigidbody);
 			scene->attachActor(actor);
+			actor->setName("hammer");
 			actor->setPosition(hammerPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
@@ -1081,8 +1084,9 @@ namespace Devil
 		{
 			snVec startPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -130, 1);
 			snVec endPosition = snVec4Set(0, snVec4GetY(dominoSize) + 7, -150, 1);
-			snhRigidbody actor = SUPERNOVA->registerObject(new snRigidbody);
+			snhRigidbody actor = SUPERNOVA->registerObject(new snRigidbody());
 			scene->attachActor(actor);
+			actor->setName("hold");
 			actor->setPosition(startPosition);
 			actor->setOrientation(snQuaternionFromEuler(0, 0, 0));
 			actor->getPhysicMaterial().m_friction = 1;
@@ -1105,7 +1109,7 @@ namespace Devil
 
 			//create component moving the entity
 			//ComponentPathInterpolate* path = new ComponentPathInterpolate(actor, false);
-			ComponentFollowPath* path = new ComponentFollowPath(actor.getPtr(), false);
+			ComponentFollowPath* path = new ComponentFollowPath(scene.getPtr(), actor.getPtr(), false);
 			path->setIsActive(false);
 			path->addWaypoint(startPosition, 2);
 			path->addWaypoint(endPosition, 10);

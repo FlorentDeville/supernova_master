@@ -162,7 +162,7 @@ namespace Supernova
 		{
 			m_frictionAccumulatedImpulse[0] = snVec4Set(0);
 			m_frictionAccumulatedImpulse[1] = snVec4Set(0);
-
+			
 			//Compute the friction coefficient as the average of frictions of the two objects.
 			m_frictionCoefficient = (m_bodies[0]->getPhysicMaterial().m_friction + m_bodies[1]->getPhysicMaterial().m_friction) * 0.5f;
 
@@ -187,7 +187,6 @@ namespace Supernova
 				snVec3Dot(snVec3Cross(m_rCrossT0InvI[0], m_radius[0]) + snVec3Cross(m_rCrossT0InvI[1], m_radius[1]), m_tangent[0]));
 			m_frictionEffectiveMass[0] = snVec4GetInverse(m_frictionEffectiveMass[0]);
 		}
-
 	}
 
 	/// <summary>
@@ -302,5 +301,15 @@ namespace Supernova
 			m_bodies[1]->setAngularVelocity(m_bodies[1]->getAngularVelocity() + m_rCrossT0InvI[1] * lagrangian);
 		}
 
+	}
+
+	snRigidbody * const * const snContactConstraint::getBodies() const
+	{
+		return m_bodies;
+	}
+
+	unsigned int snContactConstraint::getBodiesCount() const
+	{
+		return 2;
 	}
 }

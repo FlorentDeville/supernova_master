@@ -93,12 +93,12 @@ namespace Devil
 		//SCENEMGR->createStacking();
 		//SCENEMGR->createSceneDamping();
 		//SCENEMGR->createSceneActorsType();
-		//SCENEMGR->createSceneDomino();
+		SCENEMGR->createSceneDomino();
 		//SCENEMGR->createConstraints();
 		//SCENEMGR->createSceneComposite();
 		//SCENEMGR->createSceneMonkeyBall();
 		//SCENEMGR->createSceneGJK();
-		SCENEMGR->createSceneTerrain();
+		//SCENEMGR->createSceneTerrain();
 
 		return true;
 	}

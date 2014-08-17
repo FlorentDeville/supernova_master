@@ -59,6 +59,8 @@ namespace Supernova
 		m_collisionFlag = snCollisionFlag::CF_NO_FLAG;
 		m_collisionCallback = 0;
 		m_isActive = true;
+		m_isAwake = true;
+		m_preSleepingTime = 0;
 	}
 
 	snRigidbody::~snRigidbody()
@@ -207,6 +209,10 @@ namespace Supernova
 		return m_angularDamping;
 	}
 
+	bool snRigidbody::isAwake() const
+	{
+		return m_isAwake;
+	}
 #pragma endregion
 
 #pragma region Setter
@@ -283,15 +289,6 @@ namespace Supernova
 		m_angularDamping = _angularDamping;
 	}
 
-	void snRigidbody::setKinematicPosition(const snVec& _position)
-	{
-		assert(m_isKinematic);
-		setPosition(_position);
-
-		//compute colliders in world coordinate
-		updateCollidersAndAABB();
-	}
-
 	void snRigidbody::setKinematicTransform(const snVec& _position, const snVec& _orientation)
 	{
 		assert(m_isKinematic);
@@ -300,6 +297,16 @@ namespace Supernova
 		setOrientation(_orientation);
 
 		updateCollidersAndAABB();
+
+		m_isAwake = true;
+	}
+
+	void snRigidbody::setAwake(bool _isAwake)
+	{
+		if(_isAwake)
+			m_preSleepingTime = 0;
+
+		m_isAwake = _isAwake;
 	}
 
 #pragma endregion
@@ -503,5 +510,26 @@ namespace Supernova
 		m_invInertia = globalIntertia.inverse();
 
 		computeInvWorldInertia();
+	}
+
+	void snRigidbody::updateSleepingState(float _dt, float _period)
+	{
+		//Check if the body is moving
+		if(m_v == Vector::VEC_ZERO && m_w == Vector::VEC_ZERO)
+		{
+			//Increment the pre sleeping time
+			m_preSleepingTime += _dt;
+
+			//Set to sleeping
+			if(_period < m_preSleepingTime)
+			{
+				assert(!isStatic());
+				m_isAwake = false;
+			}
+		}
+		else
+		{
+			m_preSleepingTime = 0;
+		}
 	}
 }

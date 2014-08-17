@@ -34,6 +34,7 @@
 
 #include "snSweepManager.h"
 #include "snRigidbody.h"
+#include "snActorPair.h"
 
 #ifdef SN_DEBUGGER
 #include "snDebugger.h"
@@ -105,6 +106,8 @@ namespace Supernova
 	//Check for possibily colliding pair of actors and call the callback function everytime a pair is found.
 	void snSweepManager::broadPhase()
 	{
+		vector<snActorPair> pcs;
+
 		//loop through each actor in the scene using the sweep list
 		for (list<snRigidbody*>::iterator i = m_sortedActors.begin(); i != m_sortedActors.end(); ++i)
 		{
@@ -129,6 +132,14 @@ namespace Supernova
 					continue;
 				}
 
+				if((!(*i)->isAwake() && !(*j)->isAwake()) //Do not check sleeping bodies
+					|| ((*i)->isStatic() && !(*j)->isAwake()) //Do not check a static and a sleeping
+					|| (!(*i)->isAwake() && (*j)->isStatic()) //Do not check a sleeping and a static.
+					) 
+				{
+					++j;
+					continue;
+				}
 
 				//check if the collision detection is enabled between the two actors
 				if (!snRigidbody::isCollisionDetectionEnabled(*i, *j))
@@ -144,7 +155,11 @@ namespace Supernova
 				if (AABBOverlap((*i)->getBoundingVolume(), (*j)->getBoundingVolume()))
 				{
 					//a pair is found, call the callback
-					(m_scene->*m_callback)(*i, *j);
+					//(m_scene->*m_callback)(*i, *j);
+					snActorPair pair;
+					pair.m_first = *i;
+					pair.m_second = *j;
+					pcs.push_back(pair);
 
 #ifdef SN_DEBUGGER
 					//Number of pair found 
@@ -159,6 +174,12 @@ namespace Supernova
 		//Number of pair found 
 		DEBUGGER->setWatchExpression(L"Collision Pair Found", std::to_wstring(m_collisionPairFound));
 #endif //ifdef SN_DEBUGGER
+
+		//Collision detection through the possibly colliding set.
+		for(vector<snActorPair>::const_iterator i = pcs.cbegin(); i != pcs.cend(); ++i)
+		{
+			(m_scene->*m_callback)(i->m_first, i->m_second);
+		}
 	}
 
 	//Compute which axis to use to sort the actors.

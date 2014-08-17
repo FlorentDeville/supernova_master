@@ -46,6 +46,7 @@ using std::mutex;
 namespace Supernova
 {
 	class snContactConstraint;
+	class snRigidbody;
 
 	//Store and manage the contact constraints used in a scene.
 	class snContactConstraintManager
@@ -53,6 +54,9 @@ namespace Supernova
 	private:
 		//List of constraints created by the collision detection system.
 		vector<snContactConstraint*> m_collisionConstraints;
+
+		//List of the constraint for sleeping/sleeping or sleeping/static bodies.
+		vector<snContactConstraint*> m_sleepingConstraint;
 
 		//Id of the next available constraint
 		unsigned int m_currentConstraintId;
@@ -79,6 +83,12 @@ namespace Supernova
 
 		//Clean the manager after the broad phase step.
 		void postBroadPhase();
+
+		//Save the constraint for the body _body to the sleeping constraints list.
+		void setSleepingBody(snRigidbody const * const _body);
+
+		//Awake the constraint for a a rigidbody and recursively the other rigidbody of the constraints.
+		void awakeConstraint(snRigidbody * const _body);
 
 	private:
 		

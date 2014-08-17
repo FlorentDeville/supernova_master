@@ -81,6 +81,7 @@ namespace Supernova
 		m_gravity = snVec4Set(0, -9.81f, 0, 0);
 		m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
 		m_frictionMode = snFrictionMode::SN_FRICTION_ONE_DIRECTION;
+		m_sleepingPeriod = 0.5f;
 	}
 
 	snScene::~snScene()
@@ -289,6 +290,11 @@ namespace Supernova
 		m_frictionMode = _mode;
 	}
 
+	void snScene::setSleepingPeriod(float _dt)
+	{
+		m_sleepingPeriod = _dt;
+	}
+
 	void* snScene::operator new(size_t _count)
 	{
 		return _aligned_malloc(_count, SN_ALIGN_SIZE);
@@ -395,11 +401,24 @@ namespace Supernova
 
 	}
 
+	void snScene::setKinematicRigidbodyLinearVelocity(snRigidbody* _rb, const snVec& _linVel)
+	{
+		assert(_rb->isKinematic());
+
+		_rb->setLinearVelocity(_linVel);
+
+		if(!_rb->isAwake())
+		{
+			_rb->isAwake();
+			m_contactConstraintManager.awakeConstraint(_rb);
+		}
+	}
+
 	void snScene::applyForces(float _dt)
 	{
 		for (vector<snRigidbody*>::iterator i = m_actors.begin(); i != m_actors.end(); ++i)
 		{
-			if ((*i) == 0 || !(*i)->getIsActive())
+			if ((*i) == 0 || !(*i)->getIsActive() || !(*i)->isAwake())
 				continue;
 
 			//apply gravity only if the inverse of the mass is not zero.
@@ -552,6 +571,20 @@ namespace Supernova
 			return;
 		}
 
+		//Awake the bodies
+		if(!_a->isAwake())
+		{
+			_a->setAwake(true);
+			m_contactConstraintManager.awakeConstraint(_a);
+			awakeRigidbodiesLinkedByConstraints(_a);
+		}
+		if(!_b->isAwake())
+		{
+			_b->setAwake(true);
+			m_contactConstraintManager.awakeConstraint(_b);
+			awakeRigidbodiesLinkedByConstraints(_b);
+		}
+
 		//make the collision constraints from the collision results
 		for (unsigned int colResId = 0; colResId < colResCount; ++colResId)
 		{
@@ -624,9 +657,9 @@ namespace Supernova
 		}
 	}
 
-	void snScene::integrate(snRigidbody* const _rb, float _dt) const
+	void snScene::integrate(snRigidbody* const _rb, float _dt)
 	{
-		if(_rb->isStatic())
+		if(_rb->isStatic() || !_rb->isAwake())
 			return;
 
 		//apply damping
@@ -669,5 +702,62 @@ namespace Supernova
 		//compute colliders in world coordinate
 		_rb->updateCollidersAndAABB();
 		
+		//update the sleeping state
+		_rb->updateSleepingState(_dt, m_sleepingPeriod);
+
+		if(!_rb->isAwake())
+		{
+			m_contactConstraintManager.setSleepingBody(_rb);
+		}
+	}
+
+	void snScene::awakeRigidbodiesLinkedByConstraints(snRigidbody* _rb) const
+	{
+		vector<snRigidbody*> toAwake;
+
+		for(vector<snIConstraint*>::const_iterator i = m_constraints.cbegin(); i != m_constraints.cend(); ++i)
+		{
+			snRigidbody * const* const bodies = (*i)->getBodies();
+			unsigned int count = (*i)->getBodiesCount();
+
+			//Check if the constraint has the body _rb
+			bool isLinked = false;
+			for(unsigned int bodyId = 0; bodyId < count; ++bodyId)
+			{
+				if(bodies[bodyId] == _rb)
+				{
+					isLinked = true;
+					break;
+				}
+			}
+
+			if(!isLinked)
+			{
+				continue;
+			}
+
+			//Activate all the other bodies if necessary
+			for(unsigned int bodyId = 0; bodyId < count; ++bodyId)
+			{
+				if(bodies[bodyId] == _rb)
+				{
+					continue;
+				}
+
+				if(bodies[bodyId]->isAwake())
+				{
+					continue;
+				}
+
+				bodies[bodyId]->setAwake(true);
+				toAwake.push_back(bodies[bodyId]);
+			}
+		}
+
+		//Recurvisely wake up all the linked bodies.
+		for(vector<snRigidbody*>::iterator iter = toAwake.begin(); iter != toAwake.end(); ++iter)
+		{
+			awakeRigidbodiesLinkedByConstraints(*iter);
+		}
 	}
 }

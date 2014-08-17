@@ -40,6 +40,8 @@
 
 namespace Supernova
 {
+	class snRigidbody;
+
 	//Interface to represent a constraint for one or several bodies.
 	class SN_ALIGN snIConstraint
 	{
@@ -80,6 +82,11 @@ namespace Supernova
 		void setIsActive(bool _isActive){ m_active = _isActive; }
 
 		bool getIsActive() const{ return m_active; }
+
+		//Return an array of the rigidbody that are constraints.
+		virtual snRigidbody * const * const getBodies() const = 0;
+
+		virtual unsigned int getBodiesCount() const = 0;
 	};
 }
 

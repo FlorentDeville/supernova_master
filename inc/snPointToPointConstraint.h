@@ -126,6 +126,12 @@ namespace Supernova
 
 		//Return an array of vectors constaining the offset of the pivot. The vector goes from the actor origin to the pivot.
 		snVec const* getOffset() const;
+
+		//Return an array of the two snRigidbodies making this constraint.
+		snRigidbody * const * const getBodies() const;
+
+		//Return the number of bodies in this constraint
+		unsigned int getBodiesCount() const;
 	};
 }
 

@@ -137,4 +137,16 @@ namespace Supernova
 	{
 		return m_offset;
 	}
+
+	//Return an array of the two snRigidbodies making this constraint.
+	snRigidbody * const * const snPointToPointConstraint::getBodies() const
+	{
+		return m_actors;
+	}
+
+	//Return the number of bodies in this constraint
+	unsigned int snPointToPointConstraint::getBodiesCount() const
+	{
+		return 2;
+	}
 }

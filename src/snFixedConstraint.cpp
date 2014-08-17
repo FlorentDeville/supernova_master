@@ -116,8 +116,15 @@ namespace Supernova
 		return m_distance;
 	}
 
-	const snRigidbody* snFixedConstraint::getActor() const
+	//Return an array of the two snRigidbodies making this constraint.
+	snRigidbody * const * const snFixedConstraint::getBodies() const
 	{
-		return m_actor;
+		return &m_actor;
+	}
+
+	//Return the number of bodies in this constraint
+	unsigned int snFixedConstraint::getBodiesCount() const
+	{
+		return 1;
 	}
 }

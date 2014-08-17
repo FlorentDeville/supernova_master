@@ -125,7 +125,11 @@ namespace Supernova
 		//Return the distance between the fixed point and the actor.
 		float getDistance() const;
 
-		const snRigidbody* getActor() const;
+		//Return an array of the two snRigidbodies making this constraint.
+		snRigidbody * const * const getBodies() const;
+
+		//Return the number of bodies in this constraint
+		unsigned int getBodiesCount() const;
 
 	};
 }

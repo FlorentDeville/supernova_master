@@ -140,6 +140,12 @@ namespace Supernova
 		void prepare(float _dt);
 
 		void resolve();
+
+		//Return an array of the two snRigidbodies making this constraint.
+		snRigidbody * const * const getBodies() const;
+
+		//Return the number of bodies in this constraint
+		unsigned int getBodiesCount() const;
 	};
 }
 

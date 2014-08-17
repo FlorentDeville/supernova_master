@@ -121,6 +121,14 @@ namespace Supernova
 		//angular velocity
 		snVec m_w;
 
+		//Amount of time the rigidbody has been sleeping while in active state.
+		float m_preSleepingTime;
+
+		//Flag ot indicate if the rigidbody is awake or sleeping. A sleeping body is not checked for collisions against
+		//other sleeping bodies and is not simulated. The contact constraint between two sleeping bodies are cached
+		//in the contact constraint manager.
+		bool m_isAwake;
+
 		//Flag to indicate if this actor is kinematic or not.
 		bool m_isKinematic;
 
@@ -200,6 +208,9 @@ namespace Supernova
 		//Return the angular damping
 		float getAngularDampingCoeff() const;
 
+		//Get if the rigidbody is sleeping.
+		bool isAwake() const;
+
 #pragma endregion
 
 #pragma region Setter
@@ -237,11 +248,11 @@ namespace Supernova
 		//Set the angular damping coefficient
 		void setAngularDampingCoeff(float _angularDamping);
 
-		//Set the position of a kinematic actor
-		void setKinematicPosition(const snVec& _position);
-
 		//Set the position and orientation of a kinematic actor.
 		void setKinematicTransform(const snVec& _position, const snVec& _orientation);
+
+		//Set the awake flag of the rigidbody.
+		void setAwake(bool _isAwake);		
 
 #pragma endregion
 
@@ -306,6 +317,11 @@ namespace Supernova
 		//Set the mass to the actor and update its inertia
 		void updateMassAndInertia(float _mass);
 
+		//Depending of the current velocity of the body, turn into sleeping state.
+		// _dt : the time step of the physics engine.
+		// _period : the time to wait before going to sleep in seconds.
+		void updateSleepingState(float _dt, float _period);
+	
 	protected :
 		//Compute the bounding volume based on the colliders
 		void computeBoundingVolume();

@@ -123,4 +123,17 @@ namespace Supernova
 		snVec4SetW(lagrangianRot2, 0);
 		m_actor->setAngularVelocity(m_actor->getAngularVelocity() + m_invICCrossA * lagrangianRot2);
 	}
+
+	//Return an array of the two snRigidbodies making this constraint.
+	snRigidbody * const * const snHingeConstraint::getBodies() const
+	{
+		return &m_actor;
+	}
+
+	//Return the number of bodies in this constraint
+	unsigned int snHingeConstraint::getBodiesCount() const
+	{
+		return 1;
+	}
+
 }

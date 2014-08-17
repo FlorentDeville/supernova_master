@@ -48,8 +48,9 @@ using std::vector;
 namespace Supernova
 {
 	class snRigidbody;
+	class snScene;
 }
-
+using Supernova::snScene;
 using Supernova::snRigidbody;
 
 
@@ -82,14 +83,11 @@ namespace Devil
 	class ComponentFollowPath : public IComponent
 	{
 	private:
-		//The actor to move
-		snRigidbody* m_actor;
-
 		//The list of waypoint making the path to follow
 		vector<Waypoint*> m_path;
 
-		//Flag to indicate if the actor as to loop the path or stop when it reaches the end.
-		bool m_loop;
+		//The actor to move
+		snRigidbody* m_actor;
 
 		//Id in the vector m_path of the next waypoint to reach
 		unsigned int m_nextWaypoint;
@@ -97,9 +95,15 @@ namespace Devil
 		//Id in the vector m_path of the previous waypoint.
 		unsigned int m_previousWaypoint;
 
+		//Pointer to physics scene.
+		snScene* m_phScene;
+
+		//Flag to indicate if the actor as to loop the path or stop when it reaches the end.
+		bool m_loop;
+
 	public:
 		//Construct an instance of the class ComponentFollowPath
-		ComponentFollowPath(snRigidbody* _actor, bool _loop);
+		ComponentFollowPath(snScene* _scene, snRigidbody* _actor, bool _loop);
 
 		//Clean allocation made by the class ComponentFollowPath
 		virtual ~ComponentFollowPath();
