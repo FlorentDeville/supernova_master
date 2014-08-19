@@ -1,0 +1,1 @@
+Do not compile the Supernova project, it won't work. You need to compile the Demo1 solution in /sample/Demo1.
