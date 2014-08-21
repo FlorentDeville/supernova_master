@@ -47,7 +47,7 @@ namespace Devil
 		namespace Device
 		{
 			KeyboardMouse::KeyboardMouse() : m_cooldownToggleCollisionPoint(200), m_cooldownShoot(200), m_cooldownRenderMode(200),
-				m_cooldownToggleWatchWindow(200)
+				m_cooldownToggleWatchWindow(200), m_mouseWheelState(0)
 			{
 				for (int i = 0; i < MESSAGE_COUNT; ++i)
 				{

@@ -131,7 +131,8 @@ namespace Devil
 		else if (INPUT->isKeyDown(116))//F5
 		{
 			clearScene();
-			createSceneMonkeyBall();
+			//createSceneMonkeyBall();
+			createSceneFriction();
 			INPUT->keyUp(116);
 		}
 		else if (INPUT->isKeyDown(117))//F6
@@ -597,20 +598,19 @@ namespace Devil
 
 			//create actor
 			snRigidbody* rb = new snRigidbody();
-			rb->initializeStatic(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
+			
 			snhRigidbody act = SUPERNOVA->registerObject(rb);
 			scene->attachActor(act);
 
 			act->setName("slope");
 			act->getPhysicMaterial().m_restitution = 1.f;
 			act->getPhysicMaterial().m_friction = 1.f;
-
+			
 			//create collider
 			snOBB* collider = new snOBB(snVec4Set(width, height, depth, 0) * 0.5);
 			act->addCollider(collider);
 
-			//initializeDynamic
-			act->initializeDynamic();
+			rb->initializeStatic(snVec4Set(0, 0, 0, 1), snQuaternionFromEuler(slopeAngle, 0, 0));
 
 			//create the world entity
 			EntityBox* kinematicBox = WORLD->createBox(XMFLOAT3(width, height, depth));

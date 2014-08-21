@@ -89,11 +89,11 @@ namespace Devil
 		}
 
 		//Start with the first scene
-		//SCENEMGR->createBasicTest();
+		SCENEMGR->createBasicTest();
 		//SCENEMGR->createStacking();
 		//SCENEMGR->createSceneDamping();
 		//SCENEMGR->createSceneActorsType();
-		SCENEMGR->createSceneDomino();
+		//SCENEMGR->createSceneDomino();
 		//SCENEMGR->createConstraints();
 		//SCENEMGR->createSceneComposite();
 		//SCENEMGR->createSceneMonkeyBall();
