@@ -226,15 +226,6 @@ namespace Devil
 	{
 		switch (umsg)
 		{
-			case WM_SYSCOMMAND:
-			{
-				switch( wparam )
-				{
-					case SC_KEYMENU:
-						break;
-				}
-			}
-
 			case WM_MOUSEWHEEL:
 			{
 				int ds = (int)wparam;
