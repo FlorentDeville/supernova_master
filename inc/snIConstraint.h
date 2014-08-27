@@ -50,12 +50,15 @@ namespace Supernova
 		//Indicate if this constraint is currently active.
 		bool m_active;
 
-		char m_padding[9];
+		//Indicate if the constraint is awake or asleep.
+		bool m_awake;
+
+		char m_padding[8];
 
 	public:
 
 		//Default constructor
-		snIConstraint() : m_active(false){}
+		snIConstraint() : m_active(false), m_awake(true){}
 
 		//Default destructor
 		virtual ~snIConstraint(){}
@@ -81,7 +84,11 @@ namespace Supernova
 
 		void setIsActive(bool _isActive){ m_active = _isActive; }
 
+		void setAwake(bool _awake){ m_awake = _awake; }
+
 		bool getIsActive() const{ return m_active; }
+
+		bool getIsAwake() const { return m_awake; }
 
 		//Return an array of the rigidbody that are constraints.
 		virtual snRigidbody * const * const getBodies() const = 0;

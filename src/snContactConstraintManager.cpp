@@ -172,6 +172,7 @@ namespace Supernova
 			//If the other body is sleeping or static, set the constraint to sleep.
 			if(otherBody->isStatic() || !otherBody->isAwake())
 			{
+				(*constraint)->setAwake(false);
 				m_sleepingGraph[otherBody->m_id].push_back(*constraint);
 				m_sleepingGraph[_body->m_id].push_back(*constraint);
 				*constraint = 0;
@@ -182,6 +183,8 @@ namespace Supernova
 	void snContactConstraintManager::awakeConstraint(snRigidbody * const _body)
 	{
 		snConstraintsPtrArray& constraints = m_sleepingGraph[_body->m_id];
+		if(constraints.size() == 0)
+			return;
 
 		//Loop through each constraints for the body
 		for(vector<snContactConstraint*>::iterator i = constraints.begin(); i != constraints.end(); ++i)
@@ -205,7 +208,13 @@ namespace Supernova
 				continue;
 			}
 
+			if((*i)->getIsAwake())
+			{
+				continue;
+			}
+
 			//Move the constraint from the sleeping constraints to the activated constraints
+			(*i)->setAwake(true);
 			if (m_currentConstraintId < m_collisionConstraints.size())
 			{
 				m_collisionConstraints[m_currentConstraintId] = (*i);
@@ -215,28 +224,8 @@ namespace Supernova
 				m_collisionConstraints.push_back(*i);
 			}
 			++m_currentConstraintId;
-		}
 
-		for(vector<snContactConstraint*>::iterator i = constraints.begin(); i != constraints.end(); ++i)
-		{
-			//Get the other body involved in the constraint
-			snRigidbody * const * const bodies = (*i)->getBodies();
-			snRigidbody* otherBody = 0;
-			if(bodies[0] == _body)
-			{
-				otherBody = bodies[1];
-			}
-			else
-			{
-				otherBody = bodies[0];
-			}
-
-			//recursive call
-			if(otherBody->isAwake())
-			{
-				continue;
-			}
-
+			//recursive call to activate the other body.
 			otherBody->setAwake(true);
 			awakeConstraint(otherBody);
 		}

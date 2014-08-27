@@ -409,7 +409,7 @@ namespace Supernova
 
 		if(!_rb->isAwake())
 		{
-			_rb->isAwake();
+			_rb->setAwake(true);
 			m_contactConstraintManager.awakeConstraint(_rb);
 		}
 	}
