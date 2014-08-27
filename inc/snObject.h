@@ -38,6 +38,7 @@
 namespace Supernova
 {
 	class snWorld;
+	class snContactConstraintManager;
 
 	//Id to identify a snObject.
 	typedef unsigned int snObjectId;
@@ -50,6 +51,7 @@ namespace Supernova
 	class snObject
 	{
 		friend snWorld;
+		friend snContactConstraintManager;
 
 	protected:
 		snObjectId m_id;

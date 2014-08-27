@@ -35,13 +35,17 @@
 #ifndef SN_CONTACT_CONSTRAINT_MANAGER_H
 #define SN_CONTACT_CONSTRAINT_MANAGER_H
 
-//#include "snIConstraint.h"
 
 #include <vector>
 using std::vector;
 
 #include <mutex>
 using std::mutex;
+
+#include <map>
+using std::map;
+
+#include "snObject.h"
 
 namespace Supernova
 {
@@ -55,11 +59,24 @@ namespace Supernova
 		//List of constraints created by the collision detection system.
 		vector<snContactConstraint*> m_collisionConstraints;
 
-		//List of the constraint for sleeping/sleeping or sleeping/static bodies.
-		vector<snContactConstraint*> m_sleepingConstraint;
-
 		//Id of the next available constraint
 		unsigned int m_currentConstraintId;
+
+		//////////////////////////////////////////////////////////////////////
+		//				Define the sleeping constraint graph				//
+		//////////////////////////////////////////////////////////////////////
+
+		//A vector of constraint pointers.
+		typedef vector<snContactConstraint*> snConstraintsPtrArray;
+
+		//A graph of constraints. The key is the id of the rigidbody. The values are the constraints of the body.
+		typedef map<snObjectId, snConstraintsPtrArray> snConstraintGraph;
+
+		//Single element of a constraint graph.
+		typedef std::pair<snObjectId, snConstraintsPtrArray> snConstraintGraphElement;
+
+		//Graph of sleeping constraints. 
+		map<snObjectId, snConstraintsPtrArray> m_sleepingGraph;
 
 	public:
 		//Default constructor
