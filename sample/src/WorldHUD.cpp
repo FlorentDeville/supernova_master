@@ -117,7 +117,7 @@ namespace Devil
 		//display controls
 		height = 1;
 		float offset = 300;
-		GRAPHICS->writeText(L"F1 to F9 to switch scene", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
+		GRAPHICS->writeText(L"F1 to F11 to switch scene", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;
 		GRAPHICS->writeText(L"Z, Q, S, D to move around", XMFLOAT2(GRAPHICS->getScreenWidth() - offset, height), 0.5);
 		height += LINE_HEIGHT;

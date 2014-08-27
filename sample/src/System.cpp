@@ -226,6 +226,15 @@ namespace Devil
 	{
 		switch (umsg)
 		{
+			case WM_SYSCOMMAND:
+			{
+				switch( wparam )
+				{
+					case SC_KEYMENU:
+						break;
+				}
+			}
+
 			case WM_MOUSEWHEEL:
 			{
 				int ds = (int)wparam;
@@ -235,6 +244,7 @@ namespace Devil
 
 			// Check if a key has been pressed on the keyboard.
 			case WM_KEYDOWN:
+			case WM_SYSKEYDOWN:
 			{
 				// If a key is pressed send it to the input object so it can record that state.
 				INPUT->keyDown((unsigned int)wparam);
@@ -243,6 +253,7 @@ namespace Devil
 
 			//Check if a key has been released on the keyboard.
 			case WM_KEYUP:
+			case WM_SYSKEYUP:
 			{
 				unsigned int key = (unsigned int)wparam;
 				// If a key is released then send it to the input object so it can unset the state for that key.

@@ -159,17 +159,17 @@ namespace Devil
 			createSceneComposite();
 			INPUT->keyUp(120);
 		}
-		else if (INPUT->isKeyDown('9'))//9
+		else if (INPUT->isKeyDown(121))//F10
 		{
 			clearScene();
 			createSceneGJK();
-			INPUT->keyUp('9');
+			INPUT->keyUp(121);
 		}
-		else if (INPUT->isKeyDown('8'))//9
+		else if (INPUT->isKeyDown(122))//F11
 		{
 			clearScene();
 			createSceneTerrain();
-			INPUT->keyUp('8');
+			INPUT->keyUp(122);
 		}
 	}
 
