@@ -206,11 +206,6 @@ namespace Supernova
 		//Overridden delete operator to delete using the correct alignement.
 		void operator delete(void* _p);
 
-		//Make a sphere cast test
-		bool sphereCast(const snVec& _center, float _radius, const snVec& _direction, float _length);
-
-		bool shapeCast(snICollider& _collider, const snTransform& _origin, const snVec& _direction, float _length, float& _distance) const;
-
 		//Set the linear velocity of a kinematic rigidbody
 		// _rb : a kinematic rigidbody.
 		// _linVel : the new linear velocity of the kinematic rigidbody.
