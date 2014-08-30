@@ -34,6 +34,8 @@
 
 #include "snAABB.h"
 
+using namespace Supernova::Vector;
+
 namespace Supernova
 {
 	bool AABBOverlap(snAABB const * const _a, snAABB const * const _b)
@@ -79,5 +81,16 @@ namespace Supernova
 		firstHalf = _mm_and_ps(_first.m_min, compare);
 		secondHalf = _mm_andnot_ps(compare, _second.m_min);
 		_merge.m_min = _mm_or_ps(firstHalf, secondHalf);
+	}
+
+	bool isInside(const snAABB& _bb, const snVec& _p)
+	{
+		if(snVec3Inferior(_p, _bb.m_min))
+			return false;
+
+		if(snVec3Inferior(_bb.m_max, _p))
+			return false;
+
+		return true;
 	}
 }

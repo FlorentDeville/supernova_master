@@ -122,4 +122,51 @@ namespace Supernova
 		return currentIndex;
 
 	}
+
+	int snHeightMap::getOverlapTriangles(const snVec& _point, unsigned int* const _ids, unsigned int _maxTriangles) const
+	{
+		//compute the indices of the quads
+		snVec offsetedPoint = _point - m_boundingVolume.m_min;
+
+		unsigned int quadColumn = unsigned int(snVec4GetX(offsetedPoint) / m_quadSize);
+		unsigned int quadRow = unsigned int(snVec4GetZ(offsetedPoint) / m_quadSize);
+
+		if (quadRow < 0 || quadRow >= m_length)
+			return 0;
+		if (quadColumn < 0 || quadColumn >= m_length)
+			return 0;
+
+		//from the indices of the quad, compute the indices of the triangles
+		unsigned int twoWidth = 2 * m_width;
+		unsigned int offsetY = quadRow * twoWidth;
+		unsigned int newId = offsetY + (quadColumn * 2);
+
+		unsigned int currentIndex = 0;
+		if (currentIndex < _maxTriangles)
+		{
+			_ids[currentIndex++] = newId;
+		}
+		else
+		{
+			return currentIndex;
+		}
+
+		++newId;
+		if (currentIndex < _maxTriangles)
+		{
+			_ids[currentIndex++] = newId;
+		}
+
+		return currentIndex;
+	}
+
+	snAABB const & snHeightMap::getBoundingVolume() const
+	{
+		return m_boundingVolume;
+	}
+
+	float snHeightMap::getQuadSize() const
+	{
+		return m_quadSize;
+	}
 }

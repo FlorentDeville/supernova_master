@@ -49,6 +49,11 @@ namespace Supernova
 	bool AABBOverlap(snAABB const * const _a, snAABB const * const _b);
 
 	void mergeAABB(const snAABB& _first, const snAABB& _second, snAABB& _merge);
+
+	//Check if the point _p is inside the bounding box _bb.
+	// _bb : an AABB.
+	// _p : the point to check.
+	bool isInside(const snAABB& _bb, const snVec& _p);
 }
 
 #endif //ifndef SN_AABB

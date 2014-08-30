@@ -104,6 +104,19 @@ namespace Supernova
 
 		//Return the ids of all the triangles overlaping the AABB.
 		int getOverlapTriangles(const snAABB& _bounding, unsigned int* const _ids, unsigned int _maxTriangles) const;
+
+		//Return the ids of the triangles overlaping a point. It returns a maximum of two triangles.
+		// _point : the point to check.
+		// _ids : an array of triangle ids.
+		// _maxTriangles : the maximum number of element the array can contains.
+		// return : the number of triangles found.
+		int getOverlapTriangles(const snVec& _point, unsigned int* const _ids, unsigned int _maxTriangles) const;
+
+		//Return the AABB making the bounding volume of the height map.
+		snAABB const & getBoundingVolume() const;
+
+		//Return the size of the quads making the height map.
+		float getQuadSize() const;
 	};
 }
 
