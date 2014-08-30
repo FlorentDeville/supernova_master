@@ -28,6 +28,9 @@
     <Filter Include="Algorithms\EPA">
       <UniqueIdentifier>{18e3804e-6ef4-49c1-8ebe-2bfca54c4f09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Raycast">
+      <UniqueIdentifier>{2c67509c-721c-4e64-9aa2-0e5d0e0e14ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\snCollisionResult.h">
@@ -162,6 +165,12 @@
     <ClInclude Include="inc\snRigidbody.h">
       <Filter>Simulation</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snRay.h">
+      <Filter>Raycast</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snRaycast.h">
+      <Filter>Raycast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">
@@ -258,6 +267,9 @@
     </ClCompile>
     <ClCompile Include="src\snRigidbody.cpp">
       <Filter>Simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snRaycast.cpp">
+      <Filter>Raycast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

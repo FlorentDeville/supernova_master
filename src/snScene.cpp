@@ -50,6 +50,9 @@
 
 #include "snSphere.h"
 #include "snCapsule.h"
+#include "snHeightMap.h"
+#include "snRaycast.h"
+#include "snRay.h"
 
 #include "snTimer.h"
 
@@ -316,6 +319,62 @@ namespace Supernova
 			_rb->setAwake(true);
 			m_contactConstraintManager.awakeConstraint(_rb);
 		}
+	}
+
+	bool snScene::raycast(const snRay& _ray, snVec& _hit) const
+	{
+		//This is a basic implementation of raycasting against the entire scene. There is no speed up structure used. 
+		//We simply go through every body.
+		float minSqDistance = SN_FLOAT_MAX;
+		bool res = false;
+
+		//Loop through each body
+		for(vector<snRigidbody*>::const_iterator body = m_actors.cbegin(); body != m_actors.cend(); ++body)
+		{
+			if(*body == 0)
+			{
+				continue;
+			}
+
+			//Loop through each collider
+			vector<snICollider*>& colliders = (*body)->getColliders();
+			for(vector<snICollider*>::const_iterator iterCol = colliders.cbegin(); iterCol != colliders.cend(); ++iterCol)
+			{
+				//Make the raycast test
+				bool hitRes = false;
+				snVec hit;
+				switch((*iterCol)->getTypeOfCollider())
+				{
+					case snEColliderType::snEColliderHeightMap:
+						{
+							const snHeightMap& hmap = *static_cast<snHeightMap*>(*iterCol);
+							hitRes = snRaycast::RayHeightmap(_ray, hmap, hit);
+						}
+						break;
+
+						//collider not implemented.
+					default:
+						break;
+				}
+
+				//check result
+				if(!hitRes)
+				{
+					continue;
+				}
+
+				//Get distance
+				float sqDistance = snVec3SquaredNorme(hit - _ray.m_origin);
+				if(minSqDistance > sqDistance)
+				{
+					res = true;
+					minSqDistance = sqDistance;
+					_hit = hit;
+				}
+			}
+		}
+
+		return res;
 	}
 
 	void snScene::applyForces(float _dt)

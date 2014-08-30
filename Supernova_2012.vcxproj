@@ -47,6 +47,8 @@
     <ClInclude Include="inc\snPhysicMaterial.h" />
     <ClInclude Include="inc\snPointToPointConstraint.h" />
     <ClInclude Include="inc\snQuaternion.h" />
+    <ClInclude Include="inc\snRay.h" />
+    <ClInclude Include="inc\snRaycast.h" />
     <ClInclude Include="inc\snRigidbody.h" />
     <ClInclude Include="inc\snSAT.h" />
     <ClInclude Include="inc\snScene.h" />
@@ -84,6 +86,7 @@
     <ClCompile Include="src\snObject.cpp" />
     <ClCompile Include="src\snPointToPointConstraint.cpp" />
     <ClCompile Include="src\snQuaternion.cpp" />
+    <ClCompile Include="src\snRaycast.cpp" />
     <ClCompile Include="src\snRigidbody.cpp" />
     <ClCompile Include="src\snSAT.cpp" />
     <ClCompile Include="src\snScene.cpp" />

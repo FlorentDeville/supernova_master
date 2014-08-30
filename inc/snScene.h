@@ -69,6 +69,7 @@ namespace Supernova
 	class snPointToPointConstraint;
 	class snFixedConstraint;
 	class snHingeConstraint;
+	class snRay;
 
 	//The physic scene to simulate. HUGE WIP.
 	class SN_ALIGN snScene : public snObject
@@ -210,6 +211,12 @@ namespace Supernova
 		// _rb : a kinematic rigidbody.
 		// _linVel : the new linear velocity of the kinematic rigidbody.
 		void setKinematicRigidbodyLinearVelocity(snRigidbody* _rb, const snVec& _linVel);
+
+		//Make a raycast test against the entire scene.
+		// _ray : the ray to use for the raycast.
+		// _hit : closest hit point if any is found.
+		// return : true if a hit point is found. False otherwise.
+		bool raycast(const snRay& _ray, snVec& _hit) const;
 
 	private:
 		//Apply forces and compute linear and angular velocities
