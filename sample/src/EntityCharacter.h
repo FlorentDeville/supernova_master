@@ -32,70 +32,44 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef CAMERA_STATE_FOLLOW_TARGET_H
-#define CAMERA_STATE_FOLLOW_TARGET_H
+#ifndef ENTITY_CHARACTER_H
+#define ENTITY_CHARACTER_H
 
-#include "IState.h"
-using namespace Devil::FSM;
-
-#include "snVec.h"
-
-using Supernova::snVec;
-#include "snGlobals.h"
-
-#include "VecLinearDamper.h"
+#include "IWorldEntity.h"
 
 namespace Devil
 {
-	class IWorldEntity;
-	class EntityCamera;
-
-	SN_ALIGN class CameraState_FollowTarget : public IState
+	namespace Worlds
 	{
-	private:
-		EntityCamera* m_camera;
+		namespace Entities
+		{
+			class EntityCharacter : public IWorldEntity
+			{
+			private:
+				XMVECTOR m_color;
 
-		//The target to follow
-		IWorldEntity const * m_target;
+				float m_radius;
 
-		//Distance from the target to the camera.
-		float m_distance;
+				float m_height;
 
-		//Height of the camera above the target.
-		float m_height;
+			public:
 
-		//The forward vector of the camera.
-		snVec m_forward;
+				EntityCharacter();
 
-		//Damper used to smooth the camera position
-		VecLinearDamper m_positionDamper;
+				virtual ~EntityCharacter ();
 
-		//Damper used to smooth the camera look at.
-		VecLinearDamper m_lookAtDamper;
+				bool initialize(float _radius, float _height, const XMVECTOR& _color);
 
-		//Rotation of the camera around the Y axis
-		float m_angleY;
+				void update();
 
-	public:
-		CameraState_FollowTarget(EntityCamera* _camera);
-		~CameraState_FollowTarget();
+				void render();
 
-		void enter();
+				void* operator new(size_t _count);
 
-		void execute();
-
-		void exit();
-
-		void* operator new(size_t _count);
-
-		void operator delete(void* _p);
-
-		//Prepare the state
-		// _target : the entity the camera has to follow.
-		// _distance : the distance between the target and the camera.
-		// _height : the distance of the camera above the target.
-		void setup(IWorldEntity const * const _target, float _distance, float _height);
-	};
+				void operator delete(void* _p);
+			};
+		}
+	}
 }
-#endif
-//ifndef CAMERA_STATE_FOLLOW_TARGET_H
+
+#endif // ifndef ENTITY_CHARACTER_H

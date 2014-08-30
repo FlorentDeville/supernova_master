@@ -42,6 +42,7 @@ using namespace Devil::FSM;
 namespace Devil
 {
 	class Camera;
+	class CameraState_FollowTarget;
 
 	class EntityCamera : public IWorldEntity
 	{
@@ -53,6 +54,9 @@ namespace Devil
 		Camera* m_gfxCamera;
 		
 		FSMRunner m_fsmRunner;
+
+		//Pointer to the state object FollowTarget.
+		CameraState_FollowTarget* m_stateFollowTarget;
 
 	public:
 		EntityCamera();
@@ -74,7 +78,14 @@ namespace Devil
 
 		void operator delete(void* _p);
 
-		void setCameraModeFollowTarget();
+		//Change the current camera mode and set it to the follow target mode.
+		// _target : the entity to follow.
+		// _distance : the distance between the target and the camera.
+		// _height : the distance on the y axis between the target and the camera.
+		void setCameraModeFollowTarget(IWorldEntity const * const _target, float _distance, float _height);
+
+		//change the current camera mode to the free camera mode.
+		void setCameraModeFree();
 	};
 
 }

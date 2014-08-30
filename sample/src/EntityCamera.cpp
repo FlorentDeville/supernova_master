@@ -69,8 +69,8 @@ namespace Devil
 		CameraState_FreeCamera* stateFreeCamera = new CameraState_FreeCamera(this);
 		m_fsmRunner.addState(CAMERA_STATE_FREE_CAMERA, stateFreeCamera);
 		
-		CameraState_FollowTarget* stateFollowTarget = new CameraState_FollowTarget(this, (IWorldEntity*)WORLD->getMonkeyBall(), 140, 0);
-		m_fsmRunner.addState(CAMERA_STATE_FOLLOW_TARGET, stateFollowTarget);
+		m_stateFollowTarget = new CameraState_FollowTarget(this);
+		m_fsmRunner.addState(CAMERA_STATE_FOLLOW_TARGET, m_stateFollowTarget);
 
 		m_fsmRunner.setInitialState(CAMERA_STATE_FREE_CAMERA);
 		return true;
@@ -116,8 +116,14 @@ namespace Devil
 		_aligned_free(_p);
 	}
 
-	void EntityCamera::setCameraModeFollowTarget()
+	void EntityCamera::setCameraModeFollowTarget(IWorldEntity const * const _target, float _distance, float _height)
 	{
+		m_stateFollowTarget->setup(_target, _distance, _height);
 		m_fsmRunner.setInitialState(CAMERA_STATE_FOLLOW_TARGET);
+	}
+
+	void EntityCamera::setCameraModeFree()
+	{
+		m_fsmRunner.setInitialState(CAMERA_STATE_FREE_CAMERA);
 	}
 }

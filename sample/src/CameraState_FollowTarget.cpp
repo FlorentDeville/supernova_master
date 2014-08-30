@@ -49,81 +49,51 @@ using Supernova::snRigidbody;
 #include "snSphere.h"
 using namespace Supernova;
 
+#include "Input.h"
+
 namespace Devil
 {
-	CameraState_FollowTarget::CameraState_FollowTarget(EntityCamera* _camera, IWorldEntity* _target, float _distance, float _height)
-		:m_camera(_camera), m_target(_target), m_distance(_distance), m_height(_height){}
+	CameraState_FollowTarget::CameraState_FollowTarget(EntityCamera* _camera)
+		:m_camera(_camera), m_target(0), m_distance(0), m_height(0), m_angleY(0){}
 
 	CameraState_FollowTarget::~CameraState_FollowTarget(){}
 
 	void CameraState_FollowTarget::enter()
 	{
-		m_target = (IWorldEntity*)WORLD->getMonkeyBall();
-
-		//Use the target velocity as forward vector
-		float speed = Supernova::Vector::snVec3Norme(m_target->getActor()->getLinearVelocity());
-		if (speed > 0.1f)
-		{
-			m_forward = m_target->getActor()->getLinearVelocity();
-			Supernova::Vector::snVec4SetY(m_forward, 0);
-			Supernova::Vector::snVec3Normalize(m_forward);
-		}
-		else //if the target doesn't move, use the X vector as forward vector
-		{
-			m_forward = XMVectorSet(1, 0, 0, 0);
-		}
+		m_forward = XMVectorSet(0, 0, 1, 0);
+		m_angleY = 0;
 
 		m_positionDamper.setCurrentValue(m_camera->getPosition());
-		m_positionDamper.setSpeed(100.f);
+		m_positionDamper.setSpeed(1000.f);
 
 		m_lookAtDamper.setCurrentValue(m_camera->getLookAt());
-		m_lookAtDamper.setSpeed(100.f);
+		m_lookAtDamper.setSpeed(1000.f);
 	}
 
 	void CameraState_FollowTarget::execute()
 	{
-		XMVECTOR targetPosition = m_target->getActor()->getPosition();
+		//Update the rotation
+		float amount = INPUT->getMessage(Devil::Input::InputMessage::TURN_SIDEWAYS);
+		float angularSpeed = 0.1f;
+		m_angleY += amount * angularSpeed;
 
-		//Use the target velocity as forward vector
-		float speed = Supernova::Vector::snVec3Norme(m_target->getActor()->getLinearVelocity());
-		if (speed > 0.1f)
-		{
-			snVec newForward = m_target->getActor()->getLinearVelocity();
-			Supernova::Vector::snVec4SetY(newForward, 0);
-			Supernova::Vector::snVec3Normalize(newForward);
+		amount = INPUT->getMessage(Devil::Input::InputMessage::TURN_UP_AND_DOWN);
+		m_height -= amount;
 
-			if (Supernova::Vector::snVec3Norme(newForward) != 0)
-			{
-				m_forward = newForward;
-			}
-		}
-
+		//Rotate the forward vector
+		snMatrix44f forwardRotation;
+		forwardRotation.createRotationY(m_angleY);
+		snVec forward = snMatrixTransform3(Vector::snVec4Set(0, 0, 1, 0), forwardRotation);
 		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 
-		XMVECTOR cameraPosition = targetPosition - (m_forward * m_distance) + (up * m_height);
-
-		snVec dir = cameraPosition - targetPosition;
-		Vector::snVec3Normalize(dir);
-
-		snSphere s(1);
-		snTransform sphereOrigin(targetPosition);
-		float distance = 0;
-		bool res = false;//SUPERNOVA->getScene(0)->shapeCast(s, sphereOrigin, dir, length, distance);//SUPERNOVA->getScene(0)->sphereCast(targetPosition, 0.5f, dir, length);
-		if (res)
-		{
-			DEBUGGER->setWatchExpression(L"Sphere Cast", std::to_wstring(distance));
-		}
-		else
-		{
-			DEBUGGER->setWatchExpression(L"Sphere Cast", L"false");
-		}
+		XMVECTOR cameraPosition = m_target->getPosition() - (forward * m_distance) + (up * m_height);
 
 		m_positionDamper.setIdealValue(cameraPosition);
 		cameraPosition = m_positionDamper.computeValue(WORLD->getDeltaTime());
 
 		m_camera->setPosition(cameraPosition);
 
-		m_lookAtDamper.setIdealValue(targetPosition);
+		m_lookAtDamper.setIdealValue(m_target->getPosition());
 		m_camera->setLookAt(m_lookAtDamper.computeValue(WORLD->getDeltaTime()));
 		m_camera->setUp(up);
 	}
@@ -138,5 +108,12 @@ namespace Devil
 	void CameraState_FollowTarget::operator delete(void* _p)
 	{
 		_aligned_free(_p);
+	}
+
+	void CameraState_FollowTarget::setup(IWorldEntity const * const _target, float _distance, float _height)
+	{
+		m_target = _target;
+		m_distance = _distance;
+		m_height = _height;
 	}
 }

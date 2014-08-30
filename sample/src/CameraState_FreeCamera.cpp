@@ -50,7 +50,6 @@ namespace Devil
 
 	void CameraState_FreeCamera::execute()
 	{
-		//return;
 		const float linearCameraSpeed = 10.75f;
 		const float angularCameraSpeed = 0.025f;
 

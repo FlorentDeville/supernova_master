@@ -70,15 +70,17 @@ namespace Devil
 	class EntitySkybox;
 	class EntityStaticMesh;
 	class IComponent;
-
+	
 	namespace Worlds
 	{
 		namespace Entities
 		{
 			class EntityTerrain;
+			class EntityCharacter;
 		}
 	}
 	using Worlds::Entities::EntityTerrain;
+	using Worlds::Entities::EntityCharacter;
 
 	class World
 	{
@@ -136,6 +138,13 @@ namespace Devil
 		// return : a pointer to the terrain entity.
 		EntityTerrain* createTerrain(const string& _filename, unsigned int _tilesPerRow, unsigned int _tilesPerColumn, float quadSize,
 			float _minScale, float _maxScale, IWorldEntity* _target);
+
+		//Create a character entity. It is represented as capsule and stick to the ground using raycasting.
+		// _radius : capusle's radius.
+		// _height : distance between the two end points.
+		// _color : rendered color of the capsule.
+		// return : a pointer to the character entity.
+		EntityCharacter* createCharacter(float _radius, float _height, const XMVECTOR& _color);
 
 		//Delete all entities from the world.
 		void clearWorld();

@@ -44,6 +44,7 @@
 #include "EntitySkybox.h"
 #include "EntityStaticMesh.h"
 #include "EntityTerrain.h"
+#include "EntityCharacter.h"
 using namespace Devil::Worlds::Entities;
 
 #include "WorldHUD.h"
@@ -208,6 +209,14 @@ namespace Devil
 		terrain->initialize(_filename, _tilesPerRow, _tilesPerColumn, _quadSize, _minScale, _maxScale, _target);
 		m_EntityList.push_back(terrain);
 		return terrain;
+	}
+
+	EntityCharacter* World::createCharacter(float _radius, float _height, const XMVECTOR& _color)
+	{
+		EntityCharacter* character = new EntityCharacter();
+		character->initialize(_radius, _height, _color);
+		m_EntityList.push_back(character);
+		return character;
 	}
 
 	void World::clearWorld()

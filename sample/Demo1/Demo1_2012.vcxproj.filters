@@ -205,6 +205,9 @@
     <ClCompile Include="..\src\CooldownManager.cpp">
       <Filter>Input\Device</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\EntityCharacter.cpp">
+      <Filter>World\Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Camera.h">
@@ -371,6 +374,9 @@
     </ClInclude>
     <ClInclude Include="..\src\CooldownManager.h">
       <Filter>Input\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EntityCharacter.h">
+      <Filter>World\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -57,6 +57,7 @@
 #include "EntityCamera.h"
 #include "EntityComposite.h"
 #include "EntityStaticMesh.h"
+#include "EntityCharacter.h"
 
 #include "ComponentFollowPath.h"
 #include "ComponentPathInterpolate.h"
@@ -1274,7 +1275,6 @@ namespace Devil
 
 		//create the camera.
 		EntityCamera* camera = WORLD->createCamera(snVec4Set(0, 100, -100, 1), snVec4Set(0, 0, 0, 1), snVec4Set(0, 1, 0, 0));
-		camera->setCameraModeFollowTarget();
 
 		WORLD->deactivateCollisionPoint();
 
@@ -1351,6 +1351,7 @@ namespace Devil
 		ComponentBackground* cBack = new ComponentBackground(actEnvironment.getPtr(), ball.getPtr(), initialPosition, initialOrientation);
 		entity->addPreUpdateComponent(cBack);
 
+		camera->setCameraModeFollowTarget(monkeyBall, 15, 10);
 	}
 
 	void SceneManager::createSceneGJK()
@@ -1502,7 +1503,7 @@ namespace Devil
 		//	snMap->initializeDynamic();
 		//}
 
-		const unsigned int SPHERE_COUNT = 20;
+		const unsigned int SPHERE_COUNT = 0;
 		float radius = 10;
 		snVec offset = snVec4Set(0, 40, 0, 0);
 		for (int i = 0; i < SPHERE_COUNT; ++i)
@@ -1530,6 +1531,18 @@ namespace Devil
 
 			/*EntityComposite* entity =*/ WORLD->createComposite(sphere.getPtr(), m_colors[i % 4]);
 			//entity->setWireframe(true);
+		}
+
+		//Create a character entity
+		{
+			float radius = 2;
+			float height = 5;
+			XMVECTOR color = DirectX::XMLoadFloat4(&m_colors[2]);
+			EntityCharacter* character = WORLD->createCharacter(radius, height, color);
+
+			character->setPosition(snVec4Set(0, 500, -5, 1));
+
+			camera->setCameraModeFollowTarget(character, 200, 50);
 		}
 
 		//create the box launcher
