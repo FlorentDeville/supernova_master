@@ -117,6 +117,32 @@ namespace Supernova
 
 		//Return the size of the quads making the height map.
 		float getQuadSize() const;
+
+		//Return the number of quads per row.
+		unsigned int getLength() const;
+
+		//Return the number of quads per column.
+		unsigned int getWidth() const;
+
+		//Find the coordinates of the quads overlapping a given point. This function finds the quads directly above or under a point.
+		// _point : the point to use to find a quad.
+		// _x : if a quad is found, get the x coordinate of the quad.
+		// _y : if a quad is found, get the y coordinate of the quad.
+		// return : True if a quad is found. False otherwise.
+		bool getOverlapQuad(const snVec& _point, unsigned int& _x, unsigned int& _y) const;
+
+		//Retrieve the ids of triangles making a quad.
+		// _x : x coordinate of the quad.
+		// _y : y coordinate of the quad.
+		// _ids : an array of minimum 2 unsigned int containing the ids of the triangle making the quad.
+		// remarks : There is no check for out of bounds coordinate.
+		void getTriangleIds(unsigned int _x, unsigned int y, unsigned int* const _ids) const;
+
+		//Check if the coordinates correpsond to a quads of the height map.
+		// _x : the x coordinate of a quad.
+		// _y : the y coordinate of a quad.
+		// return : True if the coordinate correspond to a quad. False otherwise.
+		bool isValidQuad(unsigned int _x, unsigned int _y) const;
 	};
 }
 

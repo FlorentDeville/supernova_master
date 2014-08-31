@@ -133,7 +133,7 @@ namespace Supernova
 
 		if (quadRow < 0 || quadRow >= m_length)
 			return 0;
-		if (quadColumn < 0 || quadColumn >= m_length)
+		if (quadColumn < 0 || quadColumn >= m_width)
 			return 0;
 
 		//from the indices of the quad, compute the indices of the triangles
@@ -168,5 +168,47 @@ namespace Supernova
 	float snHeightMap::getQuadSize() const
 	{
 		return m_quadSize;
+	}
+
+	unsigned int snHeightMap::getLength() const
+	{
+		return m_length;
+	}
+
+	unsigned int snHeightMap::getWidth() const
+	{
+		return m_width;
+	}
+
+	bool snHeightMap::getOverlapQuad(const snVec& _point, unsigned int& _x, unsigned int& _y) const
+	{
+		//compute the indices of the quads
+		snVec offsetedPoint = _point - m_boundingVolume.m_min;
+
+		_x = unsigned int(snVec4GetX(offsetedPoint) / m_quadSize);
+		_y = unsigned int(snVec4GetZ(offsetedPoint) / m_quadSize);
+
+		if (_y < 0 || _y >= m_length || _x < 0 || _x >= m_width)
+			return false;
+		
+		return true;
+	}
+
+	void snHeightMap::getTriangleIds(unsigned int _x, unsigned int _z, unsigned int* const _ids) const
+	{
+		//from the indices of the quad, compute the indices of the triangles
+		unsigned int twoWidth = 2 * m_width;
+		unsigned int offsetY = _z * twoWidth;
+		unsigned int newId = offsetY + (_x * 2);
+		_ids[0] = newId;
+		_ids[1] = ++newId;
+	}
+
+	bool snHeightMap::isValidQuad(unsigned int _x, unsigned int _y) const
+	{
+		if (_y < 0 || _y >= m_length || _x < 0 || _x >= m_width)
+			return false;
+		
+		return true;
 	}
 }
