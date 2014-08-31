@@ -115,7 +115,7 @@ namespace Devil
 			float sqObstacleDistance = Vector::snVec3SquaredNorme(rayStart - hit);
 			if(sqObstacleDistance < sqCameraDistance)
 			{
-				cameraPosition = hit - dir * cameraRadius;
+				cameraPosition = hit + (Vector::snVec4Set(0, 1, 0, 0) - dir) * cameraRadius;
 			}
 		}
 

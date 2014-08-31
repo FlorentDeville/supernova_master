@@ -110,6 +110,23 @@ namespace Supernova
 
 	bool snRaycast::RayHeightmap(const snRay& _ray, const snHeightMap& _hmap, snVec& _hit)
 	{
+		//A basic implementation would be to check all the quads of the heightmap but this is super slow.
+		//To speed up things, I compute the slope of the ray. There is four different cases:
+		// Case 1 : dx == 0 and dy == 0. The ray is along the up axis. Only one quad to test.
+		// Case 2 : dx == 0 : vertical line : only one column of quads to check.
+		// Case 3 : dy == 0 : horizontal line : only one row of quads to check.
+		// Case 4 : The ray goes diagonally through the height map so I use a modified DDA (digital differential analyzer) algorithm.
+		// DDA is used to find the quads overlapping with the ray. I modified it for the case where two quads are diagonal to each other.
+		// In this case, inaccuracy can cause error and make the algorithm to miss an intersection. So when two quads are diagonal, the
+		// two common adjacent quads are also tested. See the exemple below :
+		//
+		//  _______
+		// | 0 | 1 |   Let's say we have a ray that goes perfectly through quads 0 and 3. Inaccuracy can make me
+		// |___|___|	miss the intersection so in this case I'll test also for quads 1 and 2.
+		// | 2 | 3 |
+		// |___|___|
+		//
+
 		//Check ray vs AABB
 		const snAABB& bb = _hmap.getBoundingVolume();
 
@@ -120,39 +137,35 @@ namespace Supernova
 			return false;
 		}
 
-		//Do not delete. Check all the quads one by one. Helpfull to debug.
-		/*unsigned int rawResX = 512;
-		unsigned int rawResY = 512;
-		{
-			float minSqDistance = SN_FLOAT_MAX;
-			res = false;
-			for(unsigned int x = 0; x < _hmap.getWidth(); ++x)
-			{
-				for(unsigned int y = 0; y < _hmap.getLength(); ++y)
-				{
-					snVec hit;
-					if(RayHeightmapQuad(_ray, _hmap, x, y, hit))
-					{
-						float sqDistance = snVec3SquaredNorme(_ray.m_origin - hit);
-						if(sqDistance < minSqDistance)
-						{
-							_hit = hit;
-							minSqDistance = sqDistance;
-							rawResX = x;
-							rawResY = y;
-
-						}
-					}
-				}
-			}
-		}*/
-
-		snVec secondPoint = _ray.m_origin + _ray.m_direction;
-		float sign = _ray.m_origin.m128_f32[VEC_ID_X] <= secondPoint.m128_f32[VEC_ID_X] ? 1.f : -1.f;
-
-		//Compute the slope of the line
-		float dx = secondPoint.m128_f32[VEC_ID_X] - _ray.m_origin.m128_f32[VEC_ID_X];
-		float dy = secondPoint.m128_f32[VEC_ID_Z] - _ray.m_origin.m128_f32[VEC_ID_Z];
+		//bool debug = false;
+		//if(debug)
+		//{
+		//	//Do not delete. Check all the quads one by one. Helpfull to debug.
+		//	unsigned int rawResX = 512;
+		//	unsigned int rawResY = 512;
+		//	{
+		//		float minSqDistance = SN_FLOAT_MAX;
+		//		res = false;
+		//		for(unsigned int x = 0; x < _hmap.getWidth(); ++x)
+		//		{
+		//			for(unsigned int y = 0; y < _hmap.getLength(); ++y)
+		//			{
+		//				snVec hit;
+		//				if(RayHeightmapQuad(_ray, _hmap, x, y, hit))
+		//				{
+		//					float sqDistance = snVec3SquaredNorme(_ray.m_origin - hit);
+		//					if(sqDistance < minSqDistance)
+		//					{
+		//						_hit = hit;
+		//						minSqDistance = sqDistance;
+		//						rawResX = x;
+		//						rawResY = y;
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 
 		//Get the first quad
 		unsigned int x, y;
@@ -162,8 +175,14 @@ namespace Supernova
 			return false;
 		}
 
+		//Compute the delta
+		snVec secondPoint = _ray.m_origin + _ray.m_direction;
+		snVec delta = secondPoint - _ray.m_origin;
+		float& dx = delta.m128_f32[VEC_ID_X];
+		float& dy = delta.m128_f32[VEC_ID_Z];
+
 		//Those are special cases
-		const float DELTA_EPSILON = 0.05f;
+		const float DELTA_EPSILON = 0.006f;
 		float absDX = abs(dx);
 		float absDY = abs(dy);
 		if(absDX < DELTA_EPSILON && absDY < DELTA_EPSILON) // there is only one quad
@@ -208,26 +227,30 @@ namespace Supernova
 		//Now we are on generic cases.
 		//Look for the next quad
 		float m = dy / dx;
-		unsigned int offset = 0;
 
+		//The dda algorithm always goes from the left to the right so if the origin is to the right, change the signs of dy and dx.
+		float sign = _ray.m_origin.m128_f32[VEC_ID_X] <= secondPoint.m128_f32[VEC_ID_X] ? 1.f : -1.f;
 		if(abs(m) <= 1)
 		{
 			dx = sign * _hmap.getQuadSize();
 			dy = m * sign * _hmap.getQuadSize();
-			offset = 1;
 		}
 		else
 		{
-			dx = (1.f / abs(m)) * _hmap.getQuadSize() * sign;
+			dx = (sign / abs(m)) * _hmap.getQuadSize();
 			dy = m < 0 ? -_hmap.getQuadSize() : _hmap.getQuadSize();
 			dy *= sign;
-			offset = 0;
 		}
 
-		float fx = _ray.m_origin.m128_f32[VEC_ID_X] - bb.m_min.m128_f32[VEC_ID_X];
-		float fy = _ray.m_origin.m128_f32[VEC_ID_Z] - bb.m_min.m128_f32[VEC_ID_Z];
+		//Compute the starting position.
+		snVec position = _ray.m_origin - bb.m_min;
 		unsigned int previousX = x;
 		unsigned int previousY = y;
+
+		float fQuadSizeInverse = 1.f / _hmap.getQuadSize();
+		snVec quadSizeInverse = snVec4Set(fQuadSizeInverse, 0, fQuadSizeInverse, 0);
+
+		snVec quadCoordinate = snVec4Set((float)x, 0, (float)y, 0);
 
 		while(_hmap.isValidQuad(x, y))
 		{
@@ -268,11 +291,12 @@ namespace Supernova
 			previousY = y;
 
 			//Compute next quad
-			fx += dx;
-			fy += dy;
+			position = position + delta;
+			quadCoordinate = position * quadSizeInverse;
 
-			x = (unsigned int)(fx / _hmap.getQuadSize());
-			y = (unsigned int)(fy / _hmap.getQuadSize());
+			//Cast to unsigned int
+			x = (unsigned int) quadCoordinate.m128_f32[VEC_ID_X];
+			y = (unsigned int) quadCoordinate.m128_f32[VEC_ID_Z];
 		}
 
 		return false;
