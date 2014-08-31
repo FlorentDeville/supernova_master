@@ -45,6 +45,7 @@ using Supernova::snRigidbody;
 
 #include "snWorld.h"
 #include "snScene.h"
+#include "snRay.h"
 #include "snDebugger.h"
 #include "snSphere.h"
 using namespace Supernova;
@@ -76,6 +77,15 @@ namespace Devil
 		float amount = INPUT->getMessage(Devil::Input::InputMessage::TURN_SIDEWAYS);
 		float angularSpeed = 0.1f;
 		m_angleY += amount * angularSpeed;
+		const float TWO_PI = 3.14157f * 2;
+		if(m_angleY > TWO_PI)
+		{
+			m_angleY -= TWO_PI;
+		}
+		else if(m_angleY < -TWO_PI)
+		{
+			m_angleY += TWO_PI;
+		}
 
 		amount = INPUT->getMessage(Devil::Input::InputMessage::TURN_UP_AND_DOWN);
 		m_height -= amount;
@@ -86,13 +96,34 @@ namespace Devil
 		snVec forward = snMatrixTransform3(Vector::snVec4Set(0, 0, 1, 0), forwardRotation);
 		XMVECTOR up = XMVectorSet(0, 1, 0, 0);
 
+		//Compute the position
 		XMVECTOR cameraPosition = m_target->getPosition() - (forward * m_distance) + (up * m_height);
-
 		m_positionDamper.setIdealValue(cameraPosition);
 		cameraPosition = m_positionDamper.computeValue(WORLD->getDeltaTime());
 
+		//Check for obstacles
+		snVec rayStart = m_target->getPosition() + Vector::snVec4Set(0, 1, 0, 0) * 4;
+		snVec dir = cameraPosition - rayStart;
+		float sqCameraDistance = Vector::snVec3SquaredNorme(dir);
+		Vector::snVec3Normalize(dir);
+
+		snRay ray(rayStart, dir);
+		snVec hit;
+		const float cameraRadius = 2.f;
+		if(WORLD->getPhysicsScene()->raycast(ray, hit))
+		{
+			float sqObstacleDistance = Vector::snVec3SquaredNorme(rayStart - hit);
+			if(sqObstacleDistance < sqCameraDistance)
+			{
+				cameraPosition = hit - dir * cameraRadius;
+			}
+		}
+
+		
+		//Set final camera position
 		m_camera->setPosition(cameraPosition);
 
+		//Comput the lookat
 		m_lookAtDamper.setIdealValue(m_target->getPosition());
 		m_camera->setLookAt(m_lookAtDamper.computeValue(WORLD->getDeltaTime()));
 		m_camera->setUp(up);

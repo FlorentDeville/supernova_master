@@ -1454,6 +1454,19 @@ namespace Devil
 		WORLD->getCamera()->setPosition(spawnPosition);
 		WORLD->getCamera()->setLookAt(snVec4Set(0, 400, 0, 1));
 		
+		//Create a character entity
+		EntityCharacter* character = 0;
+		{
+			float radius = 2;
+			float height = 5;
+			XMVECTOR color = DirectX::XMLoadFloat4(&m_colors[2]);
+			character = WORLD->createCharacter(radius, height, color);
+
+			character->setPosition(snVec4Set(1000, 1000, -1300, 1));
+
+			camera->setCameraModeFollowTarget(character, 200, 50);
+		}
+
 		/*float size = 30;
 		unsigned int tileResolution = 1;
 		string bitmapFilename = "C:\\Users\\Florent\\Desktop\\terrain_slope_8bits_256_256.bmp";*/
@@ -1463,7 +1476,7 @@ namespace Devil
 		string bitmapFilename = "data\\terrain_8bits_4098_4098.bmp";
 
 
-		/*IWorldEntity* entity = (IWorldEntity*)*/ WORLD->createTerrain(bitmapFilename, tileResolution, tileResolution, size, -200, 800, camera);
+		/*IWorldEntity* entity = (IWorldEntity*)*/ WORLD->createTerrain(bitmapFilename, tileResolution, tileResolution, size, -200, 800, character);
 		//entity->setWireframe(true);
 
 		//TerrainDescription desc;
@@ -1531,18 +1544,6 @@ namespace Devil
 
 			/*EntityComposite* entity =*/ WORLD->createComposite(sphere.getPtr(), m_colors[i % 4]);
 			//entity->setWireframe(true);
-		}
-
-		//Create a character entity
-		{
-			float radius = 2;
-			float height = 5;
-			XMVECTOR color = DirectX::XMLoadFloat4(&m_colors[2]);
-			EntityCharacter* character = WORLD->createCharacter(radius, height, color);
-
-			character->setPosition(snVec4Set(0, 500, -5, 1));
-
-			camera->setCameraModeFollowTarget(character, 200, 50);
 		}
 
 		//create the box launcher
