@@ -36,6 +36,7 @@
 #include "snRay.h"
 #include "snAABB.h"
 #include "snHeightMap.h"
+#include "snMath.h"
 
 using namespace Supernova::Vector;
 
@@ -119,37 +120,159 @@ namespace Supernova
 			return false;
 		}
 
-		//Compute the slope of the ray
-		snVec slope = _hmap.getQuadSize() * _ray.m_direction;
-		
-		//Now let's start from hit
-		snVec rayPoint = hit;
-
-		//While the rayPoint is inside the bounding box of the height map
-		while(isInside(bb, rayPoint))
+		//Do not delete. Check all the quads one by one. Helpfull to debug.
+		/*unsigned int rawResX = 512;
+		unsigned int rawResY = 512;
 		{
-			//Find the overlapping triangles
-			const unsigned int MAX_TRIANGLE_COUNT = 2;
-			unsigned int trianglesId[MAX_TRIANGLE_COUNT];
-			unsigned int triangleFound = _hmap.getOverlapTriangles(rayPoint, trianglesId, MAX_TRIANGLE_COUNT);
-
-			//For each overlapping triangle
-			for(unsigned int triCount = 0; triCount < triangleFound; ++triCount)
+			float minSqDistance = SN_FLOAT_MAX;
+			res = false;
+			for(unsigned int x = 0; x < _hmap.getWidth(); ++x)
 			{
-				//Get the triangle's vertices
-				snVec vertices[3];
-				_hmap.getTriangle(trianglesId[triCount], vertices);
+				for(unsigned int y = 0; y < _hmap.getLength(); ++y)
+				{
+					snVec hit;
+					if(RayHeightmapQuad(_ray, _hmap, x, y, hit))
+					{
+						float sqDistance = snVec3SquaredNorme(_ray.m_origin - hit);
+						if(sqDistance < minSqDistance)
+						{
+							_hit = hit;
+							minSqDistance = sqDistance;
+							rawResX = x;
+							rawResY = y;
 
-				//Check for intersection between the ray and the triangle
-				bool res = RayTriangle(_ray, vertices[0], vertices[1], vertices[2], _hit);
-				if(res) //Return the first intersection
+						}
+					}
+				}
+			}
+		}*/
+
+		snVec secondPoint = _ray.m_origin + _ray.m_direction;
+		float sign = _ray.m_origin.m128_f32[VEC_ID_X] <= secondPoint.m128_f32[VEC_ID_X] ? 1.f : -1.f;
+
+		//Compute the slope of the line
+		float dx = secondPoint.m128_f32[VEC_ID_X] - _ray.m_origin.m128_f32[VEC_ID_X];
+		float dy = secondPoint.m128_f32[VEC_ID_Z] - _ray.m_origin.m128_f32[VEC_ID_Z];
+
+		//Get the first quad
+		unsigned int x, y;
+		res = _hmap.getOverlapQuad(_ray.m_origin, x, y);
+		if(!res)
+		{
+			return false;
+		}
+
+		//Those are special cases
+		const float DELTA_EPSILON = 0.05f;
+		float absDX = abs(dx);
+		float absDY = abs(dy);
+		if(absDX < DELTA_EPSILON && absDY < DELTA_EPSILON) // there is only one quad
+		{
+			return RayHeightmapQuad(_ray, _hmap, x, y, _hit);
+		}
+		else if(absDX < DELTA_EPSILON) //vertical line
+		{
+			int inc = dy > 0 ? 1 : -1;
+			while(_hmap.isValidQuad(x, y))
+			{
+				//Check for intersection with the quad
+				if(RayHeightmapQuad(_ray, _hmap, x, y, _hit))
 				{
 					return true;
 				}
+
+				//Compute next value
+				y += inc;
 			}
 
-			//Move of one unit (a unit in this case is a quad size)
-			rayPoint = rayPoint + slope;
+			return false;
+		}
+		else if(absDY < DELTA_EPSILON) //dy == 0 horizontal line
+		{
+			int inc = dx > 0 ? 1 : -1;
+			while(_hmap.isValidQuad(x, y))
+			{
+				//Check for intersection with the quad
+				if(RayHeightmapQuad(_ray, _hmap, x, y, _hit))
+				{
+					return true;
+				}
+
+				//Compute next value
+				x += inc;
+			}
+
+			return false;
+		}
+
+		//Now we are on generic cases.
+		//Look for the next quad
+		float m = dy / dx;
+		unsigned int offset = 0;
+
+		if(abs(m) <= 1)
+		{
+			dx = sign * _hmap.getQuadSize();
+			dy = m * sign * _hmap.getQuadSize();
+			offset = 1;
+		}
+		else
+		{
+			dx = (1.f / abs(m)) * _hmap.getQuadSize() * sign;
+			dy = m < 0 ? -_hmap.getQuadSize() : _hmap.getQuadSize();
+			dy *= sign;
+			offset = 0;
+		}
+
+		float fx = _ray.m_origin.m128_f32[VEC_ID_X] - bb.m_min.m128_f32[VEC_ID_X];
+		float fy = _ray.m_origin.m128_f32[VEC_ID_Z] - bb.m_min.m128_f32[VEC_ID_Z];
+		unsigned int previousX = x;
+		unsigned int previousY = y;
+
+		while(_hmap.isValidQuad(x, y))
+		{
+			if(previousX != x && previousY != y) //Going in diagonal
+			{
+				if(_hmap.isValidQuad(x, previousY))
+				{
+					if(RayHeightmapQuad(_ray, _hmap, x, previousY, _hit))
+					{
+						return true;
+					}
+				}
+				if(_hmap.isValidQuad(previousX, y))
+				{
+					if(RayHeightmapQuad(_ray, _hmap, previousX, y, _hit))
+					{
+						return true;
+					}
+				}
+
+				if(_hmap.isValidQuad(previousX, previousY))
+				{
+					if(RayHeightmapQuad(_ray, _hmap, previousX, previousY, _hit))
+					{
+						return true;
+					}
+				}
+			}
+
+			//Check for intersection with the quad
+			if(RayHeightmapQuad(_ray, _hmap, x, y, _hit))
+			{
+				return true;
+			}
+			
+			//save previous values
+			previousX = x;
+			previousY = y;
+
+			//Compute next quad
+			fx += dx;
+			fy += dy;
+
+			x = (unsigned int)(fx / _hmap.getQuadSize());
+			y = (unsigned int)(fy / _hmap.getQuadSize());
 		}
 
 		return false;
@@ -211,6 +334,28 @@ namespace Supernova
 		}
  
 		// No hit, no win
+		return false;
+	}
+
+	bool snRaycast::RayHeightmapQuad(const snRay& _ray, const snHeightMap& _hmap, unsigned int _x, unsigned int _y, snVec& _hit)
+	{
+		const unsigned int TRIANGLE_COUNT = 2;
+		unsigned int triangleIds[TRIANGLE_COUNT];
+		_hmap.getTriangleIds(_x, _y, triangleIds);
+
+		for(unsigned int i = 0; i < TRIANGLE_COUNT; ++i)
+		{
+			snVec vertices[3];
+			_hmap.getTriangle(triangleIds[i], vertices);
+
+			//Check for intersection between the ray and the triangle
+			bool res = RayTriangle(_ray, vertices[0], vertices[1], vertices[2], _hit);
+			if(res) //Return the first intersection
+			{
+				return true;
+			}
+		}
+
 		return false;
 	}
 }

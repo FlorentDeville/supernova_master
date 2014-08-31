@@ -61,13 +61,24 @@ namespace Supernova
 		static bool RayHeightmap(const snRay& _ray, const snHeightMap& _hmap, snVec& _hit);
 
 		//Test for intersection between a ray and a triangle.
-		// _ray the ray to check for intersection.
+		// _ray : the ray to check for intersection.
 		// _v1 : first vertex of the triangle.
 		// _v2 : second vertex of the triangle.
 		// _v3 : third vertex of the triangle.
 		// _hit : Contains the intersection point.
 		// return : True for intersection. False otherwise.
 		static bool RayTriangle(const snRay& _ray, const snVec& _v1, const snVec& _v2, const snVec& _v3, snVec& _hit);
+
+	private:
+
+		//Test for intersection between a ray and a quad of a heightmap.
+		// _ray : the ray to check for intersection.
+		// _hmap : the heightmap containing the quad to test against the ray.
+		// _x : x coordinate of the quad in the heightmap.
+		// _y : y coordinate of the quad in the heightmap.
+		// _hit : If the ray hit the quad, it contains the hit point.
+		// return : True for intersection. False otherwise.
+		static bool RayHeightmapQuad(const snRay& _ray, const snHeightMap& _hmap, unsigned int _x, unsigned int _y, snVec& _hit);
 	};
 }
 
