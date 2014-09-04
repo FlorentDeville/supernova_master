@@ -206,7 +206,8 @@ namespace Supernova
 
 	bool snHeightMap::isValidQuad(unsigned int _x, unsigned int _y) const
 	{
-		if (_y < 0 || _y >= m_length || _x < 0 || _x >= m_width)
+		//No need to test for inferior to 0 as x and y are UNSIGNED int.
+		if (_y >= m_length || _x >= m_width)
 			return false;
 		
 		return true;

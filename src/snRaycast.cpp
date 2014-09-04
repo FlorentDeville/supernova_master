@@ -175,23 +175,20 @@ namespace Supernova
 			return false;
 		}
 
-		//Compute the delta
-		snVec secondPoint = _ray.m_origin + _ray.m_direction;
-		snVec delta = secondPoint - _ray.m_origin;
-		float& dx = delta.m128_f32[VEC_ID_X];
-		float& dy = delta.m128_f32[VEC_ID_Z];
+		const float& dirX = _ray.m_direction.m128_f32[VEC_ID_X];
+		const float& dirY = _ray.m_direction.m128_f32[VEC_ID_Z];
 
 		//Those are special cases
 		const float DELTA_EPSILON = 0.006f;
-		float absDX = abs(dx);
-		float absDY = abs(dy);
+		float absDX = abs(dirX);
+		float absDY = abs(dirY);
 		if(absDX < DELTA_EPSILON && absDY < DELTA_EPSILON) // there is only one quad
 		{
 			return RayHeightmapQuad(_ray, _hmap, x, y, _hit);
 		}
 		else if(absDX < DELTA_EPSILON) //vertical line
 		{
-			int inc = dy > 0 ? 1 : -1;
+			int inc = dirY > 0 ? 1 : -1;
 			while(_hmap.isValidQuad(x, y))
 			{
 				//Check for intersection with the quad
@@ -208,7 +205,7 @@ namespace Supernova
 		}
 		else if(absDY < DELTA_EPSILON) //dy == 0 horizontal line
 		{
-			int inc = dx > 0 ? 1 : -1;
+			int inc = dirX > 0 ? 1 : -1;
 			while(_hmap.isValidQuad(x, y))
 			{
 				//Check for intersection with the quad
@@ -224,24 +221,6 @@ namespace Supernova
 			return false;
 		}
 
-		//Now we are on generic cases.
-		//Look for the next quad
-		float m = dy / dx;
-
-		//The dda algorithm always goes from the left to the right so if the origin is to the right, change the signs of dy and dx.
-		float sign = _ray.m_origin.m128_f32[VEC_ID_X] <= secondPoint.m128_f32[VEC_ID_X] ? 1.f : -1.f;
-		if(abs(m) <= 1)
-		{
-			dx = sign * _hmap.getQuadSize();
-			dy = m * sign * _hmap.getQuadSize();
-		}
-		else
-		{
-			dx = (sign / abs(m)) * _hmap.getQuadSize();
-			dy = m < 0 ? -_hmap.getQuadSize() : _hmap.getQuadSize();
-			dy *= sign;
-		}
-
 		//Compute the starting position.
 		snVec position = _ray.m_origin - bb.m_min;
 		unsigned int previousX = x;
@@ -251,6 +230,22 @@ namespace Supernova
 		snVec quadSizeInverse = snVec4Set(fQuadSizeInverse, 0, fQuadSizeInverse, 0);
 
 		snVec quadCoordinate = snVec4Set((float)x, 0, (float)y, 0);
+
+		//Compute the delta value. It's a vector with the same direction as the ray and the greater direction has a length
+		// of quad size.
+		// For exemple if X is the greater coordinate then dx = dir.x * (quadSize / abs(dir.x)) = quadSize and
+		// dy = dir.y * (quadSize / abs(dir.x)).
+		snVec delta = _ray.m_direction;
+		float length = 0;
+		if(absDX > absDY)
+		{
+			length = _hmap.getQuadSize() / absDX;
+		}
+		else
+		{
+			length = _hmap.getQuadSize() / absDY;
+		}
+		delta = delta * length;
 
 		while(_hmap.isValidQuad(x, y))
 		{
@@ -294,9 +289,18 @@ namespace Supernova
 			position = position + delta;
 			quadCoordinate = position * quadSizeInverse;
 
+			//out of bounds
+			if(quadCoordinate.m128_f32[VEC_ID_X] < 0 || quadCoordinate.m128_f32[VEC_ID_Z] < 0)
+				return false;
+
 			//Cast to unsigned int
 			x = (unsigned int) quadCoordinate.m128_f32[VEC_ID_X];
 			y = (unsigned int) quadCoordinate.m128_f32[VEC_ID_Z];
+
+			/*if(previousX == x && previousY == y)
+			{
+				int a = 0;
+			}*/
 		}
 
 		return false;
