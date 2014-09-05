@@ -223,8 +223,8 @@ namespace Supernova
 
 		//Compute the starting position.
 		snVec position = _ray.m_origin - bb.m_min;
-		unsigned int previousX = x;
-		unsigned int previousY = y;
+		unsigned int previousX = x + 1;
+		unsigned int previousY = y + 1;
 
 		float fQuadSizeInverse = 1.f / _hmap.getQuadSize();
 		snVec quadSizeInverse = snVec4Set(fQuadSizeInverse, 0, fQuadSizeInverse, 0);
@@ -251,27 +251,14 @@ namespace Supernova
 		{
 			if(previousX != x && previousY != y) //Going in diagonal
 			{
-				if(_hmap.isValidQuad(x, previousY))
+				if(RayHeightmapQuad(_ray, _hmap, x, previousY, _hit))
 				{
-					if(RayHeightmapQuad(_ray, _hmap, x, previousY, _hit))
-					{
-						return true;
-					}
+					return true;
 				}
-				if(_hmap.isValidQuad(previousX, y))
+				
+				if(RayHeightmapQuad(_ray, _hmap, previousX, y, _hit))
 				{
-					if(RayHeightmapQuad(_ray, _hmap, previousX, y, _hit))
-					{
-						return true;
-					}
-				}
-
-				if(_hmap.isValidQuad(previousX, previousY))
-				{
-					if(RayHeightmapQuad(_ray, _hmap, previousX, previousY, _hit))
-					{
-						return true;
-					}
+					return true;
 				}
 			}
 
@@ -296,11 +283,6 @@ namespace Supernova
 			//Cast to unsigned int
 			x = (unsigned int) quadCoordinate.m128_f32[VEC_ID_X];
 			y = (unsigned int) quadCoordinate.m128_f32[VEC_ID_Z];
-
-			/*if(previousX == x && previousY == y)
-			{
-				int a = 0;
-			}*/
 		}
 
 		return false;
