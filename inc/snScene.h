@@ -126,6 +126,9 @@ namespace Supernova
 		//Time to wait before an body can go into sleeping period.
 		float m_sleepingPeriod;
 
+		//Flag to activate/deactivate the sleeping state in the engine.
+		bool m_isSleepingStateAuthorized;
+
 	public:
 		//Constructor. Scenes should be created using snWorld::createScene. This constructor should be hidden.
 		snScene();
@@ -200,6 +203,10 @@ namespace Supernova
 		//Set the time to wait before an object can go to sleep in seconds.
 		// _dt : the time to wait in seconds.
 		void setSleepingPeriod(float _dt);
+
+		//If false, no rigid bodies will fall to sleep. This flag can't be changed in runtime.
+		// _isSleepingStateAuthorized : True to make bodies fall into sleeping state. False to leave them always awake.
+		void setIsSleepingStateAuthorized(bool _isSleepingStateAuthorized);
 
 		//Overridden new operator to create scene with correct alignement.
 		void* operator new(size_t _count);

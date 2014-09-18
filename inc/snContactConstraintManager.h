@@ -62,6 +62,9 @@ namespace Supernova
 		//Id of the next available constraint
 		unsigned int m_currentConstraintId;
 
+		//Flag to indicate if we can set bodies into sleeping state
+		bool m_isSleepingStateAuthorized;
+
 		//////////////////////////////////////////////////////////////////////
 		//				Define the sleeping constraint graph				//
 		//////////////////////////////////////////////////////////////////////
@@ -107,6 +110,9 @@ namespace Supernova
 		//Awake the constraint for a a rigidbody and recursively the other rigidbody of the constraints.
 		void awakeConstraint(snRigidbody * const _body);
 
+		//Set the flag authorizing the sleeping state.
+		// _isSleepingStateAuthorized : True to authorized sleeping state. False otherwise.
+		void setIsSleepingStateAuthorized(bool _isSleepingStateAuthorized);
 	private:
 		
 	};

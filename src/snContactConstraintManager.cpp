@@ -40,7 +40,10 @@ using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snContactConstraintManager::snContactConstraintManager() : m_collisionConstraints(), m_currentConstraintId(0)
+	snContactConstraintManager::snContactConstraintManager() : 
+		m_collisionConstraints(), 
+		m_currentConstraintId(0),
+		m_isSleepingStateAuthorized(true)
 	{}
 
 	snContactConstraintManager::~snContactConstraintManager()
@@ -232,5 +235,10 @@ namespace Supernova
 
 		//Clear the list of constraints
 		constraints.clear();
+	}
+
+	void snContactConstraintManager::setIsSleepingStateAuthorized(bool _isSleepingStateAuthorized)
+	{
+		m_isSleepingStateAuthorized = _isSleepingStateAuthorized;
 	}
 }

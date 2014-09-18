@@ -77,14 +77,21 @@ namespace Supernova
 
 	snCollision snScene::m_collisionService;
 
-	snScene::snScene() : snObject(), m_linearSquaredSpeedThreshold(0.005f),
-		m_angularSquaredSpeedThreshold(0.001f), m_solverIterationCount(10),
-		m_collisionMode(snECollisionMode_ST_SweepAndPrune), m_contactConstraintBeta(0.25f), m_sweepAndPrune()
+	snScene::snScene() : 
+		snObject(), 
+		m_linearSquaredSpeedThreshold(0.005f),
+		m_angularSquaredSpeedThreshold(0.001f), 
+		m_solverIterationCount(10),
+		m_collisionMode(snECollisionMode_ST_SweepAndPrune), 
+		m_contactConstraintBeta(0.25f), 
+		m_sweepAndPrune(),
+		m_isSleepingStateAuthorized(true)
 	{
 		m_gravity = snVec4Set(0, -9.81f, 0, 0);
 		m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
 		m_frictionMode = snFrictionMode::SN_FRICTION_ONE_DIRECTION;
 		m_sleepingPeriod = 0.5f;
+		m_contactConstraintManager.setIsSleepingStateAuthorized(m_isSleepingStateAuthorized);
 	}
 
 	snScene::~snScene()
@@ -296,6 +303,12 @@ namespace Supernova
 	void snScene::setSleepingPeriod(float _dt)
 	{
 		m_sleepingPeriod = _dt;
+	}
+
+	void snScene::setIsSleepingStateAuthorized(bool _isSleepingStateAuthorized)
+	{
+		m_isSleepingStateAuthorized = _isSleepingStateAuthorized;
+		m_contactConstraintManager.setIsSleepingStateAuthorized(m_isSleepingStateAuthorized);
 	}
 
 	void* snScene::operator new(size_t _count)
@@ -665,12 +678,15 @@ namespace Supernova
 		//compute colliders in world coordinate
 		_rb->updateCollidersAndAABB();
 		
-		//update the sleeping state
-		_rb->updateSleepingState(_dt, m_sleepingPeriod);
-
-		if(!_rb->isAwake())
+		if(m_isSleepingStateAuthorized)
 		{
-			m_contactConstraintManager.setSleepingBody(_rb);
+			//update the sleeping state
+			_rb->updateSleepingState(_dt, m_sleepingPeriod);
+
+			if(!_rb->isAwake())
+			{
+				m_contactConstraintManager.setSleepingBody(_rb);
+			}
 		}
 	}
 
