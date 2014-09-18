@@ -44,7 +44,7 @@ using std::map;
 #include "snICollider.h"
 
 //Compute the key to retrieve the collision query function in the map. The parameters are the type of colliders.
-#define SN_COLLISION_KEY(a, b) ((a<<8) | b)
+#define SN_COLLISION_CALLBACK_KEY(a, b) ((a<<8) | b)
 
 namespace Supernova
 {

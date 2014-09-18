@@ -64,13 +64,13 @@ namespace Supernova
 	snCollision::snCollision()
 	{
 		//initialize the collision query map
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderBox), &Supernova::snCollision::queryTestCollisionOBBVersusOBB));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderSphere), &Supernova::snCollision::queryTestCollisionSphereVersusSphere));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderSphere), &Supernova::snCollision::queryTestCollisionCapsuleVersusSphere));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderSphere, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionSphereVersusHeightMap));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderBox, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionOBBVersusHeightMap));
-		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_KEY(snEColliderCapsule, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionCapsuleVersusHeightMap));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_CALLBACK_KEY(snEColliderBox, snEColliderBox), &Supernova::snCollision::queryTestCollisionOBBVersusOBB));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_CALLBACK_KEY(snEColliderSphere, snEColliderSphere), &Supernova::snCollision::queryTestCollisionSphereVersusSphere));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_CALLBACK_KEY(snEColliderBox, snEColliderSphere), &Supernova::snCollision::queryTestCollisionBoxVersusSphere));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_CALLBACK_KEY(snEColliderCapsule, snEColliderSphere), &Supernova::snCollision::queryTestCollisionCapsuleVersusSphere));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_CALLBACK_KEY(snEColliderSphere, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionSphereVersusHeightMap));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_CALLBACK_KEY(snEColliderBox, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionOBBVersusHeightMap));
+		m_collisionQueryMap.insert(snCollisionQueryMapElement(SN_COLLISION_CALLBACK_KEY(snEColliderCapsule, snEColliderHeightMap), &Supernova::snCollision::queryTestCollisionCapsuleVersusHeightMap));
 	}
 
 	snCollision::~snCollision(){}
@@ -108,7 +108,7 @@ namespace Supernova
 	snCollisionResult snCollision::invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const
 	{
 		//first look for a specific algorithm in the jump table
-		unsigned short key = SN_COLLISION_KEY(_c1->getTypeOfCollider(), _c2->getTypeOfCollider());
+		unsigned short key = SN_COLLISION_CALLBACK_KEY(_c1->getTypeOfCollider(), _c2->getTypeOfCollider());
 		snCollisionQueryMap::const_iterator i = m_collisionQueryMap.find(key);
 		
 		if (i != m_collisionQueryMap.cend())
@@ -117,7 +117,7 @@ namespace Supernova
 			return func(_c1, _c2);
 		}
 
-		key = SN_COLLISION_KEY(_c2->getTypeOfCollider(), _c1->getTypeOfCollider());
+		key = SN_COLLISION_CALLBACK_KEY(_c2->getTypeOfCollider(), _c1->getTypeOfCollider());
 		i = m_collisionQueryMap.find(key);
 		if (i != m_collisionQueryMap.cend())
 		{
