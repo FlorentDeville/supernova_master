@@ -136,50 +136,70 @@ namespace Supernova
 	{
 		snCollisionResult res;
 
+		const int NORMAL_COUNT = 3;
+		snVec s1Normals[NORMAL_COUNT];
+		snVec s2Normals[NORMAL_COUNT];
+
+		_c1->getUniqueNormals(s1Normals, NORMAL_COUNT);
+		_c2->getUniqueNormals(s2Normals, NORMAL_COUNT);
+
+		float smallestOverlap = SN_FLOAT_MAX;
 		snSAT sat;
-		bool resSAT = sat.queryIntersection(*_c1, *_c2, res.m_normal);
-
-#ifdef SANITY_GJK
-		const snOBB* _b1 = static_cast<const snOBB*>(_c1);
-		const snOBB* _b2 = static_cast<const snOBB*>(_c2);
-		snVec simplex[4];
-		unsigned int simplexSize;
-		bool resGJK = snGJK::gjkIntersect(*_b1, *_b2, simplex, simplexSize);
-
-		if (resSAT != resGJK)
+		bool vertexFaceFeature = false;
+		const snICollider* faceCollider = 0;
+		const snICollider* vertexCollider = 0;
+		unsigned int faceId = 0;
+		//compute collider overlap using the normals
+		for (int i = 0; i < NORMAL_COUNT; ++i)
 		{
-			snVec normals[3];
-			LOGGER->logWarn("");
-			LOGGER->logWarn("A difference was detected between SAT and GJK.");
-			LOGGER->logWarn("START DUMP");
-			LOGGER->logWarn(" - OBB 1 :");
-			LOGGER->logWarn("      pos = " + LOGGER->toString(_b1->getPosition()));
-			LOGGER->logWarn("      extends = " + LOGGER->toString(_b1->getExtends()));
-			_b1->getUniqueNormals(normals, 3);
-			LOGGER->logWarn("      nx = " + LOGGER->toString(normals[0]));
-			LOGGER->logWarn("      ny = " + LOGGER->toString(normals[1]));
-			LOGGER->logWarn("      nz = " + LOGGER->toString(normals[2]));
+			float oldOverlap = smallestOverlap;
+			if (!sat.queryOverlap(*_c1, *_c2, s1Normals[i], res.m_normal, smallestOverlap))
+				return res;
+			if(oldOverlap != smallestOverlap)
+			{
+				faceId = i;
+				vertexFaceFeature = true;
+				faceCollider = _c1;
+				vertexCollider = _c2;
+			}
 
-			LOGGER->logWarn(" - OBB 2 :");
-			LOGGER->logWarn("      pos = " + LOGGER->toString(_b2->getPosition()));
-			LOGGER->logWarn("      extends = " + LOGGER->toString(_b2->getExtends()));
-			_b2->getUniqueNormals(normals, 3);
-			LOGGER->logWarn("      nx = " + LOGGER->toString(normals[0]));
-			LOGGER->logWarn("      ny = " + LOGGER->toString(normals[1]));
-			LOGGER->logWarn("      nz = " + LOGGER->toString(normals[2]));
-			string value = resSAT ? "true" : "false";
-			LOGGER->logWarn("SAT result : " + value);
-			value = resGJK ? "true" : "false";
-			LOGGER->logWarn("GJK result : " + value);
-			LOGGER->logWarn("STOP DUMP");
-			LOGGER->logWarn("");
-
-			assert(false);
+			oldOverlap = smallestOverlap;
+			if (!sat.queryOverlap(*_c1, *_c2, s2Normals[i], res.m_normal, smallestOverlap))
+				return res;
+			if(oldOverlap != smallestOverlap)
+			{
+				faceId = i;
+				vertexFaceFeature = true;
+				faceCollider = _c2;
+				vertexCollider = _c1;
+			}
 		}
-#endif //ifdef _DEBUG
 
-		if (!resSAT)
-			return res;
+		//compute overlap for the cross product of the normals
+		bool edgeEdgeFeature = false;
+		unsigned int edgeFeature1 = 0;
+		unsigned int edgeFeature2 = 0;
+		for (int i = 0; i < NORMAL_COUNT; ++i)
+		{
+			for (int j = i; j < NORMAL_COUNT; ++j)
+			{
+				snVec cross = snVec3Cross(s1Normals[i], s2Normals[j]);
+				const float EPSILON = 1e-7f;
+				if (snVec3SquaredNorme(cross) < EPSILON) continue;
+
+				snVec3Normalize(cross);
+				float oldOverlap = smallestOverlap;
+				if (!sat.queryOverlap(*_c1, *_c2, cross, res.m_normal, smallestOverlap))
+					return res;
+				
+				if(oldOverlap != smallestOverlap)
+				{
+					edgeEdgeFeature = true;
+					edgeFeature1 = i;
+					edgeFeature2 = j;
+				}
+			}
+		}
 
 		//there is a collision so find the collision patch
 		res.m_collision = true;
@@ -188,6 +208,50 @@ namespace Supernova
 		snFeatureClipping clipping;
 		bool clippingResult = clipping.findContactPatch(*_c1, *_c2, res.m_normal, res.m_contacts, res.m_penetrations);
 		res.m_collision = clippingResult;
+
+		//find the features motherfucker!!!!!!!!!!!!!!
+		if(vertexFaceFeature)
+		{
+			snVec vertexFeatures[4];
+			unsigned int count = 4;
+			unsigned int featureId = 0;
+			vertexCollider->getClosestFeature(res.m_normal, vertexFeatures, count, featureId);
+
+			const snOBB* box = static_cast<const snOBB*>(vertexCollider);
+			unsigned int verticesFeatureId[4];
+			box->getVertexFeatureIds(vertexFeatures, res.m_normal, verticesFeatureId);
+			
+			for(unsigned int i = 0; i < 4; ++i)
+			{
+				snCollisionKey newKey;
+				newKey.shapeId[0] = faceCollider->getId();
+				newKey.shapeId[1] = vertexCollider->getId();
+
+				newKey.featureId[0] = faceId;
+				newKey.featureId[1] = verticesFeatureId[i];
+
+				res.m_keys.push_back(newKey);
+			}
+		}
+		else if(edgeEdgeFeature)
+		{
+			snCollisionKey newKey;
+			newKey.shapeId[0] = _c1->getId();
+			newKey.shapeId[1] = _c2->getId();
+
+			newKey.featureId[0] = edgeFeature1;
+			newKey.featureId[1] = edgeFeature2;
+
+			res.m_keys.push_back(newKey);
+		}
+#if _DEBUG
+		else
+		{
+			//We shouldn't be here... never!!
+			assert(false);
+		}
+#endif
+
 		return res;
 	}
 

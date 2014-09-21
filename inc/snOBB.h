@@ -95,6 +95,12 @@ namespace Supernova
 		//_featureId : unique id of the feature.
 		void getClosestFeature(const snVec& _n, snVec* const _polygon, unsigned int& _count, unsigned int& _featureId) const;
 
+		//Get the features ids for the list of vertices.
+		// _vertices : array of 4 vertices to identify.
+		// _n : the outward normal of the face made by the vertices.
+		// _ids : array of 4 unsigned int containing the feature ids of the vertices.
+		void getVertexFeatureIds(const snVec* _vertices, const snVec& _n, unsigned int* _ids) const;
+
 		//return the normal in workd coordinate of the face
 		snVec getFeatureNormal(unsigned int _featureId) const;
 

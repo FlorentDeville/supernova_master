@@ -171,6 +171,9 @@
     <ClInclude Include="inc\snRaycast.h">
       <Filter>Raycast</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snCollisionKey.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">

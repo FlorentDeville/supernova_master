@@ -47,4 +47,9 @@ namespace Supernova
 			SUPERNOVA->removeObject(m_id);
 		}
 	}
+
+	snObjectId snObject::getId() const
+	{
+		return m_id;
+	}
 }

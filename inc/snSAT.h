@@ -48,8 +48,13 @@ namespace Supernova
 		//Return true if the colliders intersects. False otherwise.
 		bool queryIntersection(const snICollider& _c1, const snICollider& _c2, snVec& collisionNormal);
 
-	private:
-
+		//Return the overlapping distance between two colliders.
+		// _c1 : the first collider.
+		// _c2 : the second collider.
+		// _axis : the axis along which to compute the overlap.
+		// _separatingAxis : The separation axis.
+		// _overlap : the overlapping distance.
+		// return : false if the two colliders do not overlap. True otherwise.
 		bool queryOverlap(const snICollider& _c1, const snICollider& _c2, const snVec& _axis, snVec& _separatingAxis, float& _overlap);
 	};
 }

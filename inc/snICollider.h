@@ -88,6 +88,8 @@ namespace Supernova
 		//Return a reference to the transform of the collider
 		snTransform& getTransform() { return m_transform; }
 
+		const snTransform& getTransform() const { return m_transform; }
+
 		//Return the feature the farthest along the normal.
 		//_n : direction along which the search of the farthest feature has to be done.
 		//_polygon : array of 4 vectors filled by the function containing the feature. 

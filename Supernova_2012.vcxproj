@@ -20,6 +20,7 @@
     <ClInclude Include="inc\snCollision.h" />
     <ClInclude Include="inc\snCollisionDispatcher.h" />
     <ClInclude Include="inc\snCollisionFlag.h" />
+    <ClInclude Include="inc\snCollisionKey.h" />
     <ClInclude Include="inc\snCollisionMode.h" />
     <ClInclude Include="inc\snCollisionResult.h" />
     <ClInclude Include="inc\snContactConstraint.h" />

@@ -32,48 +32,17 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_RESULT_H
-#define SN_COLLISION_RESULT_H
-
-#include "snTypes.h"
-#include "snGlobals.h"
-#include "snCollisionKey.h"
+#ifndef SN_COLLISION_KEY_H
+#define SN_COLLISION_KEY_H
 
 namespace Supernova
 {
-
-	class SN_ALIGN snCollisionResult
+	class snCollisionKey
 	{
-
 	public:
-		//Normal of the collision point. Its direction is from the second body to the first one.
-		snVec m_normal;
-
-		//List of contact points
-		snVecVector m_contacts;
-
-		//List of penetration depth.
-		vector<float> m_penetrations;
-
-		//Indicates if a collision was detected
-		bool m_collision;
-
-		//If a collision is detected, contains a unique identifier for the collision.
-		vector<snCollisionKey> m_keys;
-
-	public:
-
-		snCollisionResult() : m_collision(false), m_normal(), m_contacts(), m_penetrations(){}
-
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, SN_ALIGN_SIZE);
-		}
-
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
+		__int64 shapeId[2];
+		int featureId[2];
 	};
 }
-#endif // SN_COLLISION_RESULT_H
+
+#endif //ifndef SN_COLLISION_KEY_H

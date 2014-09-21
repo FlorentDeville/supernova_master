@@ -38,6 +38,8 @@
 #include "snOBB.h"
 
 #include <assert.h>
+#include <list>
+using std::list;
 
 #include "snMath.h"
 #include "snAABB.h"
@@ -303,6 +305,81 @@ namespace Supernova
 			_polygon[3] = m_worldBox[m_idFaces[indexId + 3]];
 			_count = 4;
 		}
+	}
+
+	void snOBB::getVertexFeatureIds(const snVec* _vertices, const snVec& _n, unsigned int* _ids) const
+	{
+		float maxDot = -SN_FLOAT_MAX;
+		int normalId = -1;
+		int side = 0;
+
+		//loop through each obb normal to find the one the closest to the normal in argument
+		for (int i = 0; i < 3; ++i)
+		{
+			float dot = snVec4GetX(snVec3Dot(_n, m_normals[i] * (1.f / snVec4GetById(m_extends, i))));
+
+			if (dot > maxDot && dot > 0) //if _n is going to the same direction as the normal
+			{
+				maxDot = dot;
+				normalId = i;
+				side = 1;
+			}
+			else if (-dot > maxDot && -dot > 0) //_n is going to the same direction as -normal
+			{
+				maxDot = -dot;
+				normalId = i;
+				side = -1;
+			}
+
+		}
+
+		//Get the face id
+		unsigned int faceId = 0;
+		if (normalId == 0 && side == 1)
+			faceId = 1;
+		else if (normalId == 0 && side == -1)
+			faceId = 5;
+		else if (normalId == 1 && side == 1)
+			faceId = 2;
+		else if (normalId == 1 && side == -1)
+			faceId = 3;
+		else if (normalId == 2 && side == 1)
+			faceId = 4;
+		else
+			faceId = 0;
+
+		//Get the vertices ids
+		unsigned int indexId = faceId * 4;
+		unsigned int verticesId[4];
+		verticesId[0] = m_idFaces[indexId];
+		verticesId[1] = m_idFaces[indexId + 1];
+		verticesId[2] = m_idFaces[indexId + 2];
+		verticesId[3] = m_idFaces[indexId + 3];
+
+		list<unsigned int> inputListIds;
+		for(unsigned int i = 0; i < 4; ++i)
+			inputListIds.push_back(i);
+
+		//map each vertex in parameter to an id
+		for(unsigned int i : verticesId)
+		{
+			list<unsigned int>::iterator closest;
+			float minDistance = SN_FLOAT_MAX;
+			for(list<unsigned int>::iterator input = inputListIds.begin(); input != inputListIds.end(); ++input)
+			{
+				float sqDistance = snVec3SquaredNorme(m_worldBox[i] - _vertices[*input]);
+				if(sqDistance < minDistance)
+				{
+					minDistance = sqDistance;
+					closest = input;
+				}
+			}
+
+			//save results
+			_ids[*closest] = i + 3;
+			inputListIds.erase(closest);
+		}
+
 	}
 
 	snVec snOBB::getFeatureNormal(unsigned int _featureId) const

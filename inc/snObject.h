@@ -65,6 +65,8 @@ namespace Supernova
 		snObject(snObjectId _id);
 
 		virtual ~snObject();
+
+		snObjectId getId() const;
 	};
 }
 #endif //ifndef SN_OBJECT_H
