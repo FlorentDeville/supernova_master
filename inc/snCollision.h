@@ -85,7 +85,7 @@ namespace Supernova
 			_aligned_free(_p);
 		}
 
-	private:
+	//private:
 
 		snCollisionResult invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
 

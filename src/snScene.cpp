@@ -524,61 +524,69 @@ namespace Supernova
 
 	void snScene::computeCollisionDetection(snRigidbody* _a, snRigidbody* _b)
 	{
-		//query collision between actor _a and _b.
-		const unsigned int MAX_COL_RES = 10;
-		snCollisionResult colRes[MAX_COL_RES];
-		unsigned int colResCount = 0;
-		m_collisionService.queryTestCollision(_a, _b, colRes, MAX_COL_RES, &colResCount);
+		////query collision between actor _a and _b.
+		//const unsigned int MAX_COL_RES = 10;
+		//snCollisionResult colRes[MAX_COL_RES];
+		//unsigned int colResCount = 0;
+		//m_collisionService.queryTestCollision(_a, _b, colRes, MAX_COL_RES, &colResCount);
 
-		//no collision, leave
-		if (colResCount == 0)
-			return;
+		std::vector<snICollider*>& listColliders1 = _a->getColliders();
+		std::vector<snICollider*>& listColliders2 = _b->getColliders();
 
-		//check for collision callbacks
-		if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
-			_a->onCollision(_b);
-		if (_b->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
-			_b->onCollision(_a);
-
-		//check if a collision response is needed
-		if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE) ||
-			_b->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE))
+		//for (vector<snICollider*>::const_iterator c1 = listColliders1.cbegin(); c1 != listColliders1.cend(); ++c1)
+		for(const snICollider* c1 : listColliders1)
 		{
-			return;
-		}
-
-		//Awake the bodies
-		if(!_a->isAwake())
-		{
-			_a->setAwake(true);
-			m_contactConstraintManager.awakeConstraint(_a);
-			awakeRigidbodiesLinkedByConstraints(_a);
-		}
-		if(!_b->isAwake())
-		{
-			_b->setAwake(true);
-			m_contactConstraintManager.awakeConstraint(_b);
-			awakeRigidbodiesLinkedByConstraints(_b);
-		}
-
-		//make the collision constraints from the collision results
-		for (unsigned int colResId = 0; colResId < colResCount; ++colResId)
-		{
-			snCollisionResult* singleRes = colRes + colResId;
-
-			vector<float>::const_iterator penetrationIterator = singleRes->m_penetrations.cbegin();
-			for (snVecVectorConstIterator point = singleRes->m_contacts.cbegin(); point != singleRes->m_contacts.cend(); ++point, ++penetrationIterator)
+			//for (vector<snICollider*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
+			for(const snICollider* c2 : listColliders2)
 			{
-				m_collisionPoints.push_back(*point);
+				//pouahhhh it's ugly!!!! let's check first the AABBs
+				snCollisionResult res = m_collisionService.invokeQueryTestCollision(c1, c2);
+				if (res.m_collision)
+				{
+					//check for collision callbacks
+					if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
+						_a->onCollision(_b);
+					if (_b->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
+						_b->onCollision(_a);
 
-				//if a constraints already exists, take it and reuse it or else create it.
-				snContactConstraint* contactConstraint = m_contactConstraintManager.getAvailableConstraint();
+					//check if a collision response is needed
+					if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE) ||
+						_b->isEnabledCollisionFlag(snCollisionFlag::CF_NO_CONTACT_RESPONSE))
+					{
+						return;
+					}
 
-				//initialize and activate the constraints
-				contactConstraint->initialize(_a, _b, singleRes->m_normal, *point, *penetrationIterator, this);
-				contactConstraint->setIsActive(true);
+					//Awake the bodies
+					if(!_a->isAwake())
+					{
+						_a->setAwake(true);
+						m_contactConstraintManager.awakeConstraint(_a);
+						awakeRigidbodiesLinkedByConstraints(_a);
+					}
+					if(!_b->isAwake())
+					{
+						_b->setAwake(true);
+						m_contactConstraintManager.awakeConstraint(_b);
+						awakeRigidbodiesLinkedByConstraints(_b);
+					}
+
+					vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
+					for (snVecVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
+					{
+						m_collisionPoints.push_back(*point);
+
+						//if a constraints already exists, take it and reuse it or else create it.
+						snContactConstraint* contactConstraint = m_contactConstraintManager.getAvailableConstraint();
+
+						//initialize and activate the constraints
+						contactConstraint->initialize(_a, _b, res.m_normal, *point, *penetrationIterator, this);
+						contactConstraint->setIsActive(true);
+					}
+				}
 			}
 		}
+
+		
 	}
 
 	void snScene::storeActorPair(snRigidbody* _a, snRigidbody* _b)
