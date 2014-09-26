@@ -48,8 +48,12 @@ namespace Supernova
 	/// <summary>
 	/// Initializes a new instance of the <see cref="snContactConstraint"/> class.
 	/// </summary>
-	snContactConstraint::snContactConstraint() : snIConstraint(), m_effectiveMass(snVec4Set(0))
+	snContactConstraint::snContactConstraint() 
+		: snIConstraint()
+		, m_effectiveMass(snVec4Set(0))
 	{
+		m_featuresId[0] = -1;
+		m_featuresId[1] = -1;
 	}
 
 	/// <summary>
@@ -77,6 +81,10 @@ namespace Supernova
 		m_penetrationDepth = _penetrationDepth;
 		m_normal = _normal;
 		m_scene = _scene;
+		m_accumulatedImpulseMagnitude = snVec4Set(0);
+		m_frictionAccumulatedImpulse[0] = snVec4Set(0);
+		m_frictionAccumulatedImpulse[1] = snVec4Set(0);
+		m_active = true;
 	}
 
 	/// <summary>
@@ -85,7 +93,9 @@ namespace Supernova
 	/// <param name="_dt">The _DT.</param>
 	void snContactConstraint::prepare(float _dt)
 	{
-		m_accumulatedImpulseMagnitude = snVec4Set(0);
+		//m_accumulatedImpulseMagnitude = snVec4Set(0);
+		//m_frictionAccumulatedImpulse[0] = snVec4Set(0);
+		//m_frictionAccumulatedImpulse[1] = snVec4Set(0);
 
 		//world center of mass = position + center of mass
 		//so radius = point - world center of mass = point - position - center of mass
@@ -128,9 +138,6 @@ namespace Supernova
 
 		if (m_scene->getFrictionMode() == snFrictionMode::SN_FRICTION_TWO_DIRECTION)
 		{
-			m_frictionAccumulatedImpulse[0] = snVec4Set(0);
-			m_frictionAccumulatedImpulse[1] = snVec4Set(0);
-
 			//Compute the friction coefficient as the average of frictions of the two objects.
 			m_frictionCoefficient = (m_bodies[0]->getPhysicMaterial().m_friction + m_bodies[1]->getPhysicMaterial().m_friction) * 0.5f;
 
@@ -160,9 +167,6 @@ namespace Supernova
 		}
 		else if (m_scene->getFrictionMode() == snFrictionMode::SN_FRICTION_ONE_DIRECTION)
 		{
-			m_frictionAccumulatedImpulse[0] = snVec4Set(0);
-			m_frictionAccumulatedImpulse[1] = snVec4Set(0);
-			
 			//Compute the friction coefficient as the average of frictions of the two objects.
 			m_frictionCoefficient = (m_bodies[0]->getPhysicMaterial().m_friction + m_bodies[1]->getPhysicMaterial().m_friction) * 0.5f;
 
@@ -311,5 +315,12 @@ namespace Supernova
 	unsigned int snContactConstraint::getBodiesCount() const
 	{
 		return 2;
+	}
+
+	void snContactConstraint::update(const snVec& _normal, const snVec& _point, float _penetrationDepth)
+	{
+		m_normal = _normal;
+		m_collisionPoint = _point;
+		m_penetrationDepth = _penetrationDepth;
 	}
 }

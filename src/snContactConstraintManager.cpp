@@ -35,210 +35,266 @@
 #include "snContactConstraintManager.h"
 #include "snContactConstraint.h"
 #include "snRigidbody.h"
+#include "snCollisionResult.h"
+#include "snArbiter.h"
 
 using namespace Supernova::Vector;
 
 namespace Supernova
 {
-	snContactConstraintManager::snContactConstraintManager() : 
-		m_collisionConstraints(), 
-		m_currentConstraintId(0),
-		m_isSleepingStateAuthorized(true)
+	snContactConstraintManager::snContactConstraintManager(const snScene* _scene) 
+		: m_activeConstraints()
+		, m_isSleepingStateAuthorized(true)
+		, m_scene(_scene)
 	{}
 
 	snContactConstraintManager::~snContactConstraintManager()
 	{
-		for (vector<snContactConstraint*>::iterator i = m_collisionConstraints.begin(); i != m_collisionConstraints.end(); ++i)
+		for(auto& pair : m_activeConstraints)
 		{
-			if ((*i) == 0)
+			if ((pair.second) == 0)
 				continue;
 
-			delete *i;
+			delete pair.second;
 		}
-		m_collisionConstraints.clear();
+
+		m_activeConstraints.clear();
+		
+		while(!m_constraintsPool.empty())
+		{
+			snContactConstraint* constraint = m_constraintsPool.top();
+			if(constraint != 0)
+				delete constraint;
+
+			m_constraintsPool.pop();
+		}
 	}
 
-	snContactConstraint* const snContactConstraintManager::getAvailableConstraint()
+	void snContactConstraintManager::addOrUpdateContact(snRigidbody* _body1, snRigidbody* _body2, const snCollisionResult& _contact)
 	{
-		if (m_currentConstraintId < m_collisionConstraints.size())
+		//look for the key
+		snArbiterKey key(_body1->getId(), _body2->getId());
+
+		map<snArbiterKey, snArbiter*>::iterator i = m_activeConstraints.find(key);
+
+		if(i != m_activeConstraints.end())
 		{
-			snContactConstraint* cc = m_collisionConstraints[m_currentConstraintId];
-			if(cc == 0)
-			{
-				cc = new snContactConstraint();
-				m_collisionConstraints[m_currentConstraintId] = cc;
-			}
-			++m_currentConstraintId;
-			return cc;
+			i->second->update(_contact, *this);
 		}
 		else
 		{
-			snContactConstraint* npConstraint = new snContactConstraint();
-			m_collisionConstraints.push_back(npConstraint);
-			++m_currentConstraintId;
+			snArbiter* newArbiter = new snArbiter(_body1, _body2);
+			for(unsigned int i = 0; i < snArbiter::MAX_CONTACT; ++i)
+			{
+				snContactConstraint* newConstraint = getConstraint();
+				
+				if(i < _contact.m_contactsCount)
+				{
+					const snContact& newContact = _contact.m_contacts[i];
+					newConstraint->initialize(_body1, _body2, newContact.m_normal, newContact.m_point, newContact.m_penetration, m_scene);
+					newConstraint->m_featuresId[0] = newContact.m_featuresId[0];
+					newConstraint->m_featuresId[1] = newContact.m_featuresId[1];
+				}
 
-			return npConstraint;
+				newArbiter->m_constraints[i] = newConstraint;
+			}
+			newArbiter->m_contactCount = _contact.m_contactsCount;
+			m_activeConstraints[key] = newArbiter;
 		}
+	}
+
+	void snContactConstraintManager::removeContact(snRigidbody* _body1, snRigidbody* _body2)
+	{
+		snArbiterKey key(_body1->getId(), _body2->getId());
+
+		map<snArbiterKey, snArbiter*>::iterator i = m_activeConstraints.find(key);
+		if(i == m_activeConstraints.end())
+			return;
+
+		snArbiter* arbiter = i->second;
+		for(unsigned int i = 0; i < arbiter->MAX_CONTACT; ++i)
+		{
+			if(arbiter->m_constraints[i] != nullptr)
+			{
+				m_constraintsPool.push(arbiter->m_constraints[i]);
+				arbiter->m_constraints[i] = nullptr;
+			}
+		}
+
+		delete arbiter;
+		m_activeConstraints.erase(i);
 	}
 
 	void snContactConstraintManager::prepareActiveConstraint(float _dt)
 	{
-		for (vector<snContactConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
+		for(auto& pair : m_activeConstraints)
 		{
-			if((*constraint) == 0)
-			{
+			if(pair.second == 0)
 				continue;
-			}
 
-			if ((*constraint)->getIsActive())
+			snArbiter* arbiter = pair.second;
+			for(unsigned int i = 0; i < arbiter->m_contactCount; ++i)
 			{
-				(*constraint)->prepare(_dt);
+				if(arbiter->m_constraints[i] != nullptr && arbiter->m_constraints[i]->getIsActive())
+					arbiter->m_constraints[i]->prepare(_dt);
 			}
-		}
-		
+		}		
 	}
 
 	void snContactConstraintManager::resolveActiveConstraints()
 	{
-		for (vector<snContactConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
+		for(auto& pair : m_activeConstraints)
 		{
-			if ((*constraint) != 0 && (*constraint)->getIsActive())
+			snArbiter* arbiter = pair.second;
+			if (arbiter == 0)
+				continue;
+
+			for(unsigned int i = 0; i < arbiter->m_contactCount; ++i)
 			{
-				(*constraint)->resolve();
+				if(arbiter->m_constraints[i] != nullptr && arbiter->m_constraints[i]->getIsActive())
+					arbiter->m_constraints[i]->resolve();
 			}
 		}
 	}
 
 	void snContactConstraintManager::preBroadPhase()
 	{
-		m_currentConstraintId = 0;
 	}
 
 	void snContactConstraintManager::postBroadPhase()
 	{
-		//deactivate all unused constraints
-		for (unsigned int i = m_currentConstraintId; i < m_collisionConstraints.size(); ++i)
-		{
-			snContactConstraint* cc = m_collisionConstraints[i];
-			if(cc != 0)
-			{
-				cc->setIsActive(false);
-			}
-		}
 	}
 
 	void snContactConstraintManager::setSleepingBody(snRigidbody const * const _body)
 	{
-		//Check if the body exists in the sleeping structure.
-		map<snObjectId, snConstraintsPtrArray>::iterator idExists = m_sleepingGraph.find(_body->m_id);
-		if(idExists == m_sleepingGraph.end())
-		{
-			m_sleepingGraph.insert(snConstraintGraphElement(_body->m_id, snConstraintsPtrArray()));
-		}
+		////Check if the body exists in the sleeping structure.
+		//map<snObjectId, snConstraintsPtrArray>::iterator idExists = m_sleepingGraph.find(_body->m_id);
+		//if(idExists == m_sleepingGraph.end())
+		//{
+		//	m_sleepingGraph.insert(snConstraintGraphElement(_body->m_id, snConstraintsPtrArray()));
+		//}
 
-		//Loop through each constraints to find the ones to put asleep
-		for (vector<snContactConstraint*>::iterator constraint = m_collisionConstraints.begin(); constraint != m_collisionConstraints.end(); ++constraint)
-		{
-			if(*constraint == 0)
-			{
-				continue;
-			}
+		////Loop through each constraints to find the ones to put asleep
+		//for(auto& pair : m_activeConstraints)
+		//{
+		//	if(pair.second == 0 || !pair.second->getIsActive())
+		//	{
+		//		continue;
+		//	}
 
-			//Ignore inactive contraints
-			if (!(*constraint)->getIsActive())
-			{
-				continue;
-			}
+		//	snRigidbody * const * const bodies = pair.second->getBodies();
+		//	snRigidbody const * otherBody = 0;
+		//	if(bodies[0] == _body ) //Check if the rigidbody given in parameter is a part of the constraint.
+		//	{
+		//		otherBody = bodies[1];
+		//	}
+		//	else if(bodies[1] == _body)
+		//	{
+		//		otherBody = bodies[0];
+		//	}
+		//	else
+		//	{
+		//		continue;
+		//	}
 
-			snRigidbody * const * const bodies = (*constraint)->getBodies();
-			snRigidbody const * otherBody = 0;
-			if(bodies[0] == _body ) //Check if the rigidbody given in parameter is a part of the constraint.
-			{
-				otherBody = bodies[1];
-			}
-			else if(bodies[1] == _body)
-			{
-				otherBody = bodies[0];
-			}
-			else
-			{
-				continue;
-			}
+		//	//Check if the other body exists in the graph of sleeping bodies
+		//	map<snObjectId, snConstraintsPtrArray>::iterator idExists = m_sleepingGraph.find(otherBody->m_id);
+		//	if(idExists == m_sleepingGraph.end())
+		//	{
+		//		m_sleepingGraph.insert(snConstraintGraphElement(otherBody->m_id, snConstraintsPtrArray()));
+		//	}
 
-			//Check if the other body exists in the graph of sleeping bodies
-			map<snObjectId, snConstraintsPtrArray>::iterator idExists = m_sleepingGraph.find(otherBody->m_id);
-			if(idExists == m_sleepingGraph.end())
-			{
-				m_sleepingGraph.insert(snConstraintGraphElement(otherBody->m_id, snConstraintsPtrArray()));
-			}
-
-			//If the other body is sleeping or static, set the constraint to sleep.
-			if(otherBody->isStatic() || !otherBody->isAwake())
-			{
-				(*constraint)->setAwake(false);
-				m_sleepingGraph[otherBody->m_id].push_back(*constraint);
-				m_sleepingGraph[_body->m_id].push_back(*constraint);
-				*constraint = 0;
-			}
-		}
+		//	//If the other body is sleeping or static, set the constraint to sleep.
+		//	if(otherBody->isStatic() || !otherBody->isAwake())
+		//	{
+		//		pair.second->setAwake(false);
+		//		m_sleepingGraph[otherBody->m_id].push_back(pair.second);
+		//		m_sleepingGraph[_body->m_id].push_back(pair.second);
+		//		pair.second = 0;
+		//	}
+		//}
 	}
 
 	void snContactConstraintManager::awakeConstraint(snRigidbody * const _body)
 	{
-		snConstraintsPtrArray& constraints = m_sleepingGraph[_body->m_id];
-		if(constraints.size() == 0)
-			return;
+		//snConstraintsPtrArray& constraints = m_sleepingGraph[_body->m_id];
+		//if(constraints.size() == 0)
+		//	return;
 
-		//Loop through each constraints for the body
-		for(vector<snContactConstraint*>::iterator i = constraints.begin(); i != constraints.end(); ++i)
-		{
-			//Get the other body involved in the constraint
-			snRigidbody * const * const bodies = (*i)->getBodies();
-			snRigidbody* otherBody = 0;
-			if(bodies[0] == _body)
-			{
-				otherBody = bodies[1];
-			}
-			else
-			{
-				otherBody = bodies[0];
-			}
+		////Loop through each constraints for the body
+		//for(vector<snContactConstraint*>::iterator i = constraints.begin(); i != constraints.end(); ++i)
+		//{
+		//	//Get the other body involved in the constraint
+		//	snRigidbody * const * const bodies = (*i)->getBodies();
+		//	snRigidbody* otherBody = 0;
+		//	if(bodies[0] == _body)
+		//	{
+		//		otherBody = bodies[1];
+		//	}
+		//	else
+		//	{
+		//		otherBody = bodies[0];
+		//	}
 
-			//Don't do anything if the other body is already awake. It means
-			//we are in a recursive call and the constraint was already awaken earlier.
-			if(otherBody->isAwake())
-			{
-				continue;
-			}
+		//	//Don't do anything if the other body is already awake. It means
+		//	//we are in a recursive call and the constraint was already awaken earlier.
+		//	if(otherBody->isAwake())
+		//	{
+		//		continue;
+		//	}
 
-			if((*i)->getIsAwake())
-			{
-				continue;
-			}
+		//	if((*i)->getIsAwake())
+		//	{
+		//		continue;
+		//	}
 
-			//Move the constraint from the sleeping constraints to the activated constraints
-			(*i)->setAwake(true);
-			if (m_currentConstraintId < m_collisionConstraints.size())
-			{
-				m_collisionConstraints[m_currentConstraintId] = (*i);
-			}
-			else
-			{
-				m_collisionConstraints.push_back(*i);
-			}
-			++m_currentConstraintId;
+		//	//Move the constraint from the sleeping constraints to the activated constraints
+		//	(*i)->setAwake(true);
+		//	/*if (m_currentConstraintId < m_collisionConstraints.size())
+		//	{
+		//		m_collisionConstraints[m_currentConstraintId] = (*i);
+		//	}
+		//	else
+		//	{
+		//		m_collisionConstraints.push_back(*i);
+		//	}
+		//	++m_currentConstraintId;*/
 
-			//recursive call to activate the other body.
-			otherBody->setAwake(true);
-			awakeConstraint(otherBody);
-		}
+		//	//recursive call to activate the other body.
+		//	otherBody->setAwake(true);
+		//	awakeConstraint(otherBody);
+		//}
 
-		//Clear the list of constraints
-		constraints.clear();
+		////Clear the list of constraints
+		//constraints.clear();
 	}
 
 	void snContactConstraintManager::setIsSleepingStateAuthorized(bool _isSleepingStateAuthorized)
 	{
 		m_isSleepingStateAuthorized = _isSleepingStateAuthorized;
+	}
+
+	snContactConstraint* const snContactConstraintManager::getConstraint()
+	{
+		if(m_constraintsPool.empty())
+		{
+			return new snContactConstraint();
+		}
+		else
+		{
+			snContactConstraint* constraint = m_constraintsPool.top();
+			m_constraintsPool.pop();
+			return constraint;
+		}
+	}
+
+	void snContactConstraintManager::pushConstraint(snContactConstraint* _constraint)
+	{
+		m_constraintsPool.push(_constraint);
+	}
+
+	const snScene* snContactConstraintManager::getScene() const
+	{
+		return m_scene;
 	}
 }

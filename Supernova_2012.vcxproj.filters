@@ -171,7 +171,10 @@
     <ClInclude Include="inc\snRaycast.h">
       <Filter>Raycast</Filter>
     </ClInclude>
-    <ClInclude Include="inc\snCollisionKey.h">
+    <ClInclude Include="inc\snArbiterKey.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\snArbiter.h">
       <Filter>Collision</Filter>
     </ClInclude>
   </ItemGroup>
@@ -273,6 +276,9 @@
     </ClCompile>
     <ClCompile Include="src\snRaycast.cpp">
       <Filter>Raycast</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snArbiterKey.cpp">
+      <Filter>Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

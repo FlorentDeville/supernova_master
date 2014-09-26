@@ -32,17 +32,46 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_KEY_H
-#define SN_COLLISION_KEY_H
+#include "snArbiterKey.h"
 
 namespace Supernova
 {
-	class snCollisionKey
+	snArbiterKey::snArbiterKey(snObjectId collider1, snObjectId collider2)
 	{
-	public:
-		__int64 shapeId[2];
-		int featureId[2];
-	};
-}
+		if(collider1 < collider2)
+		{
+			shapeId[0] = collider1;
+			shapeId[1] = collider2;
+		}
+		else
+		{
+			shapeId[0] = collider2;
+			shapeId[1] = collider1;
+		}
+	}
 
-#endif //ifndef SN_COLLISION_KEY_H
+
+	bool operator < (const snArbiterKey& _k1, const snArbiterKey& _k2)
+	{
+		if(_k1.shapeId[0] < _k2.shapeId[0])
+			return true;
+
+		return false;
+	}
+
+	bool operator == (const snArbiterKey& _k1, const snArbiterKey& _k2)
+	{
+		if(_k1.shapeId[0] == _k2.shapeId[0] && _k1.shapeId[1] == _k2.shapeId[1])
+			return true;
+
+		return false;
+	}
+
+	bool operator != (const snArbiterKey& _k1, const snArbiterKey& _k2)
+	{
+		if(_k1.shapeId[0] == _k2.shapeId[0] && _k1.shapeId[1] == _k2.shapeId[1])
+			return false;
+
+		return true;
+	}
+}

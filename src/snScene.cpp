@@ -85,7 +85,8 @@ namespace Supernova
 		m_collisionMode(snECollisionMode_ST_SweepAndPrune), 
 		m_contactConstraintBeta(0.25f), 
 		m_sweepAndPrune(),
-		m_isSleepingStateAuthorized(true)
+		m_isSleepingStateAuthorized(true),
+		m_contactConstraintManager(this)
 	{
 		m_gravity = snVec4Set(0, -9.81f, 0, 0);
 		m_sweepAndPrune.setCallback(this, &snScene::computeCollisionDetection);
@@ -524,24 +525,16 @@ namespace Supernova
 
 	void snScene::computeCollisionDetection(snRigidbody* _a, snRigidbody* _b)
 	{
-		////query collision between actor _a and _b.
-		//const unsigned int MAX_COL_RES = 10;
-		//snCollisionResult colRes[MAX_COL_RES];
-		//unsigned int colResCount = 0;
-		//m_collisionService.queryTestCollision(_a, _b, colRes, MAX_COL_RES, &colResCount);
+		std::vector<snICollider*>& listCollidersA = _a->getColliders();
+		std::vector<snICollider*>& listCollidersB = _b->getColliders();
 
-		std::vector<snICollider*>& listColliders1 = _a->getColliders();
-		std::vector<snICollider*>& listColliders2 = _b->getColliders();
-
-		//for (vector<snICollider*>::const_iterator c1 = listColliders1.cbegin(); c1 != listColliders1.cend(); ++c1)
-		for(const snICollider* c1 : listColliders1)
+		for(const snICollider* c1 : listCollidersA)
 		{
-			//for (vector<snICollider*>::const_iterator c2 = listColliders2.cbegin(); c2 != listColliders2.cend(); ++c2)
-			for(const snICollider* c2 : listColliders2)
+			for(const snICollider* c2 : listCollidersB)
 			{
 				//pouahhhh it's ugly!!!! let's check first the AABBs
 				snCollisionResult res = m_collisionService.invokeQueryTestCollision(c1, c2);
-				if (res.m_collision)
+				if (res.m_contactsCount > 0)
 				{
 					//check for collision callbacks
 					if (_a->isEnabledCollisionFlag(snCollisionFlag::CF_CONTACT_CALLBACK))
@@ -570,18 +563,18 @@ namespace Supernova
 						awakeRigidbodiesLinkedByConstraints(_b);
 					}
 
-					vector<float>::const_iterator penetrationIterator = res.m_penetrations.cbegin();
-					for (snVecVectorConstIterator point = res.m_contacts.cbegin(); point != res.m_contacts.cend(); ++point, ++penetrationIterator)
+					m_contactConstraintManager.addOrUpdateContact(_a, _b, res);
+
+					for(unsigned int contactId = 0; contactId < res.m_contactsCount; ++contactId)
 					{
-						m_collisionPoints.push_back(*point);
-
-						//if a constraints already exists, take it and reuse it or else create it.
-						snContactConstraint* contactConstraint = m_contactConstraintManager.getAvailableConstraint();
-
-						//initialize and activate the constraints
-						contactConstraint->initialize(_a, _b, res.m_normal, *point, *penetrationIterator, this);
-						contactConstraint->setIsActive(true);
+						const snContact& newContact = res.m_contacts[contactId];
+						m_collisionPoints.push_back(newContact.m_point);
 					}
+				}
+				else
+				{
+					//remove arbiter
+					m_contactConstraintManager.removeContact(_a, _b);
 				}
 			}
 		}

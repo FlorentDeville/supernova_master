@@ -15,12 +15,13 @@
     <ClInclude Include="inc\snAABB.h" />
     <ClInclude Include="inc\snActorPair.h" />
     <ClInclude Include="inc\snActorPairManager.h" />
+    <ClInclude Include="inc\snArbiter.h" />
     <ClInclude Include="inc\snCapsule.h" />
     <ClInclude Include="inc\snClosestPoint.h" />
     <ClInclude Include="inc\snCollision.h" />
     <ClInclude Include="inc\snCollisionDispatcher.h" />
     <ClInclude Include="inc\snCollisionFlag.h" />
-    <ClInclude Include="inc\snCollisionKey.h" />
+    <ClInclude Include="inc\snArbiterKey.h" />
     <ClInclude Include="inc\snCollisionMode.h" />
     <ClInclude Include="inc\snCollisionResult.h" />
     <ClInclude Include="inc\snContactConstraint.h" />
@@ -64,6 +65,7 @@
   <ItemGroup>
     <ClCompile Include="src\snAABB.cpp" />
     <ClCompile Include="src\snActorPairManager.cpp" />
+    <ClCompile Include="src\snArbiterKey.cpp" />
     <ClCompile Include="src\snCapsule.cpp" />
     <ClCompile Include="src\snClosestPoint.cpp" />
     <ClCompile Include="src\snCollision.cpp" />

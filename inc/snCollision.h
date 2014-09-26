@@ -58,7 +58,7 @@ namespace Supernova
 	
 	private:
 		//Typedef of pointers to the collision query functions.
-		typedef snCollisionResult(*snQueryTestCollisionFunction)(const snICollider* const, const snICollider* const);
+		typedef snCollisionResult (*snQueryTestCollisionFunction)(const snICollider* const, const snICollider* const);
 
 		typedef std::pair<unsigned short, snQueryTestCollisionFunction> snCollisionQueryMapElement;
 
@@ -71,7 +71,7 @@ namespace Supernova
 		snCollision();
 		virtual ~snCollision();
 
-		void queryTestCollision(snRigidbody*, snRigidbody*, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const;
+		//void queryTestCollision(snRigidbody*, snRigidbody*, snCollisionResult* _results, unsigned int _maxResultCount, unsigned int* _resultsCount) const;
 
 		snCollisionResult queryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
 
@@ -84,8 +84,6 @@ namespace Supernova
 		{
 			_aligned_free(_p);
 		}
-
-	//private:
 
 		snCollisionResult invokeQueryTestCollision(const snICollider* const _c1, const snICollider* const _c2) const;
 

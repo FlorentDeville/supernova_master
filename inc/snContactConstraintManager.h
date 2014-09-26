@@ -45,25 +45,37 @@ using std::mutex;
 #include <map>
 using std::map;
 
+#include <stack>
+using std::stack;
+
 #include "snObject.h"
+#include "snArbiterKey.h"
 
 namespace Supernova
 {
 	class snContactConstraint;
 	class snRigidbody;
+	class snCollisionResult;
+	class snArbiter;
+	class snScene;
 
 	//Store and manage the contact constraints used in a scene.
 	class snContactConstraintManager
 	{
 	private:
-		//List of constraints created by the collision detection system.
-		vector<snContactConstraint*> m_collisionConstraints;
+		//Map between an arbiter key and a list of constraints. The arbiter key is the unique identifier of a pair of colliders.
+		// The list of constraints can have up to 4 elements.
+		map<snArbiterKey, snArbiter*> m_activeConstraints;
 
-		//Id of the next available constraint
-		unsigned int m_currentConstraintId;
+		//Stack of contraints that can be used to create an active constraint.
+		stack<snContactConstraint*> m_constraintsPool;
 
 		//Flag to indicate if we can set bodies into sleeping state
 		bool m_isSleepingStateAuthorized;
+
+		static const int MAX_CONSTRAINT_PER_ARBITER = 4;
+
+		const snScene* m_scene;
 
 		//////////////////////////////////////////////////////////////////////
 		//				Define the sleeping constraint graph				//
@@ -83,14 +95,14 @@ namespace Supernova
 
 	public:
 		//Default constructor
-		snContactConstraintManager();
+		snContactConstraintManager(const snScene* _scene);
 
 		//Destructor. Clean all the allocated constraints
 		~snContactConstraintManager();
 
-		//Return an available constraint. If no available constraint is found, it will be created.
-		// remarks : NOT THREAD SAFE!!!!
-		snContactConstraint* const getAvailableConstraint();
+		void addOrUpdateContact(snRigidbody* _body1, snRigidbody* _body2, const snCollisionResult& _contact);
+
+		void removeContact(snRigidbody* _body1, snRigidbody* _body2);
 
 		//Prepare all the currently active constraints.
 		void prepareActiveConstraint(float _dt);
@@ -113,8 +125,15 @@ namespace Supernova
 		//Set the flag authorizing the sleeping state.
 		// _isSleepingStateAuthorized : True to authorized sleeping state. False otherwise.
 		void setIsSleepingStateAuthorized(bool _isSleepingStateAuthorized);
-	private:
 		
+		//Return a constraint that can be used for a new contact.
+		snContactConstraint* const getConstraint();
+
+		//Save a constraint in the constraint pool
+		void pushConstraint(snContactConstraint* _constraint);
+
+		const snScene* getScene() const;
+
 	};
 }
 

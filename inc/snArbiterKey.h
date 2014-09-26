@@ -32,52 +32,27 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_RESULT_H
-#define SN_COLLISION_RESULT_H
+#ifndef SN_ARBITER_KEY_H
+#define SN_ARBITER_KEY_H
 
-#include "snVec.h"
+#include "snObject.h"
 
 namespace Supernova
 {
-	class SN_ALIGN snContact
+	class snArbiterKey
 	{
 	public:
-
-		snVec m_normal;
-
-		snVec m_point;
-
-		float m_penetration;
-
-		int m_featuresId[2];
+		snObjectId shapeId[2];
 
 	public:
-
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, SN_ALIGN_SIZE);
-		}
-
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
+		snArbiterKey(snObjectId collider1, snObjectId collider2);
 	};
 
-	class snCollisionResult
-	{
+	bool operator < (const snArbiterKey& _k1, const snArbiterKey& _k2);
 
-	public:
-		static const int MAX_CONTACT = 4;
+	bool operator == (const snArbiterKey& _k1, const snArbiterKey& _k2);
 
-		snContact m_contacts[MAX_CONTACT];
-
-		unsigned int m_contactsCount;
-
-	public:
-		snCollisionResult()
-			: m_contactsCount(0)
-		{}
-	};
+	bool operator != (const snArbiterKey& _k1, const snArbiterKey& _k2);
 }
-#endif // SN_COLLISION_RESULT_H
+
+#endif //ifndef SN_ARBITER_KEY_H

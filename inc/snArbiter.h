@@ -32,52 +32,110 @@
 /*POSSIBILITY OF SUCH DAMAGE.                                               */
 /****************************************************************************/
 
-#ifndef SN_COLLISION_RESULT_H
-#define SN_COLLISION_RESULT_H
+#ifndef SN_ARBITER_H
+#define SN_ARBITER_H
 
-#include "snVec.h"
+#include "snContactConstraint.h"
 
 namespace Supernova
 {
-	class SN_ALIGN snContact
+	class snArbiter
 	{
-	public:
-
-		snVec m_normal;
-
-		snVec m_point;
-
-		float m_penetration;
-
-		int m_featuresId[2];
-
-	public:
-
-		void* operator new(size_t _count)
-		{
-			return _aligned_malloc(_count, SN_ALIGN_SIZE);
-		}
-
-		void operator delete(void* _p)
-		{
-			_aligned_free(_p);
-		}
-	};
-
-	class snCollisionResult
-	{
-
 	public:
 		static const int MAX_CONTACT = 4;
 
-		snContact m_contacts[MAX_CONTACT];
+		unsigned int m_contactCount;
 
-		unsigned int m_contactsCount;
+		snContactConstraint* m_constraints[MAX_CONTACT];
+
+		snRigidbody* m_body1;
+
+		snRigidbody* m_body2;
 
 	public:
-		snCollisionResult()
-			: m_contactsCount(0)
-		{}
+		snArbiter(snRigidbody* _body1, snRigidbody* _body2) 
+			: m_contactCount(0)
+			, m_body1(_body1)
+			, m_body2(_body2)
+		{
+			for(unsigned int i = 0; i < MAX_CONTACT; ++i)
+				m_constraints[i] = nullptr;
+		}
+
+		~snArbiter()
+		{
+			for(snContactConstraint* constraint : m_constraints)
+			{
+				if(constraint != nullptr)
+					delete constraint;
+			}
+		}
+
+		void update(const snCollisionResult& _result, snContactConstraintManager& _manager)
+		{
+			snContactConstraint* mergedConstraints[MAX_CONTACT];
+			unsigned int mergedConstraintsCount = 0;
+
+			//Loop through each new contacts
+			for(unsigned int i = 0; i < _result.m_contactsCount; ++i)
+			{
+				const snContact& newContact = _result.m_contacts[i];
+
+				snContactConstraint* foundConstraint = nullptr;
+
+				//Look for this contact
+				for(unsigned int k = 0; k < m_contactCount; ++k)
+				{
+					snContactConstraint* constraint = m_constraints[k];
+					if(constraint == nullptr)
+						continue;
+
+					if(constraint->m_featuresId[0] == newContact.m_featuresId[0] 
+					&& constraint->m_featuresId[1] == newContact.m_featuresId[1])
+					{
+						foundConstraint = constraint;
+						m_constraints[k] = nullptr;
+						break;
+					}
+				}
+
+				//Constraint not found, use an empty one
+				if(foundConstraint == nullptr)
+				{
+					foundConstraint = _manager.getConstraint();
+					foundConstraint->initialize(m_body1, m_body2, newContact.m_normal, newContact.m_point, newContact.m_penetration,
+						_manager.getScene());
+				}
+				else //Update and save the constraint
+				{
+					foundConstraint->update(newContact.m_normal, newContact.m_point, newContact.m_penetration);
+				}
+				mergedConstraints[mergedConstraintsCount++] = foundConstraint;
+			}
+
+			//Set the merged constraints to the arbiter.
+			for(unsigned int i = 0; i < mergedConstraintsCount; ++i)
+			{
+				if(m_constraints[i] != nullptr)
+					_manager.pushConstraint(m_constraints[i]);
+				
+				m_constraints[i] = mergedConstraints[i];
+				m_constraints[i]->setIsActive(true);
+			}
+
+			for(unsigned int i = mergedConstraintsCount; i < MAX_CONTACT; ++i)
+			{
+				if(m_constraints[i] != nullptr)
+				{
+					_manager.pushConstraint(m_constraints[i]);
+					m_constraints[i] = nullptr;
+				}
+			}
+
+			m_contactCount = mergedConstraintsCount;
+		}
+
 	};
 }
-#endif // SN_COLLISION_RESULT_H
+
+#endif //ifndef SN_ARBITER_H

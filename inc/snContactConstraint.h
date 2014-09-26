@@ -129,6 +129,11 @@ namespace Supernova
 		snScene const * m_scene;
 
 	public:
+
+		//The features involved in this contact. The minimum feature is always the first.
+		int m_featuresId[2];
+
+	public:
 		snContactConstraint();
 
 		virtual ~snContactConstraint();
@@ -146,6 +151,8 @@ namespace Supernova
 
 		//Return the number of bodies in this constraint
 		unsigned int getBodiesCount() const;
+
+		void update(const snVec& _normal, const snVec& _point, float _penetrationDepth);
 	};
 }
 
