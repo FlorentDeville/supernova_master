@@ -277,9 +277,6 @@
     <ClCompile Include="src\snRaycast.cpp">
       <Filter>Raycast</Filter>
     </ClCompile>
-    <ClCompile Include="src\snArbiterKey.cpp">
-      <Filter>Collision</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="inc\snVec.inl">

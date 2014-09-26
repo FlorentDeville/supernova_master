@@ -36,23 +36,11 @@
 #define SN_ARBITER_KEY_H
 
 #include "snObject.h"
+#include <utility>
 
 namespace Supernova
 {
-	class snArbiterKey
-	{
-	public:
-		snObjectId shapeId[2];
-
-	public:
-		snArbiterKey(snObjectId collider1, snObjectId collider2);
-	};
-
-	bool operator < (const snArbiterKey& _k1, const snArbiterKey& _k2);
-
-	bool operator == (const snArbiterKey& _k1, const snArbiterKey& _k2);
-
-	bool operator != (const snArbiterKey& _k1, const snArbiterKey& _k2);
+	typedef std::pair<snObjectId, snObjectId> snArbiterKey;
 }
 
 #endif //ifndef SN_ARBITER_KEY_H
