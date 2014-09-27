@@ -102,8 +102,6 @@ namespace Supernova
 
 		void addOrUpdateContact(snRigidbody* _body1, snRigidbody* _body2, const snCollisionResult& _contact);
 
-		void removeContact(snRigidbody* _body1, snRigidbody* _body2);
-
 		//Prepare all the currently active constraints.
 		void prepareActiveConstraint(float _dt);
 

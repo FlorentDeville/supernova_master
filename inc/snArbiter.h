@@ -52,11 +52,14 @@ namespace Supernova
 
 		snRigidbody* m_body2;
 
+		bool m_dirty;
+
 	public:
 		snArbiter(snRigidbody* _body1, snRigidbody* _body2) 
 			: m_contactCount(0)
 			, m_body1(_body1)
 			, m_body2(_body2)
+			, m_dirty(true)
 		{
 			for(unsigned int i = 0; i < MAX_CONTACT; ++i)
 				m_constraints[i] = nullptr;
@@ -105,6 +108,8 @@ namespace Supernova
 					foundConstraint = _manager.getConstraint();
 					foundConstraint->initialize(m_body1, m_body2, newContact.m_normal, newContact.m_point, newContact.m_penetration,
 						_manager.getScene());
+					foundConstraint->m_featuresId[0] = newContact.m_featuresId[0];
+					foundConstraint->m_featuresId[1] = newContact.m_featuresId[1];
 				}
 				else //Update and save the constraint
 				{

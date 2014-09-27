@@ -571,11 +571,6 @@ namespace Supernova
 						m_collisionPoints.push_back(newContact.m_point);
 					}
 				}
-				else
-				{
-					//remove arbiter
-					m_contactConstraintManager.removeContact(_a, _b);
-				}
 			}
 		}
 

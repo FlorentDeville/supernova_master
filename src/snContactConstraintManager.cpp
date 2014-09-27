@@ -73,13 +73,13 @@ namespace Supernova
 	void snContactConstraintManager::addOrUpdateContact(snRigidbody* _body1, snRigidbody* _body2, const snCollisionResult& _contact)
 	{
 		//look for the key
-		snArbiterKey key(_body1->getId(), _body2->getId());
-
+		snArbiterKey key = MAKE_ARBITER_KEY(_body1->getId(), _body2->getId());
 		map<snArbiterKey, snArbiter*>::iterator i = m_activeConstraints.find(key);
 
 		if(i != m_activeConstraints.end())
 		{
 			i->second->update(_contact, *this);
+			i->second->m_dirty = false;
 		}
 		else
 		{
@@ -99,30 +99,9 @@ namespace Supernova
 				newArbiter->m_constraints[i] = newConstraint;
 			}
 			newArbiter->m_contactCount = _contact.m_contactsCount;
+			newArbiter->m_dirty = false;
 			m_activeConstraints[key] = newArbiter;
 		}
-	}
-
-	void snContactConstraintManager::removeContact(snRigidbody* _body1, snRigidbody* _body2)
-	{
-		snArbiterKey key(_body1->getId(), _body2->getId());
-
-		map<snArbiterKey, snArbiter*>::iterator i = m_activeConstraints.find(key);
-		if(i == m_activeConstraints.end())
-			return;
-
-		snArbiter* arbiter = i->second;
-		for(unsigned int i = 0; i < arbiter->MAX_CONTACT; ++i)
-		{
-			if(arbiter->m_constraints[i] != nullptr)
-			{
-				m_constraintsPool.push(arbiter->m_constraints[i]);
-				arbiter->m_constraints[i] = nullptr;
-			}
-		}
-
-		delete arbiter;
-		m_activeConstraints.erase(i);
 	}
 
 	void snContactConstraintManager::prepareActiveConstraint(float _dt)
@@ -159,10 +138,35 @@ namespace Supernova
 
 	void snContactConstraintManager::preBroadPhase()
 	{
+		for(std::pair<snArbiterKey, snArbiter*> arbiter : m_activeConstraints)
+			arbiter.second->m_dirty = true;
 	}
 
 	void snContactConstraintManager::postBroadPhase()
 	{
+		//remove all dirty arbiter
+		map<snArbiterKey, snArbiter*>::iterator iter = m_activeConstraints.begin();
+
+		while(iter != m_activeConstraints.end())
+		{
+			if(iter->second->m_dirty)
+			{
+				snArbiter* arbiter = iter->second;
+				for(unsigned int i = 0; i < arbiter->MAX_CONTACT; ++i)
+				{
+					if(arbiter->m_constraints[i] != nullptr)
+					{
+						m_constraintsPool.push(arbiter->m_constraints[i]);
+						arbiter->m_constraints[i] = nullptr;
+					}
+				}
+
+				delete arbiter;
+				iter = m_activeConstraints.erase(iter);
+			}
+			else
+				++iter;
+		}
 	}
 
 	void snContactConstraintManager::setSleepingBody(snRigidbody const * const _body)

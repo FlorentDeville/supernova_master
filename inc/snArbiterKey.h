@@ -38,6 +38,8 @@
 #include "snObject.h"
 #include <utility>
 
+#define MAKE_ARBITER_KEY(a, b) a < b ? snArbiterKey(a, b) : snArbiterKey(b, a);
+
 namespace Supernova
 {
 	typedef std::pair<snObjectId, snObjectId> snArbiterKey;
