@@ -317,8 +317,14 @@ namespace Supernova
 		return 2;
 	}
 
-	void snContactConstraint::update(const snVec& _normal, const snVec& _point, float _penetrationDepth)
+	void snContactConstraint::update(snRigidbody* const _body1, snRigidbody* const _body2, const snVec& _normal, const snVec& _point, 
+		float _penetrationDepth)
 	{
+		if(m_bodies[0] != _body1)
+		{
+			m_bodies[0] = _body2;
+			m_bodies[1] = _body1;
+		}
 		m_normal = _normal;
 		m_collisionPoint = _point;
 		m_penetrationDepth = _penetrationDepth;

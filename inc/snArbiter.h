@@ -74,8 +74,11 @@ namespace Supernova
 			}
 		}
 
-		void update(const snCollisionResult& _result, snContactConstraintManager& _manager)
+		void update(snRigidbody* const _body1, snRigidbody* const _body2, const snCollisionResult& _result, snContactConstraintManager& _manager)
 		{
+			m_body1 = _body1;
+			m_body2 = _body2;
+
 			snContactConstraint* mergedConstraints[MAX_CONTACT];
 			unsigned int mergedConstraintsCount = 0;
 
@@ -113,7 +116,7 @@ namespace Supernova
 				}
 				else //Update and save the constraint
 				{
-					foundConstraint->update(newContact.m_normal, newContact.m_point, newContact.m_penetration);
+					foundConstraint->update(m_body1, m_body2, newContact.m_normal, newContact.m_point, newContact.m_penetration);
 				}
 				mergedConstraints[mergedConstraintsCount++] = foundConstraint;
 			}

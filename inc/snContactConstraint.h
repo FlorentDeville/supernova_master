@@ -152,7 +152,8 @@ namespace Supernova
 		//Return the number of bodies in this constraint
 		unsigned int getBodiesCount() const;
 
-		void update(const snVec& _normal, const snVec& _point, float _penetrationDepth);
+		void update(snRigidbody* const _body1, snRigidbody* const _body2, const snVec& _normal, const snVec& _point, 
+			float _penetrationDepth);
 	};
 }
 

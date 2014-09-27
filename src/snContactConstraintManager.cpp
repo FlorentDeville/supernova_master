@@ -78,7 +78,7 @@ namespace Supernova
 
 		if(i != m_activeConstraints.end())
 		{
-			i->second->update(_contact, *this);
+			i->second->update(_body1, _body2, _contact, *this);
 			i->second->m_dirty = false;
 		}
 		else
