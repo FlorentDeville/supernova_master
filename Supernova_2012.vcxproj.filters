@@ -177,6 +177,9 @@
     <ClInclude Include="inc\snArbiter.h">
       <Filter>Collision</Filter>
     </ClInclude>
+    <ClInclude Include="inc\snInsidePoint.h">
+      <Filter>Queries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\snMath.cpp">
@@ -276,6 +279,9 @@
     </ClCompile>
     <ClCompile Include="src\snRaycast.cpp">
       <Filter>Raycast</Filter>
+    </ClCompile>
+    <ClCompile Include="src\snInsidePoint.cpp">
+      <Filter>Queries</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

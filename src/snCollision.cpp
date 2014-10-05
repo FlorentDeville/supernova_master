@@ -56,6 +56,7 @@
 #include "snEPASimplex.h"
 
 #include "snClosestPoint.h"
+#include "snInsidePoint.h"
 
 using namespace Supernova::Vector;
 
@@ -211,6 +212,91 @@ namespace Supernova
 		bool clippingResult = clipping.findContactPatch(*_c1, *_c2, normal, points, penetrations);
 		if(!clippingResult)
 			return res;
+
+		if(points.size() > 4)
+		{
+			snVecVector newPoints;
+			vector<float> newPenetrations;
+
+			//First point, the deepest
+			int idDeepestContact = -1;
+			float deepestPenetration = 0;
+			for(unsigned int i = 0; i < penetrations.size(); ++i)
+			{
+				if(penetrations[i] > deepestPenetration)
+				{
+					deepestPenetration = penetrations[i];
+					idDeepestContact = i;
+				}
+			}
+			newPoints.push_back(points[idDeepestContact]);
+			newPenetrations.push_back(penetrations[idDeepestContact]);
+
+			//Second point : the furthest from 1st
+			int idFurthestPoint1 = -1;
+			float maxSqDistance = 0;
+			for(unsigned int i = 0; i < points.size(); ++i)
+			{
+				if(i == idDeepestContact)
+					continue;
+
+				float sqDistance = snVec3SquaredNorme(points[idDeepestContact] - points[i]);
+				if(sqDistance > maxSqDistance)
+				{
+					maxSqDistance = sqDistance;
+					idFurthestPoint1 = i;
+				}
+			}
+			newPoints.push_back(points[idFurthestPoint1]);
+			newPenetrations.push_back(penetrations[idFurthestPoint1]);
+
+			//Third point : the furthest from the line 
+			int idFurthestPoint2 = -1;
+			maxSqDistance = 0;
+			snVec dir = points[idDeepestContact] - points[idFurthestPoint1];
+			snVec3Normalize(dir);
+			for(unsigned int i = 0; i < points.size(); ++i)
+			{
+				if(i == idDeepestContact || i == idFurthestPoint1)
+					continue;
+
+				float sqDistance = snVec3SquaredNorme(points[i] - (dir * snVec3Dot(points[idFurthestPoint1], dir)));
+				if(sqDistance > maxSqDistance)
+				{
+					maxSqDistance = sqDistance;
+					idFurthestPoint2 = i;
+				}
+			}
+			newPoints.push_back(points[idFurthestPoint2]);
+			newPenetrations.push_back(penetrations[idFurthestPoint2]);
+
+			//Fourth point
+			int idFurthestPoint3 = -1;
+			maxSqDistance = 0;
+			for(unsigned int i = 0; i < points.size(); ++i)
+			{
+				if(i == idDeepestContact || i == idFurthestPoint1 || i == idFurthestPoint2)
+					continue;
+
+				snVec closestPoint = snClosestPoint::PointTriangle(points[i], points[idDeepestContact], points[idFurthestPoint1], points[idFurthestPoint2]);
+				float sqDistance = snVec3SquaredNorme(points[i] - closestPoint);
+				if(sqDistance > maxSqDistance)
+				{
+					maxSqDistance = sqDistance;
+					idFurthestPoint3 = i;
+				}
+			}
+			if(!snInsidePoint::isInsideTriangle(points[idDeepestContact], points[idFurthestPoint1], points[idFurthestPoint2], points[idFurthestPoint3]))
+			{
+				newPoints.push_back(points[idFurthestPoint3]);
+				newPenetrations.push_back(penetrations[idFurthestPoint3]);
+			}
+
+			points.swap(newPoints);
+			penetrations.swap(newPenetrations);
+		}
+
+		assert(points.size() <= 4);
 
 		//find the features
 		if(vertexFaceFeature)
