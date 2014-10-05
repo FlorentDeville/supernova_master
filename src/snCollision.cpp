@@ -212,7 +212,7 @@ namespace Supernova
 		if(!clippingResult)
 			return res;
 
-		//find the features motherfucker!!!!!!!!!!!!!!
+		//find the features
 		if(vertexFaceFeature)
 		{
 			snVec vertexFeatures[4];
@@ -255,8 +255,8 @@ namespace Supernova
 			}
 			else
 			{
-				res.m_contacts[0].m_featuresId[1] = edgeFeature2;
-				res.m_contacts[0].m_featuresId[0] = edgeFeature1;
+				res.m_contacts[0].m_featuresId[0] = edgeFeature2;
+				res.m_contacts[0].m_featuresId[1] = edgeFeature1;
 			}
 		}
 #if _DEBUG
