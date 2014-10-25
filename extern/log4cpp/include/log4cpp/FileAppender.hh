@@ -86,6 +86,9 @@ namespace log4cpp {
         int _fd;
         int _flags;
         mode_t _mode;
+
+	private:
+		FileAppender operator=(const FileAppender&);
     };
 }
 

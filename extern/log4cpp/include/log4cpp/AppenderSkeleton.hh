@@ -105,6 +105,8 @@ namespace log4cpp {
         private:
         Priority::Value _threshold;
         Filter* _filter;
+
+		AppenderSkeleton& operator=(const AppenderSkeleton&);
     };
 }
 

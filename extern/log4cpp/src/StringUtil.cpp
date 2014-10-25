@@ -10,7 +10,7 @@
 #include <stdio.h>
 
 #if defined(_MSC_VER)
-    #define VSNPRINTF _vsnprintf
+    #define VSNPRINTF _vsnprintf_s
 #else
 #ifdef LOG4CPP_HAVE_SNPRINTF
     #define VSNPRINTF vsnprintf
@@ -47,7 +47,7 @@ namespace log4cpp {
             va_copy(args_copy, args);
 #endif
 
-            int n = VSNPRINTF(buffer, size, format, args_copy);
+            int n = VSNPRINTF(buffer, size, size, format, args_copy);
 
             va_end(args_copy);
                 

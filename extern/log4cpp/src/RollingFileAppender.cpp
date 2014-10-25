@@ -37,13 +37,13 @@ namespace log4cpp {
                                              mode_t mode) :
         FileAppender(name, fileName, append, mode),
         _maxBackupIndex(maxBackupIndex > 0 ? maxBackupIndex : 1),
-        _maxBackupIndexWidth((_maxBackupIndex > 0) ? log10((float)_maxBackupIndex)+1 : 1),
+        _maxBackupIndexWidth((_maxBackupIndex > 0) ? (unsigned short)(log10((float)_maxBackupIndex)+1) : 1),
         _maxFileSize(maxFileSize) {
     }
 
     void RollingFileAppender::setMaxBackupIndex(unsigned int maxBackups) { 
         _maxBackupIndex = maxBackups; 
-        _maxBackupIndexWidth = (_maxBackupIndex > 0) ? log10((float)_maxBackupIndex)+1 : 1;
+        _maxBackupIndexWidth = (_maxBackupIndex > 0) ? (size_t)(log10((float)_maxBackupIndex)+1) : 1;
     }
     
     unsigned int RollingFileAppender::getMaxBackupIndex() const { 
@@ -59,7 +59,7 @@ namespace log4cpp {
     }
 
     void RollingFileAppender::rollOver() {
-        ::close(_fd);
+        ::_close(_fd);
         if (_maxBackupIndex > 0) {
             std::ostringstream filename_stream;
         	filename_stream << _fileName << "." << std::setw( _maxBackupIndexWidth ) << std::setfill( '0' ) << _maxBackupIndex << std::ends;
@@ -78,12 +78,12 @@ namespace log4cpp {
             // new file will be numbered 1
             ::rename(_fileName.c_str(), last_log_filename.c_str());
         }
-        _fd = ::open(_fileName.c_str(), _flags, _mode);
+		::_sopen_s(&_fd, _fileName.c_str(), _flags, _SH_DENYNO, _mode);
     }
 
     void RollingFileAppender::_append(const LoggingEvent& event) {
         FileAppender::_append(event);
-        off_t offset = ::lseek(_fd, 0, SEEK_END);
+        off_t offset = ::_lseek(_fd, 0, SEEK_END);
         if (offset < 0) {
             // XXX we got an error, ignore for now
         } else {

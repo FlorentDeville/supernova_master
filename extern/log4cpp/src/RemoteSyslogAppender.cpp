@@ -135,9 +135,10 @@ namespace log4cpp {
     void RemoteSyslogAppender::_append(const LoggingEvent& event) {
         const std::string message(_getLayout().format(event));
         size_t messageLength = message.length();
-        char *buf = new char [messageLength + 16];
+		int bufferSize = messageLength + 16;
+        char *buf = new char [bufferSize];
         int priority = _facility + toSyslogPriority(event.priority);
-        int preambleLength = sprintf (buf, "<%d>", priority);
+		int preambleLength = sprintf_s(buf, bufferSize, "<%d>", priority);
         memcpy (buf + preambleLength, message.data(), messageLength);
 
         sockaddr_in sain;

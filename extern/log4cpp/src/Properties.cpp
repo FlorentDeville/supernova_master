@@ -122,7 +122,10 @@ namespace log4cpp {
                 if (key == "${") {
                     result += "${";
                 } else {
-                    char* value = std::getenv(key.c_str());
+                    //char* value = std::getenv(key.c_str());
+					char* value;
+					size_t bufferSize;
+					::_dupenv_s(&value, &bufferSize, key.c_str());
                     if (value) {
                         result += value;
                     } else {

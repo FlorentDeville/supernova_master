@@ -140,6 +140,9 @@ namespace log4cpp {
 	     CategoryStream& operator << (cspf);
         LOG4CPP_EXPORT friend CategoryStream& eol (CategoryStream& os);
         LOG4CPP_EXPORT friend CategoryStream& left (CategoryStream& os);
+
+		private:
+			CategoryStream& operator=(const CategoryStream&);
    };
 }
 

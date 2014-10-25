@@ -142,6 +142,8 @@ namespace log4cpp {
         static void _removeAppender(Appender* appender);
 
         const std::string _name;
+
+		Appender& operator=(const Appender&);
     };
 
     typedef std::set<Appender *> AppenderSet;

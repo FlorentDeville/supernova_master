@@ -8,7 +8,7 @@ namespace log4cpp {
 
         std::string getThreadId() {
             char buffer[16];
-            sprintf(buffer, "%lu", GetCurrentThreadId());
+			sprintf_s(buffer, "%lu", GetCurrentThreadId());
             return std::string(buffer);
         };
     }

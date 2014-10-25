@@ -26,7 +26,7 @@ namespace log4cpp {
         Category& root = Category::getRoot();
         root.setPriority(Priority::INFO);
         root.removeAllAppenders();
-        root.addAppender(new FileAppender("_", ::dup(fileno(stdout))));
+        root.addAppender(new FileAppender("_", ::_dup(_fileno(stdout))));
     }
 
 }

@@ -48,6 +48,8 @@ namespace log4cpp {
 
         private:
         Layout* _layout;
+
+		LayoutAppender& operator=(const LayoutAppender&);
     };
 }
 

@@ -31,10 +31,12 @@ namespace log4cpp {
             LayoutAppender(name),
             _fileName(fileName),
             _flags(O_CREAT | O_APPEND | O_WRONLY),
-            _mode(mode) {
+            _mode(mode) 
+	{
         if (!append)
             _flags |= O_TRUNC;
-        _fd = ::open(_fileName.c_str(), _flags, _mode);
+
+		::_sopen_s(&_fd, _fileName.c_str(), _flags, _SH_DENYNO, _mode);
     }
     
     FileAppender::FileAppender(const std::string& name, int fd) :
@@ -51,7 +53,7 @@ namespace log4cpp {
 
     void FileAppender::close() {
         if (_fd!=-1) {
-            ::close(_fd);
+            ::_close(_fd);
             _fd=-1;
         }
     }
@@ -78,19 +80,20 @@ namespace log4cpp {
 
     void FileAppender::_append(const LoggingEvent& event) {
         std::string message(_getLayout().format(event));
-        if (!::write(_fd, message.data(), message.length())) {
+        if (!::_write(_fd, message.data(), message.length())) {
             // XXX help! help!
         }
     }
 
     bool FileAppender::reopen() {
         if (_fileName != "") {
-            int fd = ::open(_fileName.c_str(), _flags, _mode);
+            int fd;
+			::_sopen_s(&fd, _fileName.c_str(), _flags, _SH_DENYNO, _mode);
             if (fd < 0)
                 return false;
             else {
 	        if (_fd != -1)
-                    ::close(_fd);
+                    ::_close(_fd);
                 _fd = fd;
                 return true;
             }

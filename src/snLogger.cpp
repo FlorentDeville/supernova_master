@@ -55,7 +55,7 @@ namespace Supernova
 	void snLogger::initialize()
 	{
 		//create a file appender
-		log4cpp::Appender* appender = new log4cpp::FileAppender("default", "supernova_output.log", false);
+		log4cpp::Appender* appender = new log4cpp::FileAppender("default", "supernova_output.log", false, _S_IREAD | _S_IWRITE);
 		appender->setLayout(new log4cpp::BasicLayout());
 
 		log4cpp::Category& root = log4cpp::Category::getRoot();
