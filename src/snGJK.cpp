@@ -151,6 +151,8 @@ namespace Supernova
 
 			simplex[farthestVertexId] = candidate;
 		}
+
+		return false;
 	}
 
 	snVec snGJK::updateSimplex(snVec* _s, int& _n)
