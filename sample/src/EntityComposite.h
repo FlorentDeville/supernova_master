@@ -65,8 +65,12 @@ namespace Devil
 		//Graphic entity to show the center of mass.
 		IGfxEntity* m_gfxCenterOfMass;
 
-		XMVECTOR m_color;
+#ifdef _DEBUG
+		char m_padding[12];
+#endif
 
+		XMVECTOR m_color;
+		
 	public:
 		EntityComposite(snRigidbody* _actor, const XMFLOAT4& _color);
 		~EntityComposite();
