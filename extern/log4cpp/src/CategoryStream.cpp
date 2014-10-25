@@ -40,7 +40,7 @@ namespace log4cpp {
     {
        if (getPriority() != Priority::NOTSET) {
           if (!_buffer) {
-             if (!(_buffer = new std::ostringstream)) {
+             if ((_buffer = new std::ostringstream) == 0) {
                 // XXX help help help
              }
           }
@@ -52,7 +52,7 @@ namespace log4cpp {
     std::streamsize CategoryStream::width(std::streamsize wide ) {
         if (getPriority() != Priority::NOTSET) {
             if (!_buffer) {
-                if (!(_buffer = new std::ostringstream)) {
+                if ((_buffer = new std::ostringstream) == 0) {
                     // XXX help help help
                 }
             }

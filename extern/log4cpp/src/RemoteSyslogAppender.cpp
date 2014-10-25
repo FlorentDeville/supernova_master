@@ -143,7 +143,7 @@ namespace log4cpp {
 
         sockaddr_in sain;
         sain.sin_family = AF_INET;
-        sain.sin_port   = htons (_portNumber);
+        sain.sin_port   = htons ((u_short)_portNumber);
         // NO, do NOT use htonl on _ipAddr. Is already in network order.
         sain.sin_addr.s_addr = _ipAddr;
 

@@ -46,7 +46,7 @@ namespace log4cpp {
         return false;
     }
 
-    void NTEventLogAppender::setLayout(Layout* layout) {
+    void NTEventLogAppender::setLayout(Layout* /*layout*/) {
         return;
     }
 

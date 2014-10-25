@@ -105,7 +105,8 @@ namespace log4cpp {
             return;
         }
 
-        while(true) {
+		bool loop = true;
+        while(loop) {
             result += value.substr(left, right - left);
             if (right == std::string::npos) {
                 break;

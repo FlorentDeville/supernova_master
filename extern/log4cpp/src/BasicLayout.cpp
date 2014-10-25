@@ -36,7 +36,7 @@ namespace log4cpp {
         return message.str();
     }
 
-    std::auto_ptr<Layout> create_basic_layout(const FactoryParams& params)
+    std::auto_ptr<Layout> create_basic_layout(const FactoryParams& /*params*/)
     {
        return std::auto_ptr<Layout>(new BasicLayout);
     }

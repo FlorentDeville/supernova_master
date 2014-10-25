@@ -38,7 +38,8 @@ namespace log4cpp {
         size_t size = 1024;
         char* buffer = new char[size];
             
-        while (1) {
+		bool loop = true;
+        while (loop) {
             va_list args_copy;
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
@@ -66,6 +67,8 @@ namespace log4cpp {
             delete [] buffer;
             buffer = new char[size];
         }
+
+		return "";
     }
 
     std::string StringUtil::trim(const std::string& s) {

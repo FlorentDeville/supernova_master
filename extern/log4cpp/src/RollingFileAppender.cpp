@@ -43,7 +43,7 @@ namespace log4cpp {
 
     void RollingFileAppender::setMaxBackupIndex(unsigned int maxBackups) { 
         _maxBackupIndex = maxBackups; 
-        _maxBackupIndexWidth = (_maxBackupIndex > 0) ? (size_t)(log10((float)_maxBackupIndex)+1) : 1;
+        _maxBackupIndexWidth = (_maxBackupIndex > 0) ? (unsigned short)(log10((float)_maxBackupIndex)+1) : 1;
     }
     
     unsigned int RollingFileAppender::getMaxBackupIndex() const { 

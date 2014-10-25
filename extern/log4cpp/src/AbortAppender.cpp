@@ -27,7 +27,7 @@ namespace log4cpp {
         // empty
     }
 
-    void AbortAppender::_append(const LoggingEvent& event) {
+    void AbortAppender::_append(const LoggingEvent& /*event*/) {
         std::abort();
     }
 
@@ -39,7 +39,7 @@ namespace log4cpp {
         return false;
     }
 
-    void AbortAppender::setLayout(Layout* layout) {
+    void AbortAppender::setLayout(Layout* /*layout*/) {
         return;
     }
 

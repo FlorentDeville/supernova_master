@@ -44,11 +44,11 @@ namespace log4cpp {
         return result;
     }
     
-    void FixedContextCategory::addAppender(Appender* appender) throw() {
+    void FixedContextCategory::addAppender(Appender* /*appender*/) throw() {
         // XXX do nothing for now
     }
     
-    void FixedContextCategory::addAppender(Appender& appender) {
+    void FixedContextCategory::addAppender(Appender& /*appender*/) {
         // XXX do nothing for now
     }
     
@@ -73,7 +73,7 @@ namespace log4cpp {
         return false;
     }
     
-    bool FixedContextCategory::ownsAppender(Appender* appender) const throw() {
+    bool FixedContextCategory::ownsAppender(Appender* /*appender*/) const throw() {
         return false;
     }
     
@@ -82,7 +82,7 @@ namespace log4cpp {
         _delegate.callAppenders(event);
     }
 
-    void FixedContextCategory::setAdditivity(bool additivity) {
+    void FixedContextCategory::setAdditivity(bool /*additivity*/) {
         // XXX do nothing for now
     }
 

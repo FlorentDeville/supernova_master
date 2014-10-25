@@ -121,7 +121,7 @@ namespace log4cpp {
         }
     }
 
-    void NDC::_setMaxDepth(int maxDepth) {
+    void NDC::_setMaxDepth(int /*maxDepth*/) {
         // XXX no maximum
     }
 
