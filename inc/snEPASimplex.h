@@ -35,7 +35,6 @@
 #ifndef SN_SIMPLEX_H
 #define SN_SIMPLEX_H
 
-#include "snGlobals.h"
 #include "snEPATriangle.h"
 #include "snVec.h"
 

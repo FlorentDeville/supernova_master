@@ -40,8 +40,6 @@
 namespace Supernova
 {
 	class snICollider;
-	class snCollisionResult;
-	class snSimplex;
 
 	//Provide functionnalty to check collision between colliders using GJK algorithm.
 	class snGJK

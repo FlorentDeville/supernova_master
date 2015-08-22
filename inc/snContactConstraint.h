@@ -36,6 +36,7 @@
 #define SN_NON_PENETRATION_CONSTRAINT_H
 
 #include "snIConstraint.h"
+#include "snVec.h"
 
 namespace Supernova
 {

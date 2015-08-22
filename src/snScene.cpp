@@ -34,6 +34,7 @@
 
 #include "snScene.h"
 
+#include "snHandle.h"
 #include "snRigidbody.h"
 #include "snActorPair.h"
 #include "snICollider.h"

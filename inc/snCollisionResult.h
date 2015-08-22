@@ -36,7 +36,6 @@
 #define SN_COLLISION_RESULT_H
 
 #include "snTypes.h"
-#include "snGlobals.h"
 
 namespace Supernova
 {

@@ -42,8 +42,6 @@ using std::string;
 #include <list>
 using std::list;
 
-#include "snWorld.h"
-#include "AlignmentAllocator.h"
 #include "snObject.h"
 #include "snTypes.h"
 #include "snGJK.h"
@@ -54,22 +52,17 @@ using std::list;
 #include "snActorPairManager.h"
 #include "snFrictionMode.h"
 
-#ifdef _DEBUG
-namespace Devil
-{
-	class EntityCollisionPoint;
-}
-#endif
-
 namespace Supernova
 {
 	class snRigidbody;
-	class CollisionResult;
 	class snIConstraint;
 	class snPointToPointConstraint;
 	class snFixedConstraint;
 	class snHingeConstraint;
 	class snRay;
+
+	template <class T> class snHandle;
+	typedef snHandle<snRigidbody> snhRigidbody;
 
 	//The physic scene to simulate. HUGE WIP.
 	class SN_ALIGN snScene : public snObject

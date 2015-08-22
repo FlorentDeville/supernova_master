@@ -36,13 +36,11 @@
 #define SN_ICOLLIDER_H
 
 #include "snObject.h"
-#include "snGlobals.h"
 #include "snTransform.h"
 
 namespace Supernova
 {
 	//forward declarations of derived types.
-	class snCollisionResult;
 	struct snAABB;
 	class snMatrix44f;
 	class snTransform;

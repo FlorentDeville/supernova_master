@@ -36,7 +36,6 @@
 
 #include "snEPAEdge.h"
 #include "snVec.h"
-#include "snGlobals.h"
 
 namespace Supernova
 {

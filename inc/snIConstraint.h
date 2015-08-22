@@ -35,8 +35,8 @@
 #ifndef SN_I_CONSTRAINT_H
 #define SN_I_CONSTRAINT_H
 
-#include "snVec.h"
 #include "snGlobals.h"
+#include <malloc.h>
 
 namespace Supernova
 {

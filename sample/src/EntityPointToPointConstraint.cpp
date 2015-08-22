@@ -39,8 +39,11 @@
 #include "GfxEntityBox.h"
 
 #include "EntityPointToPointConstraint.h"
-#include "snPointToPointConstraint.h"
+
 #include "snMath.h"
+#include "snRigidbody.h"
+#include "snPointToPointConstraint.h"
+
 using Supernova::snPointToPointConstraint;
 
 using namespace DirectX;

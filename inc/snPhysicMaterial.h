@@ -35,8 +35,6 @@
 #ifndef SN_PHYSIC_MATERIAL_H
 #define SN_PHYSIC_MATERIAL_H
 
-#include "snGlobals.h"
-
 namespace Supernova
 {
 	class snPhysicMaterial

@@ -43,8 +43,6 @@ using std::list;
 #include <vector>
 using std::vector;
 
-#include "snGlobals.h"
-
 namespace Supernova
 {
 	class snRigidbody;

@@ -36,10 +36,11 @@
 #define SN_POINT_TO_POINT_CONSTRAINT_H
 
 #include "snIConstraint.h"
-#include "snRigidbody.h"
+#include "snMatrix44f.h"
 
 namespace Supernova
 {
+	class snRigidbody;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
 	//Represent a constraint between two bodies. It only lets the bodies to rotate about a common point.

@@ -38,10 +38,7 @@
 #include <vector>
 using std::vector;
 
-//#include <DirectXMath.h>
-//using namespace DirectX;
-
-#include "snIConstraint.h"
+#include "snVec.h"
 #include "AlignmentAllocator.h"
 
 namespace Supernova

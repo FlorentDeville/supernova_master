@@ -36,7 +36,6 @@
 #define SN_MATRIX44F_H
 
 #include <xmmintrin.h>
-#include "snGlobals.h"
 #include "snVec.h"
 
 namespace Supernova

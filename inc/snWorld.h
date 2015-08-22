@@ -37,7 +37,6 @@
 
 #include "snGlobals.h"
 #include "snObject.h"
-#include "snVec.h"
 #include "snHandle.h"
 
 #include <vector>
